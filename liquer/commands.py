@@ -20,7 +20,7 @@ Multiple argument parsers may be collected in a SequenceArgumentParser by use of
 """
 
 CommandMetadata = namedtuple(
-    "Command", ["name", "label", "module", "doc", "arguments"])
+    "Command", ["name", "label", "module", "doc", "state_argument", "arguments"])
 
 
 class CommandRegistry(object):
@@ -44,21 +44,21 @@ class CommandRegistry(object):
         """Returns dictionary representation of the registry, safe to serialize as json"""
         return {name: cmd._asdict() for name, cmd in self.metadata}
 
-    def evaluate_command(self, state, qcommand:list):
-        state=state.clone()
+    def evaluate_command(self, state, qcommand: list):
+        state = state.clone()
         state.commands.append(qcommand)
         state.query = encode(state.commands)
         command_name = qcommand[0]
         if command_name in self.executables:
             try:
-                state = self.executables[command_name](state,*qcommand[1:])
-            except:
+                state = self.executables[command_name](state, *qcommand[1:])
+            except Exception as e:
                 traceback.print_exc()
-                state.log_exception(message=str(e), traceback = traceback.format_exc())
+                state.log_exception(message=str(
+                    e), traceback=traceback.format_exc())
         else:
             return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
         return state
-
 
 
 _command_registry = None
@@ -69,6 +69,13 @@ def command_registry():
     global _command_registry
     if _command_registry is None:
         _command_registry = CommandRegistry()
+    return _command_registry
+
+
+def reset_command_registry():
+    """Create empty global command registry"""
+    global _command_registry
+    _command_registry = CommandRegistry()
     return _command_registry
 
 
@@ -137,7 +144,7 @@ def identifier_to_label(identifier):
     return txt
 
 
-def command_metadata_from_callable(f, skip_args=1):
+def command_metadata_from_callable(f, has_state_argument=True):
     """Extract command metadata structure from a callable.
     Function interprets function name, document string, argument names and annotations into command metadata. 
     """
@@ -149,7 +156,7 @@ def command_metadata_from_callable(f, skip_args=1):
         doc = ""
     arguments = []
     sig = inspect.signature(f)
-    for argname in list(sig.parameters)[skip_args:]:
+    for argname in list(sig.parameters):
         arg = dict(name=argname, label=identifier_to_label(argname))
         arg_type = None
         if argname in annotations:
@@ -173,7 +180,19 @@ def command_metadata_from_callable(f, skip_args=1):
         arg["editor"] = arg_editor
         arguments.append(arg)
 
-    return CommandMetadata(name=name, label=identifier_to_label(name), module=module, doc=doc, arguments=arguments)
+    if has_state_argument and len(arguments):
+        state_argument = arguments[0]
+        state_argument["pass_state"] = state_argument["name"] == "state"
+        arguments = arguments[1:]
+    else:
+        state_argument = None
+
+    return CommandMetadata(name=name,
+                           label=identifier_to_label(name),
+                           module=module,
+                           doc=doc,
+                           state_argument=state_argument,
+                           arguments=arguments)
 
 
 def argument_parser_from_command_metadata(command_metadata):
@@ -200,10 +219,13 @@ class CommandExecutable(object):
         self.argument_parser = argument_parser
 
     def __call__(self, state, *args):
-        args = list(args) + [a["default"] for a in self.metadata.arguments[len(args):]]
+        args = list(args) + [a["default"]
+                             for a in self.metadata.arguments[len(args):]]
         argv, remainder = self.argument_parser.parse(self.metadata, args)
         assert len(remainder) == 0
-        result = self.f(state, *argv)
+        state_arg = state if self.metadata.state_argument["pass_state"] else state.get(
+        )
+        result = self.f(state_arg, *argv)
         if isinstance(result, State):
             return result
         else:
@@ -212,7 +234,8 @@ class CommandExecutable(object):
 
 class FirstCommandExecutable(CommandExecutable):
     def __call__(self, state, *args):
-        args = list(args) + [a["default"] for a in self.metadata.arguments[len(args):]]
+        args = list(args) + [a["default"]
+                             for a in self.metadata.arguments[len(args):]]
         argv, remainder = self.argument_parser.parse(self.metadata, args)
         assert len(remainder) == 0
         result = self.f(*argv)
@@ -222,15 +245,22 @@ class FirstCommandExecutable(CommandExecutable):
             return state.with_data(result)
 
 
+def _register_command(f, metadata):
+    parser = argument_parser_from_command_metadata(metadata)
+    if metadata.state_argument is None:
+        executable = FirstCommandExecutable(f, metadata, parser)
+    else:
+        executable = CommandExecutable(f, metadata, parser)
+    command_registry().register(executable, metadata)
+
+
 def command(f):
     """Register a callable as a command.
     Callable is expected to take a state data as a first argument. 
     This typically can be used as a decorator 
     """
     metadata = command_metadata_from_callable(f)
-    parser = argument_parser_from_command_metadata(metadata)
-    executable = CommandExecutable(f, metadata, parser)
-    command_registry().register(executable, metadata)
+    _register_command(f, metadata)
     return f
 
 
@@ -242,8 +272,6 @@ def first_command(f):
     then the state passed to the command is ignored (and not passed to f).
     This typically can be used as a decorator.
     """
-    metadata = command_metadata_from_callable(f)
-    parser = argument_parser_from_command_metadata(metadata)
-    executable = FirstCommandExecutable(f, metadata, parser)
-    command_registry().register(executable, metadata)
+    metadata = command_metadata_from_callable(f, has_state_argument=False)
+    _register_command(f, metadata)
     return f

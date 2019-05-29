@@ -64,7 +64,7 @@ class TestCommands:
             ["abc", True, 234], [])
 
     def test_command(self):
-        _command_registry = None
+        reset_command_registry()
         @command
         def test_callable(state, a: int, b=123):  # has state as a first argument
             return a+b
@@ -72,7 +72,7 @@ class TestCommands:
         assert result.get() == 124
 
     def test_first_command(self):
-        _command_registry = None
+        reset_command_registry()
         @first_command
         def test_callable(a: int, b=123):
             return a+b
@@ -80,7 +80,7 @@ class TestCommands:
         assert result.get() == 124
 
     def test_evaluate_command(self):
-        _command_registry = None
+        reset_command_registry()
         @command
         def test_callable(state, a: int, b=123):  # has state as a first argument
             return a+b
@@ -89,3 +89,21 @@ class TestCommands:
             State(), cmd)
         assert result.get() == 124
         assert result.commands[-1] == cmd
+
+    def test_state_command(self):
+        reset_command_registry()
+        @command
+        def statecommand(state):  # has state as a first argument
+            assert isinstance(state, State)
+            return 123+state.get()
+        assert command_registry().evaluate_command(
+            State().with_data(1), ["statecommand"]).get() == 124
+
+    def test_nonstate_command(self):
+        reset_command_registry()
+        @command
+        def nonstatecommand(x: int):  # has state as a first argument
+            assert x == 1
+            return 123+x
+        assert command_registry().evaluate_command(
+            State().with_data(1), ["nonstatecommand"]).get() == 124
