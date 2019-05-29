@@ -7,7 +7,6 @@ from liquer.state import State
 
 _cache = None
 
-
 def cache():
     global _cache
     if _cache is None:
@@ -27,17 +26,26 @@ class NoCache:
     def store(self, state):
         return None
 
+    def contains(self, key):
+        return False
+
 
 class MemoryCache:
     def __init__(self):
         self.storage = {}
 
     def get(self, key):
-        return self.storage.get(key).clone()
+        state = self.storage.get(key)
+        if state is None:
+            return None
+        else:
+            return state.clone()
 
     def store(self, state):
         self.storage[state.query] = state.clone()
 
+    def contains(self, key):
+        return key in self.storage
 
 class FileCache:
     def __init__(self, path):
@@ -66,6 +74,21 @@ class FileCache:
         if os.path.exists(path):
             state.data = t.from_bytes(open(path, "rb").read())
             return state
+
+    def contains(self, key):
+        state_path = self.to_path(key)
+        if os.path.exists(state_path):
+            state = State()
+            state = state.from_dict(json.loads(open(state_path).read()))
+        else:
+            return False
+        t = state_types_registry().get(state.type_identifier)
+        path = self.to_path(key, prefix="data_",
+                            extension=t.default_extension())
+        if os.path.exists(path):
+            return True
+        else:
+            return False
 
     def store(self, state):
         with open(self.to_path(state.query), "w") as f:

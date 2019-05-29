@@ -14,8 +14,8 @@ ESCAPE_SEQUENCES=[
 ]
 
 def decode(query):
-    return [[decode_token(etoken) for etoken in eqv.split(PARAMETER_SEPARATOR)] for eqv in query.split(COMMAND_SEPARATOR)]
-
+    ql = [[decode_token(etoken) for etoken in eqv.split(PARAMETER_SEPARATOR)] for eqv in query.split(COMMAND_SEPARATOR)]
+    return [qcommand for qcommand in ql if len(qcommand) and len(qcommand[0])]
 def encode_token(token):
     "Encode single token by escaping special characters and character sequences"
     for sequence, encoding in ESCAPE_SEQUENCES:
@@ -38,3 +38,8 @@ def decode_token(token):
 
 def encode(ql):
     return COMMAND_SEPARATOR.join(PARAMETER_SEPARATOR.join(encode_token(token) for token in qv) for qv in ql)
+
+def all_splits(query):
+    ql = decode(query)
+    for i in range(len(ql),-1,-1):
+        yield encode(ql[:i]),encode(ql[i:])
