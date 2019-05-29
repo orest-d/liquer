@@ -23,6 +23,7 @@ _cache = None
 
 
 def get_cache():
+    """Get global cache object"""
     global _cache
     if _cache is None:
         _cache = NoCache()
@@ -30,11 +31,19 @@ def get_cache():
 
 
 def set_cache(cache):
+    """Set global cache object"""
     global _cache
     _cache = cache
 
 
 def cached_part(query, cache=None):
+    """Get cached part of the query.
+    Use either supplied cache object or global cache object (default).
+    In the process, query is into two parts: the beginning of the query
+    and the remainder. Function tries to find longest possible beginning of the query
+    which is cached, then returns the cached state and the remainder of the query.
+    (query == state.query + "/" + remainder)
+    """
     if cache is None:
         cache = get_cache()
 
@@ -52,6 +61,7 @@ def cached_part(query, cache=None):
 
 
 class NoCache:
+    """Trivial cache object which does not cache any state"""
     def get(self, key):
         return None
 
@@ -63,6 +73,11 @@ class NoCache:
 
 
 class MemoryCache:
+    """Simple cache which stores all the states in a dictionary.
+    Note that continuous heavy use of the system with MemoryCache
+    may lead to filling the memory, therefore this is not ideal
+    for long running services. 
+    """
     def __init__(self):
         self.storage = {}
 
@@ -81,6 +96,15 @@ class MemoryCache:
 
 
 class FileCache:
+    """Simple file cache which stores all the states in files
+    in a specified directory of a local filesystem.
+    Two files are created: one for the state metadata and the other one with
+    serialized version of the state data.
+    
+    Note that no mechanism for maintaining freshness or constraining file size
+    is provided. This may lead to filling the space on the filesystem,
+    therefore this is not ideal for long running public web-services.
+    """
     def __init__(self, path):
         self.path = path
         try:
@@ -89,6 +113,7 @@ class FileCache:
             pass
 
     def to_path(self, key, prefix="state_", extension="json"):
+        "Construct file path from a key and optionally prefix and file extension."
         m = hashlib.md5()
         m.update(key.encode('utf-8'))
         digest = m.hexdigest()
