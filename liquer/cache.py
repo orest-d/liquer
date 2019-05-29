@@ -4,10 +4,25 @@ import hashlib
 import json
 from liquer.state_types import state_types_registry
 from liquer.state import State
+from liquer.parser import all_splits, encode, decode
 
+"""
+Cache defines a mechanism for caching state for a query (or a subquery).
+Since there is a one-to-one correspondence between a query and a state (more precisely state data),
+cache can work as a simple key-value store, using state.query as a key.
+Cache object must define three methods:
+- get - for retrieving state from a key (query); get returns None if the state cannot be recovered
+- store - for storing the state
+- contains - for checking the availability of a state associated with a key (query)
+
+A global cache is configured by set_cache and available via get_cache.
+From a given query, cached_part function tries to recover as much as possible from cache,
+while returning (besides the recovered state) the query remainder that needs to be evaluated. 
+"""
 _cache = None
 
-def cache():
+
+def get_cache():
     global _cache
     if _cache is None:
         _cache = NoCache()
@@ -17,6 +32,23 @@ def cache():
 def set_cache(cache):
     global _cache
     _cache = cache
+
+
+def cached_part(query, cache=None):
+    if cache is None:
+        cache = get_cache()
+
+    if isinstance(cache, NoCache):  # Just an optimization - to avoid looping over all query splits
+        return State(), encode(decode(query))
+
+    for key, remainder in all_splits(query):
+        if key == "":
+            return State(), remainder
+        if cache.contains(key):
+            return cache.get(key), remainder
+
+    # Should never get here, but this is a sensible default:
+    return State(), encode(decode(query))
 
 
 class NoCache:
@@ -46,6 +78,7 @@ class MemoryCache:
 
     def contains(self, key):
         return key in self.storage
+
 
 class FileCache:
     def __init__(self, path):

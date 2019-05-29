@@ -50,3 +50,36 @@ class TestCache:
             assert not cache.contains("xyz")
             assert cache.get("xyz") == None
 
+    def test_cached_part(self):
+        cache = MemoryCache()
+        state, remainder = cached_part("abc", cache)
+        assert remainder == "abc"
+        assert state.get() == None
+
+        state = State().with_data(123)
+        state.query = "abc"
+        cache.store(state)
+        state, remainder = cached_part("abc", cache)
+        assert remainder == ""
+        assert state.get() == 123
+
+        state, remainder = cached_part("/abc/def", cache)
+        assert remainder == "def"
+        assert state.get() == 123
+
+    def test_cached_part_nocache(self):
+        cache = NoCache()
+        state, remainder = cached_part("abc", cache)
+        assert remainder == "abc"
+        assert state.get() == None
+
+        state = State().with_data(123)
+        state.query = "abc"
+        cache.store(state)
+        state, remainder = cached_part("/abc/", cache)
+        assert remainder == "abc"
+        assert state.get() == None
+
+        state, remainder = cached_part("/abc/def/", cache)
+        assert remainder == "abc/def"
+        assert state.get() == None
