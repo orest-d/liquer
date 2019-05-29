@@ -2,6 +2,7 @@ import traceback
 from collections import namedtuple
 import inspect
 from liquer.state import State
+from liquer.parser import encode
 
 """This module is responsible for registering commands
 Commands are composed of a command executable and command metadata, which are collected in a command registry.
@@ -44,8 +45,18 @@ class CommandRegistry(object):
         return {name: cmd._asdict() for name, cmd in self.metadata}
 
     def evaluate_command(self, state, qcommand:list):
-        state = self.executables[qcommand[0]](state,*qcommand[1:])
+        state=state.clone()
         state.commands.append(qcommand)
+        state.query = encode(state.commands)
+        command_name = qcommand[0]
+        if command_name in self.executables:
+            try:
+                state = self.executables[command_name](state,*qcommand[1:])
+            except:
+                traceback.print_exc()
+                state.log_exception(message=str(e), traceback = traceback.format_exc())
+        else:
+            return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
         return state
 
 

@@ -19,6 +19,7 @@ class State(object):
         self.data = None
         self.message = ""
         self.commands = []
+        self.type_identifier = None
 
     def with_data(self, data):
         self.data = data
