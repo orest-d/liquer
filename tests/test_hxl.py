@@ -63,3 +63,14 @@ class TestHXL:
         assert list(df.columns) == ["a", "b"]
         assert list(df.a[1:]) == ["1", "3"]
         assert list(df.b[1:]) == ["2", "4"]
+
+    def test_df2hxl(self):
+        import liquer.ext.lq_hxl     # register HXL commands and state type
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        path = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test_hxl.csv")
+        data = evaluate(f"df_from-{path}/df2hxl").get()
+        assert data.columns[0].header == "a"
+        assert data.columns[0].display_tag == "#indicator+num+aaa"
+        assert data.columns[1].header == "b"
+        assert data.columns[1].display_tag == "#indicator+num+bbb"

@@ -62,3 +62,12 @@ def hxl2df(data):
         f.write(line.encode("utf-8"))
     f.seek(0)
     return pd.read_csv(f)
+
+@command
+def df2hxl(df):
+    """Convert pandas dataframe to hxl dataset
+    """
+    f = StringIO()
+    df.to_csv(f, index=False)
+    f = BytesIO(f.getvalue().encode("utf-8"))
+    return hxl.data(f)
