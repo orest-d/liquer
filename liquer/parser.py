@@ -19,6 +19,7 @@ ESCAPE_SEQUENCES = [
     (ESCAPE, ESCAPE + ESCAPE),
     ("https://", ESCAPE + "H"),
     ("http://", ESCAPE + "h"),
+    ("file://", ESCAPE + "f"),
     ("://", ESCAPE + "P"),
     (COMMAND_SEPARATOR, ESCAPE + "I"),
     (PARAMETER_SEPARATOR, ESCAPE + "_"),
