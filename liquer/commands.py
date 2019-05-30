@@ -84,6 +84,7 @@ def reset_command_registry():
 
 
 class ArgumentParser(object):
+    is_argv = False
     def __add__(self, ap):
         return SequenceArgumentParser(self, ap)
 
@@ -106,7 +107,10 @@ class SequenceArgumentParser(ArgumentParser):
         parsed_arguments = []
         for ap, meta in zip(self.sequence, metadata):
             parsed, args = ap.parse(meta, args)
-            parsed_arguments.append(parsed)
+            if ap.is_argv:
+                parsed_arguments.extend(parsed)
+            else:
+                parsed_arguments.append(parsed)
         return parsed_arguments, args
 
 
@@ -129,12 +133,16 @@ class ListArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return args, []
 
+class ArgvArgumentParser(ListArgumentParser):
+    is_argv = True
+
 
 GENERIC_AP = ArgumentParser()
 INT_AP = IntArgumentParser()
 FLOAT_AP = FloatArgumentParser()
 BOOLEAN_AP = BooleanArgumentParser()
 LIST_AP = ListArgumentParser()
+ARGV_AP = ArgvArgumentParser()
 
 
 def identifier_to_label(identifier):
@@ -204,14 +212,15 @@ def argument_parser_from_command_metadata(command_metadata):
     ap = SequenceArgumentParser()
     for arg in command_metadata.arguments:
         if arg.get("multiple", False):
-            ap += LIST_AP
+            ap += ARGV_AP
             break
         arg_type = arg.get("type")
         ap += dict(
             str=GENERIC_AP,
             int=INT_AP,
             float=FLOAT_AP,
-            bool=BOOLEAN_AP
+            bool=BOOLEAN_AP,
+            list=LIST_AP
         ).get(arg_type, GENERIC_AP)
     return ap
 

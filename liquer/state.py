@@ -28,6 +28,7 @@ class State(object):
 
     def get(self):
         if self.is_error:
+            print("\n".join(m.get("traceback","") for m in self.log))
             raise Exception(self.message)
         return self.data
 

@@ -1,6 +1,7 @@
 from io import StringIO, BytesIO
 from urllib.request import urlopen
 import pandas as pd
+import numpy as np
 from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 from liquer.commands import command, first_command
 
@@ -102,3 +103,26 @@ def append_df(df, url, extension=None):
     """
     df1 = df_from(url, extension=extension)
     return df.append(df1, ignore_index=True)
+
+@command
+def eq(state, *column_values):
+    """Equals filter
+    Accepts one or more column-value pairs. Keep only rows where value in the column equals specified value.
+    Example: eq-column1-1
+    """
+    df = state.get()
+    assert state.type_identifier == "dataframe"
+    for i in range(0,len(column_values),2):
+        c = column_values[i]
+        v = column_values[i+1]
+        state.log_info(f"Equals: {c} == {v}")
+        index = np.array([x==v for x in df[c]],np.bool)
+        try:
+            if int(v)==float(v):
+                index = index | (df[c] == int(v))
+            else:
+                index = index | (df[c] == float(v))
+        except:
+            pass
+        df = df.loc[index,:]
+    return state.with_data(df)

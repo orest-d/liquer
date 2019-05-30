@@ -51,3 +51,20 @@ class TestPandas:
             assert list(df.a) == [1, 3, 1, 3]
             assert list(df.b) == [2, 4, 2, 4]
         set_cache(None)
+
+    def test_eq(self):
+        import liquer.ext.lq_pandas # register pandas commands and state type
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test.csv")
+        state = evaluate(f"df_from-{filename}/eq-a-1")
+        df = state.get()
+        assert "a" in df.columns
+        assert "b" in df.columns
+        assert list(df.a) == [1]
+        assert list(df.b) == [2]
+        df = evaluate(f"df_from-{filename}/eq-a-3-b-4").get()
+        assert list(df.a) == [3]
+        assert list(df.b) == [4]
+        df = evaluate(f"df_from-{filename}/eq-a-1-b-4").get()
+        assert list(df.a) == []
+        assert list(df.b) == []
