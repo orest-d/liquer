@@ -27,6 +27,8 @@ class State(object):
         return self
 
     def get(self):
+        if self.is_error:
+            raise Exception(self.message)
         return self.data
 
     def log_command(self, qv, number):

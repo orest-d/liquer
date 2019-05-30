@@ -47,7 +47,9 @@ MIMETYPES = dict(
     jpeg='image/jpeg'
 )
 
-
+def mimetype_from_extension(extension):
+    return MIMETYPES.get(extension,"text/plain")
+    
 class StateTypesRegistry(object):
     """State type registry takes care of registering and lookup of state types.
     It is typically accessed as a singleton via state_type_registry() function.

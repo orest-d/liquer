@@ -17,6 +17,10 @@ resulting from liquer.parser.decode). Parsing may extract arbitrary amount of ar
 Parse method returns a tuple with the parsed argument and remaining unparsed arguments.
 Argument parsers which do not need multiple instances (typical case) have predefined constants.
 Multiple argument parsers may be collected in a SequenceArgumentParser by use of + operator (e.g. INT_AP + FLOAT_AP).
+
+Though commands can be registered with a low level method 'register' of CommandRegistry (which allows the greatest flexibility),
+the "mainstream" way of command registration is by simply decorating a function with @command or @first_command.
+
 """
 
 CommandMetadata = namedtuple(
