@@ -4,7 +4,6 @@ import pandas as pd
 from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 from liquer.commands import command, first_command
 
-print ("LiQuer Pandas module")
 class DataframeStateType(StateType):
     def identifier(self):
         return "dataframe"
