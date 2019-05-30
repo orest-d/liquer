@@ -40,7 +40,7 @@ class CommandRegistry(object):
         self.executables[name] = executable
         self.metadata[name] = name
 
-    def to_dict(self):
+    def as_dict(self):
         """Returns dictionary representation of the registry, safe to serialize as json"""
         return {name: cmd._asdict() for name, cmd in self.metadata}
 

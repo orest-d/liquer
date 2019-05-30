@@ -1,0 +1,61 @@
+import logging
+from flask import Blueprint, jsonify, redirect, send_file
+from liquer.query import evaluate
+from liquer.state_types import encode_state_data, state_types_registry
+from liquer.commands import command_registry
+import io
+
+app = Blueprint('liquer', __name__, static_folder='static')
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index.html', methods=['GET', 'POST'])
+def index():
+    return redirect("/liquer/static/index.html")
+
+
+@app.route('/info.html', methods=['GET', 'POST'])
+def info():
+    return """
+<html>
+    <head>
+        <title>LiQuer</title>
+    </head>
+    <body>
+        <h1>LiQuer server</h1>
+        For more info, see the <a href="https://github.com/orest-d/liquer">repository</a>.
+    </body>    
+</html>
+"""
+
+
+def response(state):
+    b, mimetype, type_identifier = encode_state_data(state.get())
+    filename = state.filename
+    if filename is None:
+        filename = state_types_registry().get(type_identifier).default_filename()
+    return send_file(
+        io.BytesIO(b),
+        mimetype=mimetype,
+        as_attachment=True,
+        attachment_filename=filename)
+
+
+@app.route('/q/<path:query>')
+def serve(query):
+    return response(evaluate(query))
+
+
+@app.route('/api/commands.json')
+def commands():
+    return jsonify(command_registry().as_dict())
+
+
+@app.route('/api/debug-json/<path:query>')
+def debug_json(query):
+    state = evaluate(query)
+    state_json = state.as_dict()
+    return jsonify(state_json)

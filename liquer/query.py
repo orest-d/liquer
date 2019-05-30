@@ -27,6 +27,9 @@ def evaluate_ql_on(ql, state=None, cache=None):
         cache = get_cache()
     if state is None:
         state = State()
+    elif not isinstance(state, State):
+        state = State().with_data(state)
+        
     cr = command_registry()
     for i, qcommand in enumerate(ql):
         if i == len(ql)-1:
