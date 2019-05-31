@@ -42,11 +42,11 @@ class CommandRegistry(object):
         """
         name = metadata.name
         self.executables[name] = executable
-        self.metadata[name] = name
+        self.metadata[name] = metadata
 
     def as_dict(self):
         """Returns dictionary representation of the registry, safe to serialize as json"""
-        return {name: cmd._asdict() for name, cmd in self.metadata}
+        return {name: cmd._asdict() for name, cmd in self.metadata.items()}
 
     def evaluate_command(self, state, qcommand: list):
         state = state.clone()

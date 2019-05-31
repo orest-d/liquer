@@ -5,6 +5,10 @@ import liquer.blueprint as bp
 import webbrowser
 from flask import Flask
 from liquer.cache import FileCache, set_cache
+from liquer.state import set_var
+import liquer.ext.basic
+import liquer.ext.lq_pandas
+import liquer.ext.lq_hxl
 
 app = Flask(__name__)
 logging.basicConfig()
@@ -14,6 +18,9 @@ werkzeug_logger = logging.getLogger('werkzeug')
 werkzeug_logger.setLevel(logging.INFO)
 url_prefix='/liquer'
 app.register_blueprint(bp.app, url_prefix=url_prefix)
+set_var("api_path",url_prefix+"/q/")
+set_var("server","http://localhost:5000"+url_prefix)
+
 
 set_cache(FileCache("cache"))
 

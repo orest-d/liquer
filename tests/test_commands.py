@@ -107,3 +107,10 @@ class TestCommands:
             return 123+x
         assert command_registry().evaluate_command(
             State().with_data(1), ["nonstatecommand"]).get() == 124
+
+    def test_as_dict(self):
+        reset_command_registry()
+        @command
+        def somecommand(x: int):  # has state as a first argument
+            return 123+x
+        assert "somecommand" in command_registry().as_dict()
