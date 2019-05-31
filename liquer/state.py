@@ -3,7 +3,32 @@ import pandas as pd
 from io import BytesIO, StringIO
 import json
 from liquer.state_types import type_identifier_of, copy_state_data
+from copy import deepcopy
 
+_vars=None
+def get_vars():
+    global _vars
+    if _vars is None:
+        _vars = {}
+    return _vars
+
+def vars_clone():
+    """Return a copy of state variables dictionary
+    This is used to set the initial content of State.vars for a newly created state.
+    """
+    return deepcopy(get_vars())
+
+def set_var(name, value):
+    """Set initial value of a state variable
+    This is used to configure initial content of the state variables.
+
+    It should be done before any query is evaluated.
+    Calls at a later stage may lead to unintended behaviour like
+    cache inconsistencies (query result may depend on initial value of a state variable,
+    but this is not reflected in a query string).
+    """
+    get_vars()
+    _vars[name]=value
 
 class State(object):
     def __init__(self):
@@ -12,7 +37,7 @@ class State(object):
         self.sources = []
         self.log = []
         self.is_error = False
-        self.vars = {}
+        self.vars = vars_clone()
 
         self.filename = None
         self.extension = None

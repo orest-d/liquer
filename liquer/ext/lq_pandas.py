@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 from liquer.commands import command, first_command
+from liquer.parser import encode, decode
+from liquer.query import evaluate
 
 class DataframeStateType(StateType):
     def identifier(self):
@@ -23,7 +25,7 @@ class DataframeStateType(StateType):
         if extension == "csv":
             output = StringIO()
             data.to_csv(output, index=False)
-            return output.getvalue().encode("utf-8"), mimetype 
+            return output.getvalue().encode("utf-8"), mimetype
         elif extension == "tsv":
             output = StringIO()
             data.to_csv(output, index=False, sep="\t")
@@ -47,7 +49,8 @@ class DataframeStateType(StateType):
             data.to_msgpack(output)
             return output.getvalue()
         else:
-            raise Exception(f"Serialization: file extension {extension} is not supported by dataframe type.")
+            raise Exception(
+                f"Serialization: file extension {extension} is not supported by dataframe type.")
 
     def from_bytes(self, b: bytes, extension=None):
         if extension is None:
@@ -66,13 +69,16 @@ class DataframeStateType(StateType):
             return pd.read_excel(f)
         elif extension == "msgpack":
             return pd.read_msgpack(f)
-        raise Exception(f"Deserialization: file extension {extension} is not supported by dataframe type.")
+        raise Exception(
+            f"Deserialization: file extension {extension} is not supported by dataframe type.")
 
     def copy(self, data):
         return data.copy()
 
+
 DATAFRAME_STATE_TYPE = DataframeStateType()
 register_state_type("DataFrame", DATAFRAME_STATE_TYPE)
+
 
 @first_command
 def df_from(url, extension=None):
@@ -97,12 +103,14 @@ def df_from(url, extension=None):
     else:
         raise Exception(f"Unsupported file extension: {extension}")
 
+
 @command
 def append_df(df, url, extension=None):
     """Append dataframe from URL
     """
     df1 = df_from(url, extension=extension)
     return df.append(df1, ignore_index=True)
+
 
 @command
 def eq(state, *column_values):
@@ -112,17 +120,77 @@ def eq(state, *column_values):
     """
     df = state.get()
     assert state.type_identifier == "dataframe"
-    for i in range(0,len(column_values),2):
+    for i in range(0, len(column_values), 2):
         c = column_values[i]
         v = column_values[i+1]
         state.log_info(f"Equals: {c} == {v}")
-        index = np.array([x==v for x in df[c]],np.bool)
+        index = np.array([x == v for x in df[c]], np.bool)
         try:
-            if int(v)==float(v):
+            if int(v) == float(v):
                 index = index | (df[c] == int(v))
             else:
                 index = index | (df[c] == float(v))
         except:
             pass
-        df = df.loc[index,:]
+        df = df.loc[index, :]
+    return state.with_data(df)
+
+
+@command
+def qsplit_df(state, *columns):
+    """Quick/query split of dataframe by columns
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+    Resulting queries are put in query column. Name of the query column
+    can be overriden by query_column state variable.
+    """
+    df = state.get()
+    if len(columns) == 1:
+        keys = [(x,) for x in sorted(df.groupby(by=list(columns)).groups.keys())]
+    else:
+        keys = sorted(df.groupby(by=list(columns)).groups.keys())
+
+    query_column = state.vars.get("query_column")
+    if query_column is None:
+        query_column = "query"
+
+    sdf = pd.DataFrame(columns=list(columns)+[query_column])
+    data = []
+    ql = decode(state.query)
+    for row in keys:
+        pairs = list(zip(columns, row))
+        d = dict(pairs)
+        query = encode(ql+[["eq"]+[str(x) for p in pairs for x in p]])
+        d[query_column] = query
+        sdf = sdf.append(d, ignore_index=True)
+
+    return state.with_data(sdf)
+
+@command
+def split_df(state, *columns):
+    """Split of dataframe by columns
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+
+    This behaves like qsplit_df, with two important differenced:
+    - each generated query is evaluated (and thus eventually cached)
+    - link is generated and put into link column (state variable link_column)
+    The split_link_type state variable is used to determine the link type; url by default. 
+    """
+    state = qsplit_df(state, *columns)
+    df = state.get().copy()
+
+    query_column = state.vars.get("query_column")
+    if query_column is None:
+        query_column = "query"
+
+    link_column = state.vars.get("link_column")
+    if link_column is None:
+        link_column = "link"
+
+    split_link_type = state.vars.get("split_link_type")
+    if split_link_type is None:
+        split_link_type = "url"
+
+    df.loc[:,link_column] = [evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in df[query_column]]
     return state.with_data(df)

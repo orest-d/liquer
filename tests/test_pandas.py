@@ -10,10 +10,11 @@ from liquer.cache import set_cache, FileCache
 import os.path
 import inspect
 import tempfile
+from liquer.state import set_var
 
 class TestPandas:
     def test_from(self):
-        import liquer.ext.lq_pandas # register pandas commands and state type
+        import liquer.ext.lq_pandas  # register pandas commands and state type
         filename = encode_token(os.path.dirname(
             inspect.getfile(self.__class__))+"/test.csv")
         state = evaluate(f"df_from-{filename}")
@@ -24,7 +25,7 @@ class TestPandas:
         assert list(df.b) == [2, 4]
 
     def test_append(self):
-        import liquer.ext.lq_pandas # register pandas commands and state type
+        import liquer.ext.lq_pandas  # register pandas commands and state type
         filename = encode_token(os.path.dirname(
             inspect.getfile(self.__class__))+"/test.csv")
         state = evaluate(f"df_from-{filename}/append_df-{filename}")
@@ -35,7 +36,7 @@ class TestPandas:
         assert list(df.b) == [2, 4, 2, 4]
 
     def test_append_with_cache(self):
-        import liquer.ext.lq_pandas # register pandas commands and state type
+        import liquer.ext.lq_pandas  # register pandas commands and state type
         with tempfile.TemporaryDirectory() as cachepath:
             set_cache(FileCache(cachepath))
             filename = encode_token(os.path.dirname(
@@ -53,7 +54,7 @@ class TestPandas:
         set_cache(None)
 
     def test_eq(self):
-        import liquer.ext.lq_pandas # register pandas commands and state type
+        import liquer.ext.lq_pandas  # register pandas commands and state type
         filename = encode_token(os.path.dirname(
             inspect.getfile(self.__class__))+"/test.csv")
         state = evaluate(f"df_from-{filename}/eq-a-1")
@@ -68,3 +69,45 @@ class TestPandas:
         df = evaluate(f"df_from-{filename}/eq-a-1-b-4").get()
         assert list(df.a) == []
         assert list(df.b) == []
+
+    def test_qsplit1(self):
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test.csv")
+        df = evaluate(f"df_from-{filename}/qsplit_df-a").get()
+        assert "a" in df.columns
+        assert "b" not in df.columns
+        assert list(df.a) == [1, 3]
+        assert list(df["query"]) == [
+            f"df_from-{filename}/eq-a-1", f"df_from-{filename}/eq-a-3"]
+
+    def test_qsplit2(self):
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test.csv")
+        df = evaluate(f"df_from-{filename}/qsplit_df-a-b").get()
+        assert list(df.a) == [1, 3]
+        assert list(df.b) == [2, 4]
+        assert list(df["query"]) == [
+            f"df_from-{filename}/eq-a-1-b-2", f"df_from-{filename}/eq-a-3-b-4"]
+
+    def test_split(self):
+        import importlib
+        import liquer.ext.lq_pandas # register pandas commands and state type
+        import liquer.ext.basic
+        importlib.reload(liquer.ext.lq_pandas)  # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.basic)  
+        set_var("server", "http://localhost")
+        set_var("api_path", "/q/")
+
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test.csv")
+        df = evaluate(f"df_from-{filename}/split_df-a").get()
+        assert "a" in df.columns
+        assert "b" not in df.columns
+        assert list(df.a) == [1, 3]
+        assert list(df["query"]) == [
+            f"df_from-{filename}/eq-a-1", f"df_from-{filename}/eq-a-3"]
+        assert list(df["link"]) == [
+            f"http://localhost/q/df_from-{filename}/eq-a-1",
+            f"http://localhost/q/df_from-{filename}/eq-a-3"]

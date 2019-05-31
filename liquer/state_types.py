@@ -157,8 +157,14 @@ class JsonStateType(StateType):
         if extension is None:
             extension = self.default_extension()
 
-        assert extension == "json"
-        return json.dumps(data).encode("utf-8"), self.default_mimetype()
+        if extension == "json":
+            return json.dumps(data).encode("utf-8"), self.default_mimetype()
+        elif extension in ["html","htm"]:
+            if isinstance(data, str):
+                return data.encode("utf-8"), mimetype_from_extension("html")
+            else:
+                return f"<pre>{json.dumps(data)}</pre>".encode("utf-8"), mimetype_from_extension("html")
+        raise Exception(f"Unsupported file extension: {extension}")
 
     def from_bytes(self, b: bytes, extension=None):
         if extension is None:

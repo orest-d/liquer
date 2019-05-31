@@ -50,8 +50,6 @@ class CommandRegistry(object):
 
     def evaluate_command(self, state, qcommand: list):
         state = state.clone()
-        state.commands.append(qcommand)
-        state.query = encode(state.commands)
         command_name = qcommand[0]
         if command_name in self.executables:
             try:
@@ -62,6 +60,8 @@ class CommandRegistry(object):
                     e), traceback=traceback.format_exc())
         else:
             return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
+        state.commands.append(qcommand)
+        state.query = encode(state.commands)
         return state
 
 
@@ -180,7 +180,7 @@ def command_metadata_from_callable(f, has_state_argument=True):
         if p.default != inspect.Parameter.empty:
             arg["default"] = p.default
             arg["optional"] = True
-            if arg_type is None:
+            if arg_type is None and p.default is not None:
                 arg_type = type(p.default).__name__
         else:
             arg["optional"] = False
