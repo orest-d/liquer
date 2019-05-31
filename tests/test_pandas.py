@@ -70,6 +70,23 @@ class TestPandas:
         assert list(df.a) == []
         assert list(df.b) == []
 
+    def test_teq(self):
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test_hxl.csv")
+        state = evaluate(f"df_from-{filename}/teq-a-1")
+        df = state.get()
+        assert "a" in df.columns
+        assert "b" in df.columns
+        assert list(df.a) == ["#indicator +num +aaa","1"]
+        assert list(df.b) == ["#indicator +num +bbb","2"]
+        df = evaluate(f"df_from-{filename}/teq-a-3-b-4").get()
+        assert list(df.a) == ["#indicator +num +aaa","3"]
+        assert list(df.b) == ["#indicator +num +bbb","4"]
+        df = evaluate(f"df_from-{filename}/teq-a-1-b-4").get()
+        assert list(df.a) == ["#indicator +num +aaa"]
+        assert list(df.b) == ["#indicator +num +bbb"]
+
     def test_qsplit1(self):
         import liquer.ext.lq_pandas  # register pandas commands and state type
         filename = encode_token(os.path.dirname(
@@ -111,3 +128,25 @@ class TestPandas:
         assert list(df["link"]) == [
             f"http://localhost/q/df_from-{filename}/eq-a-1",
             f"http://localhost/q/df_from-{filename}/eq-a-3"]
+
+    def test_tsplit(self):
+        import importlib
+        import liquer.ext.lq_pandas # register pandas commands and state type
+        import liquer.ext.basic
+        importlib.reload(liquer.ext.lq_pandas)  # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.basic)  
+        set_var("server", "http://localhost")
+        set_var("api_path", "/q/")
+
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test_hxl.csv")
+        df = evaluate(f"df_from-{filename}/tsplit_df-a").get()
+        assert "a" in df.columns
+        assert "b" not in df.columns
+        assert list(df.a) == ["#indicator +num +aaa","1", "3"]
+        assert list(df["query"])[1:] == [
+            f"df_from-{filename}/teq-a-1",
+            f"df_from-{filename}/teq-a-3"]
+        assert list(df["link"])[1:] == [
+            f"http://localhost/q/df_from-{filename}/teq-a-1",
+            f"http://localhost/q/df_from-{filename}/teq-a-3"]

@@ -35,5 +35,5 @@ class TestBasic:
         ) == "/liquer/q/let-hello-world/state_variable-hello"
         assert evaluate("let-hello-world/state_variable-hello/link-url").get(
         ) == "http://localhost:1234/liquer/q/let-hello-world/state_variable-hello"
-        set_var("server", None)
-        set_var("api_path", None)
+        set_var("server", "http://localhost")
+        set_var("api_path", "/q/")
