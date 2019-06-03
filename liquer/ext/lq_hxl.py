@@ -5,6 +5,7 @@ import hxl
 from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 from liquer.commands import command, first_command
 
+
 class HxlStateType(StateType):
     def identifier(self):
         return "hxl_dataset"
@@ -27,7 +28,8 @@ class HxlStateType(StateType):
             output = "".join(data.gen_json(show_headers=True, show_tags=True))
             return output.encode("utf-8"), mimetype
         else:
-            raise Exception(f"Serialization: file extension {extension} is not supported by HXL dataset type.")
+            raise Exception(
+                f"Serialization: file extension {extension} is not supported by HXL dataset type.")
 
     def from_bytes(self, b: bytes, extension=None):
         if extension is None:
@@ -38,20 +40,24 @@ class HxlStateType(StateType):
 
         if extension == "csv":
             return hxl.data(f)
-        raise Exception(f"Deserialization: file extension {extension} is not supported by HXL dataset type.")
+        raise Exception(
+            f"Deserialization: file extension {extension} is not supported by HXL dataset type.")
 
     def copy(self, data):
         return data
 
+
 HXL_DATASET_STATE_TYPE = HxlStateType()
 register_state_type("Dataset", HXL_DATASET_STATE_TYPE)
 register_state_type("HXLReader", HXL_DATASET_STATE_TYPE)
+
 
 @first_command
 def hxl_from(url):
     """Load data from URL
     """
     return hxl.data(url)
+
 
 @command
 def hxl2df(data):
@@ -63,6 +69,7 @@ def hxl2df(data):
     f.seek(0)
     return pd.read_csv(f)
 
+
 @command
 def df2hxl(df):
     """Convert pandas dataframe to hxl dataset
@@ -71,3 +78,32 @@ def df2hxl(df):
     df.to_csv(f, index=False)
     f = BytesIO(f.getvalue().encode("utf-8"))
     return hxl.data(f)
+
+
+@command
+def set_all_tags(df, *tags):
+    """Set all tags in pandas dataframe. All tags should be specified in the same order as columns.
+    If not all tags are specified, empty strings are appended.
+    Creates a first row with tags in a dataframe.
+    Hash characters are automatically prepended if not present.
+    """
+
+    tags = pd.DataFrame([{c: tag.strip() if tag.strip().startswith(
+        "#") else "#"+tag.strip() for c, tag in zip(df.columns, tags)}], columns=df.columns)
+    tags.fillna(value="", inplace=True)
+    return tags.append(df, ignore_index=True)
+
+
+@command
+def set_tags(df, *column_tag):
+    """Set tags in pandas dataframe, tags are specified as a list with alternating column, tag.
+    Creates a first row with tags in a dataframe.
+    Hash characters are automatically prepended if not present.
+    """
+    if len(column_tag)%2 != 0:
+        raise Exception(f"Columns-tags (len:{len(column_tag)})argument od set_tags do not form pairs {column_tag}")
+    tags = pd.DataFrame([
+        {column_tag[i]: column_tag[i+1].strip() if column_tag[i+1].strip().startswith(
+        "#") else "#"+column_tag[i+1].strip() for i in range(0, len(column_tag), 2)}], columns=df.columns)
+    tags.fillna(value="", inplace=True)
+    return tags.append(df, ignore_index=True)
