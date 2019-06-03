@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, jsonify, redirect, send_file
+from flask import Blueprint, jsonify, redirect, send_file, request
 from liquer.query import evaluate
 from liquer.state_types import encode_state_data, state_types_registry
 from liquer.commands import command_registry
@@ -63,3 +63,8 @@ def debug_json(query):
     state = evaluate(query)
     state_json = state.as_dict()
     return jsonify(state_json)
+
+@app.route('/api/build', methods=['POST'])
+def build():
+    from liquer.parser import encode
+    return jsonify({"query":encode(request.get_json(force=True)["ql"]),"message":"OK","status":"OK"})

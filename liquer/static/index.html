@@ -16,10 +16,13 @@
           <v-btn flat @click="view='commands'">
             Commands
           </v-btn>
-          <v-btn flat @click="view='test_query'">
-            Test query
+          <v-btn flat @click="view='build_query'">
+            Build
           </v-btn>
-        </v-toolbar-items>
+          <v-btn flat @click="view='test_query'">
+              Test query
+            </v-btn>
+          </v-toolbar-items>
 
         <v-spacer></v-spacer>
         <v-tooltip bottom>
@@ -135,6 +138,20 @@
             </v-container>
           </v-card>
         </v-container>
+        <v-container v-if="view=='build_query'">
+          <v-card>
+            <v-toolbar color="cyan" dark>
+              <v-toolbar-title>Build Query</v-toolbar-title>
+              <v-btn @click="build_query()">Execute</v-btn>
+            </v-toolbar>
+            <v-container>
+              {{ql}}
+              <hr/>
+              {{query}}
+            </v-container>
+          </v-card>
+        </v-container>
+
       </v-content>
     </v-app>
   </div>

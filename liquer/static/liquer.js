@@ -1,4 +1,5 @@
 window.onload = function () {
+
     window.app = new Vue({
         el: "#app",
         data: {
@@ -8,13 +9,11 @@ window.onload = function () {
             status_color: "green",
             message: "",
             message_on: false,
-            query: "From~https~raw.githubusercontent.com~OCHA-DAP~scraperwiki-snapshot~master~processed_datasets.csv/data.html",
+            query: "",
             query_response: "",
             query_debug: {},
-            ql:[
-                ["From","https://raw.githubusercontent.com/OCHA-DAP/scraperwiki-snapshot/master/processed_datasets.csv"]                
-            ],
-            qfilename:"data.csv"            
+            ql:[],
+            qfilename:""            
         },
         methods: {
             error: function (message, reason) {
@@ -30,12 +29,22 @@ window.onload = function () {
                 console.log("INFO:" + message);
             },
             build_query:function(){
-                for (var i=0;i<this.ql.length;i++){
-
-                }
+                this.ql=[["abc","def"],["xyz","123"]];
+                this.info("Build query: ", this.ql);
+                this.$http.post("../api/build", {ql:this.ql}).then(
+                    function (response) {
+                        response.json().then(function (data) {
+                            this.query = data.query;
+                            this.message = data.message;
+                            this.status = data.status;
+                            this.info("Build query executed.");
+                        }.bind(this), function (reason) { this.error("Build query parsing error:", reason); }.bind(this));
+                    }.bind(this), function (reason) { this.error("Build query error:", reason); }.bind(this)); 
             },
             execute_query: function () {
                 this.info("Execute query: " + this.query);
+                this.query_response = "";
+                this.query_debug={};
                 this.$http.get("../q/" + this.query).then(
                     function (response) {
                         response.text().then(function (data) {
