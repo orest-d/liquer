@@ -18,6 +18,15 @@ class TestStateTypes:
             decoded = decode_state_data(encoded, type_identifier)
             assert data == decoded
 
+    def test_text_encode_decode(self):
+        for data in ["", "Hello"]:
+            encoded, mime, type_identifier = encode_state_data(data)
+            assert type_identifier_of(data) == type_identifier == "text"
+            assert mime == "text/plain"
+            assert encoded == data.encode("utf-8")
+            decoded = decode_state_data(encoded, type_identifier)
+            assert data == decoded
+
     def test_copy(self):
         for data in [None, True, False, 123, [], [123,456], {}, {"abc":123}]:
             assert data == copy_state_data(data)

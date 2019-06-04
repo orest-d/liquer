@@ -47,7 +47,8 @@ MIMETYPES = dict(
     png='image/png',
     svg='image/svg+xml',
     jpg='image/jpeg',
-    jpeg='image/jpeg'
+    jpeg='image/jpeg',
+    b="application/octet-stream"
 )
 
 def mimetype_from_extension(extension):
@@ -69,10 +70,13 @@ class StateTypesRegistry(object):
 
     def __init__(self):
         self.state_types_dictionary = {}
+        self.register(bytes, BytesStateType())
+        self.register(str, TextStateType())
         self.default_state_type = JsonStateType()
 
     def register(self, type_qualname, state_type):
         """Register a new state type for a qualified type name"""
+        type_qualname = get_type_qualname(type_qualname)
         self.state_types_dictionary[type_qualname] = state_type
         self.state_types_dictionary[state_type.identifier()] = state_type
         return self
@@ -188,3 +192,47 @@ class JsonStateType(StateType):
 
     def copy(self, data):
         return deepcopy(data)
+
+class BytesStateType(StateType):
+    def identifier(self):
+        return "bytes"
+
+    def default_extension(self):
+        return "b"
+
+    def default_mimetype(self):
+        return "application/octet-stream"
+
+    def is_type_of(self, data):
+        return isinstance(data, bytes)
+
+    def as_bytes(self, data, extension=None):
+        return data, mimetype_from_extension(extension)
+
+    def from_bytes(self, b: bytes, extension=None):
+        return b
+
+    def copy(self, data):
+        return deepcopy(data)
+
+class TextStateType(StateType):
+    def identifier(self):
+        return "text"
+
+    def default_extension(self):
+        return "txt"
+
+    def default_mimetype(self):
+        return "text/plain"
+
+    def is_type_of(self, data):
+        return isinstance(data, str)
+
+    def as_bytes(self, data, extension=None):
+        return data.encode("utf-8"), mimetype_from_extension(extension)
+
+    def from_bytes(self, b: bytes, extension=None):
+        return b.decode("utf-8")
+
+    def copy(self, data):
+        return data[:]

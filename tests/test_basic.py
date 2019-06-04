@@ -23,7 +23,7 @@ class TestBasic:
         assert evaluate(
             "let-hello-world/state_variable-hello/link").get() == "let-hello-world/state_variable-hello"
         assert evaluate("let-hello-world/state_variable-hello/link-dataurl").get(
-        ) == "data:application/json;base64,IndvcmxkIg=="
+        ) == "data:text/plain;base64,d29ybGQ="
 
         assert evaluate("let-hello-world/state_variable-hello/link-path").get(
         ) == "/q/let-hello-world/state_variable-hello"
