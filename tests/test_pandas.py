@@ -150,3 +150,19 @@ class TestPandas:
         assert list(df["link"])[1:] == [
             f"http://localhost/q/df_from-{filename}/teq-a-1",
             f"http://localhost/q/df_from-{filename}/teq-a-3"]
+
+    def test_columns_info(self):
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test.csv")
+        assert evaluate(f"df_from-{filename}/columns_df").get() == ["a","b"]
+        assert evaluate(f"df_from-{filename}/columns_info").get()["columns"] == ["a","b"]
+        assert evaluate(f"df_from-{filename}/columns_info").get()["has_tags"] == False
+        assert evaluate(f"df_from-{filename}/columns_info").get()["types"]["a"] == "int"
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test_hxl.csv")
+        assert evaluate(f"df_from-{filename}/columns_df").get() == ["a","b"]
+        assert evaluate(f"df_from-{filename}/columns_info").get()["columns"] == ["a","b"]
+        assert evaluate(f"df_from-{filename}/columns_info").get()["has_tags"] == True
+        assert evaluate(f"df_from-{filename}/columns_info").get()["tags"]["a"] == "#indicator +num +aaa"
+        assert evaluate(f"df_from-{filename}/columns_info").get()["tags"]["b"] == "#indicator +num +bbb"

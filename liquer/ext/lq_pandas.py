@@ -276,3 +276,23 @@ def tsplit_df(state, *columns):
 
     df.loc[:,link_column] = [""]+[evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in list(df[query_column])[1:]]
     return state.with_data(df)
+
+@command
+def columns_df(df):
+    return list(df.columns)
+
+@command
+def columns_info(df):
+    if len(df):
+        tags = dict(df.iloc[0,:])
+        has_tags = any(str(tag).strip().startswith("#") for tag in tags.values())
+    else:
+        tags = None
+        has_tags = False
+
+    return dict(
+        columns = list(df.columns),
+        tags = tags,
+        has_tags = has_tags,
+        types = dict(df.dtypes)
+    )
