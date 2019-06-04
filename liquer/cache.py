@@ -155,5 +155,8 @@ class FileCache:
         path = self.to_path(state.query, prefix="data_",
                             extension=t.default_extension())
         with open(path, "wb") as f:
-            b, mime = t.as_bytes(state.data)
-            f.write(b)
+            try:
+                b, mime = t.as_bytes(state.data)
+                f.write(b)
+            except NotImplementedError:
+                return None

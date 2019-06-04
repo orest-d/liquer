@@ -5,18 +5,22 @@ import json
 from liquer.state_types import type_identifier_of, copy_state_data
 from copy import deepcopy
 
-_vars=None
+_vars = None
+
+
 def get_vars():
     global _vars
     if _vars is None:
         _vars = {}
     return _vars
 
+
 def vars_clone():
     """Return a copy of state variables dictionary
     This is used to set the initial content of State.vars for a newly created state.
     """
     return deepcopy(get_vars())
+
 
 def set_var(name, value):
     """Set initial value of a state variable
@@ -28,7 +32,8 @@ def set_var(name, value):
     but this is not reflected in a query string).
     """
     get_vars()
-    _vars[name]=value
+    _vars[name] = value
+
 
 class State(object):
     def __init__(self):
@@ -45,6 +50,11 @@ class State(object):
         self.message = ""
         self.commands = []
         self.type_identifier = None
+        self.caching = True
+
+    def with_caching(self, caching=True):
+        self.caching = caching
+        return self
 
     def with_data(self, data):
         self.data = data
@@ -53,7 +63,7 @@ class State(object):
 
     def get(self):
         if self.is_error:
-            print("\n".join(m.get("traceback","") for m in self.log))
+            print("\n".join(m.get("traceback", "") for m in self.log))
             raise Exception(self.message)
         return self.data
 

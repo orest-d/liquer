@@ -24,7 +24,10 @@ Since the format determines the mime type, as bytes return besides serialized da
 Note that for the successful serialization/deserialization strategy (e.g. for caching), the following approaches
 can be used:
 - use the default extension/format/mimetype - i.e. do not specify the extension or set extension=None in as_bytes/from_bytes
-- specify fixed extension 
+- specify fixed extension
+
+Serialization/deserialization may as well keep being unspecified. In that case, the state the capability
+of a state being cached or served is limited.
 """
 
 MIMETYPES = dict(
@@ -141,7 +144,6 @@ class StateType(object):
 
     def copy(self, data):
         return self.from_bytes(self.as_bytes(data)[:])
-
 
 class JsonStateType(StateType):
     def identifier(self):

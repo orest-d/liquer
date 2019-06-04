@@ -37,6 +37,7 @@ def evaluate_ql_on(ql, state=None, cache=None):
                 state.with_filename(qcommand[0])
                 break
         state = cr.evaluate_command(state, qcommand)
-        cache.store(state)
+        if state.caching:
+            cache.store(state)
 
     return state
