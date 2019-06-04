@@ -48,8 +48,8 @@ class HxlStateType(StateType):
 
 
 HXL_DATASET_STATE_TYPE = HxlStateType()
-register_state_type("Dataset", HXL_DATASET_STATE_TYPE)
-register_state_type("HXLReader", HXL_DATASET_STATE_TYPE)
+register_state_type(hxl.Dataset, HXL_DATASET_STATE_TYPE)
+register_state_type(hxl.io.HXLReader, HXL_DATASET_STATE_TYPE)
 
 
 @first_command

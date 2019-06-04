@@ -52,7 +52,14 @@ MIMETYPES = dict(
 
 def mimetype_from_extension(extension):
     return MIMETYPES.get(extension,"text/plain")
-    
+
+def get_type_qualname(cls):
+    if isinstance(cls,str):
+        return cls
+    if cls.__module__ == "__main__":
+        return cls.__qualname__
+    return f"{cls.__module__}.{cls.__qualname__}"
+
 class StateTypesRegistry(object):
     """State type registry takes care of registering and lookup of state types.
     It is typically accessed as a singleton via state_type_registry() function.
@@ -74,6 +81,7 @@ class StateTypesRegistry(object):
         """Get state type object for a qualified type name
         If the qualified type name is not recognized, default_state_type is returned.
         """
+        type_qualname = get_type_qualname(type_qualname)
         return self.state_types_dictionary.get(type_qualname, self.default_state_type)
 
 
@@ -90,17 +98,20 @@ def state_types_registry():
 
 def type_identifier_of(data):
     """Convinience function to return a state type identifier for supplied data"""
-    return state_types_registry().get(type(data).__qualname__).identifier()
+    return state_types_registry().get(get_type_qualname(type(data))).identifier()
 
 
 def register_state_type(type_qualname, state_type):
-    """Function to register new state type for a qualified type name"""
+    """Function to register new state type for a qualified type name
+    type_qualname can be a string (module.ClassName) or a class/type object (not a data instance)
+    """
+    type_qualname = get_type_qualname(type_qualname)
     state_types_registry().register(type_qualname, state_type)
 
 
 def encode_state_data(data, extension=None):
     reg = state_types_registry()
-    t = reg.get(type(data).__qualname__)
+    t = reg.get(get_type_qualname(type(data)))
     b, mime = t.as_bytes(data, extension=extension)
     return b, mime, t.identifier()
 
@@ -112,7 +123,7 @@ def decode_state_data(b, type_identifier, extension=None):
 
 def copy_state_data(data):
     reg = state_types_registry()
-    t = reg.get(type(data).__qualname__)
+    t = reg.get(get_type_qualname(type(data)))
     return t.copy(data)
 
 

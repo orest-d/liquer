@@ -77,7 +77,7 @@ class DataframeStateType(StateType):
 
 
 DATAFRAME_STATE_TYPE = DataframeStateType()
-register_state_type("DataFrame", DATAFRAME_STATE_TYPE)
+register_state_type(pd.DataFrame, DATAFRAME_STATE_TYPE)
 
 
 @first_command
