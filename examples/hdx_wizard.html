@@ -95,9 +95,10 @@
                       </v-flex>
                     </v-layout>
                     <v-layout row wrap v-if="define_tags">
-                      <v-flex xs12 sm6 md3 v-for="item in columns_info.columns">
-                        <v-text-field style="padding: 5px;" :label="item" v-model="tags[item]"></v-text-field>
+                      <v-flex xs12 sm6 md3 v-for="item in tags">
+                        <v-text-field style="padding: 5px;" :label="item.column" v-model="item.tag"></v-text-field>
                       </v-flex>
+                      {{tags}}
                     </v-layout>
                   </v-container>
 
@@ -208,9 +209,12 @@
             this.get_columns_info();
           }
           if (step == 3) {
+            this.tmptags = this.tags;
             this.get_columns_info_(
               function (x){
-                this.get_query_with_tags(function (x) { });
+                this.tags = this.tmptags;
+                this.get_query_with_tags(function (x) {
+                 });
               }.bind(this)
             );
           }
@@ -243,17 +247,18 @@
           if ((!this.define_tags) || (this.columns_info == null)) {
             return this.get_base_query(f);
           }
-          this.ql = [["df_from", this.url]];
-          var tagscmd = ["set_tags"];
-          this.columns_info.columns.forEach(function (c) {
-            var tag = this.tags[c];
+          this.ql = [["df_from", this.url],["set_tags"]];
+          console.log("TAGS",this.tags);
+          this.tags.forEach(function (t) {
+            console.log("TAG",t.column,t.tag);
+            var tag = t.tag;
             if (tag != "") {
               tag = tag.replace(/ /g, '').replace(/^\s*#?|\s+$/g, '');
-              tagscmd.push(c);
-              tagscmd.push(tag);
+              this.ql[1].push(t.column);
+              this.ql[1].push(tag);
             }
           }.bind(this));
-          this.ql.push(tagscmd);
+          console.log("ql",this.ql);
 
           this.query_with_tags = "";
           return this.$http.post("/liquer/api/build", { ql: this.ql }).then(
@@ -293,10 +298,9 @@
               function (response) {
                 response.json().then(function (data) {
                   this.columns_info = data;
-                  this.tags = {};
-                  this.columns_info.columns.forEach(function (c) {
-                    this.tags[c] = "";
-                  }.bind(this));
+                  this.tags = this.columns_info.columns.map(function (c) {
+                    return {column:c, tag:""};
+                  });
                   console.log("Columns info", data);
                   f(data);
                 }.bind(this), function (reason) { this.error("Columns info parsing error:", reason); }.bind(this));
