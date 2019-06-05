@@ -13,7 +13,7 @@
       <v-toolbar dark color="primary">
         <v-toolbar-title @click="view='home'" class="white--text">HDX Wizard</v-toolbar-title>
         <v-toolbar-items class="hidden-sm-and-down">
-          <v-btn flat @click="view='home'">
+          <v-btn flat @click="start_wizard()">
             Home
           </v-btn>
           <v-btn flat @click="view='about'">
@@ -22,6 +22,7 @@
         </v-toolbar-items>
 
         <v-spacer></v-spacer>
+        <v-progress-circular v-if="in_progress" indeterminate color="primary"></v-progress-circular>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-chip :color="status_color" v-on="  on">{{status}}</v-chip>
@@ -32,17 +33,15 @@
 
       <v-content>
         <v-container v-if="view=='home'">
-          <v-stepper v-model="e1">
+          <v-stepper v-model="wstep">
             <v-stepper-header>
-              <v-stepper-step :complete="e1 > 1" step="1">Data source</v-stepper-step>
-
+              <v-stepper-step :complete="wstep > 1" step="1">Data source</v-stepper-step>
               <v-divider></v-divider>
-
-              <v-stepper-step :complete="e1 > 2" step="2">Tags</v-stepper-step>
-
+              <v-stepper-step :complete="wstep > 2" step="2">Tags</v-stepper-step>
               <v-divider></v-divider>
-
-              <v-stepper-step step="3">Disaggregation</v-stepper-step>
+              <v-stepper-step :complete="wstep > 3" step="3">Disaggregation</v-stepper-step>
+              <v-divider></v-divider>
+              <v-stepper-step step="4">Summary</v-stepper-step>
             </v-stepper-header>
 
             <v-stepper-items>
@@ -90,7 +89,8 @@
                         Dataset does not have HXL tags.
                       </v-flex>
                       <v-flex xs12>
-                        <v-switch v-model="define_tags" :label="define_tags?'Define tags':'No tags definition'">
+                        <v-switch v-model="define_tags"
+                          :label="define_tags?'Define tags':'Define tags: no tags definition'">
                         </v-switch>
                       </v-flex>
                     </v-layout>
@@ -98,7 +98,6 @@
                       <v-flex xs12 sm6 md3 v-for="item in tags">
                         <v-text-field style="padding: 5px;" :label="item.column" v-model="item.tag"></v-text-field>
                       </v-flex>
-                      {{tags}}
                     </v-layout>
                   </v-container>
 
@@ -114,12 +113,36 @@
 
               <v-stepper-content step="3">
                 <v-card class="mb-5" color="grey lighten-5">
-                  <v-container>
+                  <v-container v-if="columns_info!=null">
                     <v-layout row wrap>
                       <v-flex xs12>
                         <h3>Disaggregation</h3>
                       </v-flex>
-                      {{query_with_tags_link}}
+                      <v-flex xs12>
+                        <v-switch v-model="disaggregation_with_tags"
+                          :label="disaggregation_with_tags?'Tags: Data has tags (do not disaggregate on tags; use tags in disaggregated data)':'Tags: Data does not have tags'">
+                        </v-switch>
+                      </v-flex>
+                      <v-flex xs12>
+                        <v-select v-model="disaggregation_columns" :items="columns_info.columns"
+                          label="Disaggregation columns" multiple chips persistent-hint></v-select>
+                      </v-flex>
+                      <v-flex>
+                        <v-btn @click="get_disaggregation_preview_data(true)">Preview</v-btn>
+                        <span v-if="disaggregation_query!=''"
+                          style="padding: 10px; background-color: rgb(245, 240, 234)">
+                          <b>Query: </b> {{disaggregation_query}}
+                        </span>
+                      </v-flex>
+                      <v-flex v-if="disaggregation_preview_data!=null">
+                        <v-data-table :headers="disaggregation_preview_headers" :items="disaggregation_preview_rows"
+                          class="elevation-1">
+                          <template v-slot:items="props">
+                            <td class="text-xs-left" v-for="i in disaggregation_preview_headers">
+                              {{ props.item[i.value] }}</td>
+                          </template>
+                        </v-data-table>
+                      </v-flex>
                     </v-layout>
                   </v-container>
                 </v-card>
@@ -127,18 +150,39 @@
                   Back
                 </v-btn>
                 <v-btn color="primary" @click="go_to_step(4)">
-                  Continue
+                  Finish (may take long time)
                 </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="4">
-                <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
-
-                <v-btn color="primary" @click="e1 = 1">
-                  Continue
+                <v-card class="mb-5" color="grey lighten-4">
+                  <v-container v-if="columns_info!=null">
+                    <v-layout row wrap>
+                      <v-flex xs12>
+                        <h3>Summary</h3>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4 lg1><b>Query:</b></v-flex>
+                      <v-flex xs12 sm6 md8 lg11>{{disaggregation_query}}</v-flex>
+                      <v-flex xs12 sm6 md4 lg1 v-if="disaggregation_query_link!=''"><b>Link:</b></v-flex>
+                      <v-flex xs12 sm6 md8 lg11 v-if="disaggregation_query_link!=''"><a
+                          :href="disaggregation_query_link">{{disaggregation_query_link}}</a></v-flex>
+                      <v-flex xs12 v-if="disaggregation_preview_data!=null">
+                        <v-data-table :headers="
+                        disaggregation_preview_headers1" :items="disaggregation_preview_rows" class="elevation-1">
+                          <template v-slot:items="props">
+                            <td class="text-xs-left"><a :href="props.item.link">link</a></td>
+                            <td class="text-xs-left" v-for="c in disaggregation_columns">
+                              {{ props.item[c] }}</td>
+                            <td class="text-xs-left"><small>{{ props.item.query }}</small></td>
+                          </template>
+                        </v-data-table>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+                <v-btn color="primary" @click="wstep = 3">
+                  Back
                 </v-btn>
-
-                <v-btn flat>Cancel</v-btn>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -170,26 +214,55 @@
       el: "#app",
       data: {
         view: 'home',
-        e1: 1,
+        wstep: 1,
         url: "https://data.humdata.org/dataset/4fdcd4dc-5c2f-43af-a1e4-93c9b6539a27/resource/12d7c8e3-eff9-4db0-93b7-726825c4fe9a/download/wfpvam_foodprices.csv",
         commands: {},
         status: "OK",
         status_color: "green",
+        in_progress: false,
         message: "",
         message_on: false,
         base_query: "",
         query_with_tags: "",
         query_with_tags_link: "",
+        disaggregation_query: "",
+        disaggregation_query_link: "",
         query_response: "",
         preview_data: null,
+        disaggregation_columns: [],
+        disaggregation_preview_data: null,
         columns_info: null,
         define_tags: false,
+        disaggregation_with_tags: false,
         tags: {},
-        query_debug: {},
         ql: [],
-        qfilename: ""
       },
       methods: {
+        start_wizard: function () {
+          this.view = 'home';
+          this.wstep = 1;
+          this.url = "https://data.humdata.org/dataset/4fdcd4dc-5c2f-43af-a1e4-93c9b6539a27/resource/12d7c8e3-eff9-4db0-93b7-726825c4fe9a/download/wfpvam_foodprices.csv";
+          this.commands = {};
+          this.status = "OK";
+          this.status_color = "green";
+          this.in_progress = false;
+          this.message = "";
+          this.message_on = false;
+          this.base_query = "";
+          this.query_with_tags = "";
+          this.query_with_tags_link = "";
+          this.disaggregation_query = "";
+          this.disaggregation_query_link = "";
+          this.query_response = "";
+          this.preview_data = null;
+          this.disaggregation_columns = [];
+          this.disaggregation_preview_data = null;
+          this.columns_info = null;
+          this.define_tags = false;
+          this.disaggregation_with_tags = false;
+          this.tags = {};
+          this.ql = [];
+        },
         error: function (message, reason) {
           this.status = "ERROR";
           this.status_color = "red";
@@ -204,29 +277,36 @@
         },
         go_to_step: function (step) {
           console.log("Go to step", step);
-          this.e1 = step;
+          this.wstep = step;
           if (step == 2) {
             this.get_columns_info();
           }
           if (step == 3) {
             this.tmptags = this.tags;
             this.get_columns_info_(
-              function (x){
+              function (x) {
                 this.tags = this.tmptags;
                 this.get_query_with_tags(function (x) {
-                 });
+                });
+                if (this.define_tags || this.columns_info.has_tags) {
+                  this.disaggregation_with_tags = true;
+                }
+                else {
+                  this.disaggregation_with_tags = false;
+                }
               }.bind(this)
             );
           }
+          if (step == 4) {
+            this.disaggregation_query = "";
+            this.disaggregation_query_link = "";
+
+            this.get_disaggregation_preview_data(false);
+          }
 
         },
-        uuid: function () {
-          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-          });
-        },
         get_base_query: function (f) {
+          this.in_progress = true;
           this.ql = [["df_from", this.url]];
           this.info("Base query", this.ql);
           this.base_query = "";
@@ -239,18 +319,20 @@
                 this.status = data.status;
                 this.info("Base query created");
                 f(this.base_query);
-              }.bind(this), function (reason) { this.error("Base query parsing error:", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Base query error:", reason); }.bind(this));
+                this.in_progress = false;
+              }.bind(this), function (reason) { this.error("Base query parsing error", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("Base query error", reason); }.bind(this));
         },
         get_query_with_tags: function (f) {
           this.info("Query with tags");
+          this.in_progress = true;
           if ((!this.define_tags) || (this.columns_info == null)) {
             return this.get_base_query(f);
           }
-          this.ql = [["df_from", this.url],["set_tags"]];
-          console.log("TAGS",this.tags);
+          this.ql = [["df_from", this.url], ["set_tags"]];
+          console.log("TAGS", this.tags);
           this.tags.forEach(function (t) {
-            console.log("TAG",t.column,t.tag);
+            console.log("TAG", t.column, t.tag);
             var tag = t.tag;
             if (tag != "") {
               tag = tag.replace(/ /g, '').replace(/^\s*#?|\s+$/g, '');
@@ -258,7 +340,7 @@
               this.ql[1].push(tag);
             }
           }.bind(this));
-          console.log("ql",this.ql);
+          console.log("ql", this.ql);
 
           this.query_with_tags = "";
           return this.$http.post("/liquer/api/build", { ql: this.ql }).then(
@@ -270,28 +352,90 @@
                 this.status = data.status;
                 this.info("Query with tags created");
                 f(this.base_query);
-              }.bind(this), function (reason) { this.error("Query with tags parsing error:", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Query with tags error:", reason); }.bind(this));
+                this.in_progress = false;
+              }.bind(this), function (reason) { this.error("Query with tags parsing error", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("Query with tags error", reason); }.bind(this));
         },
+        get_disaggregation_query: function (preview, f) {
+          this.info("Disaggregation query");
+          this.in_progress = true;
+          this.disaggregation_query = "";
+          this.disaggregation_query_link = "";
+          this.get_query_with_tags(function (q) {
+            var disaggregation_command = [];
+            if (preview) {
+              if (this.disaggregation_with_tags) {
+                disaggregation_command.push("qtsplit_df");
+              }
+              else {
+                disaggregation_command.push("qsplit_df");
+              }
+            }
+            else {
+              if (this.disaggregation_with_tags) {
+                disaggregation_command.push("tsplit_df");
+              }
+              else {
+                disaggregation_command.push("split_df");
+              }
+            }
+            Array.prototype.push.apply(disaggregation_command, this.disaggregation_columns);
+            this.ql.push(disaggregation_command);
+            console.log("ql", this.ql);
+
+            this.$http.post("/liquer/api/build", { ql: this.ql }).then(
+              function (response) {
+                response.json().then(function (data) {
+                  this.disaggregation_query = data.query;
+                  this.disaggregation_query_link = data.link;
+                  this.message = data.message;
+                  this.status = data.status;
+                  this.info("Disaggregation query created");
+                  f(this.base_query);
+                  this.in_progress = false;
+                }.bind(this), function (reason) { this.error("Disaggregation query parsing error", reason); }.bind(this));
+              }.bind(this), function (reason) { this.error("Disaggregation query error", reason); }.bind(this));
+          }.bind(this));
+        },
+
         get_preview_data: function () {
           this.info("Get Preview Data");
           this.preview_data = null;
+          this.in_progress = true;
           this.get_base_query(function (bq) {
             this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
               function (response) {
                 response.json().then(function (data) {
                   this.preview_data = data;
                   console.log("Preview data", data);
-                }.bind(this), function (reason) { this.error("Preview data parsing error:", reason); }.bind(this));
-              }.bind(this), function (reason) { this.error("Get preview data:", reason); }.bind(this)
+                  this.in_progress = false;
+                }.bind(this), function (reason) { this.error("Preview data parsing error", reason); }.bind(this));
+              }.bind(this), function (reason) { this.error("Get preview data", reason); }.bind(this)
+            );
+          }.bind(this));
+        },
+        get_disaggregation_preview_data: function (preview) {
+          this.info("Get Disaggregation Preview Data");
+          this.disaggregation_preview_data = null;
+          this.in_progress = true;
+          this.get_disaggregation_query(preview, function (bq) {
+            this.$http.get(this.disaggregation_query_link + "/data.json").then(
+              function (response) {
+                response.json().then(function (data) {
+                  this.disaggregation_preview_data = data;
+                  console.log("Disaggregation preview data", data);
+                  this.in_progress = false;
+                }.bind(this), function (reason) { this.error("Disaggregation preview data parsing error", reason); }.bind(this));
+              }.bind(this), function (reason) { this.error("Get disaggregation preview data", reason); }.bind(this)
             );
           }.bind(this));
         },
         get_columns_info: function (f) {
-          this.get_columns_info_(function (x){});
+          this.get_columns_info_(function (x) { });
         },
         get_columns_info_: function (f) {
           this.info("Get Columns Info");
+          this.in_progress = true;
           this.columns_info = null;
           this.get_base_query(function (bq) {
             this.$http.get(this.base_query_link + "/columns_info").then(
@@ -299,12 +443,13 @@
                 response.json().then(function (data) {
                   this.columns_info = data;
                   this.tags = this.columns_info.columns.map(function (c) {
-                    return {column:c, tag:""};
+                    return { column: c, tag: "" };
                   });
                   console.log("Columns info", data);
                   f(data);
-                }.bind(this), function (reason) { this.error("Columns info parsing error:", reason); }.bind(this));
-              }.bind(this), function (reason) { this.error("Get columns info:", reason); }.bind(this)
+                  this.in_progress = false;
+                }.bind(this), function (reason) { this.error("Columns info parsing error", reason); }.bind(this));
+              }.bind(this), function (reason) { this.error("Get columns info", reason); }.bind(this)
             );
           }.bind(this));
         }
@@ -331,6 +476,54 @@
           else {
             console.log("preview_rows", this.preview_data.data)
             return this.preview_data.data;
+          }
+        },
+        disaggregation_preview_headers: function () {
+          if (this.disaggregation_preview_data == null) {
+            return [];
+          }
+          else {
+            return this.disaggregation_preview_data.schema.fields.map(
+              function (x) {
+                return {
+                  text: x.name, value: x.name
+                }
+              }
+            );
+          }
+        },
+        disaggregation_preview_headers1: function () {
+          if (this.disaggregation_preview_data == null) {
+            return [];
+          }
+          else {
+            var h = [
+              { text: "Link", value: "link" }
+            ];
+
+            this.disaggregation_preview_data.schema.fields.forEach(
+              function (x) {
+                if ((x.name != "query") && (x.name != "link")) {
+                  h.push({
+                    text: x.name, value: x.name
+                  });
+                }
+              }
+            );
+            h.push({
+              text: "Query", value: "query"
+            });
+            console.log(h);
+            return h;
+          }
+        },
+        disaggregation_preview_rows: function () {
+          if (this.disaggregation_preview_data == null) {
+            return [];
+          }
+          else {
+            console.log("disaggregation preview_rows", this.disaggregation_preview_data.data)
+            return this.disaggregation_preview_data.data;
           }
         }
       }
