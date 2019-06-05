@@ -278,7 +278,7 @@ def tsplit_df(state, *columns):
     return state.with_data(df)
 
 @command
-def columns_df(df):
+def df_columns(df):
     return list(df.columns)
 
 @command
@@ -296,3 +296,10 @@ def columns_info(df):
         has_tags = has_tags,
         types = dict(df.dtypes)
     )
+
+@command
+def head_df(df,count=50):
+    if count<len(df):
+        return df.iloc[:count,:]
+    else:
+        return df

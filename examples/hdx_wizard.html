@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+  <div id="app">
+    <v-app>
+      <v-toolbar dark color="primary">
+        <v-toolbar-title @click="view='home'" class="white--text">HDX Wizard</v-toolbar-title>
+        <v-toolbar-items class="hidden-sm-and-down">
+          <v-btn flat @click="view='home'">
+            Home
+          </v-btn>
+          <v-btn flat @click="view='about'">
+            About
+          </v-btn>
+        </v-toolbar-items>
+
+        <v-spacer></v-spacer>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-chip :color="status_color" v-on="  on">{{status}}</v-chip>
+          </template>
+          <span>{{message}}</span>
+        </v-tooltip>
+      </v-toolbar>
+
+      <v-content>
+        <v-container v-if="view=='home'">
+          <v-stepper v-model="e1">
+            <v-stepper-header>
+              <v-stepper-step :complete="e1 > 1" step="1">Data source</v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step :complete="e1 > 2" step="2">Tags</v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step step="3">Disaggregation</v-stepper-step>
+            </v-stepper-header>
+
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <v-card class="mb-5" color="grey lighten-5">
+                  <v-container>
+                    <v-layout row wrap>
+                      <h3>Specify the URL of the data source</h3>
+                      <v-flex xs12>
+                        <v-text-field label="URL" v-model="url"></v-text-field>
+                      </v-flex>
+                      <v-flex>
+                        <v-btn @click="get_preview_data()">Preview</v-btn>
+                        <span v-if="base_query!=''" style="padding: 10px; background-color: rgb(245, 240, 234)">
+                        <b>Base query: </b> {{base_query}}
+                        </span>
+                      </v-flex>
+                      <v-flex v-if="preview_data!=null">
+                        <v-data-table :headers="preview_headers" :items="preview_rows" class="elevation-1">
+                          <template v-slot:items="props">
+                            <td class="text-xs-right" v-for="i in preview_headers">{{ props.item[i.value] }}</td>
+                          </template>
+                        </v-data-table>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+
+                <v-btn color="primary" @click="e1 = 2">
+                  Continue
+                </v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="2">
+                <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
+
+                <v-btn color="primary" @click="e1 = 1">
+                  Back
+                </v-btn>
+                <v-btn color="primary" @click="e1 = 3">
+                  Continue
+                </v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="3">
+                <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
+
+                <v-btn color="primary" @click="e1 = 1">
+                  Continue
+                </v-btn>
+
+                <v-btn flat>Cancel</v-btn>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+
+        </v-container>
+        <v-container v-if="view=='about'">
+          <h1>HDX wizard</h1>
+          Disaggregation utility
+          for <a href="https://data.humdata.org">Humanitarian Data Exchange</a>
+          based on <a href="https://github.com/orest-d/liquer">LiQuer</a> framework.
+          <br />
+          <v-btn primary href="/liquer/">
+            LiQuer
+          </v-btn>
+        </v-container>
+      </v-content>
+      <v-footer class="pa-3">
+        <v-spacer></v-spacer>
+        <div>Orest Dubay &copy; 2019</div>
+      </v-footer>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        view: 'home',
+        e1: 1,
+        url: "https://data.humdata.org/dataset/4fdcd4dc-5c2f-43af-a1e4-93c9b6539a27/resource/12d7c8e3-eff9-4db0-93b7-726825c4fe9a/download/wfpvam_foodprices.csv",
+        commands: {},
+        status: "OK",
+        status_color: "green",
+        message: "",
+        message_on: false,
+        base_query: "",
+        query_response: "",
+        preview_data: null,
+        query_debug: {},
+        ql: [],
+        qfilename: ""
+      },
+      methods: {
+        error: function (message, reason) {
+          this.status = "ERROR";
+          this.status_color = "red";
+          this.message = message;
+          console.log("ERROR:" + message, reason);
+        },
+        info: function (message) {
+          this.status = "OK";
+          this.status_color = "";
+          this.message = message;
+          console.log("INFO:" + message);
+        },
+        get_base_query: function (f){
+          this.ql = [["df_from", this.url]];
+          this.info("Base query", this.ql);
+          this.base_query = "";
+          return this.$http.post("/liquer/api/build", { ql: this.ql }).then(
+            function (response) {
+              response.json().then(function (data) {
+                this.base_query = data.query;
+                this.base_query_link = data.link;
+                this.message = data.message;
+                this.status = data.status;
+                this.info("Base query executed");
+                f(this.base_query);
+              }.bind(this), function (reason) { this.error("Base query parsing error:", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("Base query error:", reason); }.bind(this));
+        },
+        get_preview_data: function () {
+          this.ql = [["df_from", this.url]];
+          this.info("Build query (preview_data): ", this.ql);
+          this.preview_data = null;
+          this.get_base_query(function(bq){
+            this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
+                  function (response) {
+                    response.json().then(function (data) {
+                      this.preview_data = data;
+                      console.log("Preview data", data);
+                    }.bind(this), function (reason) { this.error("Preview data parsing error:", reason); }.bind(this));
+                  }.bind(this), function (reason) { this.error("Get preview data:", reason); }.bind(this)
+                );
+          }.bind(this));
+
+          /*
+          this.$http.post("/liquer/api/build", { ql: this.ql }).then(
+            function (response) {
+              response.json().then(function (data) {
+                this.base_query = data.query;
+                this.base_query_link = data.link;
+                this.message = data.message;
+                this.status = data.status;
+                this.info("Build query executed. (preview_data)");
+                this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
+                  function (response) {
+                    response.json().then(function (data) {
+                      this.preview_data = data;
+                      console.log("Preview data", data);
+                    }.bind(this), function (reason) { this.error("Preview data parsing error:", reason); }.bind(this));
+                  }.bind(this), function (reason) { this.error("Get preview data:", reason); }.bind(this)
+                );
+              }.bind(this), function (reason) { this.error("(preview_data) Build query parsing error:", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("(preview_data) Build query error:", reason); }.bind(this));
+*/
+        },
+        build_query: function () {
+          this.ql = [["abc", "def"], ["xyz", "123"]];
+          this.info("Build query: ", this.ql);
+          this.$http.post("/liquer/api/build", { ql: this.ql }).then(
+            function (response) {
+              response.json().then(function (data) {
+                this.query = data.query;
+                this.message = data.message;
+                this.status = data.status;
+                this.info("Build query executed.");
+              }.bind(this), function (reason) { this.error("Build query parsing error:", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("Build query error:", reason); }.bind(this));
+        },
+        execute_query: function () {
+          this.info("Execute query: " + this.query);
+          this.query_response = "";
+          this.query_debug = {};
+          this.$http.get("../q/" + this.query).then(
+            function (response) {
+              response.text().then(function (data) {
+                this.query_response = data;
+                this.info("Query executed.");
+              }.bind(this), function (reason) { this.error("Query result parsing error:", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("Query execution error:", reason); }.bind(this));
+
+          this.$http.get("/liquer/api/debug-json/" + this.query).then(
+            function (response) {
+              response.json().then(function (data) {
+                this.query_debug = data;
+                this.info("Query debug executed.");
+              }.bind(this), function (reason) { this.error("Query debug parsing error:", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("Query debug error:", reason); }.bind(this));
+        }
+      },
+      computed: {
+        preview_headers: function () {
+          if (this.preview_data == null) {
+            return [];
+          }
+          else {
+            return this.preview_data.schema.fields.map(
+              function (x) {
+                return {
+                  text: x.name, value: x.name
+                }
+              }
+            );
+          }
+        },
+        preview_rows: function () {
+          if (this.preview_data == null) {
+            return [];
+          }
+          else {
+            console.log("preview_rows", this.preview_data.data)
+            return this.preview_data.data;
+          }
+        },
+      },
+      created: function () {
+        this.$http.get("/liquer/api/commands.json").then(function (response) {
+          response.json().then(function (data) {
+            this.commands = data;
+            this.info("Commands loaded.");
+          }.bind(this), function (reason) { this.error("Json error:", reason); }.bind(this));
+        }.bind(this), function (reason) { this.error("Commands loading error:", reason); }.bind(this));
+      }
+
+    });
+  </script>
+</body>
+
+</html>

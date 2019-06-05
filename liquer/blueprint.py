@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, redirect, send_file, request
 from liquer.query import evaluate
 from liquer.state_types import encode_state_data, state_types_registry
 from liquer.commands import command_registry
+from liquer.state import get_vars
 import io
 
 app = Blueprint('liquer', __name__, static_folder='static')
@@ -67,4 +68,15 @@ def debug_json(query):
 @app.route('/api/build', methods=['POST'])
 def build():
     from liquer.parser import encode
-    return jsonify({"query":encode(request.get_json(force=True)["ql"]),"message":"OK","status":"OK"})
+    query = encode(request.get_json(force=True)["ql"])
+    link = get_vars().get("server","http://localhost") + get_vars().get("api_path","/q/") + query
+    print("server:",get_vars().get("server"))
+    print("api_path:",get_vars().get("api_path"))
+    print("query:",query)
+    print("LINK:",link)
+    return jsonify(dict(
+        query = query,
+        link = link,
+        message = "OK",
+        status = "OK")
+    )
