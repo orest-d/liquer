@@ -57,7 +57,7 @@
                       <v-flex>
                         <v-btn @click="get_preview_data()">Preview</v-btn>
                         <span v-if="base_query!=''" style="padding: 10px; background-color: rgb(245, 240, 234)">
-                        <b>Base query: </b> {{base_query}}
+                          <b>Base query: </b> {{base_query}}
                         </span>
                       </v-flex>
                       <v-flex v-if="preview_data!=null">
@@ -71,23 +71,66 @@
                   </v-container>
                 </v-card>
 
-                <v-btn color="primary" @click="e1 = 2">
+                <v-btn color="primary" @click="go_to_step(2)">
                   Continue
                 </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="2">
-                <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
+                <v-card class="mb-5" color="grey lighten-5">
+                  <v-container>
+                    <v-layout row wrap>
+                      <v-flex xs12>
+                        <h3>Specify HXL tags</h3>
+                      </v-flex>
+                      <v-flex xs12 v-if="(columns_info!=null)&&(columns_info.has_tags)">
+                        Dataset appears to have HXL tags.
+                      </v-flex>
+                      <v-flex xs12 v-if="(columns_info!=null)&&(!columns_info.has_tags)">
+                        Dataset does not have HXL tags.
+                      </v-flex>
+                      <v-flex xs12>
+                        <v-switch v-model="define_tags" :label="define_tags?'Define tags':'No tags definition'">
+                        </v-switch>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout row wrap v-if="define_tags">
+                      <v-flex xs12 sm6 md3 v-for="item in columns_info.columns">
+                        <v-text-field style="padding: 5px;" :label="item" v-model="tags[item]"></v-text-field>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
 
-                <v-btn color="primary" @click="e1 = 1">
+                </v-card>
+
+                <v-btn color="primary" @click="go_to_step(1)">
                   Back
                 </v-btn>
-                <v-btn color="primary" @click="e1 = 3">
+                <v-btn color="primary" @click="go_to_step(3)">
                   Continue
                 </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="3">
+                <v-card class="mb-5" color="grey lighten-5">
+                  <v-container>
+                    <v-layout row wrap>
+                      <v-flex xs12>
+                        <h3>Disaggregation</h3>
+                      </v-flex>
+                      {{query_with_tags_link}}
+                    </v-layout>
+                  </v-container>
+                </v-card>
+                <v-btn color="primary" @click="go_to_step(2)">
+                  Back
+                </v-btn>
+                <v-btn color="primary" @click="go_to_step(4)">
+                  Continue
+                </v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="4">
                 <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
 
                 <v-btn color="primary" @click="e1 = 1">
@@ -134,8 +177,13 @@
         message: "",
         message_on: false,
         base_query: "",
+        query_with_tags: "",
+        query_with_tags_link: "",
         query_response: "",
         preview_data: null,
+        columns_info: null,
+        define_tags: false,
+        tags: {},
         query_debug: {},
         ql: [],
         qfilename: ""
@@ -153,7 +201,28 @@
           this.message = message;
           console.log("INFO:" + message);
         },
-        get_base_query: function (f){
+        go_to_step: function (step) {
+          console.log("Go to step", step);
+          this.e1 = step;
+          if (step == 2) {
+            this.get_columns_info();
+          }
+          if (step == 3) {
+            this.get_columns_info_(
+              function (x){
+                this.get_query_with_tags(function (x) { });
+              }.bind(this)
+            );
+          }
+
+        },
+        uuid: function () {
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        },
+        get_base_query: function (f) {
           this.ql = [["df_from", this.url]];
           this.info("Base query", this.ql);
           this.base_query = "";
@@ -164,79 +233,76 @@
                 this.base_query_link = data.link;
                 this.message = data.message;
                 this.status = data.status;
-                this.info("Base query executed");
+                this.info("Base query created");
                 f(this.base_query);
               }.bind(this), function (reason) { this.error("Base query parsing error:", reason); }.bind(this));
             }.bind(this), function (reason) { this.error("Base query error:", reason); }.bind(this));
         },
-        get_preview_data: function () {
+        get_query_with_tags: function (f) {
+          this.info("Query with tags");
+          if ((!this.define_tags) || (this.columns_info == null)) {
+            return this.get_base_query(f);
+          }
           this.ql = [["df_from", this.url]];
-          this.info("Build query (preview_data): ", this.ql);
-          this.preview_data = null;
-          this.get_base_query(function(bq){
-            this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
-                  function (response) {
-                    response.json().then(function (data) {
-                      this.preview_data = data;
-                      console.log("Preview data", data);
-                    }.bind(this), function (reason) { this.error("Preview data parsing error:", reason); }.bind(this));
-                  }.bind(this), function (reason) { this.error("Get preview data:", reason); }.bind(this)
-                );
+          var tagscmd = ["set_tags"];
+          this.columns_info.columns.forEach(function (c) {
+            var tag = this.tags[c];
+            if (tag != "") {
+              tag = tag.replace(/ /g, '').replace(/^\s*#?|\s+$/g, '');
+              tagscmd.push(c);
+              tagscmd.push(tag);
+            }
           }.bind(this));
+          this.ql.push(tagscmd);
 
-          /*
-          this.$http.post("/liquer/api/build", { ql: this.ql }).then(
+          this.query_with_tags = "";
+          return this.$http.post("/liquer/api/build", { ql: this.ql }).then(
             function (response) {
               response.json().then(function (data) {
-                this.base_query = data.query;
-                this.base_query_link = data.link;
+                this.query_with_tags = data.query;
+                this.query_with_tags_link = data.link;
                 this.message = data.message;
                 this.status = data.status;
-                this.info("Build query executed. (preview_data)");
-                this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
-                  function (response) {
-                    response.json().then(function (data) {
-                      this.preview_data = data;
-                      console.log("Preview data", data);
-                    }.bind(this), function (reason) { this.error("Preview data parsing error:", reason); }.bind(this));
-                  }.bind(this), function (reason) { this.error("Get preview data:", reason); }.bind(this)
-                );
-              }.bind(this), function (reason) { this.error("(preview_data) Build query parsing error:", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("(preview_data) Build query error:", reason); }.bind(this));
-*/
+                this.info("Query with tags created");
+                f(this.base_query);
+              }.bind(this), function (reason) { this.error("Query with tags parsing error:", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("Query with tags error:", reason); }.bind(this));
         },
-        build_query: function () {
-          this.ql = [["abc", "def"], ["xyz", "123"]];
-          this.info("Build query: ", this.ql);
-          this.$http.post("/liquer/api/build", { ql: this.ql }).then(
-            function (response) {
-              response.json().then(function (data) {
-                this.query = data.query;
-                this.message = data.message;
-                this.status = data.status;
-                this.info("Build query executed.");
-              }.bind(this), function (reason) { this.error("Build query parsing error:", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Build query error:", reason); }.bind(this));
+        get_preview_data: function () {
+          this.info("Get Preview Data");
+          this.preview_data = null;
+          this.get_base_query(function (bq) {
+            this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
+              function (response) {
+                response.json().then(function (data) {
+                  this.preview_data = data;
+                  console.log("Preview data", data);
+                }.bind(this), function (reason) { this.error("Preview data parsing error:", reason); }.bind(this));
+              }.bind(this), function (reason) { this.error("Get preview data:", reason); }.bind(this)
+            );
+          }.bind(this));
         },
-        execute_query: function () {
-          this.info("Execute query: " + this.query);
-          this.query_response = "";
-          this.query_debug = {};
-          this.$http.get("../q/" + this.query).then(
-            function (response) {
-              response.text().then(function (data) {
-                this.query_response = data;
-                this.info("Query executed.");
-              }.bind(this), function (reason) { this.error("Query result parsing error:", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Query execution error:", reason); }.bind(this));
-
-          this.$http.get("/liquer/api/debug-json/" + this.query).then(
-            function (response) {
-              response.json().then(function (data) {
-                this.query_debug = data;
-                this.info("Query debug executed.");
-              }.bind(this), function (reason) { this.error("Query debug parsing error:", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Query debug error:", reason); }.bind(this));
+        get_columns_info: function (f) {
+          this.get_columns_info_(function (x){});
+        },
+        get_columns_info_: function (f) {
+          this.info("Get Columns Info");
+          this.columns_info = null;
+          this.get_base_query(function (bq) {
+            this.$http.get(this.base_query_link + "/columns_info").then(
+              function (response) {
+                response.json().then(function (data) {
+                  this.columns_info = data;
+                  this.tags = {};
+                  this.columns_info.columns.forEach(function (c) {
+                    this.tags[c] = "";
+                  }.bind(this));
+                  console.log("Columns info", data);
+                  f(data);
+                }.bind(this), function (reason) { this.error("Columns info parsing error:", reason); }.bind(this));
+              }.bind(this), function (reason) { this.error("Get columns info:", reason); }.bind(this)
+            );
+          }.bind(this));
         }
       },
       computed: {
@@ -262,17 +328,8 @@
             console.log("preview_rows", this.preview_data.data)
             return this.preview_data.data;
           }
-        },
-      },
-      created: function () {
-        this.$http.get("/liquer/api/commands.json").then(function (response) {
-          response.json().then(function (data) {
-            this.commands = data;
-            this.info("Commands loaded.");
-          }.bind(this), function (reason) { this.error("Json error:", reason); }.bind(this));
-        }.bind(this), function (reason) { this.error("Commands loading error:", reason); }.bind(this));
+        }
       }
-
     });
   </script>
 </body>

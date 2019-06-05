@@ -284,17 +284,17 @@ def df_columns(df):
 @command
 def columns_info(df):
     if len(df):
-        tags = dict(df.iloc[0,:])
+        tags = {str(key):str(value) for key, value in dict(df.iloc[0,:]).items()}
         has_tags = any(str(tag).strip().startswith("#") for tag in tags.values())
     else:
         tags = None
         has_tags = False
 
     return dict(
-        columns = list(df.columns),
+        columns = list(map(str,df.columns)),
         tags = tags,
         has_tags = has_tags,
-        types = dict(df.dtypes)
+        types = {str(key):str(value) for key, value in df.dtypes.items()}
     )
 
 @command

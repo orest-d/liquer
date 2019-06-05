@@ -70,10 +70,6 @@ def build():
     from liquer.parser import encode
     query = encode(request.get_json(force=True)["ql"])
     link = get_vars().get("server","http://localhost") + get_vars().get("api_path","/q/") + query
-    print("server:",get_vars().get("server"))
-    print("api_path:",get_vars().get("api_path"))
-    print("query:",query)
-    print("LINK:",link)
     return jsonify(dict(
         query = query,
         link = link,

@@ -5,6 +5,7 @@ import json
 from liquer.state_types import state_types_registry
 from liquer.state import State
 from liquer.parser import all_splits, encode, decode
+import logging
 
 """
 Cache defines a mechanism for caching state for a query (or a subquery).
@@ -54,7 +55,11 @@ def cached_part(query, cache=None):
         if key == "":
             return State(), remainder
         if cache.contains(key):
-            return cache.get(key), remainder
+            state = cache.get(key)
+            if state is None:
+                continue
+            print(key,state)
+            return state, remainder
 
     # Should never get here, but this is a sensible default:
     return State(), encode(decode(query))
@@ -130,8 +135,12 @@ class FileCache:
         path = self.to_path(key, prefix="data_",
                             extension=t.default_extension())
         if os.path.exists(path):
-            state.data = t.from_bytes(open(path, "rb").read())
-            return state
+            try:
+                state.data = t.from_bytes(open(path, "rb").read())
+                return state
+            except:
+                logging.exception(f"Cache failed to recover {key}")
+                return None
 
     def contains(self, key):
         state_path = self.to_path(key)
