@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, jsonify, redirect, send_file, request
+from flask import Blueprint, jsonify, redirect, send_file, request, make_response
 from liquer.query import evaluate
 from liquer.state_types import encode_state_data, state_types_registry
 from liquer.commands import command_registry
@@ -42,12 +42,11 @@ def response(state):
     b, mimetype, type_identifier = encode_state_data(state.get(), extension=extension)
     if filename is None:
         filename = state_types_registry().get(type_identifier).default_filename()
-    return send_file(
-        io.BytesIO(b),
-        mimetype=mimetype,
-        as_attachment=True,
-        attachment_filename=filename)
-
+    r = make_response(b)
+    r.headers.set('Content-Type', mimetype)
+    r.headers.set(
+        'Content-Disposition', 'attachment', filename=filename)
+    return r
 
 @app.route('/q/<path:query>')
 def serve(query):
