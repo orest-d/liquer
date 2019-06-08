@@ -35,18 +35,26 @@ def info():
 
 def response(state):
     filename = state.filename
-    extension=None
+    extension = None
     if filename is not None:
         if "." in filename:
             extension = filename.split(".")[-1]
-    b, mimetype, type_identifier = encode_state_data(state.get(), extension=extension)
+    b, mimetype, type_identifier = encode_state_data(
+        state.get(), extension=extension)
     if filename is None:
         filename = state_types_registry().get(type_identifier).default_filename()
     r = make_response(b)
+    
     r.headers.set('Content-Type', mimetype)
-    r.headers.set(
-        'Content-Disposition', 'attachment', filename=filename)
+    if mimetype not in ["application/json",
+                        'text/plain',
+                        'text/html',
+                        'image/png',
+                        'image/svg+xml']:
+        r.headers.set(
+            'Content-Disposition', 'attachment', filename=filename)
     return r
+
 
 @app.route('/q/<path:query>')
 def serve(query):
@@ -64,14 +72,16 @@ def debug_json(query):
     state_json = state.as_dict()
     return jsonify(state_json)
 
+
 @app.route('/api/build', methods=['POST'])
 def build():
     from liquer.parser import encode
     query = encode(request.get_json(force=True)["ql"])
-    link = get_vars().get("server","http://localhost") + get_vars().get("api_path","/q/") + query
+    link = get_vars().get("server", "http://localhost") + \
+        get_vars().get("api_path", "/q/") + query
     return jsonify(dict(
-        query = query,
-        link = link,
-        message = "OK",
-        status = "OK")
+        query=query,
+        link=link,
+        message="OK",
+        status="OK")
     )

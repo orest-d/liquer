@@ -5,13 +5,14 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>HDX Disaggregation Wizard</title>
 </head>
 
 <body>
   <div id="app">
     <v-app>
       <v-toolbar dark color="primary">
-        <v-toolbar-title @click="view='home'" class="white--text">HDX Wizard</v-toolbar-title>
+        <v-toolbar-title @click="view='home'" class="white--text">HDX Disaggregation Wizard</v-toolbar-title>
         <v-toolbar-items class="hidden-sm-and-down">
           <v-btn flat @click="start_wizard()">
             Home
@@ -22,7 +23,7 @@
         </v-toolbar-items>
 
         <v-spacer></v-spacer>
-        <v-progress-circular v-if="in_progress" indeterminate color="primary"></v-progress-circular>
+        <v-progress-circular v-if="in_progress||in_progress1" indeterminate color="secondary"></v-progress-circular>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-chip :color="status_color" v-on="  on">{{status}}</v-chip>
@@ -56,7 +57,7 @@
                       <v-flex>
                         <v-btn @click="get_preview_data()">Preview</v-btn>
                         <span v-if="base_query!=''" style="padding: 10px; background-color: rgb(245, 240, 234)">
-                          <b>Base query: </b> {{base_query}}
+                          <b>Base query: </b> <small>{{base_query}}</small>
                         </span>
                       </v-flex>
                       <v-flex v-if="preview_data!=null">
@@ -65,6 +66,12 @@
                             <td class="text-xs-right" v-for="i in preview_headers">{{ props.item[i.value] }}</td>
                           </template>
                         </v-data-table>
+                      </v-flex>
+                      <v-flex v-if="in_progress||in_progress1">
+                        In progress<v-progress-linear :indeterminate="true"></v-progress-linear>
+                      </v-flex>
+                      <v-flex v-if="status!='OK'">
+                        <v-chip label outline color="red">{{status}}: {{message}}</v-chip>
                       </v-flex>
                     </v-layout>
                   </v-container>
@@ -98,6 +105,12 @@
                       <v-flex xs12 sm6 md3 v-for="item in tags">
                         <v-text-field style="padding: 5px;" :label="item.column" v-model="item.tag"></v-text-field>
                       </v-flex>
+                      <v-flex v-if="in_progress||in_progress1">
+                        In progress<v-progress-linear :indeterminate="true"></v-progress-linear>
+                      </v-flex>
+                      <v-flex v-if="status!='OK'">
+                        <v-chip label outline color="red">{{status}}: {{message}}</v-chip>
+                      </v-flex>
                     </v-layout>
                   </v-container>
 
@@ -123,12 +136,18 @@
                           :label="disaggregation_with_tags?'Tags: Data has tags (do not disaggregate on tags; use tags in disaggregated data)':'Tags: Data does not have tags'">
                         </v-switch>
                       </v-flex>
-                      <v-flex xs12>
+                      <v-flex xs12 v-if="disaggregation_with_tags">
+                        <v-select v-model="disaggregation_columns" :items="tagged_columns()"
+                          label="Disaggregation column(s) (required; Note: only tagged columns are shown)" multiple
+                          chips persistent-hint></v-select>
+                      </v-flex>
+                      <v-flex xs12 v-else>
                         <v-select v-model="disaggregation_columns" :items="columns_info.columns"
-                          label="Disaggregation columns" multiple chips persistent-hint></v-select>
+                          label="Disaggregation column(s) (required)" multiple chips persistent-hint></v-select>
                       </v-flex>
                       <v-flex>
-                        <v-btn @click="get_disaggregation_preview_data(true)">Preview</v-btn>
+                        <v-btn @click="get_disaggregation_preview_data(true)"
+                          :disabled="disaggregation_columns.length==0">Preview</v-btn>
                         <span v-if="disaggregation_query!=''"
                           style="padding: 10px; background-color: rgb(245, 240, 234)">
                           <b>Query: </b> {{disaggregation_query}}
@@ -143,15 +162,27 @@
                           </template>
                         </v-data-table>
                       </v-flex>
+                      <v-flex v-if="in_progress||in_progress1">
+                        In progress<v-progress-linear :indeterminate="true"></v-progress-linear>
+                      </v-flex>
+                      <v-flex v-if="status!='OK'">
+                        <v-chip label outline color="red">{{status}}: {{message}}</v-chip>
+                      </v-flex>
                     </v-layout>
                   </v-container>
                 </v-card>
                 <v-btn color="primary" @click="go_to_step(2)">
                   Back
                 </v-btn>
-                <v-btn color="primary" @click="go_to_step(4)">
-                  Finish (may take long time)
+                <v-btn color="primary" @click="go_to_step(4)" :disabled="disaggregation_columns.length==0">
+                  Finish
                 </v-btn>
+                <span v-if="disaggregation_columns.length==0">
+                  <strong>Please specify at least one disaggregation column</strong>
+                </span>
+                <span v-else>
+                  <strong>Note:</strong>An actual disaggregation is performed, it may take a long time.
+                </span>
               </v-stepper-content>
 
               <v-stepper-content step="4">
@@ -177,6 +208,13 @@
                           </template>
                         </v-data-table>
                       </v-flex>
+                      <v-flex v-if="in_progress||in_progress1">
+                        In progress<v-progress-linear :indeterminate="true"></v-progress-linear>
+                      </v-flex>
+                      <v-flex v-if="status!='OK'">
+                        <v-chip label outline color="red">{{status}}: {{message}}</v-chip>
+                      </v-flex>
+
                     </v-layout>
                   </v-container>
                 </v-card>
@@ -220,6 +258,7 @@
         status: "OK",
         status_color: "green",
         in_progress: false,
+        in_progress1: false,
         message: "",
         message_on: false,
         base_query: "",
@@ -246,6 +285,7 @@
           this.status = "OK";
           this.status_color = "green";
           this.in_progress = false;
+          this.in_progress1 = false;
           this.message = "";
           this.message_on = false;
           this.base_query = "";
@@ -306,7 +346,7 @@
 
         },
         get_base_query: function (f) {
-          this.in_progress = true;
+          this.in_progress1 = true;
           this.ql = [["df_from", this.url]];
           this.info("Base query", this.ql);
           this.base_query = "";
@@ -319,13 +359,13 @@
                 this.status = data.status;
                 this.info("Base query created");
                 f(this.base_query);
-                this.in_progress = false;
-              }.bind(this), function (reason) { this.error("Base query parsing error", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Base query error", reason); }.bind(this));
+                this.in_progress1 = false;
+              }.bind(this), function (reason) { this.error("Base query parsing error", reason); this.in_progress1 = false; }.bind(this));
+            }.bind(this), function (reason) { this.error("Base query error", reason); this.in_progress1 = false; }.bind(this));
         },
         get_query_with_tags: function (f) {
           this.info("Query with tags");
-          this.in_progress = true;
+          this.in_progress1 = true;
           if ((!this.define_tags) || (this.columns_info == null)) {
             return this.get_base_query(f);
           }
@@ -352,13 +392,13 @@
                 this.status = data.status;
                 this.info("Query with tags created");
                 f(this.base_query);
-                this.in_progress = false;
-              }.bind(this), function (reason) { this.error("Query with tags parsing error", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Query with tags error", reason); }.bind(this));
+                this.in_progress1 = false;
+              }.bind(this), function (reason) { this.error("Query with tags parsing error", reason); this.in_progress1 = false; }.bind(this));
+            }.bind(this), function (reason) { this.error("Query with tags error", reason); this.in_progress1 = false; }.bind(this));
         },
         get_disaggregation_query: function (preview, f) {
           this.info("Disaggregation query");
-          this.in_progress = true;
+          this.in_progress1 = true;
           this.disaggregation_query = "";
           this.disaggregation_query_link = "";
           this.get_query_with_tags(function (q) {
@@ -392,9 +432,9 @@
                   this.status = data.status;
                   this.info("Disaggregation query created");
                   f(this.base_query);
-                  this.in_progress = false;
-                }.bind(this), function (reason) { this.error("Disaggregation query parsing error", reason); }.bind(this));
-              }.bind(this), function (reason) { this.error("Disaggregation query error", reason); }.bind(this));
+                  this.in_progress1 = false;
+                }.bind(this), function (reason) { this.error("Disaggregation query parsing error", reason); this.in_progress1 = false; }.bind(this));
+              }.bind(this), function (reason) { this.error("Disaggregation query error", reason); this.in_progress1 = false; }.bind(this));
           }.bind(this));
         },
 
@@ -402,17 +442,21 @@
           this.info("Get Preview Data");
           this.preview_data = null;
           this.in_progress = true;
-          this.get_base_query(function (bq) {
-            this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
-              function (response) {
-                response.json().then(function (data) {
-                  this.preview_data = data;
-                  console.log("Preview data", data);
-                  this.in_progress = false;
-                }.bind(this), function (reason) { this.error("Preview data parsing error", reason); }.bind(this));
-              }.bind(this), function (reason) { this.error("Get preview data", reason); }.bind(this)
-            );
-          }.bind(this));
+          this.$nextTick(function () {
+            this.info("Get Preview Data TICK");
+
+            this.get_base_query(function (bq) {
+              this.$http.get(this.base_query_link + "/head_df-50/data.json").then(
+                function (response) {
+                  response.json().then(function (data) {
+                    this.preview_data = data;
+                    console.log("Preview data", data);
+                    this.in_progress = false;
+                  }.bind(this), function (reason) { this.error("Preview data parsing error", reason); this.in_progress = false; }.bind(this));
+                }.bind(this), function (reason) { this.error("Get preview data failed", reason); this.in_progress = false; }.bind(this)
+              );
+            }.bind(this));
+          });
         },
         get_disaggregation_preview_data: function (preview) {
           this.info("Get Disaggregation Preview Data");
@@ -425,8 +469,8 @@
                   this.disaggregation_preview_data = data;
                   console.log("Disaggregation preview data", data);
                   this.in_progress = false;
-                }.bind(this), function (reason) { this.error("Disaggregation preview data parsing error", reason); }.bind(this));
-              }.bind(this), function (reason) { this.error("Get disaggregation preview data", reason); }.bind(this)
+                }.bind(this), function (reason) { this.error("Disaggregation preview data parsing error", reason); this.in_progress = false; }.bind(this));
+              }.bind(this), function (reason) { this.error("Get disaggregation preview data failed", reason); this.in_progress = false; }.bind(this)
             );
           }.bind(this));
         },
@@ -448,10 +492,49 @@
                   console.log("Columns info", data);
                   f(data);
                   this.in_progress = false;
-                }.bind(this), function (reason) { this.error("Columns info parsing error", reason); }.bind(this));
-              }.bind(this), function (reason) { this.error("Get columns info", reason); }.bind(this)
+                }.bind(this), function (reason) { this.error("Columns info parsing error", reason); this.in_progress = false; }.bind(this));
+              }.bind(this), function (reason) { this.error("Get columns info failed", reason); this.in_progress = false; }.bind(this)
             );
           }.bind(this));
+        },
+        tagged_columns: function () {
+          var tc = [];
+          console.log("Tagged columns");
+          if (this.define_tags) {
+            console.log("Tagged columns with defined tags");
+            var tagdict = {};
+            this.tags.forEach(function (x) {
+              tagdict[x.column] = x.tag;
+            });
+            this.columns_info.columns.forEach(function (c) {
+              console.log("TAG", c, tagdict);
+              if (c in tagdict) {
+                var tag = tagdict[c];
+                if (tag.length > 0) {
+                  tc.push({ text: c + " (" + tag + ")", value: c });
+                }
+              }
+            }.bind(this));
+            console.log("tc", tc);
+            return tc;
+          }
+          if (this.columns_info.tags != null) {
+            console.log("Tagged columns with tags from file");
+            this.columns_info.columns.forEach(function (c) {
+              if (c in this.columns_info.tags) {
+                var tag = this.columns_info.tags[c];
+                if (tag.length > 0) {
+                  tc.push({ text: c + " (" + tag + ")", value: c });
+                }
+              }
+            }.bind(this));
+            console.log("tc", tc);
+            return tc;
+          }
+          console.log("Tagged columns - default");
+          return this.columns_info.columns.map(function (c) {
+            return { text: c, value: c };
+          });
         }
       },
       computed: {
