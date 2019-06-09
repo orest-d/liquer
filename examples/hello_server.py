@@ -2,10 +2,13 @@
 import sys
 sys.path.append("..")
 
-from flask import Flask
-import liquer.blueprint as bp # This is the LiQuer blueprint containing the liquer web service 
-
 from liquer import *
+
+### Create Flask app and register LiQuer blueprint
+from flask import Flask
+import liquer.blueprint as bp
+app = Flask(__name__)
+app.register_blueprint(bp.app, url_prefix='/liquer')
 
 @first_command
 def hello():
@@ -14,10 +17,6 @@ def hello():
 @command
 def greet(greeting, who="world"):
     return f"{greeting}, {who}!"
-
-app = Flask(__name__)
-url_prefix='/liquer'
-app.register_blueprint(bp.app, url_prefix=url_prefix)
 
 @app.route('/')
 @app.route('/index.html')
@@ -31,4 +30,4 @@ def index():
     """
 
 if __name__ == '__main__':
-    app.run(debug=True,threaded=False)
+    app.run()

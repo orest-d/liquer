@@ -8,7 +8,7 @@ from liquer.commands import command
 
 
 @command
-def MPL(state, *series):
+def mpl(state, *series):
     """Matplotlib chart
     """
     fig = plt.figure(figsize=(8, 6), dpi=300)

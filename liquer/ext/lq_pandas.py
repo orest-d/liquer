@@ -43,11 +43,11 @@ class DataframeStateType(StateType):
             writer = pd.ExcelWriter(output, engine='xlsxwriter')
             data.to_excel(writer)
             writer.close()
-            return output.getvalue()
+            return output.getvalue(), mimetype
         elif extension == "msgpack":
             output = BytesIO()
             data.to_msgpack(output)
-            return output.getvalue()
+            return output.getvalue(), mimetype
         else:
             raise Exception(
                 f"Serialization: file extension {extension} is not supported by dataframe type.")

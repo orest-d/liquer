@@ -8,15 +8,21 @@ from liquer.commands import command, first_command
 
 class HxlStateType(StateType):
     def identifier(self):
+        "Define an unique string identifier for the state type"
         return "hxl_dataset"
 
     def default_extension(self):
+        "Default file extension for the state type"
         return "csv"
 
     def is_type_of(self, data):
+        "Check if data is of this state type"
         return isinstance(data, hxl.model.Dataset)
 
     def as_bytes(self, data, extension=None):
+        """Serialize data as bytes
+        File extension may be provided and influence the serialization format.
+        """
         if extension is None:
             extension = self.default_extension()
         assert self.is_type_of(data)
@@ -32,6 +38,9 @@ class HxlStateType(StateType):
                 f"Serialization: file extension {extension} is not supported by HXL dataset type.")
 
     def from_bytes(self, b: bytes, extension=None):
+        """De-serialize data from bytes
+        File extension may be provided and influence the serialization format.
+        """
         if extension is None:
             extension = self.default_extension()
         f = BytesIO()
@@ -44,6 +53,7 @@ class HxlStateType(StateType):
             f"Deserialization: file extension {extension} is not supported by HXL dataset type.")
 
     def copy(self, data):
+        """Make a deep copy of the data"""
         return data
 
 
