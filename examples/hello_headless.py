@@ -2,8 +2,7 @@
 import sys
 sys.path.append("..")
 
-from liquer.commands import command, first_command
-from liquer.query import evaluate
+from liquer import *
 
 @first_command
 def hello():
