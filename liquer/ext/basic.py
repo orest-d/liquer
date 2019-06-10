@@ -59,3 +59,15 @@ def link(state, linktype=None):
             "server", "http://localhost")+state.vars.get("api_path", "/q/")+q)
 
     raise Exception(f"Unsupported link type: {linktype}")
+
+@first_command
+def fetch(url):
+    """Load binary data from URL
+    """
+    return urlopen(url).read()
+
+@first_command
+def fetch_utf8(url):
+    """Load text data encoded as utf-8 from URL
+    """
+    return urlopen(url).read().decode("utf-8")
