@@ -15,6 +15,7 @@ def mpl(state, *series):
     axis = fig.add_subplot(1, 1, 1)
     series = list(reversed(list(series)))
     df = state.get()
+    extension = "png"
     
     while len(series):
         t = series.pop()
@@ -22,31 +23,31 @@ def mpl(state, *series):
             extension = t
             continue
         elif t == "xy":
-            xcol = state.expand_column(series.pop())
-            ycol = state.expand_column(series.pop())
+            xcol = series.pop()
+            ycol = series.pop()
             state.log_info(f"Chart XY ({xcol} {ycol})")
-            axis.plot(df[xcol],df[ycol],label=state.column_label(ycol))
+            axis.plot(df[xcol],df[ycol],label=ycol)
             continue
         elif t == "xye":
-            xcol = state.expand_column(series.pop())
-            ycol = state.expand_column(series.pop())
-            ecol = state.expand_column(series.pop())
+            xcol = series.pop()
+            ycol = series.pop()
+            ecol = series.pop()
             state.log_info(f"Chart XY ({xcol} {ycol}) Error:{ecol}")
-            axis.errorbar(df[xcol],df[ycol],yerr=df[ecol],label=state.column_label(ycol))
+            axis.errorbar(df[xcol],df[ycol],yerr=df[ecol],label=ycol)
             continue
         elif t == "xyee":
-            xcol = state.expand_column(series.pop())
-            ycol = state.expand_column(series.pop())
-            e1col = state.expand_column(series.pop())
-            e2col = state.expand_column(series.pop())
+            xcol = series.pop()
+            ycol = series.pop()
+            e1col = series.pop()
+            e2col = series.pop()
             state.log_info(f"Chart XY ({xcol} {ycol}) Error:({e1col},{e2col})")
-            axis.errorbar(df[xcol],df[ycol],yerr=[df[e1col],df[e2col]],label=state.column_label(ycol))
+            axis.errorbar(df[xcol],df[ycol],yerr=[df[e1col],df[e2col]],label=ycol)
             continue
         elif t == "cxy":
             c = series.pop()
-            xcol = state.expand_column(series.pop())
-            ycol = state.expand_column(series.pop())
-            axis.plot(df[xcol],df[ycol],c,label=state.column_label(ycol))
+            xcol = series.pop()
+            ycol = series.pop()
+            axis.plot(df[xcol],df[ycol],c,label=ycol)
             continue
         else:
             state.log_warning(f"Unrecognized MPL parameter {t}")
