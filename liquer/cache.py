@@ -158,8 +158,13 @@ class FileCache:
             return False
 
     def store(self, state):
-        with open(self.to_path(state.query), "w") as f:
-            f.write(json.dumps(state.as_dict()))
+        try:
+            with open(self.to_path(state.query), "w") as f:
+                f.write(json.dumps(state.as_dict()))
+        except:
+            logging.exception(f"Cache writing error: {state.query}")
+            return None
+            
         t = state_types_registry().get(state.type_identifier)
         path = self.to_path(state.query, prefix="data_",
                             extension=t.default_extension())

@@ -49,6 +49,7 @@ def response(state):
     if mimetype not in ["application/json",
                         'text/plain',
                         'text/html',
+                        'text/csv',
                         'image/png',
                         'image/svg+xml']:
         r.headers.set(

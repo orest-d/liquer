@@ -38,7 +38,6 @@ def set_var(name, value):
 class State(object):
     def __init__(self):
         self.query = ""
-        self.parent_query = ""
         self.sources = []
         self.log = []
         self.is_error = False
@@ -59,6 +58,10 @@ class State(object):
     def with_data(self, data):
         self.data = data
         self.type_identifier = type_identifier_of(data)
+        return self
+
+    def with_source(self, source):
+        self.sources = [source] + self.sources
         return self
 
     def get(self):

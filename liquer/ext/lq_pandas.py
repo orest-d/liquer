@@ -6,6 +6,7 @@ from liquer.state_types import StateType, register_state_type, mimetype_from_ext
 from liquer.commands import command, first_command
 from liquer.parser import encode, decode
 from liquer.query import evaluate
+from liquer.state import State
 
 class DataframeStateType(StateType):
     def identifier(self):
@@ -92,14 +93,15 @@ def df_from(url, extension=None):
         f = BytesIO(urlopen(url).read())
     else:
         f = open(url)
+    state = State().with_source(url)
     if extension == "csv":
-        return pd.read_csv(f)
+        return state.with_data(pd.read_csv(f))
     elif extension == "tsv":
-        return pd.read_csv(f, sep="\t")
+        return state.with_data(pd.read_csv(f, sep="\t"))
     elif extension in ("xls", "xlsx"):
-        return pd.read_excel(f)
+        return state.with_data(pd.read_excel(f))
     elif extension == "msgpack":
-        return pd.read_msgpack(f)
+        return state.with_data(pd.read_msgpack(f))
     else:
         raise Exception(f"Unsupported file extension: {extension}")
 
@@ -108,7 +110,7 @@ def df_from(url, extension=None):
 def append_df(df, url, extension=None):
     """Append dataframe from URL
     """
-    df1 = df_from(url, extension=extension)
+    df1 = df_from(url, extension=extension).get()
     return df.append(df1, ignore_index=True)
 
 

@@ -5,6 +5,7 @@ from liquer.commands import command, first_command
 from liquer.parser import encode, decode
 from liquer.state_types import encode_state_data
 
+
 @command
 def let(state, name, value):
     """Set the state variable
@@ -21,6 +22,7 @@ def flag(state, name, value: bool = True):
     state.vars[name] = bool(value)
     return state
 
+
 @command
 def state_variable(state, name):
     """Get the state variable value
@@ -28,8 +30,9 @@ def state_variable(state, name):
     """
     return state.with_data(state.vars.get(name))
 
+
 @command
-def link(state, linktype=None):
+def link(state, linktype=None, extension=None):
     """Return a link to the result.
     Linktype can be specified as parameter or as a state variable (e.g. Set~linktype~query)
     linktype can be
@@ -40,16 +43,16 @@ def link(state, linktype=None):
     - url : complete url
     """
     q = state.query
-    if linktype is None:
+    if linktype in (None, "default"):
         linktype = state.vars.get("linktype", "query")
     if linktype == "query":
         return state.with_data(q)
     elif linktype == "dataurl":
-        b, mime, typeid = encode_state_data(state.get())
+        b, mime, typeid = encode_state_data(state.get(), extension=extension)
         encoded = base64.b64encode(b).decode('ascii')
         return state.with_data(f'data:{mime};base64,{encoded}')
     elif linktype == "htmlimage":
-        b, mime, typeid = encode_state_data(state.get())
+        b, mime, typeid = encode_state_data(state.get(), extension=extension)
         encoded = base64.b64encode(b).decode('ascii')
         return state.with_filename("image.html").with_data(f'<img src="data:{mime};base64,{encoded}"/>')
     elif linktype == 'path':
@@ -60,14 +63,22 @@ def link(state, linktype=None):
 
     raise Exception(f"Unsupported link type: {linktype}")
 
+
 @first_command
 def fetch(url):
     """Load binary data from URL
     """
     return urlopen(url).read()
 
+
 @first_command
 def fetch_utf8(url):
     """Load text data encoded as utf-8 from URL
     """
     return urlopen(url).read().decode("utf-8")
+
+
+@command
+def filename(state, name):
+    """Set filename"""
+    return state.with_filename(name)
