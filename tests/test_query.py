@@ -33,3 +33,28 @@ class TestQuery:
         assert not get_cache().contains("cache_off")
         set_cache(None)
         reset_command_registry()
+
+    def test_find_queries_in_template(self):
+        assert list(find_queries_in_template("", "(", ")")) == [("", None)]
+        assert list(find_queries_in_template(
+            "abc", "(", ")")) == [("abc", None)]
+        assert list(find_queries_in_template(
+            "abc(def)ghi", "(", ")")) == [("abc","def"),("ghi",None)]
+        assert list(find_queries_in_template(
+            "abc(def)", "(", ")")) == [("abc","def"),("",None)]
+        assert list(find_queries_in_template("abc(def", "(", ")")) == [("abc(def", None)]
+        assert list(find_queries_in_template(
+            "abc(de)(fg)hi)", "(", ")")) == [("abc","de"), ("","fg"), ("hi)",None)]
+        assert list(find_queries_in_template(
+            "abc(de)x(fg)hi)", "(", ")")) == [("abc","de"), ("x","fg"), ("hi)",None)]
+        assert list(find_queries_in_template(
+            "abc((de))x((fg))hi))", "((", "))")) == [("abc","de"), ("x","fg"), ("hi))",None)]
+        assert list(find_queries_in_template(
+            "abc$de$x$fg$hi$", "$", "$")) == [("abc","de"), ("x","fg"), ("hi$",None)]
+ 
+    def test_evaluate_template(self):
+        @first_command
+        def who():
+            return "world"
+        assert evaluate_template("Hello, $who$!") == "Hello, world!"
+ 

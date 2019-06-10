@@ -1,7 +1,7 @@
 import io
 from urllib.request import urlopen
 import base64
-from liquer.commands import command
+from liquer.commands import command, first_command
 from liquer.parser import encode, decode
 from liquer.state_types import encode_state_data
 

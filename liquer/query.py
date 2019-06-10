@@ -45,7 +45,7 @@ def evaluate_ql_on(ql, state=None, cache=None):
     return state
 
 
-def evaluate_and_save(query, target_directory=None, target_file=None):
+def evaluate_and_save(query, target_directory=None, target_file=None, cache=None):
     """Evaluate query and save result.
     Output is saved either to
     - a target directory (current working directory by default) to a file deduced from the query, or
@@ -53,7 +53,7 @@ def evaluate_and_save(query, target_directory=None, target_file=None):
     Returns a state.
     """
 
-    state = evaluate(query)
+    state = evaluate(query, cache=cache)
     data = state.get()
     reg = state_types_registry()
     t = reg.get(type(data))
@@ -74,3 +74,33 @@ def evaluate_and_save(query, target_directory=None, target_file=None):
         f.write(b)
 
     return state
+
+
+def find_queries_in_template(template: str, prefix: str, sufix: str):
+    try:
+        start = template.index(prefix)
+        end = template.index(sufix, start+len(prefix))
+        yield template[:start], template[start+len(prefix):end]
+        for text, query in find_queries_in_template(template[end+len(sufix):], prefix, sufix):
+            yield text, query
+    except ValueError:
+        yield template, None
+
+
+def evaluate_template(template: str, prefix="$", sufix="$", cache=None):
+    """Evaluate a string template; replace all queries by their values
+    Queries in the template are delimited by prefix and sufix.
+    Queries should evaluate to strings and should not cause errors.
+    """
+    local_cache = {}
+    result = ""
+    for text, q in find_queries_in_template(template, prefix, sufix):
+        result += text
+        if q is not None:
+            if q in local_cache:
+                result += local_cache[q]
+            else:
+                qr = str(evaluate(q).get())
+                local_cache[q] = qr
+                result += qr
+    return result
