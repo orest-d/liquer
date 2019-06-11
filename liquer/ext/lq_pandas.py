@@ -305,3 +305,8 @@ def head_df(df,count=50):
         return df.iloc[:count,:]
     else:
         return df
+
+@command
+def groupby_mean(df, mean_column, *groupby_columns):
+    return df.groupby(groupby_columns).mean().reset_index().loc[:,list(groupby_columns)+[mean_column]]
+

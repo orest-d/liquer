@@ -29,6 +29,23 @@ def plotly_chart(state, *series):
             state.log_info(f"Chart XY ({xcol} {ycol})")
             html = plot([go.Scatter(x=df[xcol], y=df[ycol])], show_link=False, output_type="div")
             continue
+        elif t == "xys":
+            xcol = series.pop()
+            ycol = series.pop()
+            scol = series.pop()
+            state.log_info(f"Chart XY Set ({xcol} {ycol} {scol})")
+            datasets = list(sorted(df[scol].unique()))
+            p = []
+            for ds in datasets:
+                index = df[scol]==ds
+                p.append(go.Scatter(x=df.loc[index,xcol], y=df.loc[index,ycol], mode = 'lines+markers', name = ds))
+            html = plot(p, show_link=False, output_type="div")
+        elif t == "piexs":
+            xcol = series.pop()
+            scol = series.pop()
+            state.log_info(f"Pie X Set ({xcol} {scol})")
+            html = plot([go.Pie(labels=df[scol], values=df[xcol],
+               hoverinfo='label+percent', textinfo='value')], show_link=False, output_type="div")
         else:
             state.log_warning(f"Unrecognized plotly_chart parameter {t}")
     if output_type == "page":
