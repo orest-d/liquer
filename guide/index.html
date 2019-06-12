@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>User Guide - LiQuer Docs</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">LiQuer Docs</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="active">
+                                <a href="./">User Guide</a>
+                            </li>
+                            <li >
+                                <a href="../examples/">Examples</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="..">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../examples/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#instalation">Instalation</a></li>
+        <li class="main "><a href="#hello-world">Hello, world!</a></li>
+        <li class="main "><a href="#working-with-pandas">Working with pandas</a></li>
+        <li class="main "><a href="#encoding-and-decoding-a-query">Encoding and decoding a query</a></li>
+        <li class="main "><a href="#state-variables">State variables</a></li>
+            <li><a href="#cache">Cache</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="instalation">Instalation</h1>
+<p>Get LiQuer from <a href="repository">https://github.com/orest-d/liquer</a>:</p>
+<p><code>git clone https://github.com/orest-d/liquer.git</code></p>
+<h1 id="hello-world">Hello, world!</h1>
+<p>The good tradition is to start with a Hello, world! example:</p>
+<pre><code class="python">from liquer import *
+
+@first_command
+def hello():
+    return &quot;Hello&quot;
+
+@command
+def greet(greeting, who=&quot;world&quot;):
+    return f&quot;{greeting}, {who}!&quot;
+
+print (evaluate(&quot;hello/greet&quot;).get())
+print (evaluate(&quot;hello/greet-everybody&quot;).get())
+</code></pre>
+
+<p>A server version of the same example:</p>
+<pre><code class="python">from liquer import *
+
+### Create Flask app and register LiQuer blueprint
+from flask import Flask
+import liquer.blueprint as bp
+app = Flask(__name__)
+app.register_blueprint(bp.app, url_prefix='/liquer')
+
+@first_command
+def hello():
+    return &quot;Hello&quot;
+
+@command
+def greet(greeting, who=&quot;world&quot;):
+    return f&quot;{greeting}, {who}!&quot;
+
+if __name__ == '__main__':
+    app.run()
+</code></pre>
+
+<h1 id="working-with-pandas">Working with pandas</h1>
+<p>Pandas example:</p>
+<pre><code class="python">from liquer import *
+import liquer.ext.lq_pandas
+
+@first_command
+def data():
+    return pd.DataFrame(dict(a=[1, 2, 3], b=[40, 50, 60]))
+
+@command
+def sum_columns(df, column1=&quot;a&quot;, column2=&quot;b&quot;, target=&quot;c&quot;):
+    df.loc[:, target] = df[column1]+df[column2]
+    return df
+</code></pre>
+
+<p>When queried via a web interface, the data is automatically converted
+to a most suitable format. If the last element of a query is a command
+without arguments containing a dot in the name, it is interpreted as a file name and the extension is used to determine the format.
+The format conversion only happens when query is run over the service,
+not when using the <code>evaluate</code> function. </p>
+<ul>
+<li><strong>data</strong> - default format is used (which is csv)</li>
+<li><strong>data/data.html</strong> - data is converted to html and displayed in the browser</li>
+<li><strong>data/data.csv</strong> - data is converted to csv</li>
+<li><strong>data/data.xlsx</strong> - dataframe is converted to xlsx</li>
+<li><strong>data/eq-b-50</strong> - built in equality filter selects rows with b==50</li>
+<li><strong>data/sum_columns</strong> - sum_columns is applied to a dataframe; this is equivalent to <code>sum_columns(data())</code></li>
+<li><strong>data/sum_columns/sum_columns-a-c-d/sum2.html</strong> - multiple actions are chained: sum_columns(sum_columns(data()),"a","c","d") and result is served as html.</li>
+<li><strong>df_from-URL</strong> - built in command loads a dataframe from URL</li>
+</ul>
+<h1 id="encoding-and-decoding-a-query">Encoding and decoding a query</h1>
+<pre><code class="python">from liquer import *
+from liquer.parser import encode, encode_token
+import liquer.ext.lq_pandas
+
+url = &quot;https://raw.githubusercontent.com/orest-d/liquer/master/tests/test.csv&quot;
+
+query = encode([[&quot;df_from&quot;,url]]) # encode complete query
+print (f&quot;Query: {query}&quot;)
+# Query: df_from-~Hraw.githubusercontent.com~Iorest~_d~Iliquer~Imaster~Itests~Itest.csv
+
+print (evaluate(query).get())
+
+query = &quot;df_from-&quot;+encode_token(url) # encode a single token of the query 
+print (f&quot;Query: {query}&quot;)
+print (evaluate(query).get())
+</code></pre>
+
+<h1 id="state-variables">State variables</h1>
+<p>In some situations it is useful to pass some values along the query.
+For example if we want to specify some value once and use it in multiple commands.</p>
+<pre><code class="python">from liquer import *
+from liquer.state import set_var
+import liquer.ext.basic
+
+@command
+def hello(state, who=None):
+    if who is None:
+        who = state.vars.get(&quot;greet&quot;,&quot;???&quot;)
+    return f&quot;Hello, {who}!&quot;
+
+set_var(&quot;greet&quot;,&quot;world&quot;)
+
+print (evaluate(&quot;hello&quot;).get())
+# Hello, world! : uses state variable defined above
+
+print (evaluate(&quot;state_variable-greet&quot;).get())
+# world : shows the content of the state variable
+
+print (evaluate(&quot;hello-everybody&quot;).get())
+# Hello, everybody! : uses the argument
+
+print (evaluate(&quot;let-greet-variable/hello&quot;).get())
+# Hello, variable! : defines the variable in the query
+
+print (evaluate(&quot;hello&quot;).get())
+# Hello, world! : let is local to a query
+</code></pre>
+
+<p>There are two variables that are important to set up in some cases:
+* <strong>server</strong>  should contain the URL of the LiQuer server
+* <strong>api_path</strong> should contain the path to the query service
+So <code>server + api_path + query</code> should become a valid url that would yield a query result. Several commands (e.g. link or split_df) depend on
+correct definition of these variables, so they should be set together
+with setting up the flask blueprint - e.g.</p>
+<pre><code class="python">url_prefix='/liquer'
+app.register_blueprint(bp.app, url_prefix=url_prefix)
+set_var(&quot;api_path&quot;,url_prefix+&quot;/q/&quot;)
+set_var(&quot;server&quot;,&quot;http://localhost:5000&quot;)
+</code></pre>
+
+<h2 id="cache">Cache</h2>
+<p>By default there is no cache - i.e. the queries are always re-evaluated.
+There are several cache implementations available in <code>liquer.cache</code>.
+They are configured by <code>set_cache</code> function, for example</p>
+<p><code>python
+set_cache(FileCache("cache"))</code></p>
+<p>configures a cache that will store all the (chache-able) results of queries
+in a dictionary <em>cache</em>.
+Cache should be configured before the queries are evaluated - and before state variables are set.</p>
+<p>Currently there are three cache implementations: <code>NoCache</code> is a trivial do-nothing cache, <code>FileCache</code> stores data in files, <code>MemoryCache</code> caches
+the object in the memory.</p>
+<p>Custom cache can be created by defining a cache interface, see above mentioned classes. Cache will typically use query as a key and utilize the mechanism of serializing data into a bytes sequence (defined in <code>liquer.state_types</code>), thus implementing a cache based either on a key-value store or blob-storage in SQL databases should be fairly straightforward (and probably quite similar to <code>FileCache</code>).</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

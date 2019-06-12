@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Examples - LiQuer Docs</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">LiQuer Docs</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li >
+                                <a href="../guide/">User Guide</a>
+                            </li>
+                            <li class="active">
+                                <a href="./">Examples</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../guide/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="disabled">
+                                <a rel="prev" >
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#hdx-disaggregation-wizard">HDX disaggregation wizard</a></li>
+        <li class="main "><a href="#integration-of-libhxl-example-of-a-new-state-type">Integration of libhxl (example of a new state type)</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="hdx-disaggregation-wizard">HDX disaggregation wizard</h1>
+<p>LiQuer is a small server-side framework that can be quite helpful
+when building data-oriented web applications.</p>
+<p>One such example is HDX disaggregation wizard.
+It is tool solving a simple task:
+You have a data sheet (csv) that you would like to split
+into multiple sheets based on a column value (or multiple column
+values). Such functionality is built into <code>liquer.ext.lq_pandas</code>,
+the main hero being the <code>eq</code> command.</p>
+<p>The idea is simple:
+* fetch data (command <code>df_from</code>)
+* find unique values in a column (or multiple columns) and use them
+to create a list (table) of queries (command <code>qsplit_df</code>)
+* the queries use <code>eq</code> to filter dataframe by value(s).</p>
+<p>So, use a query like <code>df_from-URL/qsplit_df-COLUMN</code>
+and you will get a table with queries like <code>df_from-URL/eq-COLUMN-VALUE1</code>,
+<code>df_from-URL/eq-COLUMN-VALUE2</code>...</p>
+<h1 id="integration-of-libhxl-example-of-a-new-state-type">Integration of libhxl (example of a new state type)</h1>
+<p>Pandas is great, but there are other
+good libraries too e.g. <a href="https://bitbucket.org/astanin/python-tabulate">tabulate</a>.
+If you want to to use other data type (tabular or other),
+it will typically require (besides some useful commands) defining how that data can be serialized.
+This is done by implementing a <em>state type</em>.
+State type does several things associated with state type handling,
+but the most important role is handling serialization and deserialization.</p>
+<p>One excelent library used for working with humanitarian data is
+<a href="https://github.com/HXLStandard/libhxl-python">libhxl</a>.
+Libhxl plays somewhat similar role as pandas: it reads, writes and manipulates tabular data - but it does as well understand <a href="http://hxlstandard.org">HXL</a>,
+which pandas doesn't - hence the <code>liquer.ext.lq_hxl</code> module.
+In order to allow libhxl objects to be used in liquer, 
+we need to define a state type: <code>HxlStateType</code>.</p>
+<pre><code>import hxl
+from liquer.state_types import StateType, register_state_type, mimetype_from_extension
+
+class HxlStateType(StateType):
+    def identifier(self):
+        &quot;Define an unique string identifier for the state type&quot;
+        return &quot;hxl_dataset&quot;
+</code></pre>
+
+<p>The <code>identifier</code> is important e.g. for caching, 
+where it is stored as a part of metadata and it
+tells what StateType should be used for deserialization.</p>
+<pre><code>    def default_extension(self):
+        &quot;Default file extension for the state type&quot;
+        return &quot;csv&quot;
+
+    def is_type_of(self, data):
+        &quot;Check if data is of this state type&quot;
+        return isinstance(data, hxl.model.Dataset)
+</code></pre>
+
+<p>Default extension is used when the extension is not specified otherwise - for example if query does not end with a filename.</p>
+<p>The <code>as_bytes</code> and <code>from_bytes</code> are two most important methods,
+which take care of the serialization and deserialization.
+A state data can be serialized into multiple formats (e.g. csv, html, json...), therefore <code>as_bytes</code> optionally accepts a file extension
+and returns (besides the bytes) as well the mimetype.
+Th mimetype (when queried through the liquer server) becomes a part of the web service response.</p>
+<p>Note that serialization and deserialization do not necessarily need
+to support the same formats. E.g. html is quite nice to support
+in serialization, but it is too unspecific for a deserialization.</p>
+<pre><code>    def as_bytes(self, data, extension=None):
+        &quot;&quot;&quot;Serialize data as bytes
+        File extension may be provided and influence the serialization format.
+        &quot;&quot;&quot;
+        if extension is None:
+            extension = self.default_extension()
+        assert self.is_type_of(data)
+        mimetype = mimetype_from_extension(extension)
+        if extension == &quot;csv&quot;:
+            output = &quot;&quot;.join(data.gen_csv(show_headers=True, show_tags=True))
+            return output.encode(&quot;utf-8&quot;), mimetype
+        elif extension == &quot;json&quot;:
+            output = &quot;&quot;.join(data.gen_json(show_headers=True, show_tags=True))
+            return output.encode(&quot;utf-8&quot;), mimetype
+        else:
+            raise Exception(
+                f&quot;Serialization: file extension {extension} is not supported by HXL dataset type.&quot;)
+
+    def from_bytes(self, b: bytes, extension=None):
+        &quot;&quot;&quot;De-serialize data from bytes
+        File extension may be provided and influence the serialization format.
+        &quot;&quot;&quot;
+        if extension is None:
+            extension = self.default_extension()
+        f = BytesIO()
+        f.write(b)
+        f.seek(0)
+
+        if extension == &quot;csv&quot;:
+            return hxl.data(f)
+        raise Exception(
+            f&quot;Deserialization: file extension {extension} is not supported by HXL dataset type.&quot;)
+</code></pre>
+
+<p>Sometimes a deep copy of state data is needed - e.g. to assure
+that the data in the cache will not become unintentionally
+modified. That's why the state type should define <code>copy</code> method.
+Since libhxl dataset is immutable (?), it is OK to return just the data without making a copy. </p>
+<pre><code>    def copy(self, data):
+        &quot;&quot;&quot;Make a deep copy of the data&quot;&quot;&quot;
+        return data
+</code></pre>
+
+<p>Once the state type class is defined, a state type instance
+is created and registered</p>
+<pre><code>HXL_DATASET_STATE_TYPE = HxlStateType()
+register_state_type(hxl.Dataset, HXL_DATASET_STATE_TYPE)
+register_state_type(hxl.io.HXLReader, HXL_DATASET_STATE_TYPE)
+</code></pre>
+
+<p>This is (currently) done for all relevant types.
+State types are registered in a global <code>StateTypesRegistry</code>
+object, which is responsible for registering and finding a state type
+instance for any state data.</p>
+<p>For more details see <code>liquer.ext.lq_hxl</code> module.</p>
+<p>Actually, the state type may not define a serialization and/or deserialization. There are objects that either can't be reliably serialized
+(e.g. matplotlib figure - as of time of writing)
+or serialization is otherwise undesirable. Such state types would be perfectly legal - they just could be neither cached nor served by the liquer web server. However, they could be inside the query, e.g.
+if matplotlib figure would be followed by image creation command,
+the image could be both served and cached.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
