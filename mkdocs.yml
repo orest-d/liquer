@@ -1,5 +1,0 @@
-site_name: LiQuer Docs
-nav:
-- Home : 'index.md'
-- User Guide : 'guide.md'
-- Examples : 'examples.md'
