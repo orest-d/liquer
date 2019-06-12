@@ -37,7 +37,7 @@ which pandas doesn't - hence the ``liquer.ext.lq_hxl`` module.
 In order to allow libhxl objects to be used in liquer, 
 we need to define a state type: ``HxlStateType``.
 
-```
+```python
 import hxl
 from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 
@@ -50,7 +50,7 @@ The ``identifier`` is important e.g. for caching,
 where it is stored as a part of metadata and it
 tells what StateType should be used for deserialization.
 
-```
+```python
     def default_extension(self):
         "Default file extension for the state type"
         return "csv"
@@ -71,7 +71,7 @@ Note that serialization and deserialization do not necessarily need
 to support the same formats. E.g. html is quite nice to support
 in serialization, but it is too unspecific for a deserialization.
 
-```
+```python
     def as_bytes(self, data, extension=None):
         """Serialize data as bytes
         File extension may be provided and influence the serialization format.
@@ -111,7 +111,7 @@ that the data in the cache will not become unintentionally
 modified. That's why the state type should define ``copy`` method.
 Since libhxl dataset is immutable (?), it is OK to return just the data without making a copy. 
 
-```
+```python
     def copy(self, data):
         """Make a deep copy of the data"""
         return data
@@ -120,7 +120,7 @@ Since libhxl dataset is immutable (?), it is OK to return just the data without 
 Once the state type class is defined, a state type instance
 is created and registered
 
-``` 
+```python
 HXL_DATASET_STATE_TYPE = HxlStateType()
 register_state_type(hxl.Dataset, HXL_DATASET_STATE_TYPE)
 register_state_type(hxl.io.HXLReader, HXL_DATASET_STATE_TYPE)
@@ -139,3 +139,96 @@ or serialization is otherwise undesirable. Such state types would be perfectly l
 if matplotlib figure would be followed by image creation command,
 the image could be both served and cached.
 
+# Reports and visualizations
+
+With the help of LiQuer, it is very easy to create both resuable visualizations with multiple views
+as well as documents viewable offline or suitable for printing. Probably the easiest way to achieve that
+is creating a command, which will return a html document.
+(Alternatively other markup can be used, e.g. LaTeX, but we will focus on html.)
+Creation of text is simplified by ``evaluate_template`` function, which processes a string (*template*)
+containing LiQuer queries and replaces those queries by their results.
+
+```python
+@command
+def datemy(df,y="mp_year",m="mp_month",target="date"):
+    df.loc[:,target]=["%04d-%02d-01"%(int(year),int(month)) for year,month in zip(df[y],df[m])]
+    return df
+
+@command
+def count(df, *groupby_columns):
+    df.loc[:,"count"]=1
+    return df.groupby(groupby_columns).count().reset_index().loc[:,list(groupby_columns)+["count"]]
+
+@command
+def geq(df, column, value:float):
+    index = df.loc[:,column] >= value 
+    return df.loc[index,:]
+
+@command
+def table(state):
+    df = state.get()
+    html=evaluate_template(f"""<a href="${state.query}/link-url-csv$">(data)</a> """)
+    return html+df.to_html(index=False, classes="table table-striped")
+
+@command
+def report(state, from_year=2017, linktype=None):
+    state = state.with_caching(False)
+    def makelink(url):
+        if linktype is None:
+            return url
+        extension = url.split(".")[-1]
+        return evaluate(f"fetch-{encode_token(url)}/link-{linktype}-{extension}").get()
+
+    try:
+        source = state.sources[0]
+    except:
+        source = "???"
+    
+    LiQuer='<a href="https://github.com/orest-d/liquer">&nbsp;LiQuer&nbsp;</a>'
+    df = state.get()
+    try:
+        title = ",".join(sorted(df.adm0_name.unique())) + f" since {from_year}"
+    except:
+        title = "report"
+    return state.with_filename("report.html").with_data(evaluate_template(f"""
+<html>
+    <head>
+        <title>{title}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{makelink('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')}" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="p-3 mb-2 bg-success text-white fixed-top shadow-sm">
+            <a class="nav-link active" href="https://data.humdata.org"><img src="{makelink('https://centre.humdata.org/wp-content/uploads/hdx_new_logo_accronym2.png')}" style="height:30px;" alt="HDX"></a>
+        </div>
+        <div class="bg-light fixed-bottom border-top">
+        Generated with {LiQuer} <span class="float-right">&#169; 2019 Orest Dubay</span>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <h1>{title}</h1>
+        <div class="container-fluid">
+            <div class="row">
+                Data originate from <a href="{source}">&nbsp;{source}&nbsp;</a> were processed via a {LiQuer} service.
+                Only data after {from_year} are shown (<a href="${state.query}/datemy/geq-mp_year-{from_year}/link-url-csv$">data</a>),
+                complete data are <a href="${state.query}/datemy/link-url$">&nbsp;here</a>. 
+            </div>
+            <div class="row">
+                <div class="col-md-6" style="height:50%;">${state.query}/datemy/geq-mp_year-{from_year}/groupby_mean-mp_price-date-cm_name/plotly_chart-xys-date-mp_price-cm_name$</div>
+                <div class="col-md-6" style="height:50%;">${state.query}/datemy/geq-mp_year-{from_year}/count-adm1_name/plotly_chart-piexs-count-adm1_name$</div>
+            </div>
+            <div class="row">
+                <div class="col-md-6" style="height:50%;">
+                <h2>Average prices</h2>
+                ${state.query}/datemy/geq-mp_year-{from_year}/groupby_mean-mp_price-cm_name/table$</div>
+                <div class="col-md-6" style="height:50%;">
+                <h2>Observations</h2>
+                ${state.query}/datemy/geq-mp_year-{from_year}/count-adm1_name/table$</div>
+            </div>
+    </body>
+</html>
+    """))
+```
