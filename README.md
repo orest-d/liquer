@@ -1,15 +1,11 @@
 # LiQuer (Link Query) 
 
-LiQuer is a simplistic syntax (mini query language) aimingto be used inside URLs
- - either as a part of the path or as an anchor string.
-It represents a sequence of operations performed applied to a state.
-The state can in principle be any type of data, but the main usecase
-is dataframes, documents and images.
+LiQuer is a minimalistic python framework on top of flask, which simplifies creation of web services and web interfaces,
+particularly in connection to data science: working with data frames, charts and reports.
+The core of LiQuer is a simplistic query language, that can represent a chain of transformations (*commands*)
+applied to an arbitrary data object (e.g. a dataframes, text, json, images). LiQuer query is safe to use inside URLs
+and is interpreted and executed by a LiQuer server that is available as a flask blueprint.
+LiQuer is very modular and designed to be extremely easy to extend (typically just by simple decorators and use of conventions).
+Results of LiQuer queries can be cached for added performance.
 
-Liquer can be used to do simple manipulation of tabular data sources, typically csv files stored on the internet.
-Liquer can easily be extended with new commands.
-Flask integration is provided by a blueprint.
-
-Query consists of a sequence of commands, each command is a sequence of string tokens, the first token identifies the command.
-Syntactically the sequences are separated by "/".
-
+Please visit [https://orest-d.github.io/liquer/](LiQuer website) for more info.
