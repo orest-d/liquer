@@ -8,4 +8,4 @@ and is interpreted and executed by a LiQuer server that is available as a flask 
 LiQuer is very modular and designed to be extremely easy to extend (typically just by simple decorators and use of conventions).
 Results of LiQuer queries can be cached for added performance.
 
-Please visit [https://orest-d.github.io/liquer/](LiQuer website) for more info.
+Please visit [LiQuer website](https://orest-d.github.io/liquer/) for more info.
