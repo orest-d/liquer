@@ -51,7 +51,7 @@ def mpl(state, *series):
             continue
         else:
             state.log_warning(f"Unrecognized MPL parameter {t}")
-    fig.legend()
+    #fig.legend()
     output = io.BytesIO()
     fig.savefig(output, dpi=300, format=extension)
     return state.with_data(output.getvalue()).with_filename(f"image.{extension}")
