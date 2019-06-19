@@ -32,7 +32,7 @@ LiQuer tries to find a sweet among these values:
 
 Let's start with a Hello, world! example:
 
-```
+```python
 from liquer import *
 
 @first_command

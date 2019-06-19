@@ -52,6 +52,8 @@ class State(object):
         self.caching = True
 
     def with_caching(self, caching=True):
+        # TODO: Make sure caching is propagated to dependent states
+        # TODO: Examples and documentation
         self.caching = caching
         return self
 

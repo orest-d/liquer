@@ -2,9 +2,11 @@
 
 Get LiQuer from [https://github.com/orest-d/liquer](repository):
 
-``
+```
 git clone https://github.com/orest-d/liquer.git
-``
+
+python3 setup.py install
+```
 
 # Hello, world!
 
@@ -46,6 +48,41 @@ def greet(greeting, who="world"):
 if __name__ == '__main__':
     app.run()
 ```
+This is a normal [flask](http://flask.pocoo.org/) server, registering LiQuer
+[blueprint](http://flask.pocoo.org/docs/1.0/blueprints/) which makes all the LiQuer functionality available
+in the web service.
+
+# Commands
+
+By decorating a function with ``@command`` or ``@first_command``, 
+the function is registered in a command registry.
+Function is only registered, not modified or wrapped in any way - therefore it can be used as if it would not be decorated at all.
+Commands (command functions) typically need to be enabled in a LiQuer application simply by importing a module
+with command-decorated functions. Built-in modules need to be imported as well - this gives control about enabled features
+and as well allows to limit dependencies (e.g. in principle LiQuer application only requires pandas when ``liquer.ext.lq_pandas`` is imported.) 
+
+When a command function is registered, metadata are extracted based on available informations and conventions:
+
+* Function name becomes a name of the command. Modules can not be distinguished inside the query, therefore command (and hence functions) should have unique names even when they are defined in multiple modules.
+* When decorated with ``@command``, the first argument of the function will always be a state.
+* If the first argument is called ``state``, command function will receive the state as an instance of ``State``,
+otherwise it will be just plain data. Plain data can be obtained from ``state`` by ``state.get()``.  
+* When decorated with ``@first_command``, command will not receive a state at all.
+* Command registration tries to identify all the arguments and their types. The types are guessed either from type annotations (if available) or from default values. Default values and ``*args`` are suported, the ``**kwargs`` are not supported in commands.
+* Parsed string arguments are converted to estimated types before they are passed to the command. This is done with help of argument parsers (see ``liquer.commands.ArgumentParser``).
+* Command function may return any data type. If it does not return an instance of ``State``, the returned data is automatically wrapped as a ``State`` when evaluated.
+
+The main purpose of ``State`` instance is to add metadata to the data (e.g. the query executed sofar, data sources used, type of the data, file name). It as well provides a logging functionality, which can record messages and errors during the execution of the query. See ``liquer.state`` for more info. 
+
+# Security
+LiQuer was so far only deployed on intranet. More development is needed to make interent deployment of LiQuer safe.
+
+LiQuer exposes only services defined in the ``liquer.blueprint`` module - and by extension all the registered commands.
+Only enable commands that do not put your system to risk.
+
+A big source of security concerns are DOS attacks:
+* It is easy to overload LiQuer server with huge queries. To solve this issue, queries need to be validated in some way.
+* Badly implemented cache may quickly exceed the storage capacity. (Default ``NoCache`` is a safe choice in this respect.) 
 
 # Working with pandas
 
@@ -146,15 +183,15 @@ set_var("api_path",url_prefix+"/q/")
 set_var("server","http://localhost:5000")
 ```
 
-## Cache
+# Cache
 
 By default there is no cache - i.e. the queries are always re-evaluated.
 There are several cache implementations available in ``liquer.cache``.
 They are configured by ``set_cache`` function, for example
 
-``python
+```python
 set_cache(FileCache("cache"))
-``
+```
 
 configures a cache that will store all the (chache-able) results of queries
 in a dictionary *cache*.
@@ -165,3 +202,5 @@ the object in the memory.
 
 Custom cache can be created by defining a cache interface, see above mentioned classes. Cache will typically use query as a key and utilize the mechanism of serializing data into a bytes sequence (defined in ``liquer.state_types``), thus implementing a cache based either on a key-value store or blob-storage in SQL databases should be fairly straightforward (and probably quite similar to ``FileCache``).
 
+Command may optionally decide not to cache its output. This may be useful when command produces volatile data, e.g. time.
+In such a case command (operating on a state) can disable cache by ``state.with_caching(False)``.

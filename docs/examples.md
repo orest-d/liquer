@@ -4,23 +4,45 @@ LiQuer is a small server-side framework that can be quite helpful
 when building data-oriented web applications.
 
 One such example is HDX disaggregation wizard.
-It is tool solving a simple task:
-You have a data sheet (csv) that you would like to split
-into multiple sheets based on a column value (or multiple column
-values). Such functionality is built into ``liquer.ext.lq_pandas``,
-the main hero being the ``eq`` command.
+It is a tool solving a simple task:
+splitting (disaggregating) a single data sheet (csv or xlsx)
+into multiple sheets. Sheet is split by values in the specified column (or multiple columns).
 
-The idea is simple:
+Since this is a quite generic task (related to *group by*), this functionality is built into ``liquer.ext.lq_pandas``.
+The core of this feature is the ``eq`` command, filtering dataframe by specific values in a column,
+e.g. ``eq-a-123`` keeps in the dataframe only rows where column ``a`` is 123.
+Command ``eq`` (equal) accepts multiple column-value pairs, e.g. ``eq-a-123-b-234``.
+In HDX the convention is to use the first row for tags. To support this comvention, ``teq`` command (tag equal)
+always keeps the first row of the dataframe. The disaggregation service supports both tagged and untagged data,
+using either ``eq`` or ``teq`` for filtering, depending on the user input.
+
+The complete flow is simple:
 * fetch data (command ``df_from``)
 * find unique values in a column (or multiple columns) and use them
-to create a list (table) of queries (command ``qsplit_df``)
-* the queries use ``eq`` to filter dataframe by value(s).
+to create a list (table) of queries (command ``split_df``)
+* the queries use ``eq`` (or ``teq``) to filter dataframe by value(s).
 
-So, use a query like ``df_from-URL/qsplit_df-COLUMN``
+So, use a query like ``df_from-URL/split_df-COLUMN``
 and you will get a table with queries like ``df_from-URL/eq-COLUMN-VALUE1``,
-``df_from-URL/eq-COLUMN-VALUE2``...
+``df_from-URL/eq-COLUMN-VALUE2``.
 
-# Integration of libhxl (example of a new state type)
+A little detail regarding the split function:
+There are actually four versions of this function - depending whether it is used for tagged or untagged document
+and whether it is *quick* (or *query*) splits or full splits.
+The quick version only provides raw LiQuer queries (not the complete URL),
+The full split (``split_df`` for untagged and ``tsplit_df`` for tagged data) execute all the split queries,
+which might be slow. As a side effect, the results are cached (depending on the configuration, the example is using ``FileCache('cache')``).
+
+The complete user interface is in a single html file ``hdx_wizard.html``, served by the flask server.
+Inside the user interface, LiQuer service is called multiple times e.g. to get previews or metadata:
+* Data previews uses the ability of LiQuer ``lq_pandas`` to convert dataframes to json, which can easily be read into javascript on the browser. First preview uses ``head_df`` command to display only a restricted part of the dataframe (*head*)
+* ``columns_info`` command is used to get lit of columns and eventual tags
+* ``/api/build`` service is used to build valid queries from javascript lists. This could be implemented directly in javascript,
+build service is a way to remotely call ``liquer.parser.encode``.
+
+  
+
+# Integration of libhxl (example of a custom state type)
 
 Pandas is great, but there are other
 good libraries too e.g. [tabulate](https://bitbucket.org/astanin/python-tabulate).
@@ -142,34 +164,77 @@ the image could be both served and cached.
 # Reports and visualizations
 
 With the help of LiQuer, it is very easy to create both resuable visualizations with multiple views
-as well as documents viewable offline or suitable for printing. Probably the easiest way to achieve that
-is creating a command, which will return a html document.
-(Alternatively other markup can be used, e.g. LaTeX, but we will focus on html.)
+as well as documents viewable offline or suitable for printing.
+There are multiple markups suitable for creating reports and visualisations,
+but probably the easiest and most flexible are HTML documents.
+In LiQuer html can be easily created by returning a html text from a command. 
+
 Creation of text is simplified by ``evaluate_template`` function, which processes a string (*template*)
 containing LiQuer queries and replaces those queries by their results.
+
+Report example is processing data from [Global Food Prices Database (WFP)](https://data.humdata.org/dataset/4fdcd4dc-5c2f-43af-a1e4-93c9b6539a27).
+It contains monthly prices for various commodities.
+To adapt the data to our needs we need a cople of extra commands:
+
+Month and year are in two separate columns ``mp_year`` and ``mp_month``. For charts we need dates in YYYY-MM-DD format, which we achieve with the following command:
 
 ```python
 @command
 def datemy(df,y="mp_year",m="mp_month",target="date"):
     df.loc[:,target]=["%04d-%02d-01"%(int(year),int(month)) for year,month in zip(df[y],df[m])]
     return df
+```
+
+To make statistics, it's handy to use pandas groupby. As an example we show count of groups,
+which used in the report to show number of observed prices in various markets:
+
+```python
 
 @command
 def count(df, *groupby_columns):
     df.loc[:,"count"]=1
     return df.groupby(groupby_columns).count().reset_index().loc[:,list(groupby_columns)+["count"]]
+```
 
+An example of a custom filter is a *greater or equal* command ``geq``, used in the report
+to cut away years before a start year:
+
+```python
 @command
 def geq(df, column, value:float):
     index = df.loc[:,column] >= value 
     return df.loc[index,:]
+```
+This is somewhat similar to ``eq`` command from the pandas support module ``liquer.ext.lq_pandas``,
+but only supports numerical values, while the ``eq`` command is somewhat more general.
 
+Pandas dataframe supports quite flexible method ``to_html`` for converting dataframes to html format.
+Report uses for styling the popular css framework [bootstrap](https://getbootstrap.com/) and to display the
+tables nicely we just need to add some [bootstrap css classes](https://getbootstrap.com/docs/4.3/content/tables/).
+Command as well prepends a link to the dataframe itself by the ``link`` command.
+This tends to be very useful in practice, allowing to conviniently import underlying raw data into a spreadsheet.
+
+```python
 @command
 def table(state):
     df = state.get()
     html=evaluate_template(f"""<a href="${state.query}/link-url-csv$">(data)</a> """)
     return html+df.to_html(index=False, classes="table table-striped")
+```
 
+The core of the report is a ``report`` command. It can be applied on any dataframe containing suitable fields.
+This allows a large degree of flexibility - arbitrary filters can be inserted into a command chain before the report.
+For example, the current report can be restricted to specific markets, time periods or commodities without
+any additional code, just by modifying the URL.
+
+Report embeds a possibility to remove data pefore a ``from_year``. This in principle could be done
+by inserting a ``geq`` command before the report (which would work fine). Passing ``from_year`` as an argument
+has an advantage, that the start year can become a part of the report (e.g. it can be used as a part of the title).
+
+Main part of the report is a single template, evaluated with ``evaluate_template``.
+Note that LiQuer template uses as well string interpolation by [python f string (PEP 498)](https://docs.python.org/3/whatsnew/3.6.html#whatsnew36-pep498), which is a very powerful combination. 
+
+```python
 @command
 def report(state, from_year=2017, linktype=None):
     state = state.with_caching(False)
@@ -232,3 +297,11 @@ def report(state, from_year=2017, linktype=None):
 </html>
     """))
 ```
+
+Inside the ``report`` command some more magic is used to handle links and external resources.
+Links are created by a nested function ``makelink``. The main purpose is to allow two different regimes
+of how the links work: classic links (default) and dataurls.
+Classic links are useful if the report is used from a web service: the report size is then relatively small
+and thus the loading time is faster than for dataurls. On the other hand, dataurl link type
+allows saving the report as a single html file, which can be used e.g. for offline browsing, archiving or sending by e-mail.
+All the assets are embedded inside the html file.
