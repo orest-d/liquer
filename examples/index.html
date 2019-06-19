@@ -83,6 +83,7 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#hdx-disaggregation-wizard">HDX disaggregation wizard</a></li>
         <li class="main "><a href="#integration-of-libhxl-example-of-a-new-state-type">Integration of libhxl (example of a new state type)</a></li>
+        <li class="main "><a href="#reports-and-visualizations">Reports and visualizations</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -118,7 +119,7 @@ Libhxl plays somewhat similar role as pandas: it reads, writes and manipulates t
 which pandas doesn't - hence the <code>liquer.ext.lq_hxl</code> module.
 In order to allow libhxl objects to be used in liquer, 
 we need to define a state type: <code>HxlStateType</code>.</p>
-<pre><code>import hxl
+<pre><code class="python">import hxl
 from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 
 class HxlStateType(StateType):
@@ -130,7 +131,7 @@ class HxlStateType(StateType):
 <p>The <code>identifier</code> is important e.g. for caching, 
 where it is stored as a part of metadata and it
 tells what StateType should be used for deserialization.</p>
-<pre><code>    def default_extension(self):
+<pre><code class="python">    def default_extension(self):
         &quot;Default file extension for the state type&quot;
         return &quot;csv&quot;
 
@@ -148,7 +149,7 @@ Th mimetype (when queried through the liquer server) becomes a part of the web s
 <p>Note that serialization and deserialization do not necessarily need
 to support the same formats. E.g. html is quite nice to support
 in serialization, but it is too unspecific for a deserialization.</p>
-<pre><code>    def as_bytes(self, data, extension=None):
+<pre><code class="python">    def as_bytes(self, data, extension=None):
         &quot;&quot;&quot;Serialize data as bytes
         File extension may be provided and influence the serialization format.
         &quot;&quot;&quot;
@@ -186,14 +187,14 @@ in serialization, but it is too unspecific for a deserialization.</p>
 that the data in the cache will not become unintentionally
 modified. That's why the state type should define <code>copy</code> method.
 Since libhxl dataset is immutable (?), it is OK to return just the data without making a copy. </p>
-<pre><code>    def copy(self, data):
+<pre><code class="python">    def copy(self, data):
         &quot;&quot;&quot;Make a deep copy of the data&quot;&quot;&quot;
         return data
 </code></pre>
 
 <p>Once the state type class is defined, a state type instance
 is created and registered</p>
-<pre><code>HXL_DATASET_STATE_TYPE = HxlStateType()
+<pre><code class="python">HXL_DATASET_STATE_TYPE = HxlStateType()
 register_state_type(hxl.Dataset, HXL_DATASET_STATE_TYPE)
 register_state_type(hxl.io.HXLReader, HXL_DATASET_STATE_TYPE)
 </code></pre>
@@ -207,7 +208,97 @@ instance for any state data.</p>
 (e.g. matplotlib figure - as of time of writing)
 or serialization is otherwise undesirable. Such state types would be perfectly legal - they just could be neither cached nor served by the liquer web server. However, they could be inside the query, e.g.
 if matplotlib figure would be followed by image creation command,
-the image could be both served and cached.</p></div>
+the image could be both served and cached.</p>
+<h1 id="reports-and-visualizations">Reports and visualizations</h1>
+<p>With the help of LiQuer, it is very easy to create both resuable visualizations with multiple views
+as well as documents viewable offline or suitable for printing. Probably the easiest way to achieve that
+is creating a command, which will return a html document.
+(Alternatively other markup can be used, e.g. LaTeX, but we will focus on html.)
+Creation of text is simplified by <code>evaluate_template</code> function, which processes a string (<em>template</em>)
+containing LiQuer queries and replaces those queries by their results.</p>
+<pre><code class="python">@command
+def datemy(df,y=&quot;mp_year&quot;,m=&quot;mp_month&quot;,target=&quot;date&quot;):
+    df.loc[:,target]=[&quot;%04d-%02d-01&quot;%(int(year),int(month)) for year,month in zip(df[y],df[m])]
+    return df
+
+@command
+def count(df, *groupby_columns):
+    df.loc[:,&quot;count&quot;]=1
+    return df.groupby(groupby_columns).count().reset_index().loc[:,list(groupby_columns)+[&quot;count&quot;]]
+
+@command
+def geq(df, column, value:float):
+    index = df.loc[:,column] &gt;= value 
+    return df.loc[index,:]
+
+@command
+def table(state):
+    df = state.get()
+    html=evaluate_template(f&quot;&quot;&quot;&lt;a href=&quot;${state.query}/link-url-csv$&quot;&gt;(data)&lt;/a&gt; &quot;&quot;&quot;)
+    return html+df.to_html(index=False, classes=&quot;table table-striped&quot;)
+
+@command
+def report(state, from_year=2017, linktype=None):
+    state = state.with_caching(False)
+    def makelink(url):
+        if linktype is None:
+            return url
+        extension = url.split(&quot;.&quot;)[-1]
+        return evaluate(f&quot;fetch-{encode_token(url)}/link-{linktype}-{extension}&quot;).get()
+
+    try:
+        source = state.sources[0]
+    except:
+        source = &quot;???&quot;
+
+    LiQuer='&lt;a href=&quot;https://github.com/orest-d/liquer&quot;&gt;&amp;nbsp;LiQuer&amp;nbsp;&lt;/a&gt;'
+    df = state.get()
+    try:
+        title = &quot;,&quot;.join(sorted(df.adm0_name.unique())) + f&quot; since {from_year}&quot;
+    except:
+        title = &quot;report&quot;
+    return state.with_filename(&quot;report.html&quot;).with_data(evaluate_template(f&quot;&quot;&quot;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;{title}&lt;/title&gt;
+        &lt;meta charset=&quot;utf-8&quot;&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, shrink-to-fit=no&quot;&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;{makelink('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')}&quot; integrity=&quot;sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T&quot; crossorigin=&quot;anonymous&quot;&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div class=&quot;p-3 mb-2 bg-success text-white fixed-top shadow-sm&quot;&gt;
+            &lt;a class=&quot;nav-link active&quot; href=&quot;https://data.humdata.org&quot;&gt;&lt;img src=&quot;{makelink('https://centre.humdata.org/wp-content/uploads/hdx_new_logo_accronym2.png')}&quot; style=&quot;height:30px;&quot; alt=&quot;HDX&quot;&gt;&lt;/a&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;bg-light fixed-bottom border-top&quot;&gt;
+        Generated with {LiQuer} &lt;span class=&quot;float-right&quot;&gt;&amp;#169; 2019 Orest Dubay&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;br/&gt;
+        &lt;br/&gt;
+        &lt;br/&gt;
+        &lt;br/&gt;
+        &lt;h1&gt;{title}&lt;/h1&gt;
+        &lt;div class=&quot;container-fluid&quot;&gt;
+            &lt;div class=&quot;row&quot;&gt;
+                Data originate from &lt;a href=&quot;{source}&quot;&gt;&amp;nbsp;{source}&amp;nbsp;&lt;/a&gt; were processed via a {LiQuer} service.
+                Only data after {from_year} are shown (&lt;a href=&quot;${state.query}/datemy/geq-mp_year-{from_year}/link-url-csv$&quot;&gt;data&lt;/a&gt;),
+                complete data are &lt;a href=&quot;${state.query}/datemy/link-url$&quot;&gt;&amp;nbsp;here&lt;/a&gt;. 
+            &lt;/div&gt;
+            &lt;div class=&quot;row&quot;&gt;
+                &lt;div class=&quot;col-md-6&quot; style=&quot;height:50%;&quot;&gt;${state.query}/datemy/geq-mp_year-{from_year}/groupby_mean-mp_price-date-cm_name/plotly_chart-xys-date-mp_price-cm_name$&lt;/div&gt;
+                &lt;div class=&quot;col-md-6&quot; style=&quot;height:50%;&quot;&gt;${state.query}/datemy/geq-mp_year-{from_year}/count-adm1_name/plotly_chart-piexs-count-adm1_name$&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;row&quot;&gt;
+                &lt;div class=&quot;col-md-6&quot; style=&quot;height:50%;&quot;&gt;
+                &lt;h2&gt;Average prices&lt;/h2&gt;
+                ${state.query}/datemy/geq-mp_year-{from_year}/groupby_mean-mp_price-cm_name/table$&lt;/div&gt;
+                &lt;div class=&quot;col-md-6&quot; style=&quot;height:50%;&quot;&gt;
+                &lt;h2&gt;Observations&lt;/h2&gt;
+                ${state.query}/datemy/geq-mp_year-{from_year}/count-adm1_name/table$&lt;/div&gt;
+            &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+    &quot;&quot;&quot;))
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

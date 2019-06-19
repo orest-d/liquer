@@ -88,23 +88,29 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="welcome-to-liquer">Welcome to LiQuer</h1>
-<p>LiQuer is a leightweighted framework that can turn your python functions into
-a web service with just a couple of lines of code.
-In fact just one line. A very short line... 
-OK, I am not that good at lying: You will need a small start script and some import statements.)</p>
-<p>LiQuer is a flexible tool targeted at data scientists, that allows to represent and evaluate
-a sequence of transformations (actions, or in LiQuer lingo "commands") as a query string,
-which can be a part of URL. For example: if you would like to read a csv file, filter it,
+<p>LiQuer is a leightweighted framework that turns ordinary python functions into
+a flexible web service with just a couple of lines of code.
+In fact just one line. A very short line... </p>
+<p>OK, this not exactly true: yes, to make a function available as a web service,
+you just need to use a simple decorator (<code>@command</code> or perhaps <code>@first_command</code>),
+but there have to be as well some import statements and a little code (which you can copy and paste from examples)
+to configure and start flask.</p>
+<p>LiQuer is a flexible tool targeted at data scientists, helping to create web applications
+working with manupulating tables (or other data), creating charts, images, reports or interactive applications.
+The core of Liquer is a small query language, which represents 
+a sequence of transformations (or "commands") as a string safe to use as a part of URL.</p>
+<p>For example: if you would like to read a csv file, filter it,
 expose it a xlsx or make a chart out of it, cache it and make all that awailable as a web service - LiQuer does all this out of the box.</p>
-<p>But when it is not supported out of the box ... that's where LiQuer really shines!
-LiQuer is designed to make it very easy - even when you are not an expert on web application development.</p>
-<p>LiQuer tries to find a sweet spot by considering these values:
-- simple things very simple, complex things possible (convention over configuration)
+<p>And when it is not supported out of the box ... that's where LiQuer really shines!
+LiQuer is designed to make web-services very easy - even when you are not an expert on web application development.</p>
+<p>LiQuer tries to find a sweet among these values:
+- simple things simple, complex things possible (convention over configuration)
 - modularity and extensibility (it should be possible to override or change anything - within reason)
 - technology neutral (limit necessary dependencies, decide what packages you want to use)
-- feature completeness (Most important features should be supported out of the box - but they need to be enabled to keep neutrality.)</p>
+- feature completeness (Most important features should be supported out of the box - but they need to be enabled to keep neutrality.)
+- safety should be achievable</p>
 <h2 id="hello-world">Hello, world!</h2>
-<p>The good tradition is to start with a Hello, world! example:</p>
+<p>Let's start with a Hello, world! example:</p>
 <pre><code>from liquer import *
 
 @first_command
@@ -117,7 +123,26 @@ def greet(greeting, who=&quot;world&quot;):
 
 print (evaluate(&quot;hello/greet&quot;).get())
 print (evaluate(&quot;hello/greet-everybody&quot;).get())
-</code></pre></div>
+</code></pre>
+
+<p>What is happening here? There are two functions: <code>hello</code> and <code>greet</code>.
+Both of them are turned into "commands" with the decorators (<code>@first_command</code> and <code>@command</code>).
+This means, that they are "published" and can be called via a web interface.
+To make the example simple, we just call them by calling <code>evaluate</code>.
+Evaluate accepts a LiQuer query, which consists out of a chain of slash-separated commands;
+output of each command becomes an input of a next command.
+Hence <code>@first_command</code>: a command first in the chain that does not need any input from
+a previous command.</p>
+<p>For example <code>hello/greet</code> calls function hello() and then passes the return value as a
+first argument of greet - i.e. <code>hello/greet</code> is equivalent to <code>greet(hello())</code>.</p>
+<p>Commands can as well pass arguments to the functions, which are dash-separated,
+i.e. <code>hello/greet-everybody</code> query is equivalent to python expression <code>greet(hello(), "everybody")</code>.
+This way multiple function calls can be combined in a single query, which may combine
+data fetching, filters, various analysis/calculations with parameters and visualizations.</p>
+<p>Of course, the arguments must be represented as strings in the query. LiQuer takes care of
+proper escaping and type conversion.
+The result of the query returned by <code>evaluate</code> is wrapped in a <code>State</code> object.
+<code>State</code> object contains various metadata useful for debugging and tracking the data source - e.g. the query itself.</p></div>
         </div>
 
         <footer class="col-md-12">
@@ -200,5 +225,5 @@ print (evaluate(&quot;hello/greet-everybody&quot;).get())
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2019-06-12 19:00:59
+Build Date UTC : 2019-06-19 16:34:08
 -->
