@@ -1,10 +1,18 @@
 # Instalation
 
-Get LiQuer from [https://github.com/orest-d/liquer](repository):
+LiQuer requires at least python 3.6 with flask. It can be installed by
+```
+python3 -m pip install liquer-framework
+```
+
+Alternatively you can get LiQuer from [https://github.com/orest-d/liquer](repository):
 
 ```
 git clone https://github.com/orest-d/liquer.git
 
+python3 -m venv venv
+source venv/bin/activate
+cd liquer
 python3 setup.py install
 ```
 

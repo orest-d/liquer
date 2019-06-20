@@ -27,7 +27,6 @@ LiQuer tries to find a sweet among these values:
 - feature completeness (Most important features should be supported out of the box - but they need to be enabled to keep neutrality.)
 - safety should be achievable
 
-
 ## Hello, world!
 
 Let's start with a Hello, world! example:
