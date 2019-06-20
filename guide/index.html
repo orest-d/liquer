@@ -86,7 +86,8 @@
         <li class="main "><a href="#commands">Commands</a></li>
         <li class="main "><a href="#security">Security</a></li>
         <li class="main "><a href="#working-with-pandas">Working with pandas</a></li>
-        <li class="main "><a href="#encoding-and-decoding-a-query">Encoding and decoding a query</a></li>
+        <li class="main "><a href="#charts">Charts</a></li>
+        <li class="main "><a href="#encoding-and-decoding">Encoding and decoding</a></li>
         <li class="main "><a href="#state-variables">State variables</a></li>
         <li class="main "><a href="#cache">Cache</a></li>
     </ul>
@@ -98,7 +99,7 @@
 <pre><code>python3 -m pip install liquer-framework
 </code></pre>
 
-<p>Alternatively you can get LiQuer from <a href="repository">https://github.com/orest-d/liquer</a>:</p>
+<p>Alternatively you can get LiQuer from <a href="https://github.com/orest-d/liquer">repository</a>:</p>
 <pre><code>git clone https://github.com/orest-d/liquer.git
 
 python3 -m venv venv
@@ -203,7 +204,16 @@ not when using the <code>evaluate</code> function. </p>
 <li><strong>data/sum_columns/sum_columns-a-c-d/sum2.html</strong> - multiple actions are chained: sum_columns(sum_columns(data()),"a","c","d") and result is served as html.</li>
 <li><strong>df_from-URL</strong> - built in command loads a dataframe from URL</li>
 </ul>
-<h1 id="encoding-and-decoding-a-query">Encoding and decoding a query</h1>
+<h1 id="charts">Charts</h1>
+<p>LiQuer has a rudimentary support for <a href="https://matplotlib.org/">matplotlib</a> and <a href="https://plot.ly/python/">plotly</a>
+residing in packages <code>liquer.ext.lq_matplotlib</code> and <code>liquer.ext.lq_plotly</code>
+Examples are in <a href="https://github.com/orest-d/liquer/blob/master/examples/matplotlib_chart.py">matplotlib_chart.py</a>
+and <a href="https://github.com/orest-d/liquer/blob/master/examples/plotly_chart.py">plotly_chart.py</a>
+show how to make simple plots with the commands already built in. This functionality is very basic at the moment and is likely to change.</p>
+<h1 id="encoding-and-decoding">Encoding and decoding</h1>
+<p>In many cases, particularly when supplying a URL as a parameter to a query, 
+some charactes need to be escaped.</p>
+<p>A comprehensive example shows two ways how to do it:</p>
 <pre><code class="python">from liquer import *
 from liquer.parser import encode, encode_token
 import liquer.ext.lq_pandas
@@ -221,6 +231,12 @@ print (f&quot;Query: {query}&quot;)
 print (evaluate(query).get())
 </code></pre>
 
+<p>A query is a list of commands; each command being a list of strings (<em>tokens</em>).
+The first string token in a command is the name of the command and the rest are the parameters.
+A string token is simply a string which can be escaped by <code>encode_token</code> and unescaped by <code>decode_token</code>.</p>
+<p>A <em>decoded query</em> is simply a list of lists of strings. To convert a <em>decoded query</em> to a string (<em>encoded query</em>) use <code>encode</code>,
+for the inverse operation use <code>decode</code>. </p>
+<p>The encode can as well be done via a web service by <code>api/build</code> (see <code>liquer/blueprint</code>).</p>
 <h1 id="state-variables">State variables</h1>
 <p>In some situations it is useful to pass some values along the query.
 For example if we want to specify some value once and use it in multiple commands.</p>
