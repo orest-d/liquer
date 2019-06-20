@@ -5,7 +5,7 @@ LiQuer requires at least python 3.6 with flask. It can be installed by
 python3 -m pip install liquer-framework
 ```
 
-Alternatively you can get LiQuer from [https://github.com/orest-d/liquer](repository):
+Alternatively you can get LiQuer from [repository](https://github.com/orest-d/liquer):
 
 ```
 git clone https://github.com/orest-d/liquer.git
@@ -124,7 +124,19 @@ not when using the ``evaluate`` function.
 * **data/sum_columns/sum_columns-a-c-d/sum2.html** - multiple actions are chained: sum_columns(sum_columns(data()),"a","c","d") and result is served as html.
 * **df_from-URL** - built in command loads a dataframe from URL
 
-# Encoding and decoding a query
+# Charts
+LiQuer has a rudimentary support for [matplotlib](https://matplotlib.org/) and [plotly](https://plot.ly/python/)
+residing in packages ``liquer.ext.lq_matplotlib`` and ``liquer.ext.lq_plotly``
+Examples are in [matplotlib_chart.py](https://github.com/orest-d/liquer/blob/master/examples/matplotlib_chart.py)
+and [plotly_chart.py](https://github.com/orest-d/liquer/blob/master/examples/plotly_chart.py)
+show how to make simple plots with the commands already built in. This functionality is very basic at the moment and is likely to change.
+
+# Encoding and decoding
+
+In many cases, particularly when supplying a URL as a parameter to a query, 
+some charactes need to be escaped.
+
+A comprehensive example shows two ways how to do it:
 ```python
 from liquer import *
 from liquer.parser import encode, encode_token
@@ -142,6 +154,15 @@ query = "df_from-"+encode_token(url) # encode a single token of the query
 print (f"Query: {query}")
 print (evaluate(query).get())
 ```
+
+A query is a list of commands; each command being a list of strings (*tokens*).
+The first string token in a command is the name of the command and the rest are the parameters.
+A string token is simply a string which can be escaped by ``encode_token`` and unescaped by ``decode_token``.
+
+A *decoded query* is simply a list of lists of strings. To convert a *decoded query* to a string (*encoded query*) use ``encode``,
+for the inverse operation use ``decode``. 
+
+The encode can as well be done via a web service by ``api/build`` (see ``liquer/blueprint``).
 
 # State variables
 

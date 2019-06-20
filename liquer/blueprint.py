@@ -15,11 +15,13 @@ logger.setLevel(logging.DEBUG)
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index.html', methods=['GET', 'POST'])
 def index():
+    """Link to a LiQuer main service page"""
     return redirect("/liquer/static/index.html")
 
 
 @app.route('/info.html', methods=['GET', 'POST'])
 def info():
+    """Info page"""
     return """
 <html>
     <head>
@@ -34,6 +36,7 @@ def info():
 
 
 def response(state):
+    """Create flask response from a State"""
     filename = state.filename
     extension = None
     if filename is not None:
@@ -59,16 +62,19 @@ def response(state):
 
 @app.route('/q/<path:query>')
 def serve(query):
+    """Main service for evaluating queries"""
     return response(evaluate(query))
 
 
 @app.route('/api/commands.json')
 def commands():
+    """Returns a list of commands in json format"""
     return jsonify(command_registry().as_dict())
 
 
 @app.route('/api/debug-json/<path:query>')
 def debug_json(query):
+    """Debug query - returns metadata from a state after a query is evaluated"""
     state = evaluate(query)
     state_json = state.as_dict()
     return jsonify(state_json)
@@ -76,6 +82,9 @@ def debug_json(query):
 
 @app.route('/api/build', methods=['POST'])
 def build():
+    """Build a query from a posted decoded query (list of lists of strings).
+    Result is a dictionary with encoded query and link.
+    """
     from liquer.parser import encode
     query = encode(request.get_json(force=True)["ql"])
     link = get_vars().get("server", "http://localhost") + \

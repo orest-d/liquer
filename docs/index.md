@@ -27,6 +27,8 @@ LiQuer tries to find a sweet among these values:
 - feature completeness (Most important features should be supported out of the box - but they need to be enabled to keep neutrality.)
 - safety should be achievable
 
+LiQuer sorce is [here](https://github.com/orest-d/liquer)
+
 ## Hello, world!
 
 Let's start with a Hello, world! example:

@@ -55,6 +55,7 @@ def mimetype_from_extension(extension):
     return MIMETYPES.get(extension,"text/plain")
 
 def get_type_qualname(cls):
+    """Get a string uniquely identifying the supplied class"""
     if isinstance(cls,str):
         return cls
     if cls.__module__ == "__main__":
@@ -114,6 +115,11 @@ def register_state_type(type_qualname, state_type):
 
 
 def encode_state_data(data, extension=None):
+    """Helper function to encode state data.
+    Extension decides which data format is used for encoding.
+    If not supplied, a default extension defined for the state type is used.
+    Returns a tuple with binary representation of the data, mime type and state type identifier.
+    """
     reg = state_types_registry()
     t = reg.get(get_type_qualname(type(data)))
     b, mime = t.as_bytes(data, extension=extension)
@@ -121,46 +127,71 @@ def encode_state_data(data, extension=None):
 
 
 def decode_state_data(b, type_identifier, extension=None):
+    """Helper function to decode state data.
+    Requires binary representation of the state data and state type identifier.
+    Extension decides which data format is used for decoding.
+    If not supplied, a default extension defined for the state type is used.
+    Returns a tuple with binary representation of the data, mime type and state type identifier.
+    """
     t = state_types_registry().get(type_identifier)
     return t.from_bytes(b, extension=extension)
 
 
 def copy_state_data(data):
+    """Helper function to get a deep copy of a state data."""
     reg = state_types_registry()
     t = reg.get(get_type_qualname(type(data)))
     return t.copy(data)
 
 
 class StateType(object):
+    """Abstarct state type basis"""
     def identifier(self):
+        """String identifier of the state type"""
         raise NotImplementedError(
             "State type class must define a state type identifier")
 
     def default_extension(self):
+        """Default file extension; determines the default data format
+        Must be consistent with the default_mimetype.
+        """
         raise NotImplementedError(
             "State type class must define the default extension")
 
     def default_filename(self):
+        """Default file name"""
         return "data."+self.default_extension()
 
     def default_mimetype(self):
+        """Default mime type - must be consistent with the default_extension"""
         return MIMETYPES.get(self.default_extension(), "text/plain")
 
     def is_type_of(self, data):
+        """Returns true if data is of this state type"""
         return False
 
     def as_bytes(self, data, extension=None):
+        """Serialize data as bytes.
+        Data must be of this state type. Extension determines the serialization format. If none, default extension is used.
+        """
         raise NotImplementedError(
             "State type class must define serialization to bytes (as_bytes)")
 
     def from_bytes(self, b: bytes, extension=None):
+        """Deserialize data from bytes.
+        Data must be a binary representation of this state type.
+        Extension determines the serialization format. If none, default extension is used.
+        """
         raise NotImplementedError(
             "State type class must define deserialization from bytes (from_bytes)")
 
     def copy(self, data):
+        """Create a deep copy of data.
+        Data must be of this state type."""
         return self.from_bytes(self.as_bytes(data)[:])
 
 class JsonStateType(StateType):
+    """JSON serializable data."""
     def identifier(self):
         return "generic"
 
@@ -194,6 +225,7 @@ class JsonStateType(StateType):
         return deepcopy(data)
 
 class BytesStateType(StateType):
+    """Binary data"""
     def identifier(self):
         return "bytes"
 
@@ -216,6 +248,7 @@ class BytesStateType(StateType):
         return deepcopy(data)
 
 class TextStateType(StateType):
+    """Text data (string)"""
     def identifier(self):
         return "text"
 

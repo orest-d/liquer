@@ -49,31 +49,37 @@ class State(object):
         self.caching = True
 
     def with_caching(self, caching=True):
+        """Enables or disables caching for this state"""
         # TODO: Make sure caching is propagated to dependent states
         # TODO: Examples and documentation
         self.caching = caching
         return self
 
     def with_data(self, data):
+        """Set the data"""
         self.data = data
         self.type_identifier = type_identifier_of(data)
         return self
 
     def with_source(self, source):
+        """Add sources to the state"""
         self.sources = [source] + self.sources
         return self
 
     def get(self):
+        """Get data from the state"""
         if self.is_error:
             print("\n".join(m.get("traceback", "") for m in self.log))
             raise Exception(self.message)
         return self.data
 
     def log_command(self, qv, number):
+        """Log a command"""
         self.log.append(dict(kind="command", qv=qv, command_number=number))
         return self
 
     def log_error(self, message):
+        """Log an error message"""
         self.log.append(
             dict(kind="error", message=message))
         self.is_error = True
@@ -81,11 +87,13 @@ class State(object):
         return self
 
     def log_warning(self, message):
+        """Log a warning message"""
         self.log.append(dict(kind="warning", message=message))
         self.message = message
         return self
 
     def log_exception(self, message, traceback):
+        """Log an exception"""
         self.log.append(dict(kind="error",
                              message=message, traceback=traceback))
         self.is_error = True
@@ -93,11 +101,15 @@ class State(object):
         return self
 
     def log_info(self, message):
+        """Log a message (info)"""
         self.log.append(dict(kind="info", message=message))
         self.message = message
         return self
 
     def as_dict(self):
+        """Represent state metadata as a dictionary - suitable for json serialization
+        State data is NOT part of the returned dictionary.
+        """
         return dict(
             query=self.query,
             type_identifier=self.type_identifier,
@@ -112,9 +124,11 @@ class State(object):
         )
 
     def mimetype(self):
+        """Return mime type of the data"""
         return mimetype_from_extension(self.extension)
 
     def from_dict(self, state):
+        """Fill state by valueas from a dictionary"""
         if isinstance(state, self.__class__):
             state = state.__dict__
         self.query = state["query"]
@@ -133,17 +147,14 @@ class State(object):
         return self.vars.get(name) == True
 
     def clone(self):
+        """Clone the state including the deep copy of the data"""
         state = self.__class__()
         state = state.from_dict(self.as_dict())
         state.data = copy_state_data(self.data)
         return state
 
-    def add_source(self, source):
-        if source not in self.sources:
-            self.sources.append(source)
-        return self
-
     def with_filename(self, filename):
+        """set filename"""
         self.filename = filename
         if "." in filename:
             self.extension = filename.split(".")[-1].lower()

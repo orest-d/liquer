@@ -226,6 +226,11 @@ def argument_parser_from_command_metadata(command_metadata):
 
 
 class CommandExecutable(object):
+    """Wrapper around a registered command
+    Adapts arbitrary function to be used as a command.
+    Function needs to be described by a command metadata structure and accompanied by an argument parser.
+    This decodes all the arguments, executes the command and (if needed) wraps the result as a State.
+    """
     def __init__(self, f, metadata, argument_parser):
         self.f = f
         self.metadata = metadata
@@ -246,6 +251,7 @@ class CommandExecutable(object):
 
 
 class FirstCommandExecutable(CommandExecutable):
+    """Wrapper around a registered first command"""
     def __call__(self, state, *args):
         args = list(args) + [a["default"]
                              for a in self.metadata.arguments[len(args):]]

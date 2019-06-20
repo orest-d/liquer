@@ -58,7 +58,6 @@ def cached_part(query, cache=None):
             state = cache.get(key)
             if state is None:
                 continue
-            print(key,state)
             return state, remainder
 
     # Should never get here, but this is a sensible default:

@@ -32,7 +32,6 @@ class TestParser:
             "~~I",
             "&+*:\\"
         ]:
-            # print(token,encode_token(token))
             assert decode_token(encode_token(token)) == token
 
     def test_encode_decode(self):
@@ -40,7 +39,6 @@ class TestParser:
             "~Hexample.com/abc-def/abcdef",
             "abc-defghi/jkl~_mno/abc-def/abcdef",
         ]:
-            # print(q,decode(q))
             assert encode(decode(q)) == q
 
     def test_all_splits(self):
