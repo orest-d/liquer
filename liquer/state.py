@@ -1,8 +1,5 @@
-from flask import jsonify, Response, send_file
-import pandas as pd
-from io import BytesIO, StringIO
 import json
-from liquer.state_types import type_identifier_of, copy_state_data
+from liquer.state_types import type_identifier_of, copy_state_data, mimetype_from_extension
 from copy import deepcopy
 
 _vars = None
@@ -115,7 +112,7 @@ class State(object):
         )
 
     def mimetype(self):
-        return self.MIMETYPES.get(self.extension)
+        return mimetype_from_extension(self.extension)
 
     def from_dict(self, state):
         if isinstance(state, self.__class__):

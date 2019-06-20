@@ -299,9 +299,20 @@ def report(state, from_year=2017, linktype=None):
 ```
 
 Inside the ``report`` command some more magic is used to handle links and external resources.
-Links are created by a nested function ``makelink``. The main purpose is to allow two different regimes
-of how the links work: classic links (default) and dataurls.
-Classic links are useful if the report is used from a web service: the report size is then relatively small
-and thus the loading time is faster than for dataurls. On the other hand, dataurl link type
-allows saving the report as a single html file, which can be used e.g. for offline browsing, archiving or sending by e-mail.
-All the assets are embedded inside the html file.
+Links are created by a nested function ``makelink``. The main purpose is to allow three different regimes
+of working with links:
+* links to original sources (default),
+* serving (proxying) resources through LiQuer service and
+* dataurls.
+**Links to original sources** are useful if the report is used from a web service: the report size is then relatively small
+and thus the loading time is faster than for dataurls.
+
+**Proxying resources** through LiQuer service allows to cache resources by LiQuer. This may be useful on slower internet connections, when running the service without internet or behind a firewall.
+
+**Dataurl** link type allows saving the report as a single html file. Such a report can be used e.g. for offline browsing, archiving or sending by e-mail. All the assets are embedded inside the html file, so the report will work even when the LiQuer service
+is not available. Note: The embedded LiQuer queries will of course not work offline, but if necessary, the data comming out from LiQuer can be turned to a dataurl with ``link`` command; type of the link can be controlled by ``linktype`` state variable. Assuming
+*linktype* is not hardcoded (as in ``table`` command) all query links in the report could be turned to dataurls like this:
+```
+filter-params/let-linktype-dataurl/report
+```
+This of course could lead to extremply large report files, so it should be used carefully.
