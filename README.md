@@ -9,3 +9,20 @@ LiQuer is very modular and designed to be extremely easy to extend (typically ju
 Results of LiQuer queries can be cached for added performance.
 
 Please visit [LiQuer website](https://orest-d.github.io/liquer/) for more info.
+
+# Install
+
+```
+pip install liquer-framework
+```
+
+# TODO
+
+- [ ] namespaces
+- [ ] support for dataframe iterator 
+- [ ] lift the requirement for a state to be cloneable - at least for some data types
+- [ ] immutable ?
+- [ ] make indicator of *volatile* state, that can never be cached (volatile=immutable?)
+- [ ] specify metadata in command decorator
+- [ ] cache categories/levels dependent on metadata
+- [ ] improve command catalogue
