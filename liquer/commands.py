@@ -49,7 +49,8 @@ class CommandRegistry(object):
         return {name: cmd._asdict() for name, cmd in self.metadata.items()}
 
     def evaluate_command(self, state, qcommand: list):
-        state = state.clone()
+        if not state.is_volatile():
+            state = state.clone()
         command_name = qcommand[0]
         if command_name in self.executables:
             try:

@@ -68,6 +68,9 @@ class State(object):
         self.sources = [source] + self.sources
         return self
 
+    def is_volatile(self):
+        return self.attributes.get("volatile",False)
+        
     def get(self):
         """Get data from the state"""
         if self.is_error:

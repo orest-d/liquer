@@ -20,9 +20,8 @@ pip install liquer-framework
 
 - [ ] namespaces
 - [ ] support for dataframe iterator 
-- [ ] lift the requirement for a state to be cloneable - at least for some data types
-- [ ] immutable ?
-- [ ] make indicator of *volatile* state, that can never be cached (volatile=immutable?)
-- [ ] specify metadata in command decorator
+- [x] lift the requirement for a state to be cloneable - at least for some data types
+- [x] make indicator of *volatile* state, that can never be cached (volatile=immutable?)
+- [x] specify metadata in command decorator
 - [ ] cache categories/levels dependent on metadata
 - [ ] improve command catalogue
