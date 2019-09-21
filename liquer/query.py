@@ -23,7 +23,7 @@ def evaluate_query_on(query, state=None, cache=None):
 
 
 def evaluate_ql_on(ql, state=None, cache=None):
-    """This is equivalen to evaluate_query_on, but accepts decoded query
+    """This is equivalent to evaluate_query_on, but accepts decoded query
     (list of lists of strings)."""
     if cache is None:
         cache = get_cache()

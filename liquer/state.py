@@ -47,6 +47,8 @@ class State(object):
         self.commands = []
         self.type_identifier = None
         self.caching = True
+        self.exception = None
+        self.attributes = {}
 
     def with_caching(self, caching=True):
         """Enables or disables caching for this state"""
@@ -70,7 +72,11 @@ class State(object):
         """Get data from the state"""
         if self.is_error:
             print("\n".join(m.get("traceback", "") for m in self.log))
-            raise Exception(self.message)
+            if self.exception is None:
+                raise Exception(self.message)
+            else:
+                raise self.exception
+
         return self.data
 
     def log_command(self, qv, number):
@@ -120,7 +126,8 @@ class State(object):
             is_error=self.is_error,
             message=self.message,
             commands=self.commands,
-            vars=dict(**self.vars)
+            vars=dict(**self.vars),
+            attributes=self.attributes
         )
 
     def mimetype(self):
@@ -141,6 +148,7 @@ class State(object):
         self.message = state["message"]
         self.commands = state["commands"]
         self.vars = state["vars"]
+        self.attributes = state["attributes"]
         return self
 
     def has_flag(self, name):

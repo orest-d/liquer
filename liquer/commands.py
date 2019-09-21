@@ -24,7 +24,7 @@ the "mainstream" way of command registration is by simply decorating a function 
 """
 
 CommandMetadata = namedtuple(
-    "Command", ["name", "label", "module", "doc", "state_argument", "arguments"])
+    "Command", ["name", "label", "module", "doc", "state_argument", "arguments", "attributes"])
 
 
 class CommandRegistry(object):
@@ -58,10 +58,17 @@ class CommandRegistry(object):
                 traceback.print_exc()
                 state.log_exception(message=str(
                     e), traceback=traceback.format_exc())
+                state.exception = e
         else:
+            print (f"Unknown command: {command_name}")
             return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
         state.commands.append(qcommand)
         state.query = encode(state.commands)
+        if command_name in self.metadata:
+            state.attributes.update(self.metadata[command_name].attributes)
+        else:
+            print (f"Unknown command (metadata): {command_name}")
+
         return state
 
 
@@ -85,6 +92,7 @@ def reset_command_registry():
 
 class ArgumentParser(object):
     is_argv = False
+
     def __add__(self, ap):
         return SequenceArgumentParser(self, ap)
 
@@ -133,6 +141,7 @@ class ListArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return args, []
 
+
 class ArgvArgumentParser(ListArgumentParser):
     is_argv = True
 
@@ -156,7 +165,7 @@ def identifier_to_label(identifier):
     return txt
 
 
-def command_metadata_from_callable(f, has_state_argument=True):
+def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
     """Extract command metadata structure from a callable.
     Function interprets function name, document string, argument names and annotations into command metadata. 
     """
@@ -164,6 +173,8 @@ def command_metadata_from_callable(f, has_state_argument=True):
     doc = f.__doc__
     module = f.__module__
     annotations = f.__annotations__
+    if attributes is None:
+        attributes = dict(ns=None)
     if doc is None:
         doc = ""
     arguments = []
@@ -204,7 +215,9 @@ def command_metadata_from_callable(f, has_state_argument=True):
                            module=module,
                            doc=doc,
                            state_argument=state_argument,
-                           arguments=arguments)
+                           arguments=arguments,
+                           attributes=attributes
+                           )
 
 
 def argument_parser_from_command_metadata(command_metadata):
@@ -231,6 +244,7 @@ class CommandExecutable(object):
     Function needs to be described by a command metadata structure and accompanied by an argument parser.
     This decodes all the arguments, executes the command and (if needed) wraps the result as a State.
     """
+
     def __init__(self, f, metadata, argument_parser):
         self.f = f
         self.metadata = metadata
@@ -252,6 +266,7 @@ class CommandExecutable(object):
 
 class FirstCommandExecutable(CommandExecutable):
     """Wrapper around a registered first command"""
+
     def __call__(self, state, *args):
         args = list(args) + [a["default"]
                              for a in self.metadata.arguments[len(args):]]
@@ -273,17 +288,26 @@ def _register_command(f, metadata):
     command_registry().register(executable, metadata)
 
 
-def command(f):
+def command(*arg, **kwarg):
     """Register a callable as a command.
     Callable is expected to take a state data as a first argument. 
-    This typically can be used as a decorator 
+
+    This function typically can be used as a decorator.
+    As a decorator it can be used directly (@command) or it can have parameters,
+    e.g. @command(ns="MyNameSpace") 
     """
-    metadata = command_metadata_from_callable(f)
-    _register_command(f, metadata)
-    return f
+    if len(arg) == 1:
+        assert callable(arg[0])
+        f = arg[0]
+        metadata = command_metadata_from_callable(f, attributes=kwarg)
+        _register_command(f, metadata)
+        return f
+    else:
+        assert len(arg) == 0
+        return lambda f, attributes=kwarg: command(f, **attributes)
 
 
-def first_command(f):
+def first_command(*arg, **kwarg):
     """Register a callable as a command.
     Unlike in command(), callable is expected NOT to take a state data as a first argument.
     Thus first_command can be a first command in the query - does not require a state to be applied on.
@@ -291,6 +315,12 @@ def first_command(f):
     then the state passed to the command is ignored (and not passed to f).
     This typically can be used as a decorator.
     """
-    metadata = command_metadata_from_callable(f, has_state_argument=False)
-    _register_command(f, metadata)
-    return f
+    if len(arg) == 1:
+        assert callable(arg[0])
+        f = arg[0]
+        metadata = command_metadata_from_callable(f, has_state_argument=False, attributes=kwarg)
+        _register_command(f, metadata)
+        return f
+    else:
+        assert len(arg) == 0
+        return lambda f, attributes=kwarg: first_command(f, **attributes)

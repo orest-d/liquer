@@ -90,6 +90,18 @@ class TestCommands:
         assert result.get() == 124
         assert result.commands[-1] == cmd
 
+    def test_evaluate_command_with_attributes(self):
+        reset_command_registry()
+        @command(abc="def")
+        def test_callable(state, a: int, b=123):  # has state as a first argument
+            return a+b
+        cmd = ["test_callable", "1"]
+        result = command_registry().evaluate_command(
+            State(), cmd)
+        assert result.get() == 124
+        assert result.commands[-1] == cmd
+        assert result.attributes["abc"] == "def"
+
     def test_state_command(self):
         reset_command_registry()
         @command
