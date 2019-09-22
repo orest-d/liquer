@@ -82,9 +82,11 @@ class CommandRegistry(object):
         if not state.is_volatile():
             state = state.clone()
         command_name = qcommand[0]
-        for ns in ["root"]:
+
+        for ns in state.vars.get("active_namespaces",["root"]):
             if command_name in self.executables[ns]:
                 break
+
         if command_name in self.executables[ns]:
             try:
                 state = self.executables[ns][command_name](state, *qcommand[1:])

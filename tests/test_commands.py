@@ -190,14 +190,16 @@ class TestCommands:
 
         try:
             @command(ns="new")
-            def flag(name):
+            def flag(state, name):
                 return f"New definition of flag called with {name}"
             redefined=True
         except:
             redefined=False
 
         assert redefined
-        assert evaluate("flag-test/state_variable-test").get() == True
+#        assert evaluate("/flag-test-f/flag-test/state_variable-test").get() == True
+#        assert evaluate("/flag-test-f/ns-root/flag-test/state_variable-test").get() == True
+        assert evaluate("/flag-test-f/ns-new/flag-test/state_variable-test").get() == False
 
         # Cleanup
         reset_command_registry() # prevent double-registration

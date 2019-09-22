@@ -82,3 +82,20 @@ def fetch_utf8(url):
 def filename(state, name):
     """Set filename"""
     return state.with_filename(name)
+
+@command
+def ns(state, *namespaces):
+    """Set command namespaces to be included
+
+    By default only the root namespace is enabled. The 'ns' command enables commands present in specified namespaces.
+    This works by setting "active_namespaces" state variable.
+    The "root" namespace is appended to the active_namespaces if not already present.    
+    When command is executed, all the active namespaces are searched one by one until the command is found.
+    Note that order of active_namespaces is significant. 
+    """
+    namespaces = list(namespaces)
+    if "root" not in namespaces:
+        namespaces.append("root")
+    state.vars["active_namespaces"] = namespaces
+    
+    return state
