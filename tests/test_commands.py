@@ -68,7 +68,7 @@ class TestCommands:
         @command
         def test_callable(state, a: int, b=123):  # has state as a first argument
             return a+b
-        result = command_registry().executables["test_callable"](State(), "1")
+        result = command_registry().executables["root"]["test_callable"](State(), "1")
         assert result.get() == 124
 
     def test_first_command(self):
@@ -76,7 +76,7 @@ class TestCommands:
         @first_command
         def test_callable(a: int, b=123):
             return a+b
-        result = command_registry().executables["test_callable"](State(), "1")
+        result = command_registry().executables["root"]["test_callable"](State(), "1")
         assert result.get() == 124
 
     def test_evaluate_command(self):
@@ -125,7 +125,7 @@ class TestCommands:
         @command
         def somecommand(x: int):  # has state as a first argument
             return 123+x
-        assert "somecommand" in command_registry().as_dict()
+        assert "somecommand" in command_registry().as_dict()["root"]
 
     def test_duplicate_registration(self):
         reset_command_registry()
@@ -133,33 +133,31 @@ class TestCommands:
             return 123+x
         command(somecommand)
         command(somecommand)
-        assert "somecommand" in command_registry().as_dict()
+        assert "somecommand" in command_registry().as_dict()["root"]
 
     def test_changing_attributes(self):
         reset_command_registry()
         def somecommand(x: int):  # has state as a first argument
             return 123+x
         command(somecommand)
-        assert "abc" not in command_registry().metadata["somecommand"].attributes
+        assert "abc" not in command_registry().metadata["root"]["somecommand"].attributes
         command(abc="def")(somecommand)
-        assert "def" == command_registry().metadata["somecommand"].attributes["abc"]
+        assert "def" == command_registry().metadata["root"]["somecommand"].attributes["abc"]
 
-    def test_registration_change(self):
+    def test_registration_modification(self):
         import importlib
-        import liquer.ext.lq_pandas  # register pandas commands and state type
         import liquer.ext.basic
         from liquer.commands import reset_command_registry
         reset_command_registry() # prevent double-registration
         # Hack to enforce registering of the commands
-        importlib.reload(liquer.ext.lq_pandas)
         importlib.reload(liquer.ext.basic)
 
-        assert "df_from" in command_registry().as_dict()
+        assert "flag" in command_registry().as_dict()["root"]
 
         try:
-            @first_command
-            def df_from():
-                return "New definition"
+            @command
+            def flag(name):
+                return f"New definition of flag called with {name}"
             redefined=True
         except:
             redefined=False
@@ -167,8 +165,8 @@ class TestCommands:
 
         try:
             @first_command(modify_command=True)
-            def df_from():
-                return "New definition"
+            def flag(name):
+                return f"New definition of flag called with {name}"
             redefined=True
         except:
             redefined=False
@@ -177,5 +175,32 @@ class TestCommands:
         # Cleanup
         reset_command_registry() # prevent double-registration
         # Hack to enforce registering of the commands
-        importlib.reload(liquer.ext.lq_pandas)
         importlib.reload(liquer.ext.basic)
+
+    def test_registration_namespace(self):
+        import importlib
+        from liquer import evaluate
+        import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+        reset_command_registry() # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.basic)
+
+        assert "flag" in command_registry().as_dict()["root"]
+
+        try:
+            @command(ns="new")
+            def flag(name):
+                return f"New definition of flag called with {name}"
+            redefined=True
+        except:
+            redefined=False
+
+        assert redefined
+        assert evaluate("flag-test/state_variable-test").get() == True
+
+        # Cleanup
+        reset_command_registry() # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.basic)
+

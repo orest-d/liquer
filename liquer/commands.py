@@ -34,19 +34,22 @@ class CommandRegistry(object):
         """Create empty command registry"""
         self.executables = {}
         self.metadata = {}
+        self.namespaces = {}
 
-    def is_already_registered(self, executable, metadata):
+    def is_doubleregistered(self, executable, metadata):
         """Returns True if the same function is already registered as a command.
         Another function registered under the same name would return False. 
         """
         name = metadata.name
+        ns = metadata.attributes.get("ns","root")
+        self.executables[ns] = self.executables.get(ns,{})
+        self.metadata[ns] = self.metadata.get(ns,{})
 
-        if name in self.executables:
-            registered = self.metadata[name]
+        if name in self.executables[ns]:
+            registered = self.metadata[ns][name]
             return (name == registered.name and
-                executable.inner_id() == self.executables[name].inner_id())
-        else:
-            return False
+                executable.inner_id() == self.executables[ns][name].inner_id())
+        return False
 
     def register(self, executable, metadata, modify=False):
         """Create command
@@ -54,30 +57,37 @@ class CommandRegistry(object):
         metadata is CommandMetadata
         """
         name = metadata.name
+        ns = metadata.attributes.get("ns","root")
+
         modify = modify or metadata.attributes.get("modify_command",False)
         can_register = modify
-        if name in self.executables:
-            if self.is_already_registered(executable, metadata):
+        self.executables[ns] = self.executables.get(ns,{})
+        self.metadata[ns] = self.metadata.get(ns,{})
+        if name in self.executables[ns]:
+            if self.is_doubleregistered(executable, metadata):
                 can_register = True
         else:
             can_register = True
         if can_register:
-            self.executables[name] = executable
-            self.metadata[name] = metadata
+            self.executables[ns][name] = executable
+            self.metadata[ns][name] = metadata
         else:
             raise Exception(f"Command {name} is already registered")
 
     def as_dict(self):
         """Returns dictionary representation of the registry, safe to serialize as json"""
-        return {name: cmd._asdict() for name, cmd in self.metadata.items()}
-
+        return {ns:{name: cmd._asdict() for name, cmd in metadata.items()} for ns,metadata in self.metadata.items() }
+ 
     def evaluate_command(self, state, qcommand: list):
         if not state.is_volatile():
             state = state.clone()
         command_name = qcommand[0]
-        if command_name in self.executables:
+        for ns in ["root"]:
+            if command_name in self.executables[ns]:
+                break
+        if command_name in self.executables[ns]:
             try:
-                state = self.executables[command_name](state, *qcommand[1:])
+                state = self.executables[ns][command_name](state, *qcommand[1:])
             except Exception as e:
                 traceback.print_exc()
                 state.log_exception(message=str(
@@ -88,8 +98,8 @@ class CommandRegistry(object):
             return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
         state.commands.append(qcommand)
         state.query = encode(state.commands)
-        if command_name in self.metadata:
-            state.attributes.update(self.metadata[command_name].attributes)
+        if command_name in self.metadata[ns]:
+            state.attributes.update(self.metadata[ns][command_name].attributes)
         else:
             print (f"Unknown command (metadata): {command_name}")
 
@@ -326,6 +336,8 @@ def command(*arg, **kwarg):
     if len(arg) == 1:
         assert callable(arg[0])
         f = arg[0]
+        if "ns" not in kwarg:
+            kwarg["ns"]="root"
         metadata = command_metadata_from_callable(f, attributes=kwarg)
         _register_command(f, metadata)
         return f
@@ -345,6 +357,8 @@ def first_command(*arg, **kwarg):
     if len(arg) == 1:
         assert callable(arg[0])
         f = arg[0]
+        if "ns" not in kwarg:
+            kwarg["ns"]="root"
         metadata = command_metadata_from_callable(f, has_state_argument=False, attributes=kwarg)
         _register_command(f, metadata)
         return f
