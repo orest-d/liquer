@@ -83,3 +83,44 @@ class TestCache:
         state, remainder = cached_part("/abc/def/", cache)
         assert remainder == "abc/def"
         assert state.get() == None
+
+    def test_cache_rules(self):
+        from liquer import evaluate, first_command
+        cache1 = MemoryCache()
+        cache2 = MemoryCache()
+        cache3 = MemoryCache()
+
+        set_cache(cache1.if_contains("abc") + cache2.if_not_contains("xyz") + cache3)
+        @first_command(abc=True)
+        def command1():
+            return "C1"
+
+        @first_command(xyz=True)
+        def command2():
+            return "C2"
+
+        @first_command
+        def command3():
+            return "C3"
+
+        evaluate("command1")
+        evaluate("command2")
+        evaluate("command3")
+
+        assert "command1" in cache1.storage
+        assert "command1" not in cache2.storage
+        assert "command1" not in cache3.storage
+        assert cache1.storage["command1"].get() == "C1"
+
+        assert "command2" not in cache1.storage
+        assert "command2" not in cache2.storage
+        assert "command2" in cache3.storage
+        assert cache3.storage["command2"].get() == "C2"
+
+        assert "command3" not in cache1.storage
+        assert "command3" in cache2.storage
+        assert "command3" not in cache3.storage
+        assert cache2.storage["command3"].get() == "C3"
+
+        set_cache(None)
+ 
