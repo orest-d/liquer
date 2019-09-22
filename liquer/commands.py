@@ -35,14 +35,37 @@ class CommandRegistry(object):
         self.executables = {}
         self.metadata = {}
 
-    def register(self, executable, metadata):
+    def is_already_registered(self, executable, metadata):
+        """Returns True if the same function is already registered as a command.
+        Another function registered under the same name would return False. 
+        """
+        name = metadata.name
+
+        if name in self.executables:
+            registered = self.metadata[name]
+            return (name == registered.name and
+                executable.inner_id() == self.executables[name].inner_id())
+        else:
+            return False
+
+    def register(self, executable, metadata, modify=False):
         """Create command
         executable is an CommandExecutable of the command,
         metadata is CommandMetadata
         """
         name = metadata.name
-        self.executables[name] = executable
-        self.metadata[name] = metadata
+        modify = modify or metadata.attributes.get("modify_command",False)
+        can_register = modify
+        if name in self.executables:
+            if self.is_already_registered(executable, metadata):
+                can_register = True
+        else:
+            can_register = True
+        if can_register:
+            self.executables[name] = executable
+            self.metadata[name] = metadata
+        else:
+            raise Exception(f"Command {name} is already registered")
 
     def as_dict(self):
         """Returns dictionary representation of the registry, safe to serialize as json"""
@@ -250,6 +273,9 @@ class CommandExecutable(object):
         self.f = f
         self.metadata = metadata
         self.argument_parser = argument_parser
+
+    def inner_id(self):
+        return id(self.f)
 
     def __call__(self, state, *args):
         args = list(args) + [a["default"]

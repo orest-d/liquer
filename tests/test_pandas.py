@@ -113,6 +113,8 @@ class TestPandas:
         import importlib
         import liquer.ext.lq_pandas  # register pandas commands and state type
         import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+        reset_command_registry() # prevent double-registration
         # Hack to enforce registering of the commands
         importlib.reload(liquer.ext.lq_pandas)
         importlib.reload(liquer.ext.basic)
@@ -135,6 +137,8 @@ class TestPandas:
         import importlib
         import liquer.ext.lq_pandas  # register pandas commands and state type
         import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+        reset_command_registry() # prevent double-registration
         # Hack to enforce registering of the commands
         importlib.reload(liquer.ext.lq_pandas)
         importlib.reload(liquer.ext.basic)

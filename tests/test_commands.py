@@ -126,3 +126,56 @@ class TestCommands:
         def somecommand(x: int):  # has state as a first argument
             return 123+x
         assert "somecommand" in command_registry().as_dict()
+
+    def test_duplicate_registration(self):
+        reset_command_registry()
+        def somecommand(x: int):  # has state as a first argument
+            return 123+x
+        command(somecommand)
+        command(somecommand)
+        assert "somecommand" in command_registry().as_dict()
+
+    def test_changing_attributes(self):
+        reset_command_registry()
+        def somecommand(x: int):  # has state as a first argument
+            return 123+x
+        command(somecommand)
+        assert "abc" not in command_registry().metadata["somecommand"].attributes
+        command(abc="def")(somecommand)
+        assert "def" == command_registry().metadata["somecommand"].attributes["abc"]
+
+    def test_registration_change(self):
+        import importlib
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+        reset_command_registry() # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.lq_pandas)
+        importlib.reload(liquer.ext.basic)
+
+        assert "df_from" in command_registry().as_dict()
+
+        try:
+            @first_command
+            def df_from():
+                return "New definition"
+            redefined=True
+        except:
+            redefined=False
+        assert not redefined
+
+        try:
+            @first_command(modify_command=True)
+            def df_from():
+                return "New definition"
+            redefined=True
+        except:
+            redefined=False
+        assert redefined
+
+        # Cleanup
+        reset_command_registry() # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.lq_pandas)
+        importlib.reload(liquer.ext.basic)
