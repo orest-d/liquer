@@ -24,4 +24,14 @@ pip install liquer-framework
 - [x] make indicator of *volatile* state, that can never be cached (volatile=immutable?)
 - [x] specify metadata in command decorator
 - [x] cache categories/levels dependent on metadata
+- [ ] remote liquer service as cache
 - [ ] improve command catalogue
+- [ ] automatic dependent query recording
+- [ ] implied volatile (query result dependent on a volatile query should be volatile)
+- [ ] attributes to prevent cloning and caching
+- [ ] prevent crashing on non-cloneable types - automatic volatile ?
+- [x] basic keras support
+- [ ] keras history support
+- [ ] numpy support
+- [ ] scikit support
+- [ ] command/query GUI
