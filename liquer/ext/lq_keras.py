@@ -3,6 +3,8 @@ from urllib.request import urlopen
 from tempfile import NamedTemporaryFile
 
 from keras.models import Model, model_from_json, model_from_yaml, load_model, clone_model
+from keras.utils import plot_model, print_summary
+
 from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 from liquer.commands import command, first_command
 from liquer.parser import encode, decode
@@ -64,3 +66,19 @@ class KerasModelStateType(StateType):
 
 KERASMODEL_STATE_TYPE = KerasModelStateType()
 register_state_type(Model, KERASMODEL_STATE_TYPE)
+
+@command
+def keras_plot_model(model, show_shapes=False, show_layer_names=True, rankdir='TB', expand_nested=False, dpi=96):
+    "Keras plot model as png"
+    assert isinstance(model, Model)
+    with NamedTemporaryFile(prefix="keras_model_",suffix=".png") as f:
+        plot_model(model, to_file=f.name, show_shapes=show_shapes, show_layer_names=show_layer_names, rankdir=rankdir, expand_nested=expand_nested, dpi=96)
+        b = open(f.name,"rb").read()
+    return b
+
+@command
+def keras_summary(model):
+    "Keras model summary"
+    s = StringIO()
+    print_summary(model, print_fn=lambda x,s=s:s.write(str(x)+"\n") )
+    return s.getvalue()

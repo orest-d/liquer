@@ -2,4 +2,5 @@ pytest==4.0.2
 pytest-cov==2.6.0
 pytest-httpserver>=0.3.0
 keras>=2.3.0
+pydot>=1.4.1
 -r requirements.txt
