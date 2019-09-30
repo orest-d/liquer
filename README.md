@@ -35,3 +35,4 @@ pip install liquer-framework
 - [ ] numpy support
 - [ ] scikit support
 - [ ] command/query GUI
+- [ ] fix volatility logic - now just the state does not get cloned 

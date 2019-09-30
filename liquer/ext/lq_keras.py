@@ -1,6 +1,6 @@
 from io import StringIO, BytesIO
-from urllib.request import urlopen
-from tempfile import NamedTemporaryFile
+from tempfile import mkstemp
+import os
 
 from keras.models import Model, model_from_json, model_from_yaml, load_model, clone_model
 from keras.utils import plot_model, print_summary
@@ -35,9 +35,11 @@ class KerasModelStateType(StateType):
             output.write(data.to_yaml())
             return output.getvalue().encode("utf-8"), mimetype
         elif extension in ("h5", "hdf5"):
-            with NamedTemporaryFile(prefix="keras_model_",suffix="."+extension) as f:
-                data.save(f.name)            
-                b = open(f.name,"rb").read()
+            handle, name = mkstemp(prefix="keras_model_",suffix="."+extension) # HACK - we need a file name, NamedTemporaryFile implementation does not work in windows
+            os.close(handle)
+            data.save(name)            
+            b = open(name,"rb").read()
+            os.remove(name)
             return b, mimetype
         else:
             raise Exception(
@@ -52,9 +54,13 @@ class KerasModelStateType(StateType):
         elif extension == "yaml":
             return model_from_yaml(b)
         elif extension in ["h5", "hdf5"]:
-            with NamedTemporaryFile(prefix="keras_model_",suffix="."+extension) as f:
+            handle, name = mkstemp(prefix="keras_model_",suffix="."+extension) # HACK - we need a file name, NamedTemporaryFile implementation does not work in windows
+            os.close(handle)
+            with open(name, "wb") as f:
                 f.write(b)
-                return load_model(f.name)
+            model = load_model(f.name)
+            os.remove(name)
+            return model
         raise Exception(
             f"Deserialization: file extension {extension} is not supported by kerasmodel type.")
 
@@ -68,12 +74,13 @@ KERASMODEL_STATE_TYPE = KerasModelStateType()
 register_state_type(Model, KERASMODEL_STATE_TYPE)
 
 @command
-def keras_plot_model(model, show_shapes=False, show_layer_names=True, rankdir='TB', expand_nested=False, dpi=96):
+def keras_plot_model(model, show_shapes:bool=False, show_layer_names:bool=True, rankdir:str='TB', expand_nested:bool=False, dpi:int=96):
     "Keras plot model as png"
     assert isinstance(model, Model)
-    with NamedTemporaryFile(prefix="keras_model_",suffix=".png") as f:
-        plot_model(model, to_file=f.name, show_shapes=show_shapes, show_layer_names=show_layer_names, rankdir=rankdir, expand_nested=expand_nested, dpi=96)
-        b = open(f.name,"rb").read()
+    handle, name = mkstemp(prefix="keras_model_",suffix=".png") # HACK - we need a file name, NamedTemporaryFile implementation does not work in windows
+    os.close(handle)
+    plot_model(model, to_file=name, show_shapes=show_shapes, show_layer_names=show_layer_names, rankdir=rankdir, expand_nested=expand_nested, dpi=96)
+    b = open(name,"rb").read()
     return b
 
 @command
