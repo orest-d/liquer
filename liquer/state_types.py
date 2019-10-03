@@ -86,6 +86,8 @@ class StateTypesRegistry(object):
         """Get state type object for a qualified type name
         If the qualified type name is not recognized, default_state_type is returned.
         """
+        if type_qualname is None:
+            return self.default_state_type
         type_qualname = get_type_qualname(type_qualname)
         return self.state_types_dictionary.get(type_qualname, self.default_state_type)
 
