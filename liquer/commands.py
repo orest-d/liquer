@@ -293,7 +293,8 @@ class CommandExecutable(object):
         args = list(args) + [a["default"]
                              for a in self.metadata.arguments[len(args):]]
         argv, remainder = self.argument_parser.parse(self.metadata, args)
-        assert len(remainder) == 0
+        if len(remainder) != 0:
+            raise Exception(f"Arguments not completely parsed for {self.metadata.name}")
         state_arg = state if self.metadata.state_argument["pass_state"] else state.get(
         )
         result = self.f(state_arg, *argv)

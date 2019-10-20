@@ -73,6 +73,7 @@ class StateTypesRegistry(object):
         self.state_types_dictionary = {}
         self.register(bytes, BytesStateType())
         self.register(str, TextStateType())
+        self.register(type(None), JsonStateType())
         self.default_state_type = JsonStateType()
 
     def register(self, type_qualname, state_type):
