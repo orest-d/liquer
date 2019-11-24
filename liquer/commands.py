@@ -83,30 +83,45 @@ class CommandRegistry(object):
             state = state.clone()
         command_name = qcommand[0]
 
-        for ns in state.vars.get("active_namespaces",["root"]):
-            if command_name in self.executables[ns]:
-                break
+        ns, command, metadata = self.resolve_command(state, command_name)
 
-        if command_name in self.executables[ns]:
+        if command is None:
+            print (f"Unknown command: {command_name}")
+            return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
+        else:
             try:
-                state = self.executables[ns][command_name](state, *qcommand[1:])
+                state = command(state, *qcommand[1:])
             except Exception as e:
                 traceback.print_exc()
                 state.log_exception(message=str(
                     e), traceback=traceback.format_exc())
                 state.exception = e
-        else:
-            print (f"Unknown command: {command_name}")
-            return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
+
         state.commands.append(qcommand)
+        state.extended_commands.append(dict(command_name=command_name,ns=ns,qcommand=qcommand,command_metadata=metadata._asdict()))
         state.query = encode(state.commands)
-        if command_name in self.metadata[ns]:
-            state.attributes.update(self.metadata[ns][command_name].attributes)
-        else:
-            print (f"Unknown command (metadata): {command_name}")
+        if metadata is not None:
+            state.attributes.update(metadata.attributes)
 
         return state
 
+    def resolve_command(self, state, command_name):
+        for ns in state.vars.get("active_namespaces",["root"]):
+            if ns not in self.executables:
+                print(f"Unknown namespace: {ns}")
+                continue
+            if command_name in self.executables[ns]:
+                break
+
+        if command_name in self.executables[ns]:
+            command = self.executables[ns][command_name]
+            if command_name in self.metadata[ns]:
+                return ns, command, self.metadata[ns][command_name]
+            else:
+                print (f"Unknown command (metadata): {command_name}")
+                return ns, command, None
+
+        return None, None, None
 
 _command_registry = None
 

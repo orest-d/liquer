@@ -45,6 +45,7 @@ class State(object):
         self.data = None
         self.message = ""
         self.commands = []
+        self.extended_commands = []
         self.type_identifier = None
         self.caching = True
         self.exception = None
@@ -129,6 +130,7 @@ class State(object):
             is_error=self.is_error,
             message=self.message,
             commands=self.commands,
+            extended_commands=self.extended_commands,
             vars=dict(**self.vars),
             attributes=self.attributes
         )
@@ -150,6 +152,7 @@ class State(object):
         self.is_error = state["is_error"]
         self.message = state["message"]
         self.commands = state["commands"]
+        self.extended_commands = state.get("extended_commands",[])
         self.vars = state["vars"]
         self.attributes = state["attributes"]
         return self
