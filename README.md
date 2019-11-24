@@ -36,3 +36,7 @@ pip install liquer-framework
 - [ ] scikit support
 - [ ] command/query GUI
 - [ ] fix volatility logic - now just the state does not get cloned 
+- [ ] meta extension (in progress)
+- [ ] parquet support
+- [ ] simple GUI
+- [ ] composite state (MVP: state can be a list or dict of 'normal' states)
