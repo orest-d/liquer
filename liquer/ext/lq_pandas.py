@@ -80,6 +80,10 @@ class DataframeStateType(StateType):
 DATAFRAME_STATE_TYPE = DataframeStateType()
 register_state_type(pd.DataFrame, DATAFRAME_STATE_TYPE)
 
+@command
+def to_df(data):
+    "Convert data to DataFrame; data should be list of dicts or dict of lists."
+    return pd.DataFrame(data)
 
 @first_command
 def df_from(url, extension=None):

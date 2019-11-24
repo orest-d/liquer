@@ -7,6 +7,7 @@ from flask import Flask
 from liquer.cache import FileCache, set_cache
 from liquer.state import set_var
 import liquer.ext.basic
+import liquer.ext.meta
 import liquer.ext.lq_pandas
 import liquer.ext.lq_hxl
 
@@ -22,7 +23,7 @@ set_var("api_path",url_prefix+"/q/")
 set_var("server","http://localhost:5000"+url_prefix)
 
 
-set_cache(FileCache("cache"))
+#set_cache(FileCache("cache"))
 
 if __name__ == '__main__':
     webbrowser.open("http://localhost:5000"+url_prefix)

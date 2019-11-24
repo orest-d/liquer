@@ -50,6 +50,7 @@ class State(object):
         self.caching = True
         self.exception = None
         self.attributes = {}
+        self.arguments=None
 
     def with_caching(self, caching=True):
         """Enables or disables caching for this state"""
@@ -120,7 +121,7 @@ class State(object):
         """Represent state metadata as a dictionary - suitable for json serialization
         State data is NOT part of the returned dictionary.
         """
-        return dict(
+        return deepcopy(dict(
             query=self.query,
             type_identifier=self.type_identifier,
             sources=self.sources,
@@ -133,7 +134,7 @@ class State(object):
             extended_commands=self.extended_commands,
             vars=dict(**self.vars),
             attributes=self.attributes
-        )
+        ))
 
     def mimetype(self):
         """Return mime type of the data"""

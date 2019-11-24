@@ -41,14 +41,14 @@ class CommandRegistry(object):
         Another function registered under the same name would return False. 
         """
         name = metadata.name
-        ns = metadata.attributes.get("ns","root")
-        self.executables[ns] = self.executables.get(ns,{})
-        self.metadata[ns] = self.metadata.get(ns,{})
+        ns = metadata.attributes.get("ns", "root")
+        self.executables[ns] = self.executables.get(ns, {})
+        self.metadata[ns] = self.metadata.get(ns, {})
 
         if name in self.executables[ns]:
             registered = self.metadata[ns][name]
             return (name == registered.name and
-                executable.inner_id() == self.executables[ns][name].inner_id())
+                    executable.inner_id() == self.executables[ns][name].inner_id())
         return False
 
     def register(self, executable, metadata, modify=False):
@@ -57,12 +57,12 @@ class CommandRegistry(object):
         metadata is CommandMetadata
         """
         name = metadata.name
-        ns = metadata.attributes.get("ns","root")
+        ns = metadata.attributes.get("ns", "root")
 
-        modify = modify or metadata.attributes.get("modify_command",False)
+        modify = modify or metadata.attributes.get("modify_command", False)
         can_register = modify
-        self.executables[ns] = self.executables.get(ns,{})
-        self.metadata[ns] = self.metadata.get(ns,{})
+        self.executables[ns] = self.executables.get(ns, {})
+        self.metadata[ns] = self.metadata.get(ns, {})
         if name in self.executables[ns]:
             if self.is_doubleregistered(executable, metadata):
                 can_register = True
@@ -76,17 +76,16 @@ class CommandRegistry(object):
 
     def as_dict(self):
         """Returns dictionary representation of the registry, safe to serialize as json"""
-        return {ns:{name: cmd._asdict() for name, cmd in metadata.items()} for ns,metadata in self.metadata.items() }
- 
+        return {ns: {name: cmd._asdict() for name, cmd in metadata.items()} for ns, metadata in self.metadata.items()}
+
     def evaluate_command(self, state, qcommand: list):
         if not state.is_volatile():
             state = state.clone()
         command_name = qcommand[0]
-
         ns, command, metadata = self.resolve_command(state, command_name)
 
         if command is None:
-            print (f"Unknown command: {command_name}")
+            print(f"Unknown command: {command_name}")
             return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
         else:
             try:
@@ -96,9 +95,14 @@ class CommandRegistry(object):
                 state.log_exception(message=str(
                     e), traceback=traceback.format_exc())
                 state.exception = e
-
+        arguments = getattr(state, "arguments", None)
         state.commands.append(qcommand)
-        state.extended_commands.append(dict(command_name=command_name,ns=ns,qcommand=qcommand,command_metadata=metadata._asdict()))
+        state.extended_commands.append(dict(
+            command_name=command_name,
+            ns=ns,
+            qcommand=qcommand,
+            command_metadata=metadata._asdict(),
+            arguments=arguments))
         state.query = encode(state.commands)
         if metadata is not None:
             state.attributes.update(metadata.attributes)
@@ -106,7 +110,7 @@ class CommandRegistry(object):
         return state
 
     def resolve_command(self, state, command_name):
-        for ns in state.vars.get("active_namespaces",["root"]):
+        for ns in state.vars.get("active_namespaces", ["root"]):
             if ns not in self.executables:
                 print(f"Unknown namespace: {ns}")
                 continue
@@ -118,10 +122,11 @@ class CommandRegistry(object):
             if command_name in self.metadata[ns]:
                 return ns, command, self.metadata[ns][command_name]
             else:
-                print (f"Unknown command (metadata): {command_name}")
+                print(f"Unknown command (metadata): {command_name}")
                 return ns, command, None
 
         return None, None, None
+
 
 _command_registry = None
 
@@ -140,6 +145,8 @@ def reset_command_registry():
     _command_registry = CommandRegistry()
     return _command_registry
 
+class ArgumentParserException(Exception):
+    pass
 
 class ArgumentParser(object):
     is_argv = False
@@ -149,6 +156,9 @@ class ArgumentParser(object):
 
     def parse(self, metadata, args):
         return args[0], args[1:]
+
+    def parse_meta(self, metadata, args):
+        return args[0], (args[0], metadata), args[1:]
 
 
 class SequenceArgumentParser(ArgumentParser):
@@ -172,25 +182,66 @@ class SequenceArgumentParser(ArgumentParser):
                 parsed_arguments.append(parsed)
         return parsed_arguments, args
 
+    def parse_meta(self, metadata, args):
+        parsed_arguments = []
+        parsed_meta = []
+        for ap, meta in zip(self.sequence, metadata):
+            parsed, argmeta, args = ap.parse_meta(meta, args)
+            if ap.is_argv:
+                parsed_arguments.extend(parsed)
+            else:
+                parsed_arguments.append(parsed)
+            parsed_meta.append(argmeta)
+        return parsed_arguments, parsed_meta, args
+
 
 class IntArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return int(args[0]), args[1:]
+
+    def parse_meta(self, metadata, args):
+        try:
+            value = int(args[0])
+        except:
+            raise ArgumentParserException(
+                f'''Error parsing integer argument '{metadata["name"]}' from value {repr(args[0])}''')
+        return value, (value, metadata), args[1:]
 
 
 class FloatArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return float(args[0]), args[1:]
 
+    def parse_meta(self, metadata, args):
+        try:
+            value = float(args[0])
+        except:
+            raise ArgumentParserException(
+                f'''Error parsing float argument '{metadata["name"]}' from value {repr(args[0])}''')
+        return value, (value, metadata), args[1:]
+
 
 class BooleanArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return dict(y=True, yes=True, n=False, no=False, t=True, true=True, f=False, false=False).get(str(args[0]).lower(), False), args[1:]
 
+    def parse_meta(self, metadata, args):
+        try:
+            value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
+                         f=False, false=False).get(str(args[0]).lower(), False)
+        except:
+            raise ArgumentParserException(
+                f'''Error parsing boolean argument '{metadata["name"]}' from value {repr(args[0])}''')
+        return value, (value, metadata), args[1:]
+
 
 class ListArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return args, []
+
+    def parse_meta(self, metadata, args):
+        value = args
+        return value, (value, metadata), []
 
 
 class ArgvArgumentParser(ListArgumentParser):
@@ -306,16 +357,23 @@ class CommandExecutable(object):
 
     def __call__(self, state, *args):
         args = list(args) + [a["default"]
-                             for a in self.metadata.arguments[len(args):]]
-        argv, remainder = self.argument_parser.parse(self.metadata, args)
+                             for a in self.metadata.arguments[len(args):] if not a["multiple"]]
+        try:
+            argv, argmeta, remainder = self.argument_parser.parse_meta(
+                self.metadata.arguments, args)
+        except ArgumentParserException as e:
+            raise ArgumentParserException(f"While executing '{self.metadata.name}': {e}")
         if len(remainder) != 0:
-            raise Exception(f"Arguments not completely parsed for {self.metadata.name}")
+            raise ArgumentParserException(
+                f"Too many arguments for '{self.metadata.name}': {repr(remainder)}")
         state_arg = state if self.metadata.state_argument["pass_state"] else state.get(
         )
         result = self.f(state_arg, *argv)
         if isinstance(result, State):
+            result.arguments = argmeta
             return result
         else:
+            state.arguments = argmeta
             return state.with_data(result)
 
 
@@ -324,13 +382,21 @@ class FirstCommandExecutable(CommandExecutable):
 
     def __call__(self, state, *args):
         args = list(args) + [a["default"]
-                             for a in self.metadata.arguments[len(args):]]
-        argv, remainder = self.argument_parser.parse(self.metadata, args)
-        assert len(remainder) == 0
+                             for a in self.metadata.arguments[len(args):] if not a["multiple"]]
+        try:
+            argv, argmeta, remainder = self.argument_parser.parse_meta(
+                self.metadata.arguments, args)
+        except ArgumentParserException as e:
+            raise ArgumentParserException(f"While executing '{self.metadata.name}': {e}")
+        if len(remainder) != 0:
+            raise ArgumentParserException(
+                f"Too many arguments for '{self.metadata.name}': {repr(remainder)}")
         result = self.f(*argv)
         if isinstance(result, State):
+            result.arguments = argmeta
             return result
         else:
+            state.arguments = argmeta
             return state.with_data(result)
 
 
@@ -355,7 +421,7 @@ def command(*arg, **kwarg):
         assert callable(arg[0])
         f = arg[0]
         if "ns" not in kwarg:
-            kwarg["ns"]="root"
+            kwarg["ns"] = "root"
         metadata = command_metadata_from_callable(f, attributes=kwarg)
         _register_command(f, metadata)
         return f
@@ -376,8 +442,9 @@ def first_command(*arg, **kwarg):
         assert callable(arg[0])
         f = arg[0]
         if "ns" not in kwarg:
-            kwarg["ns"]="root"
-        metadata = command_metadata_from_callable(f, has_state_argument=False, attributes=kwarg)
+            kwarg["ns"] = "root"
+        metadata = command_metadata_from_callable(
+            f, has_state_argument=False, attributes=kwarg)
         _register_command(f, metadata)
         return f
     else:
