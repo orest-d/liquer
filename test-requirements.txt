@@ -3,4 +3,5 @@ pytest-cov==2.6.0
 pytest-httpserver>=0.3.0
 keras>=2.3.0
 pydot>=1.4.1
+sklearn
 -r requirements.txt
