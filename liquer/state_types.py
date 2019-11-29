@@ -1,6 +1,7 @@
 from io import BytesIO, StringIO
 import json
 from copy import deepcopy
+import base64
 
 """State types represent the additional properties of data types that can be used as a state:
 - state type must be representable as a (short) string identifier
@@ -32,6 +33,7 @@ of a state being cached or served is limited.
 
 MIMETYPES = dict(
     json="application/json",
+    djson="application/json",
     txt='text/plain',
     html='text/html',
     htm='text/html',
@@ -73,6 +75,7 @@ class StateTypesRegistry(object):
         self.state_types_dictionary = {}
         self.register(bytes, BytesStateType())
         self.register(str, TextStateType())
+        self.register(dict, DictStateType())
         self.register(type(None), JsonStateType())
         self.default_state_type = JsonStateType()
 
@@ -148,7 +151,7 @@ def copy_state_data(data):
 
 
 class StateType(object):
-    """Abstarct state type basis"""
+    """Abstract state type basis"""
     def identifier(self):
         """String identifier of the state type"""
         raise NotImplementedError(
@@ -192,6 +195,69 @@ class StateType(object):
         """Create a deep copy of data.
         Data must be of this state type."""
         return self.from_bytes(self.as_bytes(data)[:])
+
+class DictStateType(StateType):
+    """JSON serializable data."""
+    def identifier(self):
+        return "dictionary"
+
+    def default_extension(self):
+        return "djson"
+
+    def is_type_of(self, data):
+        return isinstance(data, dict)
+
+    def encode_element(self,data_element):
+        if isinstance(data_element,(int, float, str)) or data_element is None:
+            return json.dumps(data_element)
+        else:
+            reg = state_types_registry()
+            t = reg.get(get_type_qualname(type(data_element)))
+            extension = t.default_extension()
+            b, mime = t.as_bytes(data_element, extension=extension)
+            txt = base64.b64encode(b).decode("utf-8")
+            return '[%-10s, %-4s, "%s"]'%(f'"{t.identifier()}"',f'"{extension}"',txt)
+
+    def decode_element(self,data_element_encoded):
+        if isinstance(data_element_encoded,list):
+            type_identifier, extension, b64 = data_element_encoded
+            b = base64.b64decode(b64)
+            return decode_state_data(b, type_identifier, extension)
+        else:
+            return data_element_encoded
+
+    def as_bytes(self, data, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+
+        if extension == "djson":
+            d="{\n"
+            sep=""
+            for key, value in data.items():
+                assert isinstance(key, str)
+                d+=sep
+                d+="%-20s%s"%(f'"{key}":', self.encode_element(value))
+                sep=",\n"
+            d+="\n}"
+            return d.encode("utf-8"), mimetype_from_extension("djson")
+        elif extension == "json":
+            return json.dumps(data).encode("utf-8"), mimetype_from_extension("json")
+
+        raise Exception(f"Unsupported file extension: {extension}")
+
+    def from_bytes(self, b: bytes, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        if extension == "djson":
+            d={}
+            for key, value in json.loads(b.decode("utf-8")).items():
+                d[key]=self.decode_element(value)
+            return d
+        elif extension == "json":
+            return json.loads(b.decode("utf-8"))
+
+    def copy(self, data):
+        return deepcopy(data)
 
 class JsonStateType(StateType):
     """JSON serializable data."""
