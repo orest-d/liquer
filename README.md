@@ -18,25 +18,25 @@ pip install liquer-framework
 
 # TODO
 
+- [ ] improve command catalogue (in progress)
+- [ ] support for dataframe iterator (maybe)
 - [x] namespaces
-- [ ] support for dataframe iterator 
 - [x] lift the requirement for a state to be cloneable - at least for some data types
 - [x] make indicator of *volatile* state, that can never be cached (volatile=immutable?)
 - [x] specify metadata in command decorator
 - [x] cache categories/levels dependent on metadata
+- [x] basic keras support
+- [x] basic scikit support
+- [x] composite state (djson)
+- [x] meta extension
 - [ ] remote liquer service as cache
-- [ ] improve command catalogue
 - [ ] automatic dependent query recording
 - [ ] implied volatile (query result dependent on a volatile query should be volatile)
 - [ ] attributes to prevent cloning and caching
 - [ ] prevent crashing on non-cloneable types - automatic volatile ?
-- [x] basic keras support
 - [ ] keras history support
 - [ ] numpy support
-- [ ] scikit support
 - [ ] command/query GUI
 - [ ] fix volatility logic - now just the state does not get cloned 
-- [ ] meta extension (in progress)
 - [ ] parquet support
 - [ ] simple GUI
-- [ ] composite state (MVP: state can be a list or dict of 'normal' states)
