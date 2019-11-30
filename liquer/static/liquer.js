@@ -1,75 +1,199 @@
-window.onload = function () {
-
-    window.app = new Vue({
-        el: "#app",
-        data: {
-            view: 'home',
-            commands: {},
-            status: "OK",
-            status_color: "green",
-            message: "",
-            message_on: false,
-            query: "",
-            query_response: "",
-            query_debug: {},
-            ql:[],
-            qfilename:""            
-        },
-        methods: {
-            error: function (message, reason) {
-                this.status = "ERROR";
-                this.status_color = "red";
-                this.message = message;
-                console.log("ERROR:" + message, reason);
-            },
-            info: function (message) {
-                this.status = "OK";
-                this.status_color = "";
-                this.message = message;
-                console.log("INFO:" + message);
-            },
-            build_query:function(){
-                this.ql=[["abc","def"],["xyz","123"]];
-                this.info("Build query: ", this.ql);
-                this.$http.post("../api/build", {ql:this.ql}).then(
-                    function (response) {
-                        response.json().then(function (data) {
-                            this.query = data.query;
-                            this.message = data.message;
-                            this.status = data.status;
-                            this.info("Build query executed.");
-                        }.bind(this), function (reason) { this.error("Build query parsing error:", reason); }.bind(this));
-                    }.bind(this), function (reason) { this.error("Build query error:", reason); }.bind(this)); 
-            },
-            execute_query: function () {
-                this.info("Execute query: " + this.query);
-                this.query_response = "";
-                this.query_debug={};
-                this.$http.get("../q/" + this.query).then(
-                    function (response) {
-                        response.text().then(function (data) {
-                            this.query_response = data;
-                            this.info("Query executed.");
-                        }.bind(this), function (reason) { this.error("Query result parsing error:", reason); }.bind(this));
-                    }.bind(this), function (reason) { this.error("Query execution error:", reason); }.bind(this));
-
-                this.$http.get("../api/debug-json/" + this.query).then(
-                    function (response) {
-                        response.json().then(function (data) {
-                            this.query_debug = data;
-                            this.info("Query debug executed.");
-                        }.bind(this), function (reason) { this.error("Query debug parsing error:", reason); }.bind(this));
-                    }.bind(this), function (reason) { this.error("Query debug error:", reason); }.bind(this));
+window.vue = new Vue({
+    el: '#app',
+    data: {
+        route: "",
+        status: "OK",
+        state: null,
+        data: null,
+        query: '',
+        message: "",
+        html: "",
+        url_prefix: "/liquer/q/",
+        external_link: "",
+        mode: "",
+        menu: [
+            {title:"Help", items:[
+                {title:"Homepage", link:"https://orest-d.github.io/liquer/"},
+                {title:"Commands", link:"ns-meta/flat_commands_nodoc/to_df"},
+           ]}
+        ]
+    },
+    vuetify: new Vuetify(),
+    methods: {
+        update_route: function () {
+            console.log("Update", window.location.hash);
+            this.route = window.location.hash.slice("1");
+            if (this.route.length>0){
+                this.load(this.route);
+            }
+            else{
+                this.load("state/state.json");
             }
         },
-        created: function () {
-            this.$http.get("../api/commands.json").then(function (response) {
-                response.json().then(function (data) {
-                    this.commands = data;
-                    this.info("Commands loaded.");
-                }.bind(this), function (reason) { this.error("Json error:", reason); }.bind(this));
-            }.bind(this), function (reason) { this.error("Commands loading error:", reason); }.bind(this));
+        info: function (txt) {
+            console.log("INFO:" + txt);
+            this.message = txt;
+            this.status = "OK";
+        },
+        error: function (txt, reason) {
+            console.log("ERROR:" + txt, reason);
+            this.message = txt;
+            this.status = "ERROR";
+            if (reason.hasOwnProperty("body")) {
+                this.html = reason.body;
+            }
+        },
+        goto: function (link) {
+            console.log("GOTO", link);
+            if (link.indexOf(":") == -1) {
+                window.location.href = "#" + link;
+                this.load(link);
+            }
+            else {
+                this.update_link=true;
+                window.location.href = "#";
+                this.external_link = link;
+                this.mode = "iframe";
+            }
+        },
+        load: function (query) {
+            if (this.update_link){
+                console.log("Update link prevented loading");
+                this.update_link=false;
+                return;
+            }
+            console.log("Load", query);
+            var q = query.split("/").filter(function(x){return x.length;});
+            
+            this.query = query;
+            if (q.length > 0) {
+                var last = q[q.length - 1];
+                var path = query;
+                var query_basis = query;
+                var extension="";
+                if (last.indexOf("-") == -1 && last.indexOf(".") != -1) {
+                    query_basis = q.slice(0, q.length - 1).join("/");
+                    extension = last.split(".");
+                    extension = extension[extension.length-1];
+                }
+                this.status = "LOADING";
+                this.mode = "";
+                console.log("query_basis",query_basis)
+                console.log("Load state", this.url_prefix + query_basis + "/state/state.json");
+                this.$http.get(this.url_prefix + query_basis + "/state/state.json").then(function (response) {
+                    response.json().then(function (data) {
+                        this.data = null;
+                        this.state = data;
+                        try {
+                            this.menu = this.state.vars.menu;
+                        }
+                        catch (error) {
+                            console.log("No menu:", error);
+                        }
+                        this.html = "";
+                        this.info("State loaded.");
+                        
+                        if (this.state.type_identifier == "dataframe") {
+                            if (extension=="") {
+                                console.log("dataframe -> append .json");
+                                path += "/data.json";
+                            }
+                        }
+                        if (this.state.extension == "json" || path.endsWith(".json")) {
+                            this.status = "LOADING";
+                            console.log("Load json data", this.url_prefix + path);
+                            this.$http.get(this.url_prefix + path).then(function (response) {
+                                response.json().then(function (data) {
+                                    this.html = "";
+                                    this.data = data;
+                                    this.info("Data loaded.");
+                                    if (this.state.type_identifier == "dataframe") {
+                                        this.mode = "dataframe";
+                                    }
+                                }.bind(this), function (reason) { this.error("Json error (data)", reason); }.bind(this));
+                            }.bind(this), function (reason) { this.error("Data loading error", reason); }.bind(this));
+                        }
+                        else if (this.state.extension == "html" || this.state.extension == "htm" || path.endsWith(".html") || path.endsWith(".htm")) {
+                            console.log("html mode");
+                            this.external_link = this.url_prefix + path;
+                            this.mode = "iframe";
+                        }
+                        else if (this.state.extension == "png" ||
+                                 this.state.extension == "jpg" ||
+                                 this.state.extension == "jpeg" ||
+                                 path.endsWith(".png") ||
+                                 path.endsWith(".jpg") ||
+                                 path.endsWith(".svg") ||
+                                 path.endsWith(".jpeg")) {
+                            console.log("image mode");
+                            this.external_link = this.url_prefix + path;
+                            this.mode = "image";
+                        }
+                        else {
+                            console.log("iframe mode by default");
+                            this.external_link = this.url_prefix + path;
+                            this.mode = "iframe";
+                        }
+                    }.bind(this), function (reason) { this.error("Json error (state)", reason); }.bind(this));
+                }.bind(this), function (reason) { this.error("State loading error", reason); }.bind(this));
+            }
+            else {
+                this.data = null;
+                this.status = "LOADING";
+                console.log("Load state (2) ", this.url_prefix + "state/state.json");
+                this.$http.get(this.url_prefix + "state/state.json").then(function (response) {
+                    response.json().then(function (data) {
+                        this.data = null;
+                        this.state = data;
+                        this.html = "";
+                        this.mode = "";
+                        this.info("State loaded.");
+                    }.bind(this), function (reason) { this.error("Json error (state)", reason); }.bind(this));
+                }.bind(this), function (reason) { this.error("State loading error", reason); }.bind(this));
+            }
         }
+    },
+    computed: {
+        status_color: function () {
+            if (this.status == "OK") {
+                return "green";
+            }
+            if (this.status == "ERROR") {
+                return "red";
+            }
+            return "gray";
+        },
+        dataframe_headers: function () {
+            if (this.data == null) {
+                return [];
+            }
+            else {
+                var h = [
+                ];
 
-    });
-};
+                this.data.schema.fields.forEach(
+                    function (x) {
+                        h.push({
+                            text: x.name, value: x.name
+                        });
+                    }
+                );
+                console.log(h);
+                return h;
+            }
+        },
+        dataframe_rows: function () {
+            if (this.data == null) {
+                return [];
+            }
+            else {
+                console.log("rows", this.data.data)
+                return this.data.data;
+            }
+        }
+    },
+    created: function () {
+        window.onhashchange = this.update_route
+        this.update_route();
+    },
+});
