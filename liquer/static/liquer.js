@@ -10,6 +10,8 @@ window.vue = new Vue({
         html: "",
         url_prefix: "/liquer/q/",
         external_link: "",
+        xlsx_link: "",
+        csv_link: "",
         mode: "",
         menu: [
             {title:"Help", items:[
@@ -57,6 +59,8 @@ window.vue = new Vue({
             }
         },
         load: function (query) {
+            this.xlsx_link="";
+            this.csv_link="";
             if (this.update_link){
                 console.log("Update link prevented loading");
                 this.update_link=false;
@@ -71,10 +75,12 @@ window.vue = new Vue({
                 var path = query;
                 var query_basis = query;
                 var extension="";
+                var filename=last.replace("-","_");
                 if (last.indexOf("-") == -1 && last.indexOf(".") != -1) {
                     query_basis = q.slice(0, q.length - 1).join("/");
-                    extension = last.split(".");
-                    extension = extension[extension.length-1];
+                    var v = last.split(".");
+                    filename = v[0];
+                    extension = v[v.length-1];
                 }
                 this.status = "LOADING";
                 this.mode = "";
@@ -98,6 +104,8 @@ window.vue = new Vue({
                                 console.log("dataframe -> append .json");
                                 path += "/data.json";
                             }
+                            this.csv_link = this.url_prefix+query_basis+"/"+filename+".csv";
+                            this.xlsx_link = this.url_prefix+query_basis+"/"+filename+".xlsx";
                         }
                         if (this.state.extension == "json" || path.endsWith(".json")) {
                             this.status = "LOADING";

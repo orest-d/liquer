@@ -4,4 +4,5 @@ pytest-httpserver>=0.3.0
 keras>=2.3.0
 pydot>=1.4.1
 sklearn
+Pygments
 -r requirements.txt

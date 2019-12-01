@@ -70,6 +70,10 @@
                 </v-menu>
                 <v-spacer></v-spacer>
                 <v-toolbar-items>
+                    <v-btn :href="xlsx_link" color="green" v-if="mode=='dataframe'">xlsx</v-btn>
+                    <v-btn :href="csv_link" color="orange" v-if="mode=='dataframe'">csv</v-btn>
+                    <v-btn :href="external_link" color="orange" v-if="mode=='iframe'">link</v-btn>
+                    <v-btn :href="external_link" color="orange" v-if="mode=='image'">image</v-btn>
                     <v-btn @click="mode='inspect'" text>Inspect</v-btn>
                 </v-toolbar-items>
             </v-app-bar>
@@ -243,7 +247,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.1.12/dist/vuetify.min.js"></script>
-    <script src="/liquer/static/liquer.js"></script>
+    <script src="liquer.js"></script>
 </body>
 
 </html>

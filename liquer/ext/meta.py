@@ -1,4 +1,5 @@
 from liquer.commands import command, first_command, command_registry
+from liquer.query import evaluate_template
 import liquer.ext.basic
 
 @first_command(ns="meta")
@@ -44,8 +45,10 @@ def state(state):
 @command(ns="meta")
 def help(state, command_name, ns="root"):
     """Returns a description of the command"""
+    crd = command_registry().as_dict()
+    make_link =  ("py" in crd) and ("pygments" in crd)
     try:
-        r = command_registry().as_dict()[ns]
+        r = crd[ns]
         try:
             c = r[command_name]
             html=f"<html><head><title>{command_name}</title></head>"
@@ -62,14 +65,20 @@ def help(state, command_name, ns="root"):
             for key,value in sorted(c["attributes"].items()):
                 html+=f"    <li><b>{key}</b>:{value}</li>\n"
             html+="  </ul>"
-            html+=f"<h3>Python module</h3>{c['module']}\n"
+            html+=f"<h3>Python module</h3>\n"
+            module = c['module']
+            if make_link:
+                modfile = module.replace(".","_")
+                html+=evaluate_template(f'<a href="$ns-py-pygments/module_source-{module}/highlight/link-url-html$/{modfile}.html">{module}</a>\n')
+            else:
+                html+=module
 
             html+="</body>"
             html+="</html>"
             return state.with_data(html).with_filename("help.html")
         except KeyError:
             html = f"<h1>Command <em>{command_name}</em> not registered in namespace <em>{ns}</em></h1>"
-            candidates = ", ".join(key for key,value in command_registry().as_dict().items() if command_name in value)
+            candidates = ", ".join(key for key,value in crd.items() if command_name in value)
             if len(candidates):
                 html+=f"Command can be found in: {candidates}"
             else:

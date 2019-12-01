@@ -9,12 +9,14 @@ import liquer.blueprint as bp
 import webbrowser
 from flask import Flask, make_response, redirect
 from liquer.cache import FileCache, set_cache
-from liquer.state import set_var
+from liquer.state import set_var, get_vars
 from liquer import *
 import liquer.ext.basic
 import liquer.ext.meta
 import liquer.ext.lq_pandas
 import liquer.ext.lq_hxl
+import liquer.ext.lq_python
+import liquer.ext.lq_pygments
 
 app = Flask(__name__)
 logging.basicConfig()
@@ -26,19 +28,33 @@ url_prefix='/liquer'
 app.register_blueprint(bp.app, url_prefix=url_prefix)
 set_var("api_path",url_prefix+"/q/")
 set_var("server","http://localhost:5000")
-set_var("menu",[
-    dict(title="Test", items=[
-        dict(title="Hello, world - html", link="hello_html/hello.html"),
-        dict(title="Hello, world - text", link="hello_text"),
-        dict(title="Logo", link="logo/logo.png"),
-    ]),
-   dict(title="Help", items=[
-        dict(title="Commands", link="ns-meta/flat_commands_nodoc/to_df"),
-        dict(title="Homepage", link="https://orest-d.github.io/liquer/"),
-    ])
-])
+#set_var("menu",[
+#    dict(title="Test", items=[
+#        dict(title="Hello, world - html", link="hello_html/hello.html"),
+#        dict(title="Hello, world - text", link="hello_text"),
+#        dict(title="Logo", link="logo/logo.png"),
+#    ]),
+#   dict(title="Help", items=[
+#        dict(title="Commands", link="ns-meta/flat_commands_nodoc/to_df"),
+#        dict(title="Homepage", link="https://orest-d.github.io/liquer/"),
+#    ])
+#])
 
+def add_menuitem(title, subtitle, link):
+    menu = get_vars().get("menu",[])
+    try:
+        item_number = [i for i,item in enumerate(menu) if item["title"]==title][0]
+    except:
+        menu.append(dict(title=title,items=[]))
+        item_number = len(menu)-1
+    menu[item_number]["items"].append(dict(title=subtitle,link=link))
+    set_var("menu",menu)
 
+add_menuitem("Test", "Hello, world - html", "hello_html/hello.html")
+add_menuitem("Test", "Hello, world - txt",  "hello_text")
+add_menuitem("Help", "Commands",            "ns-meta/flat_commands_nodoc/to_df")
+add_menuitem("Help", "Homepage",            "https://orest-d.github.io/liquer/")
+ 
 @first_command
 def hello_html():
     return """
