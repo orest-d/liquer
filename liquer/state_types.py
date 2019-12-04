@@ -2,6 +2,7 @@ from io import BytesIO, StringIO
 import json
 from copy import deepcopy
 import base64
+import pickle
 
 """State types represent the additional properties of data types that can be used as a state:
 - state type must be representable as a (short) string identifier
@@ -50,7 +51,9 @@ MIMETYPES = dict(
     svg='image/svg+xml',
     jpg='image/jpeg',
     jpeg='image/jpeg',
-    b="application/octet-stream"
+    b="application/octet-stream",
+    pkl="application/octet-stream",
+    pickle="application/octet-stream"
 )
 
 def mimetype_from_extension(extension):
@@ -77,7 +80,9 @@ class StateTypesRegistry(object):
         self.register(str, TextStateType())
         self.register(dict, DictStateType())
         self.register(type(None), JsonStateType())
-        self.default_state_type = JsonStateType()
+        self.register(int, JsonStateType())
+        self.register(float, JsonStateType())
+        self.default_state_type = PickleStateType()
 
     def register(self, type_qualname, state_type):
         """Register a new state type for a qualified type name"""
@@ -292,6 +297,46 @@ class JsonStateType(StateType):
 
     def copy(self, data):
         return deepcopy(data)
+
+class PickleStateType(StateType):
+    """Pickle-serializable data."""
+    def identifier(self):
+        return "pickle"
+
+    def default_extension(self):
+        return "pickle"
+
+    def is_type_of(self, data):
+        return True
+
+    def as_bytes(self, data, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+
+        if extension in ["pkl","pickle"]:
+            return pickle.dumps(data), mimetype_from_extension("pickle")
+        elif extension == "json":
+            return json.dumps(data).encode("utf-8"), mimetype_from_extension("json")
+        elif extension in ["html","htm"]:
+            if isinstance(data, str):
+                return data.encode("utf-8"), mimetype_from_extension("html")
+            else:
+                return f"<pre>{json.dumps(data)}</pre>".encode("utf-8"), mimetype_from_extension("html")
+        raise Exception(f"Unsupported file extension: {extension}")
+
+    def from_bytes(self, b: bytes, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+
+        if extension in ["pkl", "pickle"]:
+            return pickle.loads(b)
+        elif extension == "json":
+            return json.loads(b.decode("utf-8"))
+        raise Exception(f"Unsupported file extension: {extension}")
+
+    def copy(self, data):
+        return deepcopy(data)
+
 
 class BytesStateType(StateType):
     """Binary data"""

@@ -10,4 +10,4 @@ class TestState:
     def test_as_dict(self):
         state = State().with_data(123)
         d = state.as_dict()
-        assert d["type_identifier"] == "generic"
+        assert d["type_identifier"] in ["generic","pickle"]
