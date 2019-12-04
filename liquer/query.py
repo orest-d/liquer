@@ -38,6 +38,7 @@ def evaluate_ql_on(ql, state=None, cache=None):
             if len(qcommand) == 1 and '.' in qcommand[0]:
                 state.with_filename(qcommand[0])
                 break
+        state.log_command(qcommand,i)
         state = cr.evaluate_command(state, qcommand)
         if state.caching and not state.is_error and not state.is_volatile():
             cache.store(state)

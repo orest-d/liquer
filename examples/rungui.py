@@ -55,13 +55,19 @@ add_menuitem("Test", "Hello, world - txt",  "hello_text")
 add_menuitem("Help", "Commands",            "ns-meta/flat_commands_nodoc/to_df")
 add_menuitem("Help", "Homepage",            "https://orest-d.github.io/liquer/")
  
-@first_command
-def hello_html():
-    return """
+@first_command(
+    example_link="hello_html",
+    context_menu=[
+      dict(title="Hello help", link="/ns-meta/help-hello_html"),
+      dict(title="Hello GUI", link="gui")
+    ])
+def hello_html(world="World"):
+    "xxx this is a hello world example"
+    return f"""
 <html>
 <body>
   <h1>Hello</h1>
-  World!
+  {world}!
 </body>
 </html>
     """
@@ -71,10 +77,6 @@ def hello_text():
     return """
     Hello, world!
     """
-
-@first_command
-def logo():
-    return open("logo.png","rb").read()
 
 @command
 def gui(state):

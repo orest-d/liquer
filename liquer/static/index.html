@@ -57,7 +57,7 @@
                     <v-btn v-for="(item, index) in menu" :key="index" :to="item.link" text>{{ item.title }}</v-btn>
                 </v-toolbar-items>
                 -->
-                <v-menu v-for="(item, index) in menu" :key="index">
+                <v-menu offset-y v-for="(item, index) in menu" :key="index">
                     <template v-slot:activator="{ on }">
                         <v-btn text v-on="on">{{item.title}}</v-btn>
                     </template>
@@ -74,8 +74,28 @@
                     <v-btn :href="csv_link" color="orange" v-if="mode=='dataframe'">csv</v-btn>
                     <v-btn :href="external_link" color="orange" v-if="mode=='iframe'">link</v-btn>
                     <v-btn :href="external_link" color="orange" v-if="mode=='image'">image</v-btn>
-                    <v-btn @click="mode='inspect'" text>Inspect</v-btn>
                 </v-toolbar-items>
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on">
+                            <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list>
+                        <v-list-item @click="mode='commands'" />
+                        <v-list-item-title>Commands</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="mode='inspect'" />
+                        <v-list-item-title>Inspect</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="goto(query_basis+'/gui')" />
+                        <v-list-item-title>Edit</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item v-for="(item, i) in context_menu" :key="i" @click="goto_rel(item.link)" />
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
             </v-app-bar>
             <v-content>
                 <div class="download" v-if="status=='LOADING'"></div>
@@ -134,14 +154,14 @@
                                                         <pre>{{item.traceback}}</pre>
                                                     </div>
                                                     <div v-if="item.kind=='warning'">
-                                                        <v-icon color="yellow">warning</v-icon>{{item.message}}
+                                                        <v-icon color="yellow">mdi-warning</v-icon>{{item.message}}
                                                     </div>
                                                     <div v-if="item.kind=='info'">
-                                                        <v-icon color="green">info</v-icon>{{item.message}}
+                                                        <v-icon color="green">mdi-info</v-icon>{{item.message}}
                                                     </div>
                                                     <div v-if="item.kind=='command'">
                                                         </template>
-                                                        <v-icon color="primary">label</v-icon>
+                                                        <v-icon color="primary">mdi-label</v-icon>
                                                         <span>{{item.command_number}}</span>
                                                         <v-chip label outline v-for="cmd in item.qv">{{cmd}}
                                                         </v-chip>
@@ -165,13 +185,14 @@
                                         <th>Parameters</th>
                                     </tr>
                                     <tr v-for="c in state.extended_commands">
-                                        <td><a :href="'#ns-meta/help-'+c.command_name+'-'+c.ns">{{c.command_name}}</a></td>
+                                        <td><a :href="'#ns-meta/help-'+c.command_name+'-'+c.ns">{{c.command_name}}</a>
+                                        </td>
                                         <td>{{c.ns}}</td>
                                         <td>
                                             <ul>
                                                 <li v-for="arg in c.arguments">
                                                     <em>{{arg[1].label}}</em>:
-                                                    <span v-for="value in arg[0]">{{value}}&nbsp;</span>
+                                                    <span>{{arg[0]}}&nbsp;</span>
                                                 </li>
                                             </ul>
                                         </td>
@@ -226,14 +247,40 @@
                         <v-flex>Pandas version: {{data.schema.pandas_version}}</v-flex>
                         <v-flex xs12 v-if="data!=null">
                             <v-data-table :headers="dataframe_headers" :items="dataframe_rows" class="elevation-1">
-                                <template v-slot:items="props">
-                                    <td class="text-xs-right" v-for="i in preview_headers">{{ props.item[i.value] }}
+                                <!--                                <template v-slot:items="props">
+                                    <td class="text-xs-right" v-for="i in commands_headers">{{ props.item[i.value] }}
                                     </td>
                                 </template>
+                                -->
                             </v-data-table>
                         </v-flex>
                     </v-layout>
                 </v-container>
+            </v-content>
+            <v-container class="fill-height" v-if="mode=='commands'">
+                <v-card v-if="commands!=null">
+                    <v-card-title>
+                        List of commands
+                        <v-spacer></v-spacer>
+                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
+                            hide-details>
+                        </v-text-field>
+                    </v-card-title>
+
+                    <v-data-table :headers="commands_headers" :items="commands_rows" :search="search"
+                        class="elevation-1">
+                        <template v-slot:item.name="{ item }">
+                            <a :href="'#ns-meta/help-'+item.name+'-'+item.ns">{{item.name}}</a>
+                        </template>
+                        <template v-slot:item.example_link="{ item }">
+                            <a v-if="item.example_link" :href="'#'+item.example_link">{{item.example_link}}</a>
+                        </template>
+                        <template v-slot:item.doc="{ item }">
+                            {{item.doc.split('\n')[0]}}
+                        </template>
+                    </v-data-table>
+                </v-card>
+            </v-container>
             </v-content>
             <v-footer padless>
                 <v-chip :color="status_color">{{status}}</v-chip>&nbsp;&nbsp;<span>{{message}}</span>

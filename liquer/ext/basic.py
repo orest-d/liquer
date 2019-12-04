@@ -63,6 +63,17 @@ def link(state, linktype=None, extension=None):
 
     raise Exception(f"Unsupported link type: {linktype}")
 
+@command
+def html_a(state, linktype=None, value=None, extension=None):
+    """Create a html link tag
+    If value is None, query is displayed as a value.
+    """
+    if value is None:
+        value = state.query
+
+    lnk = link(state,linktype=linktype, extension=extension)
+    return state.with_data(f'<a href="{lnk}">{value}</a>')
+
 
 @first_command
 def fetch(url):

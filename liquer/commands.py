@@ -29,7 +29,6 @@ CommandMetadata = namedtuple(
 
 class CommandRegistry(object):
     """Class responsible for registering all commands and their metadata"""
-
     def __init__(self):
         """Create empty command registry"""
         self.executables = {}
@@ -83,7 +82,6 @@ class CommandRegistry(object):
             state = state.clone()
         command_name = qcommand[0]
         ns, command, metadata = self.resolve_command(state, command_name)
-
         if command is None:
             print(f"Unknown command: {command_name}")
             return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
@@ -104,6 +102,7 @@ class CommandRegistry(object):
             command_metadata=metadata._asdict(),
             arguments=arguments))
         state.query = encode(state.commands)
+        state.attributes = {key:value for key, value in state.attributes.items() if key[0].isupper()}
         if metadata is not None:
             state.attributes.update(metadata.attributes)
 

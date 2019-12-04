@@ -98,7 +98,7 @@ class TestCommands:
 
     def test_evaluate_command_with_attributes(self):
         reset_command_registry()
-        @command(abc="def")
+        @command(ABC="def")
         def test_callable(state, a: int, b=123):  # has state as a first argument
             return a+b
         cmd = ["test_callable", "1"]
@@ -106,7 +106,52 @@ class TestCommands:
             State(), cmd)
         assert result.get() == 124
         assert result.commands[-1] == cmd
-        assert result.attributes["abc"] == "def"
+        assert result.attributes["ABC"] == "def"
+
+    def test_evaluate_chaining_attributes(self):
+        reset_command_registry()
+        @command(ABC="def")
+        def test_callable1(state, a: int, b=123):  # has state as a first argument
+            return a+b
+        @command
+        def test_callable2(state):  # has state as a first argument
+            return state
+        cmd1 = ["test_callable1", "1"]
+        cmd2 = ["test_callable2"]
+        state1 = command_registry().evaluate_command(
+            State(), cmd1)
+        assert state1.get() == 124
+        assert state1.attributes["ABC"] == "def"
+        state2 = command_registry().evaluate_command(
+            state1, cmd2)
+        assert state2.get() == 124
+        assert state2.attributes["ABC"] == "def"
+
+    def test_evaluate_chaining_exceptions(self):
+        import importlib
+        from liquer import evaluate
+        import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+        reset_command_registry() # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.basic)
+
+        @command(ABC="def", ns="testns", context_menu="menu")
+        def test_callable1(state, a: int, b=123):  # has state as a first argument
+            return a+b
+        @command
+        def test_callable2(state):  # has state as a first argument
+            return state
+        state1 = evaluate("ns-testns/test_callable1-1")
+        assert state1.get() == 124
+        assert state1.attributes["ABC"] == "def"
+        assert state1.attributes["ns"] == "testns"
+        assert state1.attributes["context_menu"] == "menu"
+        state2 = evaluate("ns-testns/test_callable1-1/test_callable2")
+        assert state2.get() == 124
+        assert state2.attributes["ABC"] == "def"
+        assert state2.attributes.get("ns")!="testns"
+        assert "context_menu" not in state2.attributes
 
     def test_state_command(self):
         reset_command_registry()

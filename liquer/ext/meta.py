@@ -32,7 +32,7 @@ def flat_commands_nodoc(*pairs):
             if len(filters)==0 or all(r["attributes"].get(key) == value for key,value in filters):
                 c={key:r.get(key) for key in ["name", "label", "module"]}
                 for key, value in r["attributes"].items():
-                    if key not in c:
+                    if key not in c and key!="context_menu":
                         c[key]=value
                 d.append(c)
     return d
@@ -63,7 +63,12 @@ def help(state, command_name, ns="root"):
             html+="<h3>Attributes</h3>\n"
             html+="  <ul>\n"
             for key,value in sorted(c["attributes"].items()):
-                html+=f"    <li><b>{key}</b>:{value}</li>\n"
+                if key == "example_link":
+                    q=value
+                    url=state.vars.get("server", "http://localhost")+state.vars.get("api_path", "/q/")+q
+                    html+=f'    <li><b>{key}</b>:<a href="{url}">{value}</a></li>\n'
+                else:
+                    html+=f"    <li><b>{key}</b>:{value}</li>\n"
             html+="  </ul>"
             html+=f"<h3>Python module</h3>\n"
             module = c['module']

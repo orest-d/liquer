@@ -2,10 +2,12 @@ window.vue = new Vue({
     el: '#app',
     data: {
         route: "",
+        search:"",
         status: "OK",
         state: null,
         data: null,
         query: '',
+        query_basis: '',
         message: "",
         html: "",
         url_prefix: "/liquer/q/",
@@ -13,12 +15,14 @@ window.vue = new Vue({
         xlsx_link: "",
         csv_link: "",
         mode: "",
+        commands:[],
         menu: [
             {title:"Help", items:[
                 {title:"Homepage", link:"https://orest-d.github.io/liquer/"},
                 {title:"Commands", link:"ns-meta/flat_commands_nodoc/to_df"},
            ]}
-        ]
+        ],
+        context_menu:[]
     },
     vuetify: new Vuetify(),
     methods: {
@@ -43,6 +47,25 @@ window.vue = new Vue({
             this.status = "ERROR";
             if (reason.hasOwnProperty("body")) {
                 this.html = reason.body;
+            }
+        },
+        goto_rel: function (link) {
+            console.log("GOTO REL", link);
+            if (link.indexOf(":") == -1) {
+                if (link.startsWith('/')){
+                    link = link.slice(1);
+                }
+                else{
+                    link = this.query_basis+'/'+link;
+                }
+                window.location.href = "#" + link;
+                this.load(link);
+            }
+            else {
+                this.update_link=true;
+                window.location.href = "#";
+                this.external_link = link;
+                this.mode = "iframe";
             }
         },
         goto: function (link) {
@@ -82,6 +105,7 @@ window.vue = new Vue({
                     filename = v[0];
                     extension = v[v.length-1];
                 }
+                this.query_basis=query_basis;
                 this.status = "LOADING";
                 this.mode = "";
                 console.log("query_basis",query_basis)
@@ -96,6 +120,13 @@ window.vue = new Vue({
                         catch (error) {
                             console.log("No menu:", error);
                         }
+                        try {
+                            this.context_menu = this.state.attributes.context_menu;
+                        }
+                        catch (error) {
+                            console.log("No context menu:", error);
+                        }
+
                         this.html = "";
                         this.info("State loaded.");
                         
@@ -198,9 +229,33 @@ window.vue = new Vue({
                 console.log("rows", this.data.data)
                 return this.data.data;
             }
+        },
+        commands_headers: function () {
+            return [
+                {text:"Namespace", value:"ns"},
+                {text:"Command", value:"name"},
+                {text:"Description", value:"doc"},
+                {text:"Example", value:"example_link"},
+            ];
+        },
+        commands_rows: function () {
+            if (this.data == null) {
+                return [];
+            }
+            else {
+                return this.commands;
+            }
         }
+
     },
     created: function () {
+        this.$http.get(this.url_prefix + "ns-meta/flat_commands").then(function (response) {
+            response.json().then(function (data) {
+                this.commands = data;
+                this.info("Commands loaded.");
+            }.bind(this), function (reason) { this.error("Json error (commands)", reason); }.bind(this));
+        }.bind(this), function (reason) { this.error("Data loading error", reason); }.bind(this));
+
         window.onhashchange = this.update_route
         this.update_route();
     },
