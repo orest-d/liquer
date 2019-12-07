@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="liquer-framework",
-    version="0.2.8",
+    version="0.2.9",
     author="Orest Dubay",
     author_email="orest3.dubay@gmail.com",
     description="LiQuer - Query in (URL) link",
@@ -13,9 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/orest-d/liquer",
     packages=setuptools.find_packages(),
-    install_requires=[
-       'flask'
-    ],
+    include_package_data=True,
+    zip_safe=False,
+    install_requires=['Flask'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

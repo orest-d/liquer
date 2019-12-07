@@ -19,7 +19,7 @@ pip install liquer-framework
 # TODO
 
 - [x] improve command catalogue (in progress)
-- [ ] support for dataframe iterator (maybe)
+- [x] support for dataframe iterator - kind of supported by pickling
 - [x] namespaces
 - [x] lift the requirement for a state to be cloneable - at least for some data types
 - [x] make indicator of *volatile* state, that can never be cached (volatile=immutable?)

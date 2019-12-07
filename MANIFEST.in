@@ -1,0 +1,2 @@
+recursive-include liquer/static *
+recursive-include liquer/templates *

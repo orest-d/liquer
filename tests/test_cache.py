@@ -124,3 +124,42 @@ class TestCache:
 
         set_cache(None)
  
+    def test_cache_attribute_equality_rules(self):
+        from liquer import evaluate, first_command
+        cache1 = MemoryCache()
+        cache2 = MemoryCache()
+        cache3 = MemoryCache()
+
+        set_cache(cache1.if_attribute_equal("abc",123) + cache2.if_attribute_not_equal("xyz",456) + cache3)
+        @first_command(abc=123)
+        def command1a():
+            return "C1"
+
+        @first_command(xyz=456)
+        def command2a():
+            return "C2"
+
+        @first_command
+        def command3a():
+            return "C3"
+
+        evaluate("command1a")
+        evaluate("command2a")
+        evaluate("command3a")
+
+        assert "command1a" in cache1.storage
+        assert "command1a" not in cache2.storage
+        assert "command1a" not in cache3.storage
+        assert cache1.storage["command1a"].get() == "C1"
+
+        assert "command2a" not in cache1.storage
+        assert "command2a" not in cache2.storage
+        assert "command2a" in cache3.storage
+        assert cache3.storage["command2a"].get() == "C2"
+
+        assert "command3a" not in cache1.storage
+        assert "command3a" in cache2.storage
+        assert "command3a" not in cache3.storage
+        assert cache2.storage["command3a"].get() == "C3"
+
+        set_cache(None)

@@ -64,12 +64,21 @@ def cached_part(query, cache=None):
     return State(), encode(decode(query))
 
 class CacheMixin:
+    """Adds various cache combinator helpers"""
     def __add__(self, cache):
         return CacheCombine(self,cache)
     def if_contains(self,*attributes):
+        "Cache if state contains all attributes"
         return CacheIfHasAttributes(self,*attributes)
     def if_not_contains(self,*attributes):
+        "Cache if state contains none of the attributes"
         return CacheIfHasNotAttributes(self,*attributes)
+    def if_attribute_equal(self, attribute, value):
+        "Cache if state attribute is equal to value"
+        return CacheAttributeCondition(self, attribute, value, True)
+    def if_attribute_not_equal(self, attribute, value):
+        "Cache if state attribute is not equal to value"
+        return CacheAttributeCondition(self, attribute, value, False)
 
 class CacheCombine(CacheMixin):
     def __init__(self,cache1, cache2):
@@ -122,7 +131,7 @@ class CacheIfHasAttributes(CacheMixin):
         return f"({str(self.cache)} containing {', '.join(self.attributes)})"
         
     def __repr__(self):
-        return f"CacheIfHasAttributes({repr(self.cache1)}, {', '.join(map(repr,self.attributes))})"
+        return f"CacheIfHasAttributes({repr(self.cache)}, {', '.join(map(repr,self.attributes))})"
 
 class CacheIfHasNotAttributes(CacheMixin):
     def __init__(self,cache, *attributes):
@@ -145,7 +154,39 @@ class CacheIfHasNotAttributes(CacheMixin):
         return f"({str(self.cache)} not containing {', '.join(self.attributes)})"
         
     def __repr__(self):
-        return f"CacheIfHasNotAttributes({repr(self.cache1)}, {', '.join(map(repr,self.attributes))})"
+        return f"CacheIfHasNotAttributes({repr(self.cache)}, {', '.join(map(repr,self.attributes))})"
+
+class CacheAttributeCondition(CacheMixin):
+    def __init__(self,cache, attribute, value, equals=True):
+        self.cache = cache
+        self.attribute = attribute
+        self.value = value
+        self.equals = equals
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def store(self, state):
+        state_attribute_value = state.attributes.get(self.attribute)
+        if self.equals:
+            if state_attribute_value == self.value:
+                return self.cache.store(state)
+        else:
+            if state_attribute_value != self.value:
+                return self.cache.store(state)
+        return False
+
+    def contains(self, key):
+        return self.cache.contains(key)
+
+    def __str__(self):
+        if self.equals:
+            return f"({str(self.cache)} when {self.attribute}=={self.value})"
+        else:
+            return f"({str(self.cache)} when {self.attribute}!={self.value})"
+        
+    def __repr__(self):
+        return f"CacheAttributeCondition({repr(self.cache)}, {repr(self.attribute)}, {repr(self.value)}, {self.equals})"
 
 
 class NoCache(CacheMixin):

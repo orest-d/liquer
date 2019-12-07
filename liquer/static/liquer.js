@@ -249,7 +249,7 @@ window.vue = new Vue({
 
     },
     created: function () {
-        this.$http.get(this.url_prefix + "ns-meta/flat_commands").then(function (response) {
+        this.$http.get(this.url_prefix + "ns-meta/flat_commands/commands.json").then(function (response) {
             response.json().then(function (data) {
                 this.commands = data;
                 this.info("Commands loaded.");
