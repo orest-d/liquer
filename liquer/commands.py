@@ -3,6 +3,9 @@ from collections import namedtuple
 import inspect
 from liquer.state import State
 from liquer.parser import encode
+import marshal
+import pickle
+import types
 
 """This module is responsible for registering commands
 Commands are composed of a command executable and command metadata, which are collected in a command registry.
@@ -24,8 +27,71 @@ the "mainstream" way of command registration is by simply decorating a function 
 """
 
 CommandMetadata = namedtuple(
-    "Command", ["name", "label", "module", "doc", "state_argument", "arguments", "attributes"])
+    "CommandMetadata", ["name", "label", "module", "doc", "state_argument", "arguments", "attributes"])
 
+
+_remote_registration=False
+
+def is_remote_registration_enabled():
+    """Returns true if remote registration is enabled.
+    This is a flag that a web interface can use to enable or disable the remote command registration.
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.    
+    """
+    return _remote_registration
+
+def enable_remote_registration():
+    """Enable remote registration service
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.    
+    """
+    global _remote_registration
+    _remote_registration = True
+
+def disable_remote_registration():
+    "Disable remote registration service"
+    global _remote_registration
+    _remote_registration = True
+
+class RemoteCommandRegistry(object):
+    """Remote command registry allows to register commands into a remote LiQuer server, e.g. Jupyter server extension"""
+    def __init__(self, url, modify=True):
+        self.url = url
+        self.modify = modify
+    def register_command(self, f, metadata, modify=False):
+        import requests
+        url = self.url
+        if url[-1]!="/":
+            url+="/"
+        if self.modify:
+            url+="modify"
+        b = self.encode_registration(f, metadata, modify)
+        response = requests.post(url = url, data = b)
+        if response.ok:
+            response=response.json()
+            if response["status"]!="OK":
+                print (response.get("traceback",""))
+                raise Exception("Remote registration failed: "+response.get("message", f"Error registering {f.__name__}"))
+        else:
+            response.raise_for_status()
+
+    @classmethod
+    def encode_registration(cls, f, metadata, modify=False):
+        code = marshal.dumps(f.__code__)
+        return pickle.dumps((code, f.__name__, f.__defaults__, f.__closure__, metadata._asdict(), modify))
+
+    @classmethod
+    def decode_registration(cls, b):
+        code, name, defaults, closure, metadata, modify = pickle.loads(b)
+        bc = marshal.loads(code)
+        f = types.FunctionType(bc, globals(), name, defaults, closure)
+        return (f, CommandMetadata(**metadata), modify)
 
 class CommandRegistry(object):
     """Class responsible for registering all commands and their metadata"""
@@ -49,6 +115,14 @@ class CommandRegistry(object):
             return (name == registered.name and
                     executable.inner_id() == self.executables[ns][name].inner_id())
         return False
+
+    def register_command(self, f, metadata, modify=False):
+        parser = argument_parser_from_command_metadata(metadata)
+        if metadata.state_argument is None:
+            executable = FirstCommandExecutable(f, metadata, parser)
+        else:
+            executable = CommandExecutable(f, metadata, parser)
+        return self.register(executable, metadata)
 
     def register(self, executable, metadata, modify=False):
         """Create command
@@ -129,7 +203,6 @@ class CommandRegistry(object):
 
 _command_registry = None
 
-
 def command_registry():
     """Return global the command registry object"""
     global _command_registry
@@ -137,6 +210,14 @@ def command_registry():
         _command_registry = CommandRegistry()
     return _command_registry
 
+
+def remote_command_registry(url, modify=True):
+    """Configure the command registry to use remote LiQuer server
+    Provide url to the registration service
+    """
+    global _command_registry
+    _command_registry = RemoteCommandRegistry(url, modify=modify)
+    return _command_registry
 
 def reset_command_registry():
     """Create empty global command registry"""
@@ -399,15 +480,6 @@ class FirstCommandExecutable(CommandExecutable):
             return state.with_data(result)
 
 
-def _register_command(f, metadata):
-    parser = argument_parser_from_command_metadata(metadata)
-    if metadata.state_argument is None:
-        executable = FirstCommandExecutable(f, metadata, parser)
-    else:
-        executable = CommandExecutable(f, metadata, parser)
-    command_registry().register(executable, metadata)
-
-
 def command(*arg, **kwarg):
     """Register a callable as a command.
     Callable is expected to take a state data as a first argument. 
@@ -422,7 +494,7 @@ def command(*arg, **kwarg):
         if "ns" not in kwarg:
             kwarg["ns"] = "root"
         metadata = command_metadata_from_callable(f, attributes=kwarg)
-        _register_command(f, metadata)
+        command_registry().register_command(f, metadata)
         return f
     else:
         assert len(arg) == 0
@@ -444,7 +516,7 @@ def first_command(*arg, **kwarg):
             kwarg["ns"] = "root"
         metadata = command_metadata_from_callable(
             f, has_state_argument=False, attributes=kwarg)
-        _register_command(f, metadata)
+        command_registry().register_command(f, metadata)
         return f
     else:
         assert len(arg) == 0

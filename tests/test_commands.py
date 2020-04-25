@@ -257,3 +257,13 @@ class TestCommands:
         # Hack to enforce registering of the commands
         importlib.reload(liquer.ext.basic)
 
+class TestRemoteCommandsRegistry:
+    def test_encode_decode_registration(self):
+        def f(x):
+            return x*102
+        metadata = command_metadata_from_callable(
+            f, has_state_argument=False, attributes={})
+        b = RemoteCommandRegistry.encode_registration(f, metadata)
+
+        r_f, r_metadata, r_modify = RemoteCommandRegistry.decode_registration(b)
+        assert r_f(3) == 306
