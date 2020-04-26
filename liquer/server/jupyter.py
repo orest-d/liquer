@@ -12,20 +12,15 @@ class LiquerIndexHandler(IPythonHandler):
     def get(self):
         self.write(open(os.path.join(h.liquer_static_path(),"index.html")).read())
 
-class LiquerIndexJsHandler(IPythonHandler):
+class LiquerJsHandler(IPythonHandler):
     def prepare(self):
         header = "Content-Type"
         body = "text/javascript"
         self.set_header(header, body)
 
     def get(self):
-        self.write(open(os.path.join(h.liquer_static_path(),"index.js")).read())
+        self.write(open(os.path.join(h.liquer_static_path(),"liquer.js")).read())
 
-class LiquerIndexHandler(h.LiquerIndexHandler, IPythonHandler):
-    pass
-
-class LiquerIndexJsHandler(h.LiquerIndexJsHandler, IPythonHandler):
-    pass
 #/api/commands.json
 class CommandsHandler(h.CommandsHandler, IPythonHandler):
     pass
@@ -74,9 +69,9 @@ def load_jupyter_server_extension(nb_server_app):
     web_app.add_handlers(host_pattern, [
         (route_pattern, LiquerIndexHandler),
         (url_path_join(route_pattern,'/index.html'), LiquerIndexHandler),
-        (url_path_join(route_pattern,'/index.js'), LiquerIndexJsHandler),
+        (url_path_join(route_pattern,'/liquer.js'), LiquerJsHandler),
         (url_path_join(route_pattern,'/static/index.html'), LiquerIndexHandler),
-        (url_path_join(route_pattern,'/static/index.js'), LiquerIndexJsHandler),
+        (url_path_join(route_pattern,'/static/liquer.js'), LiquerJsHandler),
         (url_path_join(route_pattern,'/api/commands.json'), CommandsHandler),
         (url_path_join(route_pattern,'/api/debug-json/(.*)'), DebugQueryHandler),
         (url_path_join(route_pattern,'/api/build'), BuildHandler),

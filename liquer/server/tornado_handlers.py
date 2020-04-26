@@ -5,7 +5,7 @@ import liquer.server.handlers as h
 class LiquerIndexHandler(h.LiquerIndexHandler, tornado.web.RequestHandler):
     pass
 
-class LiquerIndexJsHandler(h.LiquerIndexJsHandler, tornado.web.RequestHandler):
+class LiquerJsHandler(h.LiquerIndexJsHandler, tornado.web.RequestHandler):
     pass
 #/api/commands.json
 class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         (r'/liquer/static/(.*)', tornado.web.StaticFileHandler, {'path': h.liquer_static_path()}),
         (r'/', LiquerIndexHandler),
         (r'/index.html', LiquerIndexHandler),
-        (r'/index.js', LiquerIndexJsHandler),
+        (r'/liquer.js', LiquerJsHandler),
     ])
     application.listen(port)
     tornado.ioloop.IOLoop.current().start()

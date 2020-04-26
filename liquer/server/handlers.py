@@ -15,9 +15,9 @@ class LiquerIndexHandler:
     def get(self):
         self.redirect("/static/index.html")
 
-class LiquerIndexJsHandler:
+class LiquerJsHandler:
     def get(self):
-        self.redirect("/static/index.js")
+        self.redirect("/static/liquer.js")
 
 #/api/commands.json
 class CommandsHandler:
