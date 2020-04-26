@@ -35,6 +35,7 @@ of a state being cached or served is limited.
 MIMETYPES = dict(
     json="application/json",
     djson="application/json",
+    js="text/javascript",
     txt='text/plain',
     html='text/html',
     htm='text/html',
@@ -53,7 +54,8 @@ MIMETYPES = dict(
     jpeg='image/jpeg',
     b="application/octet-stream",
     pkl="application/octet-stream",
-    pickle="application/octet-stream"
+    pickle="application/octet-stream",
+    wasm="application/wasm"
 )
 
 def mimetype_from_extension(extension):

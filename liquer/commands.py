@@ -6,6 +6,9 @@ from liquer.parser import encode
 import marshal
 import pickle
 import types
+import traceback
+import base64
+
 
 """This module is responsible for registering commands
 Commands are composed of a command executable and command metadata, which are collected in a command registry.
@@ -59,20 +62,72 @@ def disable_remote_registration():
     global _remote_registration
     _remote_registration = True
 
-class RemoteCommandRegistry(object):
+class RegisterRemoteMixin:
+    def register_remote_serialized(self, b):
+        """Helper method used to register serialized command in remote registration"""
+        if is_remote_registration_enabled():
+            try:
+                f, metadata, modify = self.decode_registration(b)
+                self.register_command(f, metadata, modify=modify)
+                ns = metadata.attributes.get("ns", "root")
+                return dict(
+                    message=f"Function {f.__name__} in namespace {ns} is registered as command",
+                    status="OK")
+            except:
+                return dict(
+                    message="Error while registering command",
+                    traceback=traceback.format_exc(),
+                    status="ERROR")
+        else:    
+            return dict(
+                message="Remote command registration is disabled.",
+                status="ERROR")
+    @classmethod
+    def encode_registration(cls, f, metadata, modify=False):
+        code = marshal.dumps(f.__code__)
+        return b'B'+pickle.dumps((code, f.__name__, f.__defaults__, f.__closure__, metadata._asdict(), modify))
+
+    @classmethod
+    def encode_registration_base64(cls, f, metadata, modify=False):
+        return b'E'+base64.urlsafe_b64encode(cls.encode_registration(f, metadata, modify))
+
+    @classmethod
+    def decode_registration(cls, b):
+        assert type(b) == bytes
+        if b[0] == b'E'[0]:
+            print("DECODE E:",b[:20])
+            print()
+            b=base64.urlsafe_b64decode(b[1:])
+        print("DECODE B:",b[:20])
+        print()
+        print()
+        assert b[0]==b"B"[0]
+        b=b[1:]
+
+        code, name, defaults, closure, metadata, modify = pickle.loads(b)
+        bc = marshal.loads(code)
+        f = types.FunctionType(bc, globals(), name, defaults, closure)
+        return (f, CommandMetadata(**metadata), modify)
+
+
+class RemoteCommandRegistry(RegisterRemoteMixin, object):
     """Remote command registry allows to register commands into a remote LiQuer server, e.g. Jupyter server extension"""
-    def __init__(self, url, modify=True):
+    def __init__(self, url, use_get_method=False):
         self.url = url
-        self.modify = modify
+        self.use_get_method = use_get_method
     def register_command(self, f, metadata, modify=False):
         import requests
         url = self.url
-        if url[-1]!="/":
-            url+="/"
-        if self.modify:
-            url+="modify"
-        b = self.encode_registration(f, metadata, modify)
-        response = requests.post(url = url, data = b)
+        url += "" if url[-1]=="/" else "/"
+
+        if self.use_get_method:
+            b = self.encode_registration_base64(f, metadata, modify)
+            encoded = b.decode("ascii")
+            response = requests.get(url=url+encoded)
+        else:
+            b = self.encode_registration(f, metadata, modify)
+            response = requests.post(url = url, data = b)
+
         if response.ok:
             response=response.json()
             if response["status"]!="OK":
@@ -81,19 +136,8 @@ class RemoteCommandRegistry(object):
         else:
             response.raise_for_status()
 
-    @classmethod
-    def encode_registration(cls, f, metadata, modify=False):
-        code = marshal.dumps(f.__code__)
-        return pickle.dumps((code, f.__name__, f.__defaults__, f.__closure__, metadata._asdict(), modify))
 
-    @classmethod
-    def decode_registration(cls, b):
-        code, name, defaults, closure, metadata, modify = pickle.loads(b)
-        bc = marshal.loads(code)
-        f = types.FunctionType(bc, globals(), name, defaults, closure)
-        return (f, CommandMetadata(**metadata), modify)
-
-class CommandRegistry(object):
+class CommandRegistry(RegisterRemoteMixin, object):
     """Class responsible for registering all commands and their metadata"""
     def __init__(self):
         """Create empty command registry"""
@@ -211,12 +255,12 @@ def command_registry():
     return _command_registry
 
 
-def remote_command_registry(url, modify=True):
+def remote_command_registry(url, use_get_method=False):
     """Configure the command registry to use remote LiQuer server
     Provide url to the registration service
     """
     global _command_registry
-    _command_registry = RemoteCommandRegistry(url, modify=modify)
+    _command_registry = RemoteCommandRegistry(url, use_get_method=use_get_method)
     return _command_registry
 
 def reset_command_registry():

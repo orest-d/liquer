@@ -3,9 +3,9 @@ import sys
 sys.path.append("..")
 
 from liquer import *
-import liquer.commands
+from liquer.commands import remote_command_registry
 
-liquer.commands.remote_command_registry("http://127.0.0.1:5000/liquer/api/register_command")  # Configure the remote command registration
+remote_command_registry("http://127.0.0.1:5000/liquer/api/register_command/", use_get_method=True)  # Configure the remote command registration
 
 
 hello_text = "Hello"

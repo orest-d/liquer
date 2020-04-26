@@ -1,6 +1,25 @@
 from notebook.utils import url_path_join
 from notebook.base.handlers import IPythonHandler
 import liquer.server.handlers as h
+import os.path
+
+class LiquerIndexHandler(IPythonHandler):
+    def prepare(self):
+        header = "Content-Type"
+        body = "text/html"
+        self.set_header(header, body)
+
+    def get(self):
+        self.write(open(os.path.join(h.liquer_static_path(),"index.html")).read())
+
+class LiquerIndexJsHandler(IPythonHandler):
+    def prepare(self):
+        header = "Content-Type"
+        body = "text/javascript"
+        self.set_header(header, body)
+
+    def get(self):
+        self.write(open(os.path.join(h.liquer_static_path(),"index.js")).read())
 
 class LiquerIndexHandler(h.LiquerIndexHandler, IPythonHandler):
     pass
@@ -19,6 +38,12 @@ class DebugQueryHandler(h.DebugQueryHandler, IPythonHandler):
 class QueryHandler(h.QueryHandler, IPythonHandler):
     pass
 
+class BuildHandler(h.BuildHandler, IPythonHandler):
+    pass
+
+class RegisterCommandHandler(h.RegisterCommandHandler, IPythonHandler):
+    pass    
+
 def load_jupyter_server_extension(nb_server_app):
     """
     Called when the extension is loaded.
@@ -30,11 +55,13 @@ def load_jupyter_server_extension(nb_server_app):
     import liquer.ext.basic
     import liquer.ext.meta
     import liquer.ext.lq_pandas
-    import liquer.ext.lq_hxl
+    #import liquer.ext.lq_hxl
     import liquer.ext.lq_python
     import liquer.ext.lq_pygments
     from liquer.state import set_var, get_vars
-    import tornado.web
+    import liquer.commands
+
+    liquer.commands.enable_remote_registration()
 
     web_app = nb_server_app.web_app
     host_pattern = '.*$'
@@ -48,8 +75,11 @@ def load_jupyter_server_extension(nb_server_app):
         (route_pattern, LiquerIndexHandler),
         (url_path_join(route_pattern,'/index.html'), LiquerIndexHandler),
         (url_path_join(route_pattern,'/index.js'), LiquerIndexJsHandler),
+        (url_path_join(route_pattern,'/static/index.html'), LiquerIndexHandler),
+        (url_path_join(route_pattern,'/static/index.js'), LiquerIndexJsHandler),
         (url_path_join(route_pattern,'/api/commands.json'), CommandsHandler),
         (url_path_join(route_pattern,'/api/debug-json/(.*)'), DebugQueryHandler),
+        (url_path_join(route_pattern,'/api/build'), BuildHandler),
+        (url_path_join(route_pattern,'/api/register_command/(.*)'), RegisterCommandHandler),
         (url_path_join(route_pattern,'/q/(.*)'), QueryHandler),
-        (url_path_join(route_pattern,'/static/(.*)'), tornado.web.StaticFileHandler, {'path': h.liquer_static_path()}),
     ])

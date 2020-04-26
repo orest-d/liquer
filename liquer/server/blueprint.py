@@ -97,8 +97,9 @@ def build():
         status="OK")
     )
 
-@app.route('/api/register_command/<string:param>', methods=['POST'])
-def register_command(param):
+
+@app.route('/api/register_command/<data>', methods=['GET'])
+def register_command(data):
     """Remote command registration service.
     This has to be enabled by liquer.commands.enable_remote_registration() 
 
@@ -107,26 +108,17 @@ def register_command(param):
     (e.g. on localhost or intranet where only trusted users have access).
     This is on by default on Jupyter server extension.    
     """
-    import liquer.commands as lqc
-    import traceback
-    if lqc.is_remote_registration_enabled():
-        b = request.get_data()
-        try:
-            f, metadata, modify = lqc.RemoteCommandRegistry.decode_registration(b)
-            if param=="modify":
-                print ("MODIFY ON")
-                modify=True
-            lqc.command_registry().register_command(f, metadata, modify=modify)
-            ns = metadata.attributes.get("ns", "root")
-            return jsonify(dict(
-                message=f"Function {f.__name__} in namespace {ns} is registered as command",
-                status="OK"))
-        except:
-            return jsonify(dict(
-                message="Error while registering command",
-                traceback=traceback.format_exc(),
-                status="ERROR"))
-    else:    
-        return jsonify(dict(
-            message="Remote command registration is disabled.",
-            status="ERROR"))
+    return jsonify(command_registry().register_remote_serialized(data.encode('ascii')))
+
+@app.route('/api/register_command/', methods=['POST'])
+def register_command1():
+    """Remote command registration service.
+    This has to be enabled by liquer.commands.enable_remote_registration() 
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.    
+    """
+    data = request.get_data()
+    return jsonify(command_registry().register_remote_serialized(data))

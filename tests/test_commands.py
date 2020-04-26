@@ -264,6 +264,33 @@ class TestRemoteCommandsRegistry:
         metadata = command_metadata_from_callable(
             f, has_state_argument=False, attributes={})
         b = RemoteCommandRegistry.encode_registration(f, metadata)
+        assert b[0]==b"B"[0]
 
         r_f, r_metadata, r_modify = RemoteCommandRegistry.decode_registration(b)
         assert r_f(3) == 306
+
+    def test_encode_decode_registration_base64(self):
+        def f(x):
+            return x*102
+        metadata = command_metadata_from_callable(
+            f, has_state_argument=False, attributes={})
+        b = RemoteCommandRegistry.encode_registration_base64(f, metadata)
+        assert b[0]==b"E"[0]
+
+        r_f, r_metadata, r_modify = RemoteCommandRegistry.decode_registration(b)
+        assert r_f(3) == 306
+
+    def test_serialized_registration(self):
+        from liquer import evaluate
+        reset_command_registry()
+        def f(x:int):
+            return x*102
+        metadata = command_metadata_from_callable(
+            f, has_state_argument=False, attributes={})
+        b = command_registry().encode_registration(f, metadata)
+        enable_remote_registration()
+        command_registry().register_remote_serialized(b)
+        assert evaluate("f-3").get() == 306
+        reset_command_registry()
+        disable_remote_registration()
+ 

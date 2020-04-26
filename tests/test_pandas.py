@@ -11,9 +11,22 @@ import os.path
 import inspect
 import tempfile
 from liquer.state import set_var
-
+import importlib
 
 class TestPandas:
+    @classmethod
+    def setup_class(cls):
+        from liquer.commands import reset_command_registry
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        reset_command_registry() # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.lq_pandas)
+
+    @classmethod
+    def teardown_class(cls):
+        from liquer.commands import reset_command_registry
+        reset_command_registry()
+   
     def test_from(self):
         import liquer.ext.lq_pandas  # register pandas commands and state type
         filename = encode_token(os.path.dirname(

@@ -6,7 +6,7 @@ from liquer import *
 
 ### Create Flask app and register LiQuer blueprint
 from flask import Flask
-import liquer.blueprint as bp
+import liquer.server.blueprint as bp
 import liquer.commands
 
 liquer.commands.enable_remote_registration()
