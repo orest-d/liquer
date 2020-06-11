@@ -55,7 +55,9 @@ MIMETYPES = dict(
     b="application/octet-stream",
     pkl="application/octet-stream",
     pickle="application/octet-stream",
-    wasm="application/wasm"
+    wasm="application/wasm",
+    mid="audio/midi",
+    midi="audio/midi",
 )
 
 def mimetype_from_extension(extension):
