@@ -140,7 +140,7 @@ class SegmentHeader(object):
 
 class QuerySegment(object):
     def __init__(self, header=None, query=None):
-        "header can be SegementHeader, query is a list of ActionRequest objects"
+        "header can be SegmentHeader, query is a list of ActionRequest objects"
         self.header = header
         self.query = query or []
 
