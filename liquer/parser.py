@@ -1,4 +1,5 @@
 from urllib.parse import quote, unquote
+
 """
 This module provides functions to decode and encode query.
 A query is a sequence of commands, each command being a list of strings starting with the command name as a first element.
@@ -23,14 +24,16 @@ ESCAPE_SEQUENCES = [
     ("://", ESCAPE + "P"),
     (COMMAND_SEPARATOR, ESCAPE + "I"),
     (PARAMETER_SEPARATOR, ESCAPE + "_"),
-    (" ", ESCAPE + ".")
+    (" ", ESCAPE + "."),
 ]
 
 
 def decode(query: str):
     """Decode query string into a list of lists of strings."""
-    ql = [[decode_token(etoken) for etoken in eqv.split(PARAMETER_SEPARATOR)]
-          for eqv in query.split(COMMAND_SEPARATOR)]
+    ql = [
+        [decode_token(etoken) for etoken in eqv.split(PARAMETER_SEPARATOR)]
+        for eqv in query.split(COMMAND_SEPARATOR)
+    ]
     return [qcommand for qcommand in ql if len(qcommand) and len(qcommand[0])]
 
 
@@ -49,8 +52,8 @@ def decode_token(token: str):
     try:
         index = token.index(ESCAPE)
         head = token[:index]
-        mid = token[index:index+2]
-        tail = token[index+2:]
+        mid = token[index : index + 2]
+        tail = token[index + 2 :]
         return unquote(head + encoding.get(mid, mid)) + decode_token(tail)
     except ValueError:
         return unquote(token)
@@ -58,7 +61,9 @@ def decode_token(token: str):
 
 def encode(ql: list):
     """Decode query list (list of lists of strings) into an properly escaped query string."""
-    return COMMAND_SEPARATOR.join(PARAMETER_SEPARATOR.join(encode_token(token) for token in qv) for qv in ql)
+    return COMMAND_SEPARATOR.join(
+        PARAMETER_SEPARATOR.join(encode_token(token) for token in qv) for qv in ql
+    )
 
 
 def all_splits(query):
@@ -69,3 +74,95 @@ def all_splits(query):
     ql = decode(query)
     for i in range(len(ql), -1, -1):
         yield encode(ql[:i]), encode(ql[i:])
+
+
+class Position:
+    def __init__(self, offset=0, line=0, column=0):
+        self.offset = offset
+        self.line = line
+        self.column = column
+
+    def __repr__(self):
+        if self.line == 0:
+            return "(unknown position)"
+        elif self.line > 1:
+            return f"line {self.line}, position {self.column}"
+        else:
+            return f"position {self.column}"
+
+
+class ActionParameter(object):
+    pass
+
+
+class LinkActionParameter(ActionParameter):
+    def __init__(self, link: str):
+        self.link = link
+
+
+class StringActionParameter(ActionParameter):
+    def __init__(self, string: str):
+        self.string = string
+
+
+class ActionRequest(object):
+    def __init__(self, name: str, parameters: list, position=None):
+        self.name = name
+        self.parameters = parameters
+        self.position = position or Position()
+
+    def encode(self):
+        if len(self.parameters):
+            p = "-".join(x.encode() for x in self.parameters)
+            return f"{self.name}-{p}"
+        else:
+            return self.name
+
+
+class SegmentHeader(object):
+    def __init__(self, name: str, level: int, parameters: list = None, position=None):
+        self.name = name
+        self.level = level
+        self.parameters = parameters or []
+        self.position = position or Position()
+
+    def encode(self):
+        assert self.level >= 1
+        encoded = "-" * self.level
+        encoded += self.name
+        if len(self.parameters):
+            assert len(self.name) > 0
+            for parameter in self.parameters:
+                encoded += "-"
+                encoded += parameter.encode()
+        return encoded
+
+
+class QuerySegment(object):
+    def __init__(self, header=None, query=None):
+        "header can be SegementHeader, query is a list of ActionRequest objects"
+        self.header = header
+        self.query = query or []
+
+    def encode(self):
+        query = "/".join(x.encode() for x in self.query)
+        if self.header is None:
+            return query
+        else:
+            if len(query):
+                return self.header.encode()
+            else:
+                return f"{self.header.encode()}/{query}"
+
+
+class Query(object):
+    def __init__(self, segments: list = None):
+        self.segments = segments or []
+
+    def add_segment(self, name: str, level=1):
+        qs = QuerySegment(SegmentHeader(name, level=level))
+        self.segments.append(qs)
+        return qs
+
+    def encode(self):
+        return "/".join(x.encode() for x in self.segments)
