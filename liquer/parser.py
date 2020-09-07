@@ -93,6 +93,17 @@ def all_splits(query):
         yield encode(ql[:i]), encode(ql[i:])
 
 
+def indent(text, prefix="  "):
+    return "\n".join(prefix + x for x in text.split("\n"))
+
+
+def list_indent(lst, prefix="  "):
+    if len(lst):
+        return "[\n" + ",\n".join(indent(repr(x), prefix) for x in lst) + "\n]"
+    else:
+        return "[]"
+
+
 class Position:
     def __init__(self, offset=0, line=0, column=0):
         self.offset = offset
@@ -126,15 +137,30 @@ class LinkActionParameter(ActionParameter):
     def __init__(self, link: str, position=None):
         super().__init__(position)
         self.link = link
+
+    def encode(self):
+        return self.link
+
     def __repr__(self):
         return f"LinkActionParameter({repr(self.link)}, {repr(self.position)})"
+
+    def __str__(self):
+        return self.encode()
+
 
 class StringActionParameter(ActionParameter):
     def __init__(self, string: str, position=None):
         super().__init__(position)
         self.string = string
+
+    def encode(self):
+        return self.string
+
     def __repr__(self):
         return f"StringActionParameter({repr(self.string)}, {repr(self.position)})"
+
+    def __str__(self):
+        return self.encode()
 
 
 class ActionRequest(object):
@@ -149,12 +175,22 @@ class ActionRequest(object):
             return f"{self.name}-{p}"
         else:
             return self.name
+
     def __repr__(self):
-        return f"ActionRequest({repr(self.name)}, {repr(self.parameters)}, {repr(self.position)})"
+        return f"""ActionRequest(
+  {repr(self.name)},
+{indent(list_indent(self.parameters))},
+  {repr(self.position)}
+)"""
+
+    def __str__(self):
+        return self.encode()
 
 
 class SegmentHeader(object):
-    def __init__(self, name: str, level: int, parameters: list = None, position=None):
+    def __init__(
+        self, name: str = "", level: int = 1, parameters: list = None, position=None
+    ):
         self.name = name
         self.level = level
         self.parameters = parameters or []
@@ -171,6 +207,17 @@ class SegmentHeader(object):
                 encoded += parameter.encode()
         return encoded
 
+    def __repr__(self):
+        return f"""SegmentHeader(
+  name  = {repr(self.name)},
+  level = {self.level},
+  parameters={indent(list_indent(self.parameters))},
+  position={repr(self.position)}
+)"""
+
+    def __str__(self):
+        return self.encode()
+
 
 class QuerySegment(object):
     def __init__(self, header=None, query=None):
@@ -184,9 +231,18 @@ class QuerySegment(object):
             return query
         else:
             if len(query):
-                return self.header.encode()
-            else:
                 return f"{self.header.encode()}/{query}"
+            else:
+                return self.header.encode()
+
+    def __repr__(self):
+        return f"""QuerySegment(
+  header = {indent(repr(self.header))},
+  query  = {indent(list_indent(self.query))}
+)"""
+
+    def __str__(self):
+        return self.encode()
 
 
 class Query(object):
@@ -200,6 +256,12 @@ class Query(object):
 
     def encode(self):
         return "/".join(x.encode() for x in self.segments)
+
+    def __repr__(self):
+        return f"""Query({list_indent(self.segments)})"""
+
+    def __str__(self):
+        return self.encode()
 
 
 item_separator = Literal("/").suppress()
@@ -250,3 +312,92 @@ action_request = (
     .setParseAction(_action_request_parse_action)
     .setName("action_request")
 )
+
+
+def _action_path_parse_action(s, loc, toks):
+    return list(toks)
+
+
+action_path = (
+    delimitedList(action_request, "/")
+    .setParseAction(_action_path_parse_action)
+    .setName("action_path")
+)
+
+action_path_nonempty = (
+    (action_request + Optional(Literal("/") + action_path))
+    .setParseAction(_action_path_parse_action)
+    .setName("action_path_nonempty")
+)
+
+segment_indicator = (
+    OneOrMore(Literal("-"))
+    .setParseAction(lambda s, loc, toks: len(toks))
+    .setName("segment_indicator")
+)
+
+
+def _segment_header_parse_action(s, loc, toks):
+    position = Position.from_loc(loc, s)
+    level = toks[0]
+    if len(toks) > 1:
+        assert len(toks) == 2
+        ar = toks[1]
+        return SegmentHeader(
+            name=ar.name, level=level, parameters=ar.parameters, position=position
+        )
+    else:
+        return SegmentHeader(level=level)
+
+
+segment_header = (
+    (segment_indicator + Optional(action_request))
+    .setParseAction(_segment_header_parse_action)
+    .setName("segment_header")
+)
+
+
+def _segment_with_header_parse_action(s, loc, toks):
+    if len(toks) == 1:
+        return QuerySegment(header=toks[0])
+    else:
+        assert len(toks) == 3
+        return QuerySegment(header=toks[0], query=list(toks[2]))
+
+
+segment_with_header = (
+    (segment_header + Optional(Literal("/") + Group(action_path)))
+    .setParseAction(_segment_with_header_parse_action)
+    .setName("segment_with_header")
+)
+
+
+def _segment_without_header_parse_action(s, loc, toks):
+    return QuerySegment(query=list(toks))
+
+
+segment_without_header = action_path_nonempty.setParseAction(
+    _segment_without_header_parse_action
+).setName("segment_without_header")
+
+query_segment = (segment_with_header | segment_without_header).setName("query_segment")
+
+
+def _parse_query_parse_action(s, loc, toks):
+    return Query(segments=list(toks))
+
+
+parse_query = (
+    delimitedList(query_segment, "/")
+    .setParseAction(_parse_query_parse_action)
+    .setName("parse_query")
+)
+
+
+def parse(query):
+    return parse_query.parseString(query, True)[0]
+
+
+if __name__ == "__main__":
+    print(parse("abc-def/-/x-y/--xxx-y/aaa"))
+    print(repr(parse("abc-def/-/x-y/--xxx-y/aaa")))
