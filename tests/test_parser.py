@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-'''
+"""
 Unit tests for LiQuer parser.
-'''
+"""
 import pytest
 from liquer.parser import *
 
@@ -30,7 +30,7 @@ class TestParser:
             "abc-def~ghi/jkl mno",
             "--~~..__",
             "~~I",
-            "&+*:\\"
+            "&+*:\\",
         ]:
             assert decode_token(encode_token(token)) == token
 
@@ -44,15 +44,33 @@ class TestParser:
     def test_all_splits(self):
         assert list(all_splits("")) == [("", "")]
         assert list(all_splits("abc")) == [("abc", ""), ("", "abc")]
-        assert list(all_splits("abc/def")
-                    ) == [("abc/def", ""), ("abc", "def"), ("", "abc/def")]
-        assert list(all_splits("/abc/def/")
-                    ) == [("abc/def", ""), ("abc", "def"), ("", "abc/def")]
-        assert list(all_splits("/ab-c/de-f/")
-                    ) == [("ab-c/de-f", ""), ("ab-c", "de-f"), ("", "ab-c/de-f")]
+        assert list(all_splits("abc/def")) == [
+            ("abc/def", ""),
+            ("abc", "def"),
+            ("", "abc/def"),
+        ]
+        assert list(all_splits("/abc/def/")) == [
+            ("abc/def", ""),
+            ("abc", "def"),
+            ("", "abc/def"),
+        ]
+        assert list(all_splits("/ab-c/de-f/")) == [
+            ("ab-c/de-f", ""),
+            ("ab-c", "de-f"),
+            ("", "ab-c/de-f"),
+        ]
 
+
+class TestNewParser:
     def test_parse_action(self):
         action = action_request.parseString("abc-def", True)[0]
         assert action.name == "abc"
         assert len(action.parameters) == 1
         assert action.parameters[0].string == "def"
+
+    def test_parse_parameter_entity(self):
+        action = action_request.parseString("abc-~~x-~123-~.a~_b~.", True)[0]
+        assert action.name == "abc"
+        assert action.parameters[0].string == "~x"
+        assert action.parameters[1].string == "-123"
+        assert action.parameters[2].string == " a-b "
