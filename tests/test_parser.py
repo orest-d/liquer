@@ -50,3 +50,9 @@ class TestParser:
                     ) == [("abc/def", ""), ("abc", "def"), ("", "abc/def")]
         assert list(all_splits("/ab-c/de-f/")
                     ) == [("ab-c/de-f", ""), ("ab-c", "de-f"), ("", "ab-c/de-f")]
+
+    def test_parse_action(self):
+        action = action_request.parseString("abc-def", True)[0]
+        assert action.name == "abc"
+        assert len(action.parameters) == 1
+        assert action.parameters[0].string == "def"

@@ -1,4 +1,21 @@
 from urllib.parse import quote, unquote
+from pyparsing import (
+    Literal,
+    Word,
+    alphas,
+    alphanums,
+    nums,
+    delimitedList,
+    Regex,
+    OneOrMore,
+    Group,
+    Combine,
+    ZeroOrMore,
+    Optional,
+    Forward,
+    lineno,
+    col,
+)
 
 """
 This module provides functions to decode and encode query.
@@ -82,7 +99,11 @@ class Position:
         self.line = line
         self.column = column
 
-    def __repr__(self):
+    @classmethod
+    def from_loc(cls, loc, string):
+        return cls(loc, line=lineno(loc, string), column=col(loc, string))
+
+    def __str__(self):
         if self.line == 0:
             return "(unknown position)"
         elif self.line > 1:
@@ -90,19 +111,30 @@ class Position:
         else:
             return f"position {self.column}"
 
+    def __repr__(self):
+        if self.line == 0:
+            return "Position()"
+        return f"Position(offset={self.offset}, line={self.line}, column={self.column})"
+
 
 class ActionParameter(object):
-    pass
+    def __init__(self, position=None):
+        self.position = position or Position()
 
 
 class LinkActionParameter(ActionParameter):
-    def __init__(self, link: str):
+    def __init__(self, link: str, position=None):
+        super().__init__(position)
         self.link = link
-
+    def __repr__(self):
+        return f"LinkActionParameter({repr(self.link)}, {repr(self.position)})"
 
 class StringActionParameter(ActionParameter):
-    def __init__(self, string: str):
+    def __init__(self, string: str, position=None):
+        super().__init__(position)
         self.string = string
+    def __repr__(self):
+        return f"StringActionParameter({repr(self.string)}, {repr(self.position)})"
 
 
 class ActionRequest(object):
@@ -117,6 +149,8 @@ class ActionRequest(object):
             return f"{self.name}-{p}"
         else:
             return self.name
+    def __repr__(self):
+        return f"ActionRequest({repr(self.name)}, {repr(self.parameters)}, {repr(self.position)})"
 
 
 class SegmentHeader(object):
@@ -166,3 +200,53 @@ class Query(object):
 
     def encode(self):
         return "/".join(x.encode() for x in self.segments)
+
+
+item_separator = Literal("/").suppress()
+separator = Literal("-").suppress()
+identifier = Word(alphas + "_", alphanums + "_").setName("identifier")
+parameter_text = Regex("[a-zA-Z0-9_.]+").setName("parameter_text")
+percent_encoding = Regex("%[0-9a-fA-F][0-9a-fA-F]").setName("percent_encoding")
+
+tilde_entity = (
+    Literal("~~").setParseAction(lambda s, loc, toks: ["~"]).setName("tilde_entity")
+)
+minus_entity = (
+    Literal("~_").setParseAction(lambda s, loc, toks: ["-"]).setName("minus_entity")
+)
+negative_number_entity = (
+    Regex("~[0-9]")
+    .setParseAction(lambda s, loc, toks: ["-" + toks[0][1:]])
+    .setName("negative_number_entity")
+)
+space_entity = (
+    Literal("~.").setParseAction(lambda s, loc, toks: [" "]).setName("space_entity")
+)
+entities = tilde_entity | minus_entity | negative_number_entity | space_entity
+
+
+def _parameter_parse_action(s, loc, toks):
+    position = Position.from_loc(loc, s)
+    par = unquote("".join(toks))
+    return StringActionParameter(par, position=position)
+
+
+parameter = (
+    ZeroOrMore(parameter_text | entities | percent_encoding)
+    .setParseAction(_parameter_parse_action)
+    .setName("parameter")
+)
+
+
+def _action_request_parse_action(s, loc, toks):
+    position = Position.from_loc(loc, s)
+    name = toks[0]
+    parameters = [x[1] for x in toks[1:]]
+    return ActionRequest(name=name, parameters=parameters, position=position)
+
+
+action_request = (
+    (identifier + ZeroOrMore(Group(Word("-") + parameter)))
+    .setParseAction(_action_request_parse_action)
+    .setName("action_request")
+)
