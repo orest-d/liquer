@@ -299,10 +299,9 @@ class Query(object):
         return self.encode()
 
 
-item_separator = Literal("/").suppress()
-separator = Literal("-").suppress()
 identifier = Regex("[a-z_][a-zA-Z0-9_]*").setName("identifier")
-filename = Regex(r"[a-zA-Z0-9_]*\.[a-zA-Z0-9._-]*")
+filename = Regex(r"[a-zA-Z0-9_]*\.[a-zA-Z0-9._-]*").setName("filename")
+resource_name = Regex(r"[a-zA-Z0-9._][a-zA-Z0-9._-]*").setName("resource_name")
 parameter_text = Regex("[a-zA-Z0-9_.]+").setName("parameter_text")
 percent_encoding = Regex("%[0-9a-fA-F][0-9a-fA-F]").setName("percent_encoding")
 
@@ -375,6 +374,25 @@ action_path_nonempty = (
     .setName("action_path_nonempty")
 )
 
+def _resource_path_parse_action(s, loc, toks):
+    return list(toks)
+
+resource_path = (
+    delimitedList(resource_name, delim="/")
+    .setParseAction(_resource_path_parse_action)
+    .setName("resource_path")
+)
+
+def _resource_header_parse_action(s, loc, toks):
+    position = Position.from_loc(loc, s)
+    level = toks[0]
+    return SegmentHeader(level=level)
+
+resource_header = (
+    (segment_indicator + Literal("R"))
+    .setParseAction(_resource_header_parse_action)
+    .setName("segment_header")
+)
 
 def _segment_header_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
