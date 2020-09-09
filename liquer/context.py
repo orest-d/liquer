@@ -10,9 +10,11 @@ import os.path
 def find_queries_in_template(template: str, prefix: str, sufix: str):
     try:
         start = template.index(prefix)
-        end = template.index(sufix, start+len(prefix))
-        yield template[:start], template[start+len(prefix):end]
-        for text, query in find_queries_in_template(template[end+len(sufix):], prefix, sufix):
+        end = template.index(sufix, start + len(prefix))
+        yield template[:start], template[start + len(prefix) : end]
+        for text, query in find_queries_in_template(
+            template[end + len(sufix) :], prefix, sufix
+        ):
             yield text, query
     except ValueError:
         yield template, None
@@ -21,8 +23,10 @@ def find_queries_in_template(template: str, prefix: str, sufix: str):
 class Context(object):
     def command_registry(self):
         return command_registry()
+
     def cache(self):
         return get_cache()
+
     def state_types_registry(self):
         return state_types_registry()
 
@@ -31,7 +35,6 @@ class Context(object):
         state, remainder = cached_part(query, cache=self.cache())
         return self.evaluate_query_on(remainder, state=state)
 
-
     def evaluate_query_on(self, query, state=None):
         """Evaluate query on state, returns a State, cache the output in supplied cache
         Unlike evaluate function, this function does not try to fetch state from cache,
@@ -39,7 +42,6 @@ class Context(object):
         """
         ql = decode(query)
         return self.evaluate_ql_on(ql, state=state)
-
 
     def evaluate_ql_on(self, ql, state=None):
         """This is equivalent to evaluate_query_on, but accepts decoded query
@@ -52,17 +54,16 @@ class Context(object):
 
         cr = self.command_registry()
         for i, qcommand in enumerate(ql):
-            if i == len(ql)-1:
-                if len(qcommand) == 1 and '.' in qcommand[0]:
+            if i == len(ql) - 1:
+                if len(qcommand) == 1 and "." in qcommand[0]:
                     state.with_filename(qcommand[0])
                     break
-            state.log_command(qcommand,i)
+            state.log_command(qcommand, i)
             state = cr.evaluate_command(state, qcommand)
             if state.caching and not state.is_error and not state.is_volatile():
                 cache.store(state)
 
         return state
-
 
     def evaluate_and_save(query, target_directory=None, target_file=None):
         """Evaluate query and save result.
@@ -83,9 +84,10 @@ class Context(object):
                 b, mime, typeid = encode_state_data(data)
                 path = t.default_filename()
             else:
-                b, mime, typeid = encode_state_data(
-                    data, extension=state.extension)
-                path = t.default_filename() if state.filename is None else state.filename
+                b, mime, typeid = encode_state_data(data, extension=state.extension)
+                path = (
+                    t.default_filename() if state.filename is None else state.filename
+                )
             if target_directory is not None:
                 path = os.path.join(target_directory, path)
 
@@ -93,7 +95,6 @@ class Context(object):
             f.write(b)
 
         return state
-
 
     def evaluate_template(self, template: str, prefix="$", sufix="$", cache=None):
         """Evaluate a string template; replace all queries by their values
