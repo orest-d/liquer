@@ -251,14 +251,17 @@ class TransformQuerySegment(object):
 
 
 class ResourceQuerySegment(object):
-    def __init__(self, name="", query=None):
+    def __init__(self, header=None, query=None):
         "header can be SegmentHeader, query is a list of ActionRequest objects"
-        self.name = name
+        self.header = header
         self.query = query or []
 
     def encode(self):
         query = "/".join(x.encode() for x in self.query)
-        rqs = f"-R{self.name}"
+        if self.header is None:
+            rqs="-R"
+        else:
+            rqs = f"-R-{self.header.encode()}"
         if len(query):
             return f"{rqs}/{query}"
         else:
@@ -266,7 +269,7 @@ class ResourceQuerySegment(object):
 
     def __repr__(self):
         return f"""ResourceQuerySegment(
-  name   = {indent(repr(self.name))},
+  header = {indent(repr(self.header))},
   query  = {indent(list_indent(self.query))}
 )"""
 
@@ -374,8 +377,10 @@ action_path_nonempty = (
     .setName("action_path_nonempty")
 )
 
+
 def _resource_path_parse_action(s, loc, toks):
     return list(toks)
+
 
 resource_path = (
     delimitedList(resource_name, delim="/")
@@ -383,16 +388,19 @@ resource_path = (
     .setName("resource_path")
 )
 
+
 def _resource_header_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
     level = toks[0]
     return SegmentHeader(level=level)
+
 
 resource_header = (
     (segment_indicator + Literal("R"))
     .setParseAction(_resource_header_parse_action)
     .setName("segment_header")
 )
+
 
 def _segment_header_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
@@ -408,9 +416,39 @@ def _segment_header_parse_action(s, loc, toks):
 
 
 segment_header = (
-    (segment_indicator + Optional(action_request))
+    (segment_indicator +  Optional(action_request))
     .setParseAction(_segment_header_parse_action)
     .setName("segment_header")
+)
+
+
+def _resource_segment_with_header_parse_action(s, loc, toks):
+    position = Position.from_loc(loc, s)
+    level = toks[0]
+    assert toks[1]=="R"
+    if len(toks[2]):
+        header = SegmentHeader(
+            name=toks[2][0].encode(), level=level, parameters=list(toks[2][1:]), position=position
+        )
+    else:
+        header = SegmentHeader(level=level, position=position)
+    if len(toks)==4:
+        return ResourceQuerySegment(header=header, query=list(toks[3]))
+    else:
+        return ResourceQuerySegment(header=header, query=[])
+
+
+
+resource_segment_with_header = (
+    (
+        segment_indicator
+        + Literal("R")
+        + Group(ZeroOrMore(Word("-").suppress() + parameter))
+        + Literal("/").suppress()
+        + Optional(Group(resource_path))
+    )
+    .setParseAction(_resource_segment_with_header_parse_action)
+    .setName("resource_segment_with_header")
 )
 
 
@@ -441,11 +479,11 @@ segment_without_header = (
     .setName("segment_without_header")
 )
 
-query_segment = (segment_with_header | segment_without_header).setName("query_segment")
+query_segment = (segment_with_header | segment_without_header | resource_segment_with_header).setName("query_segment")
 
 
 def _parse_query_parse_action(s, loc, toks):
-    if toks[0]=="/":
+    if toks[0] == "/":
         return Query(segments=list(toks[1:]), absolute=True)
     else:
         return Query(segments=list(toks), absolute=False)
@@ -463,18 +501,21 @@ def parse(query):
 
 
 if __name__ == "__main__":
-#    print(action_path_nonempty.parseString("abc/def/file.txt", True))
-#    print(query_segment.parseString("abc/def/file.txt", True))
+    #    print(action_path_nonempty.parseString("abc/def/file.txt", True))
+    #    print(query_segment.parseString("abc/def/file.txt", True))
     print(resource_path.parseString("abc/def/file.txt", True))
-#    print(query_segment.parseString("-qs/abc/def/file.txt", True))
-#    print(parse_query.parseString("abc/def/file.txt", True))
-#    print(parse_query.parseString("-/abc/def/file.txt", True))
-#    print(parse_query.parseString("-qs/abc/def/file.txt", True))
-#    print(parse_query.parseString("-/xxx", True))
-#    print(parse_query.parseString("abc/def/-/xxx", True))
-#    print(parse_query.parseString("abc/def/-/xxx/file.txt", True))
-#    print(repr(parse("abc/def/-/xxx/file.txt")))
-#    print(repr(parse("abc/def")))
+    #    print(query_segment.parseString("-qs/abc/def/file.txt", True))
+    #    print(parse_query.parseString("abc/def/file.txt", True))
+    #    print(parse_query.parseString("-/abc/def/file.txt", True))
+    #    print(parse_query.parseString("-qs/abc/def/file.txt", True))
+    #    print(parse_query.parseString("-/xxx", True))
+    #    print(parse_query.parseString("abc/def/-/xxx", True))
+    #    print(parse_query.parseString("abc/def/-/xxx/file.txt", True))
+    #    print(repr(parse("abc/def/-/xxx/file.txt")))
+    #    print(repr(parse("abc/def")))
 
-#    print(parse("abc-def/-/x-y/--xxx-y/aaa"))
-#    print(repr(parse("/abc-def/-/x-y/--xxx-y/aaa")))
+    #    print(parse("abc-def/-/x-y/--xxx-y/aaa"))
+    #    print(repr(parse("/abc-def/-/x-y/--xxx-y/aaa")))
+    print(resource_segment_with_header.parseString("-R/abc/def"))
+    print(resource_segment_with_header.parseString("-R-1-2/"))
+#    print(parse("-R/abc/def"))
