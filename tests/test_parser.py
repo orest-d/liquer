@@ -74,3 +74,19 @@ class TestNewParser:
         assert action.parameters[0].string == "~x"
         assert action.parameters[1].string == "-123"
         assert action.parameters[2].string == " a-b "
+
+    def test_parse_escaped_parameter(self):
+        res = parameter.parseString("abc~~~_~0%21",True)
+        assert res[0].string == "abc~--0!"
+
+    def test_parse_filename(self):
+        q = parse("abc/def/file.txt")
+        assert q.segments[0].filename == "file.txt"
+    def test_parse_segments(self):
+        q = parse("abc/def/-/xxx/-q/qqq")
+        assert len(q.segments) == 3
+        assert q.segments[0].header is None
+        assert q.segments[1].header.name == ""
+        assert q.segments[2].header.name == "q"
+    
+ 

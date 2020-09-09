@@ -227,9 +227,6 @@ class TransformQuerySegment(object):
         self.filename = filename
 
     def encode(self):
-        for i in range(len(self.query)):
-            print ("ITEM",i)
-            print(f"-- {i}:{self.query[i]}")
         query = "/".join(x.encode() for x in self.query)
         if self.filename is not None:
             query = f"{query}/{self.filename}" if len(query) else self.filename
@@ -252,6 +249,7 @@ class TransformQuerySegment(object):
     def __str__(self):
         return self.encode()
 
+
 class ResourceQuerySegment(object):
     def __init__(self, name="", query=None):
         "header can be SegmentHeader, query is a list of ActionRequest objects"
@@ -260,7 +258,7 @@ class ResourceQuerySegment(object):
 
     def encode(self):
         query = "/".join(x.encode() for x in self.query)
-        rqs=f"-R{self.name}"
+        rqs = f"-R{self.name}"
         if len(query):
             return f"{rqs}/{query}"
         else:
@@ -277,28 +275,34 @@ class ResourceQuerySegment(object):
 
 
 class Query(object):
-    def __init__(self, segments: list = None):
+    def __init__(self, segments: list = None, absolute=False):
         self.segments = segments or []
+        self.absolute = absolute
 
-    def create_segment(self, name: str="", level=1):
+    def create_segment(self, name: str = "", level=1):
         qs = TransformQuerySegment(SegmentHeader(name, level=level))
         self.segments.append(qs)
         return qs
 
     def encode(self):
-        return "/".join(x.encode() for x in self.segments)
+        return ("/" if self.absolute else "") + "/".join(
+            x.encode() for x in self.segments
+        )
 
     def __repr__(self):
-        return f"""Query({list_indent(self.segments)})"""
+        return f"""Query(
+{indent(list_indent(self.segments))},
+  absolute = {self.absolute}
+)"""
 
     def __str__(self):
         return self.encode()
 
 
 item_separator = Literal("/").suppress()
-separator  = Literal("-").suppress()
+separator = Literal("-").suppress()
 identifier = Regex("[a-z_][a-zA-Z0-9_]*").setName("identifier")
-filename   = Regex(r"[a-zA-Z0-9_]*\.[a-zA-Z0-9._-]*")
+filename = Regex(r"[a-zA-Z0-9_]*\.[a-zA-Z0-9._-]*")
 parameter_text = Regex("[a-zA-Z0-9_.]+").setName("parameter_text")
 percent_encoding = Regex("%[0-9a-fA-F][0-9a-fA-F]").setName("percent_encoding")
 
@@ -349,7 +353,7 @@ action_request = (
 def _action_path_parse_action(s, loc, toks):
     ap = list(toks)
     if type(ap[-1]) is str:
-        return (ap[:-1],ap[-1])
+        return (ap[:-1], ap[-1])
     else:
         return (ap, None)
 
@@ -361,11 +365,15 @@ segment_indicator = (
 )
 
 action_path_nonempty = (
-    ((ZeroOrMore(action_request + (Literal("/") + ~segment_indicator).suppress()) + (filename|action_request)))
+    (
+        (
+            ZeroOrMore(action_request + (Literal("/") + ~segment_indicator).suppress())
+            + (filename | action_request)
+        )
+    )
     .setParseAction(_action_path_parse_action)
     .setName("action_path_nonempty")
 )
-
 
 
 def _segment_header_parse_action(s, loc, toks):
@@ -393,7 +401,9 @@ def _segment_with_header_parse_action(s, loc, toks):
         return TransformQuerySegment(header=toks[0])
     else:
         assert len(toks) == 3
-        return TransformQuerySegment(header=toks[0], query=toks[2][0][0], filename=toks[2][0][1])
+        return TransformQuerySegment(
+            header=toks[0], query=toks[2][0][0], filename=toks[2][0][1]
+        )
 
 
 segment_with_header = (
@@ -407,19 +417,24 @@ def _segment_without_header_parse_action(s, loc, toks):
     return TransformQuerySegment(query=list(toks[0][0][0]), filename=toks[0][0][1])
 
 
-segment_without_header = Group(action_path_nonempty).setParseAction(
-    _segment_without_header_parse_action
-).setName("segment_without_header")
+segment_without_header = (
+    Group(action_path_nonempty)
+    .setParseAction(_segment_without_header_parse_action)
+    .setName("segment_without_header")
+)
 
 query_segment = (segment_with_header | segment_without_header).setName("query_segment")
 
 
 def _parse_query_parse_action(s, loc, toks):
-    return Query(segments=list(toks))
+    if toks[0]=="/":
+        return Query(segments=list(toks[1:]), absolute=True)
+    else:
+        return Query(segments=list(toks), absolute=False)
 
 
 parse_query = (
-    delimitedList(query_segment, "/")
+    (Optional(Literal("/")) + delimitedList(query_segment, "/"))
     .setParseAction(_parse_query_parse_action)
     .setName("parse_query")
 )
@@ -430,17 +445,17 @@ def parse(query):
 
 
 if __name__ == "__main__":
-    print (action_path_nonempty.parseString("abc/def/file.txt",True))
-    print (query_segment.parseString("abc/def/file.txt",True))
-    print (query_segment.parseString("-qs/abc/def/file.txt",True))
-    print (parse_query.parseString("abc/def/file.txt",True))
-    print (parse_query.parseString("-/abc/def/file.txt",True))
-    print (parse_query.parseString("-qs/abc/def/file.txt",True))
-    print (parse_query.parseString("-/xxx",True))
-    print (parse_query.parseString("abc/def/-/xxx",True))
-    print (parse_query.parseString("abc/def/-/xxx/file.txt",True))
-    print (repr(parse("abc/def/-/xxx/file.txt")))
-    print (repr(parse("abc/def")))
+    print(action_path_nonempty.parseString("abc/def/file.txt", True))
+    print(query_segment.parseString("abc/def/file.txt", True))
+    print(query_segment.parseString("-qs/abc/def/file.txt", True))
+    print(parse_query.parseString("abc/def/file.txt", True))
+    print(parse_query.parseString("-/abc/def/file.txt", True))
+    print(parse_query.parseString("-qs/abc/def/file.txt", True))
+    print(parse_query.parseString("-/xxx", True))
+    print(parse_query.parseString("abc/def/-/xxx", True))
+    print(parse_query.parseString("abc/def/-/xxx/file.txt", True))
+    print(repr(parse("abc/def/-/xxx/file.txt")))
+    print(repr(parse("abc/def")))
 
     print(parse("abc-def/-/x-y/--xxx-y/aaa"))
-    print(repr(parse("abc-def/-/x-y/--xxx-y/aaa")))
+    print(repr(parse("/abc-def/-/x-y/--xxx-y/aaa")))
