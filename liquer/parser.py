@@ -163,6 +163,21 @@ class StringActionParameter(ActionParameter):
         return self.encode()
 
 
+class ResourceName(ActionParameter):
+    def __init__(self, name: str, position=None):
+        self.position = position or Position()
+        self.name = name
+
+    def encode(self):
+        return self.name
+
+    def __repr__(self):
+        return f"ResourceName({repr(self.name)}, {repr(self.position)})"
+
+    def __str__(self):
+        return self.encode()
+
+
 class ActionRequest(object):
     def __init__(self, name: str, parameters: list, position=None):
         self.name = name
@@ -259,7 +274,7 @@ class ResourceQuerySegment(object):
     def encode(self):
         query = "/".join(x.encode() for x in self.query)
         if self.header is None:
-            rqs="-R"
+            rqs = "-R"
         else:
             rqs = f"-R-{self.header.encode()}"
         if len(query):
@@ -304,9 +319,25 @@ class Query(object):
 
 identifier = Regex("[a-z_][a-zA-Z0-9_]*").setName("identifier")
 filename = Regex(r"[a-zA-Z0-9_]*\.[a-zA-Z0-9._-]*").setName("filename")
-resource_name = Regex(r"[a-zA-Z0-9._][a-zA-Z0-9._-]*").setName("resource_name")
+
+
+def _resource_name_parse_action(s, loc, toks):
+    position = Position.from_loc(loc, s)
+    name = unquote("".join(toks))
+    return ResourceName(name, position=position)
+
+
+resource_name = (
+    Regex(r"[a-zA-Z0-9._][a-zA-Z0-9._-]*")
+    .setParseAction(_resource_name_parse_action)
+    .setName("resource_name")
+)
 parameter_text = Regex("[a-zA-Z0-9_.]+").setName("parameter_text")
 percent_encoding = Regex("%[0-9a-fA-F][0-9a-fA-F]").setName("percent_encoding")
+#parse_query = Forward()
+#action_path_nonempty = Forward()
+#action_request = Forward()
+#parameter = Forward()
 
 tilde_entity = (
     Literal("~~").setParseAction(lambda s, loc, toks: ["~"]).setName("tilde_entity")
@@ -322,8 +353,11 @@ negative_number_entity = (
 space_entity = (
     Literal("~.").setParseAction(lambda s, loc, toks: [" "]).setName("space_entity")
 )
-entities = tilde_entity | minus_entity | negative_number_entity | space_entity
+end_entity = Literal("~E")
 
+#expand_entity = (Literal("~X~").suppress() + action_request + end_entity.suppress())
+
+entities = tilde_entity | minus_entity | negative_number_entity | space_entity #| expand_entity
 
 def _parameter_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
@@ -341,12 +375,12 @@ parameter = (
 def _action_request_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
     name = toks[0]
-    parameters = [x[1] for x in toks[1:]]
+    parameters = list(toks[1:])
     return ActionRequest(name=name, parameters=parameters, position=position)
 
 
 action_request = (
-    (identifier + ZeroOrMore(Group(Word("-") + parameter)))
+    (identifier + ZeroOrMore(Literal("-").suppress() + parameter))
     .setParseAction(_action_request_parse_action)
     .setName("action_request")
 )
@@ -416,7 +450,7 @@ def _segment_header_parse_action(s, loc, toks):
 
 
 segment_header = (
-    (segment_indicator +  Optional(action_request))
+    (segment_indicator + Optional(action_request))
     .setParseAction(_segment_header_parse_action)
     .setName("segment_header")
 )
@@ -425,18 +459,20 @@ segment_header = (
 def _resource_segment_with_header_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
     level = toks[0]
-    assert toks[1]=="R"
+    assert toks[1] == "R"
     if len(toks[2]):
         header = SegmentHeader(
-            name=toks[2][0].encode(), level=level, parameters=list(toks[2][1:]), position=position
+            name=toks[2][0].encode(),
+            level=level,
+            parameters=list(toks[2][1:]),
+            position=position,
         )
     else:
         header = SegmentHeader(level=level, position=position)
-    if len(toks)==4:
+    if len(toks) == 4:
         return ResourceQuerySegment(header=header, query=list(toks[3]))
     else:
         return ResourceQuerySegment(header=header, query=[])
-
 
 
 resource_segment_with_header = (
@@ -479,7 +515,9 @@ segment_without_header = (
     .setName("segment_without_header")
 )
 
-query_segment = (segment_with_header | segment_without_header | resource_segment_with_header).setName("query_segment")
+query_segment = (
+    segment_with_header | segment_without_header | resource_segment_with_header
+).setName("query_segment")
 
 
 def _parse_query_parse_action(s, loc, toks):
@@ -496,8 +534,36 @@ parse_query = (
 )
 
 
+def _resource_transform_query_action(s, loc, toks):
+    if toks[0] == "/":
+        assert len(toks) == 3
+        resource = ResourceQuerySegment(query=list(toks[1]))
+        transform = toks[2]
+        return Query(segments=[resource, transform], absolute=True)
+    else:
+        assert len(toks) == 2
+        resource = ResourceQuerySegment(query=list(toks[0]))
+        transform = toks[1]
+        return Query(segments=[resource, transform], absolute=False)
+
+
+resource_transform_query = (
+    (
+        Optional(Literal("/"))
+        + Group(resource_path)
+        + Literal("/").suppress()
+        + segment_with_header
+    )
+    .setParseAction(_resource_transform_query_action)
+    .setName("resource_transform_query")
+)
+
+
 def parse(query):
-    return parse_query.parseString(query, True)[0]
+    try:
+        return resource_transform_query.parseString(query, True)[0]
+    except:
+        return parse_query.parseString(query, True)[0]
 
 
 if __name__ == "__main__":
@@ -516,6 +582,12 @@ if __name__ == "__main__":
 
     #    print(parse("abc-def/-/x-y/--xxx-y/aaa"))
     #    print(repr(parse("/abc-def/-/x-y/--xxx-y/aaa")))
-    print(resource_segment_with_header.parseString("-R/abc/def"))
-    print(resource_segment_with_header.parseString("-R-1-2/"))
-#    print(parse("-R/abc/def"))
+    #    print(resource_segment_with_header.parseString("-R/abc/def"))
+    #    print(resource_segment_with_header.parseString("-R-1-2/"))
+    # print(parse("-R/abc/def"))
+    print((parse("abc/xxx/-/def")))
+    print(repr(parse("-/def")))
+    print(repr(parse("def")))
+#    print(repr(action_path_nonempty.parseString("abc", True)))
+#    print(repr(expand_entity.parseString("~X~abc~E", True)))
+#    print(repr(parse("-/def-~X~abc~E")))
