@@ -1,6 +1,6 @@
 import traceback
 from liquer.state import State
-from liquer.parser import encode, decode
+from liquer.parser import encode, decode, parse
 from liquer.cache import cached_part, get_cache
 from liquer.commands import command_registry
 from liquer.state_types import encode_state_data, state_types_registry
@@ -26,6 +26,25 @@ class Context(object):
 
     def cache(self):
         return get_cache()
+
+    def cached_part(self, query):
+        """Get cached part of the query.
+        In the process, query is into two parts: the beginning of the query
+        and the remainder. Function tries to find longest possible beginning of the query
+        which is cached, then returns the cached state and the remainder of the query.
+        """
+        cache = self.get_cache()
+
+        if isinstance(cache, NoCache):  # Just an optimization - to avoid looping over all query splits
+            return State(), query
+
+        for q, remainder in query.all_predecessors():
+            if cache.contains(q.encode()):
+                state = cache.get(key)
+                if state is None:
+                    continue
+                return state, remainder
+        return State(), query
 
     def state_types_registry(self):
         return state_types_registry()

@@ -89,4 +89,8 @@ class TestNewParser:
         assert q.segments[1].header.name == ""
         assert q.segments[2].header.name == "q"
     
- 
+    def test_predecessors(self):
+        p = [p.encode() for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()]
+        assert p == ["-R/abc/def/-/ghi/jkl/file.txt", "-R/abc/def/-/ghi/jkl", "-R/abc/def/-/ghi", "-R/abc/def/-", "-R/abc/def"]
+        r = [(None if r is None else r.encode()) for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()]
+        assert r == [None, "file.txt", "jkl/file.txt", "ghi/jkl/file.txt", "-/ghi/jkl/file.txt"]
