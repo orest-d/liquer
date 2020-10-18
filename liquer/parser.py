@@ -1,4 +1,5 @@
 from urllib.parse import quote, unquote
+import re
 from pyparsing import (
     Literal,
     Word,
@@ -15,6 +16,7 @@ from pyparsing import (
     Forward,
     lineno,
     col,
+    FollowedBy,
 )
 
 """
@@ -273,7 +275,7 @@ class ResourceQuerySegment(object):
 
     def encode(self):
         query = "/".join(x.encode() for x in self.query)
-        if self.header is None:
+        if self.header is None or self.header.name in (None, ""):
             rqs = "-R"
         else:
             rqs = f"-R-{self.header.encode()}"
@@ -334,10 +336,7 @@ resource_name = (
 )
 parameter_text = Regex("[a-zA-Z0-9_.]+").setName("parameter_text")
 percent_encoding = Regex("%[0-9a-fA-F][0-9a-fA-F]").setName("percent_encoding")
-#parse_query = Forward()
-#action_path_nonempty = Forward()
-#action_request = Forward()
-#parameter = Forward()
+parse_query = Forward()
 
 tilde_entity = (
     Literal("~~").setParseAction(lambda s, loc, toks: ["~"]).setName("tilde_entity")
@@ -355,9 +354,12 @@ space_entity = (
 )
 end_entity = Literal("~E")
 
-#expand_entity = (Literal("~X~").suppress() + action_request + end_entity.suppress())
+expand_entity = Literal("~X~").suppress() + parse_query + end_entity.suppress()
 
-entities = tilde_entity | minus_entity | negative_number_entity | space_entity #| expand_entity
+entities = (
+    tilde_entity | minus_entity | negative_number_entity | space_entity | expand_entity
+)
+
 
 def _parameter_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
@@ -394,16 +396,47 @@ def _action_path_parse_action(s, loc, toks):
         return (ap, None)
 
 
-segment_indicator = (
-    OneOrMore(Literal("-"))
-    .setParseAction(lambda s, loc, toks: len(toks))
-    .setName("segment_indicator")
+# segment_indicator = (
+#    OneOrMore(Literal("-"))
+#    .setParseAction(lambda s, loc, toks: len(toks))
+#    .setName("segment_indicator")
+# )
+
+
+def _segment_identifier_action(s, loc, toks):
+    m = re.match("(-+)([a-zA-Z0-9_]*)", toks[0])
+    assert m is not None
+    return len(m.group(1)), m.group(2)
+
+
+segment_identifier = (
+    (Regex("-+[a-z][a-zA-Z0-9_]*") | (Regex("-+") + FollowedBy("/")))
+    .setParseAction(_segment_identifier_action)
+    .setName("segment_identifier")
+)
+
+
+def _resource_identifier_action(s, loc, toks):
+    m = re.match("(-+)R([a-zA-Z0-9_]*)", toks[0])
+    assert m is not None
+    return len(m.group(1)), m.group(2)
+
+
+resource_identifier = (
+    (Regex("-+R[a-zA-Z0-9_]*"))
+    .setParseAction(_resource_identifier_action)
+    .setName("resource_identifier")
 )
 
 action_path_nonempty = (
     (
         (
-            ZeroOrMore(action_request + (Literal("/") + ~segment_indicator).suppress())
+            ZeroOrMore(
+                action_request
+                + (
+                    Literal("/") + ~(resource_identifier | segment_identifier)
+                ).suppress()
+            )
             + (filename | action_request)
         )
     )
@@ -423,34 +456,20 @@ resource_path = (
 )
 
 
-def _resource_header_parse_action(s, loc, toks):
-    position = Position.from_loc(loc, s)
-    level = toks[0]
-    return SegmentHeader(level=level)
-
-
-resource_header = (
-    (segment_indicator + Literal("R"))
-    .setParseAction(_resource_header_parse_action)
-    .setName("segment_header")
-)
-
-
 def _segment_header_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
-    level = toks[0]
+    level, name = toks[0]
     if len(toks) > 1:
-        assert len(toks) == 2
-        ar = toks[1]
+        parameters = list(toks[1:])
         return SegmentHeader(
-            name=ar.name, level=level, parameters=ar.parameters, position=position
+            name=name, level=level, parameters=parameters, position=position
         )
     else:
         return SegmentHeader(level=level)
 
 
 segment_header = (
-    (segment_indicator + Optional(action_request))
+    (segment_identifier + ZeroOrMore(Literal("-").suppress() + parameter))
     .setParseAction(_segment_header_parse_action)
     .setName("segment_header")
 )
@@ -458,27 +477,22 @@ segment_header = (
 
 def _resource_segment_with_header_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
-    level = toks[0]
-    assert toks[1] == "R"
-    if len(toks[2]):
-        header = SegmentHeader(
-            name=toks[2][0].encode(),
-            level=level,
-            parameters=list(toks[2][1:]),
-            position=position,
-        )
-    else:
-        header = SegmentHeader(level=level, position=position)
-    if len(toks) == 4:
-        return ResourceQuerySegment(header=header, query=list(toks[3]))
+    level, name = toks[0]
+    header = SegmentHeader(
+        name=name,
+        level=level,
+        parameters=list(toks[1]),
+        position=position,
+    )
+    if len(toks) == 3:
+        return ResourceQuerySegment(header=header, query=list(toks[2]))
     else:
         return ResourceQuerySegment(header=header, query=[])
 
 
 resource_segment_with_header = (
     (
-        segment_indicator
-        + Literal("R")
+        resource_identifier
         + Group(ZeroOrMore(Word("-").suppress() + parameter))
         + Literal("/").suppress()
         + Optional(Group(resource_path))
@@ -527,7 +541,7 @@ def _parse_query_parse_action(s, loc, toks):
         return Query(segments=list(toks), absolute=False)
 
 
-parse_query = (
+parse_query << (
     (Optional(Literal("/")) + delimitedList(query_segment, "/"))
     .setParseAction(_parse_query_parse_action)
     .setName("parse_query")
@@ -569,7 +583,7 @@ def parse(query):
 if __name__ == "__main__":
     #    print(action_path_nonempty.parseString("abc/def/file.txt", True))
     #    print(query_segment.parseString("abc/def/file.txt", True))
-    print(resource_path.parseString("abc/def/file.txt", True))
+    #print(resource_path.parseString("abc/def/file.txt", True))
     #    print(query_segment.parseString("-qs/abc/def/file.txt", True))
     #    print(parse_query.parseString("abc/def/file.txt", True))
     #    print(parse_query.parseString("-/abc/def/file.txt", True))
@@ -583,11 +597,12 @@ if __name__ == "__main__":
     #    print(parse("abc-def/-/x-y/--xxx-y/aaa"))
     #    print(repr(parse("/abc-def/-/x-y/--xxx-y/aaa")))
     #    print(resource_segment_with_header.parseString("-R/abc/def"))
-    #    print(resource_segment_with_header.parseString("-R-1-2/"))
-    # print(parse("-R/abc/def"))
-    print((parse("abc/xxx/-/def")))
-    print(repr(parse("-/def")))
-    print(repr(parse("def")))
+    # print(resource_segment_with_header.parseString("-R-1-2/"))
+    print(repr(parse("-R/abc/def/-/ghi")))
+    print((parse("-R/abc/def/-/ghi")))
+#    print(parse("abc/xxx/-/def"))
+#    print(repr(parse("-/def")))
+#    print(repr(parse("def")))
 #    print(repr(action_path_nonempty.parseString("abc", True)))
 #    print(repr(expand_entity.parseString("~X~abc~E", True)))
 #    print(repr(parse("-/def-~X~abc~E")))
