@@ -246,15 +246,32 @@ class TransformQuerySegment(object):
     def predecessor(self):
         if self.filename is None:
             if len(self.query):
-                p = TransformQuerySegment(header=self.header, query=self.query[:-1], filename=None)
-                r = TransformQuerySegment(header=None, query=[self.query[-1]], filename=None)
-                return p,r
+                p = TransformQuerySegment(
+                    header=self.header, query=self.query[:-1], filename=None
+                )
+                r = TransformQuerySegment(
+                    header=self.header, query=[self.query[-1]], filename=None
+                )
+                return p, r
             else:
                 return None, None
         else:
-            p = TransformQuerySegment(header=self.header, query=self.query, filename=None)
-            r = TransformQuerySegment(header=None, query=[], filename=self.filename)
-            return p,r
+            p = TransformQuerySegment(
+                header=self.header, query=self.query, filename=None
+            )
+            r = TransformQuerySegment(
+                header=self.header, query=[], filename=self.filename
+            )
+            return p, r
+
+    def is_empty(self):
+        return len(self.query) == 0 and self.filename is None
+
+    def is_filename(self):
+        return len(self.query) == 0 and self.filename is not None
+
+    def is_action_request(self):
+        return len(self.query) == 1 and self.filename is None
 
     def encode(self):
         query = "/".join(x.encode() for x in self.query)
@@ -269,20 +286,23 @@ class TransformQuerySegment(object):
             else:
                 return self.header.encode()
 
-    def __add__(self,q):
+    def __add__(self, q):
         if q is None:
             return self
         if isinstance(q, TransformQuerySegment):
-            return TransformQuerySegment(header=self.header, query=self.query + q.query, filename=q.filename)
+            return TransformQuerySegment(
+                header=self.header, query=self.query + q.query, filename=q.filename
+            )
+
         raise Exception(f"Unsupported operation (add): {self.encode()} + {repr(q)}")
 
-    def __radd__(self,q):
+    def __radd__(self, q):
         if q is None:
             return self
         if isinstance(q, TransformQuerySegment):
             return q + self
         raise Exception(f"Unsupported operation (radd): {repr(q)} + {self.encode()}")
-        
+
     def __repr__(self):
         return f"""TransformQuerySegment(
   header   = {indent(repr(self.header))},
@@ -330,9 +350,9 @@ class Query(object):
         if len(self.segments):
             if isinstance(self.segments[-1], TransformQuerySegment):
                 p, r = self.segments[-1].predecessor()
-                if p is None:
+                if p is None or p.is_empty():
                     qp = Query(self.segments[:-1], absolute=self.absolute)
-                    qr = self.segments[-1]
+                    qr = r
                     return qp, qr
                 else:
                     qp = Query(self.segments[:-1] + [p], absolute=self.absolute)
@@ -342,12 +362,12 @@ class Query(object):
                 return None, None
         else:
             return None, None
-    
+
     def all_predecessors(self):
         qp, qr = self, None
         while qp is not None:
             yield qp, qr
-            qp,r = qp.predecessor()
+            qp, r = qp.predecessor()
             qr = r + qr
 
     def create_segment(self, name: str = "", level=1):
@@ -634,7 +654,7 @@ def parse(query):
 if __name__ == "__main__":
     #    print(action_path_nonempty.parseString("abc/def/file.txt", True))
     #    print(query_segment.parseString("abc/def/file.txt", True))
-    #print(resource_path.parseString("abc/def/file.txt", True))
+    # print(resource_path.parseString("abc/def/file.txt", True))
     #    print(query_segment.parseString("-qs/abc/def/file.txt", True))
     #    print(parse_query.parseString("abc/def/file.txt", True))
     #    print(parse_query.parseString("-/abc/def/file.txt", True))
@@ -653,11 +673,11 @@ if __name__ == "__main__":
     print((parse("-R/abc/def/-/ghi")))
     print()
     for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors():
-        print(p.encode(),"   -   ", "NONE" if r is None else r.encode())
-#    print(parse("abc/xxx/-/def"))
-#    print(repr(parse("-/def")))
-#    print(repr(parse("def")))
-#    print(repr(action_path_nonempty.parseString("abc", True)))
-#    print(repr(expand_entity.parseString("~X~abc~E", True)))
-#    print(repr(parse("-/def-~X~abc~E")))
+        print(p.encode(), "   -   ", "NONE" if r is None else r.encode())
+    #    print(parse("abc/xxx/-/def"))
+    #    print(repr(parse("-/def")))
+    #    print(repr(parse("def")))
+    #    print(repr(action_path_nonempty.parseString("abc", True)))
+    #    print(repr(expand_entity.parseString("~X~abc~E", True)))
+    #    print(repr(parse("-/def-~X~abc~E")))
     print(parse("abc/def/-/xxx/-q/qqq"))
