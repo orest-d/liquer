@@ -346,6 +346,9 @@ class Query(object):
         self.segments = segments or []
         self.absolute = absolute
 
+    def is_empty(self):
+        return len(self.segments)==0
+
     def predecessor(self):
         if len(self.segments):
             if isinstance(self.segments[-1], TransformQuerySegment):

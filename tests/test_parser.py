@@ -89,7 +89,31 @@ class TestNewParser:
         assert q.segments[1].header.name == ""
         assert q.segments[2].header.name == "q"
     
-    def test_predecessor(self):
+    def test_predecessor1(self):
+        query = parse("ghi/jkl/file.txt")
+        p, r = query.predecessor()
+        assert p.encode() == "ghi/jkl"
+        assert r.encode() == "file.txt"
+        assert not r.is_empty()
+        assert r.is_filename()
+        assert not r.is_action_request()
+
+        p, r = p.predecessor()
+        assert p.encode() == "ghi"
+        assert r.encode() == "jkl"
+        assert not r.is_empty()
+        assert not r.is_filename()
+        assert r.is_action_request()
+
+        p, r = p.predecessor()
+        assert p.is_empty()
+        assert r.encode() == "ghi"
+
+        p, r = p.predecessor()
+        assert p is None
+        assert r is None
+
+    def test_predecessor2(self):
         query = parse("-R/abc/def/-x/ghi/jkl/file.txt")
         p, r = query.predecessor()
         assert p.encode() == "-R/abc/def/-x/ghi/jkl"
@@ -113,7 +137,13 @@ class TestNewParser:
         assert p == None
         assert r == None
 
-    def test_all_predecessors(self):
+    def test_all_predecessors1(self):
+        p = [p.encode() for p, r in parse("ghi/jkl/file.txt").all_predecessors()]
+        assert p == ["ghi/jkl/file.txt", "ghi/jkl", "ghi", ""]
+        r = [(None if r is None else r.encode()) for p, r in parse("ghi/jkl/file.txt").all_predecessors()]
+        assert r == [None, "file.txt", "jkl/file.txt", "ghi/jkl/file.txt"]
+
+    def test_all_predecessors2(self):
         p = [p.encode() for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()]
         assert p == ["-R/abc/def/-/ghi/jkl/file.txt", "-R/abc/def/-/ghi/jkl", "-R/abc/def/-/ghi", "-R/abc/def"]
         r = [(None if r is None else r.encode()) for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()]
