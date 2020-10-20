@@ -8,6 +8,7 @@ import pickle
 import types
 import traceback
 import base64
+from liquer.parser import StringActionParameter, ActionParameter
 
 
 """This module is responsible for registering commands
@@ -281,9 +282,16 @@ class ArgumentParser(object):
     def parse(self, metadata, args):
         return args[0], args[1:]
 
-    def parse_meta(self, metadata, args):
-        return args[0], (args[0], metadata), args[1:]
-
+    def parse_meta(self, metadata, args, context=None):
+        if isinstance(args[0], str):
+            return args[0], (args[0], metadata), args[1:]
+        elif isinstance(args[0], StringActionParameter):
+            return args[0].string, (args[0].string, metadata), args[1:]
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(f"Unsupported action parameter {repr(args[0])}  in ArgumentParser")        
+        else:
+            return args[0], (args[0], metadata), args[1:]
+            
 
 class SequenceArgumentParser(ArgumentParser):
     def __init__(self, *sequence):
@@ -306,11 +314,11 @@ class SequenceArgumentParser(ArgumentParser):
                 parsed_arguments.append(parsed)
         return parsed_arguments, args
 
-    def parse_meta(self, metadata, args):
+    def parse_meta(self, metadata, args, context=None):
         parsed_arguments = []
         parsed_meta = []
         for ap, meta in zip(self.sequence, metadata):
-            parsed, argmeta, args = ap.parse_meta(meta, args)
+            parsed, argmeta, args = ap.parse_meta(meta, args, context=context)
             if ap.is_argv:
                 parsed_arguments.extend(parsed)
             else:
@@ -323,12 +331,28 @@ class IntArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return int(args[0]), args[1:]
 
-    def parse_meta(self, metadata, args):
-        try:
-            value = int(args[0])
-        except:
-            raise ArgumentParserException(
-                f'''Error parsing integer argument '{metadata["name"]}' from value {repr(args[0])}''')
+    def parse_meta(self, metadata, args, context=None):
+        if isinstance(args[0], str):
+            try:
+                value = int(args[0])
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing integer argument '{metadata["name"]}' from string {repr(args[0])}''')
+        elif isinstance(args, StringActionParameter):
+            try:
+                value = int(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing integer argument '{metadata["name"]}' at {args[0].position} from {repr(args[0].string)}''')
+        elif isinstance(args, ActionParameter):
+            raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in IntArgumentParser")
+        else:
+            try:
+                value = int(args[0])
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing integer argument '{metadata["name"]}' from object {repr(args[0])}''')
+
         return value, (value, metadata), args[1:]
 
 
@@ -336,12 +360,28 @@ class FloatArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return float(args[0]), args[1:]
 
-    def parse_meta(self, metadata, args):
-        try:
-            value = float(args[0])
-        except:
-            raise ArgumentParserException(
-                f'''Error parsing float argument '{metadata["name"]}' from value {repr(args[0])}''')
+    def parse_meta(self, metadata, args, context=None):
+        if isinstance(args[0], str):
+            try:
+                value = float(args[0])
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing float argument '{metadata["name"]}' from string {repr(args[0])}''')
+        elif isinstance(args, StringActionParameter):
+            try:
+                value = float(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing float argument '{metadata["name"]}' at {args[0].position} from {repr(args[0].string)}''')
+        elif isinstance(args, ActionParameter):
+            raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in FloatArgumentParser")
+        else:
+            try:
+                value = float(args[0])
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing float argument '{metadata["name"]}' from object {repr(args[0])}''')
+
         return value, (value, metadata), args[1:]
 
 
@@ -349,13 +389,31 @@ class BooleanArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return dict(y=True, yes=True, n=False, no=False, t=True, true=True, f=False, false=False).get(str(args[0]).lower(), False), args[1:]
 
-    def parse_meta(self, metadata, args):
-        try:
-            value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
-                         f=False, false=False).get(str(args[0]).lower(), False)
-        except:
-            raise ArgumentParserException(
-                f'''Error parsing boolean argument '{metadata["name"]}' from value {repr(args[0])}''')
+    def parse_meta(self, metadata, args, context=None):
+        if isinstance(args[0], str):
+            try:
+                value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
+                            f=False, false=False).get(str(args[0]).lower(), False)
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing boolean argument '{metadata["name"]}' from string {repr(args[0])}''')
+        elif isinstance(args, StringActionParameter):
+            try:
+                value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
+                            f=False, false=False).get(str(args[0].string).lower(), False)
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing boolean argument '{metadata["name"]}' at {args[0].position} from value {repr(args[0].string)}''')
+        elif isinstance(args, ActionParameter):
+            raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in BooleanArgumentParser")
+        else:
+            try:
+                value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
+                            f=False, false=False).get(str(args[0]).lower(), False)
+            except:
+                raise ArgumentParserException(
+                    f'''Error parsing boolean argument '{metadata["name"]}' from object {repr(args[0])}''')
+
         return value, (value, metadata), args[1:]
 
 
@@ -363,8 +421,16 @@ class ListArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return args, []
 
-    def parse_meta(self, metadata, args):
-        value = args
+    def parse_meta(self, metadata, args, context=None):
+        value = []
+        for x in args:
+            if isinstance(x, str):
+                value.append(x)
+            elif isinstance(x, StringActionParameter):
+                value.append(x.string)
+            else:
+                raise ArgumentParserException(f"Unsupported action parameter type {repr(x)} in ListArgumentParser")
+
         return value, (value, metadata), []
 
 

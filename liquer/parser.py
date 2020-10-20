@@ -133,6 +133,10 @@ class Position:
 class ActionParameter(object):
     def __init__(self, position=None):
         self.position = position or Position()
+    def __repr__(self):
+        return f"{self.__class__.__name__}({repr(self.position)})"
+    def __str__(self):
+        return f"{self.__class__.__name__} at {self.position}"
 
 
 class LinkActionParameter(ActionParameter):

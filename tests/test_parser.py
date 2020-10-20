@@ -132,6 +132,9 @@ class TestNewParser:
         p, r = p.predecessor()
         assert p.encode() == "-R/abc/def"
         assert r.encode() == "-x/ghi"
+        assert not r.is_empty()
+        assert not r.is_filename()
+        assert r.is_action_request()
 
         p, r = p.predecessor()
         assert p == None

@@ -52,6 +52,11 @@ class State(object):
         self.attributes = {}
         self.arguments=None
 
+    def next_state(self):
+        state = self.__class__()
+        state = state.from_dict(self.as_dict()).with_data(None)
+        return state
+
     def with_caching(self, caching=True):
         """Enables or disables caching for this state"""
         # TODO: Make sure caching is propagated to dependent states
@@ -72,7 +77,11 @@ class State(object):
 
     def is_volatile(self):
         return self.attributes.get("volatile",False)
-        
+
+    def set_volatile(self, flag):
+        self.attributes["volatile"] = flag
+        return self
+          
     def get(self):
         """Get data from the state"""
         if self.is_error:
