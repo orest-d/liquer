@@ -1,10 +1,11 @@
 import pandas as pd
-import io
+from io import BytesIO
 from urllib.request import urlopen
 from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 import numpy as np
 from liquer.commands import command
+from liquer.state_types import StateType, register_state_type, mimetype_from_extension
 import pickle
 
 class MatplotlibFigureStateType(StateType):
@@ -15,7 +16,7 @@ class MatplotlibFigureStateType(StateType):
         return "pickle"
 
     def is_type_of(self, data):
-        return isinstance(data, pd.DataFrame)
+        return isinstance(data, plt.Figure)
 
     def as_bytes(self, data, extension=None):
         if extension is None:
@@ -101,6 +102,6 @@ def mpl(state, *series):
         else:
             state.log_warning(f"Unrecognized MPL parameter {t}")
     #fig.legend()
-    output = io.BytesIO()
+    output = BytesIO()
     fig.savefig(output, dpi=300, format=extension)
     return state.with_data(output.getvalue()).with_filename(f"image.{extension}")
