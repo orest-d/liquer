@@ -71,6 +71,8 @@ class TestPandas:
         import liquer.ext.lq_pandas  # register pandas commands and state type
         filename = encode_token(os.path.dirname(
             inspect.getfile(self.__class__))+"/test.csv")
+        print ("DF FROM TYPE ID",evaluate(f"df_from-{filename}").type_identifier)
+        print ("DF FROM TYPE   ",type(evaluate(f"df_from-{filename}").data))
         state = evaluate(f"df_from-{filename}/eq-a-1")
         df = state.get()
         assert "a" in df.columns

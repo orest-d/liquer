@@ -30,7 +30,7 @@ the "mainstream" way of command registration is by simply decorating a function 
 """
 
 CommandMetadata = namedtuple(
-    "CommandMetadata", ["name", "label", "module", "doc", "state_argument", "arguments", "attributes"])
+    "CommandMetadata", ["name", "label", "module", "doc", "state_argument", "arguments", "attributes", "is_generator"])
 
 
 _remote_registration=False
@@ -196,7 +196,7 @@ class CommandRegistry(RegisterRemoteMixin, object):
         return {ns: {name: cmd._asdict() for name, cmd in metadata.items()} for ns, metadata in self.metadata.items()}
 
     def evaluate_command(self, state, qcommand: list):
-        if not state.is_volatile():
+        if not state.is_volatile() and not state.is_generator():
             state = state.clone()
         command_name = qcommand[0]
         ns, command, metadata = self.resolve_command(state, command_name)
@@ -405,6 +405,7 @@ def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
         doc = ""
     arguments = []
     sig = inspect.signature(f)
+    is_generator = inspect.isgeneratorfunction(f)
     for argname in list(sig.parameters):
         arg = dict(name=argname, label=identifier_to_label(argname))
         arg_type = None
@@ -442,7 +443,8 @@ def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
                            doc=doc,
                            state_argument=state_argument,
                            arguments=arguments,
-                           attributes=attributes
+                           attributes=attributes,
+                           is_generator=is_generator
                            )
 
 

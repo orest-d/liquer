@@ -163,3 +163,19 @@ class TestCache:
         assert cache2.storage["command3a"].get() == "C3"
 
         set_cache(None)
+
+    def test_generator(self):
+        from liquer import evaluate, first_command, command
+        cache = MemoryCache()
+
+        set_cache(cache)
+        @first_command
+        def squares():
+            for x in range(5):
+                yield x*x
+
+        @command 
+        def join_three(gen):
+            return ",".join( f"{i}:{x}" for i,x in zip(range(3),gen))
+
+        assert evaluate("squares/join_three").get() == "0:0,1:1,2:4"

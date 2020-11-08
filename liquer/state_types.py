@@ -3,6 +3,7 @@ import json
 from copy import deepcopy
 import base64
 import pickle
+from types import GeneratorType
 
 """State types represent the additional properties of data types that can be used as a state:
 - state type must be representable as a (short) string identifier
@@ -83,6 +84,7 @@ class StateTypesRegistry(object):
         self.register(bytes, BytesStateType())
         self.register(str, TextStateType())
         self.register(dict, DictStateType())
+        self.register(GeneratorType, GeneratorStateType())
         self.register(type(None), JsonStateType())
         self.register(int, JsonStateType())
         self.register(float, JsonStateType())
@@ -387,3 +389,26 @@ class TextStateType(StateType):
 
     def copy(self, data):
         return data[:]
+
+class GeneratorStateType(StateType):
+    """Generator"""
+    def identifier(self):
+        return "generator"
+
+    def default_extension(self):
+        return "gen"
+
+    def default_mimetype(self):
+        return "application/octet-stream"
+
+    def is_type_of(self, data):
+        return isinstance(data, GeneratorType)
+
+    def as_bytes(self, data, extension=None):
+        raise Exception("Generator can't be serialized directly")
+
+    def from_bytes(self, b: bytes, extension=None):
+        raise Exception("Generator can't be de-serialized directly")
+
+    def copy(self, data):
+        raise Exception("Generator can't be copied")

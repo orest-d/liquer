@@ -1,6 +1,7 @@
 import json
 from liquer.state_types import type_identifier_of, copy_state_data, mimetype_from_extension
 from copy import deepcopy
+from types import GeneratorType
 
 _vars = None
 
@@ -72,7 +73,10 @@ class State(object):
 
     def is_volatile(self):
         return self.attributes.get("volatile",False)
-        
+    
+    def is_generator(self):
+        return isinstance(self.data, GeneratorType) or self.type_identifier == "generator"
+
     def get(self):
         """Get data from the state"""
         if self.is_error:
@@ -160,6 +164,13 @@ class State(object):
 
     def has_flag(self, name):
         return self.vars.get(name) == True
+
+    def clone_metadata(self):
+        """Clone the state including the deep copy of the data"""
+        state = self.__class__()
+        state = state.from_dict(self.as_dict())
+        state.with_data(None)
+        return state
 
     def clone(self):
         """Clone the state including the deep copy of the data"""

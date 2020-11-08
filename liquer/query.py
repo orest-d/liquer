@@ -1,7 +1,7 @@
 import traceback
 from liquer.state import State
 from liquer.parser import encode, decode
-from liquer.cache import cached_part, get_cache
+from liquer.cache import cached_part, get_cache, create_cached_generator
 from liquer.commands import command_registry
 from liquer.state_types import encode_state_data, state_types_registry
 import os.path
@@ -40,8 +40,13 @@ def evaluate_ql_on(ql, state=None, cache=None):
                 break
         state.log_command(qcommand,i)
         state = cr.evaluate_command(state, qcommand)
+
         if state.caching and not state.is_error and not state.is_volatile():
-            cache.store(state)
+            if state.is_generator():
+                g = create_cached_generator(state, cache, max_steps_cached=state.attributes.get("max_steps_cached"))
+                state = state.with_data(g)
+            else:
+                cache.store(state)
 
     return state
 
