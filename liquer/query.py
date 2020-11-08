@@ -7,22 +7,22 @@ from liquer.state_types import encode_state_data, state_types_registry
 import os.path
 
 
-def evaluate(query, cache=None):
+def evaluate(query, cache=None, stop_on_error=True):
     """Evaluate query, returns a State, cache the output in supplied cache"""
     state, remainder = cached_part(query, cache=cache)
-    return evaluate_query_on(remainder, state=state, cache=cache)
+    return evaluate_query_on(remainder, state=state, cache=cache, stop_on_error=stop_on_error)
 
 
-def evaluate_query_on(query, state=None, cache=None):
+def evaluate_query_on(query, state=None, cache=None, stop_on_error=True):
     """Evaluate query on state, returns a State, cache the output in supplied cache
     Unlike evaluate function, this function does not try to fetch state from cache,
     but it uses a supplied state (if available).
     """
     ql = decode(query)
-    return evaluate_ql_on(ql, state=state, cache=cache)
+    return evaluate_ql_on(ql, state=state, cache=cache, stop_on_error=stop_on_error)
 
 
-def evaluate_ql_on(ql, state=None, cache=None):
+def evaluate_ql_on(ql, state=None, cache=None, stop_on_error=True):
     """This is equivalent to evaluate_query_on, but accepts decoded query
     (list of lists of strings)."""
     if cache is None:
@@ -40,13 +40,15 @@ def evaluate_ql_on(ql, state=None, cache=None):
                 break
         state.log_command(qcommand,i)
         state = cr.evaluate_command(state, qcommand)
+        if stop_on_error and state.is_error:
+            return state
         if state.caching and not state.is_error and not state.is_volatile():
             cache.store(state)
 
     return state
 
 
-def evaluate_and_save(query, target_directory=None, target_file=None, cache=None):
+def evaluate_and_save(query, target_directory=None, target_file=None, cache=None, stop_on_error=True):
     """Evaluate query and save result.
     Output is saved either to
     - a target directory (current working directory by default) to a file deduced from the query, or
@@ -54,7 +56,7 @@ def evaluate_and_save(query, target_directory=None, target_file=None, cache=None
     Returns a state.
     """
 
-    state = evaluate(query, cache=cache)
+    state = evaluate(query, cache=cache, stop_on_error=stop_on_error)
     data = state.get()
     reg = state_types_registry()
     t = reg.get(type(data))

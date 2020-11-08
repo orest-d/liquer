@@ -6,6 +6,7 @@ from liquer.state_types import state_types_registry
 from liquer.state import State
 from liquer.parser import all_splits, encode, decode
 import logging
+import traceback
 
 """
 Cache defines a mechanism for caching state for a query (or a subquery).
@@ -318,3 +319,91 @@ class FileCache(CacheMixin):
         
     def __repr__(self):
         return f"FileCache('{self.path}')"
+
+class SQLCache(CacheMixin):
+    """Store cache in a SQL database.
+    """
+    def __init__(self, connection=None, table="liquer_cache"):
+        self.connection = connection
+        self.table = table
+        try:
+            query = f"""CREATE TABLE {table} (
+                key      VARCHAR(2000),
+                metadata TEXT,
+                data     BLOB
+            )
+            """
+            print (query)
+            logging.debug(f"CACHE TABLE: {query}")
+            c=self.connection.cursor()        
+            c.execute(query)
+        except:
+            traceback.print_exc()
+
+    @classmethod
+    def from_sqlite(cls, path, table="liquer_cache"):
+        import sqlite3
+        connection = sqlite3.connect(path)
+        return cls(connection=connection, table=table)
+
+    def get(self, key):
+        c=self.connection.cursor()        
+        c.execute(f"""
+        SELECT
+          metadata,
+          data
+        FROM {self.table}
+        WHERE key=?
+        """, [key])
+
+        try:
+            metadata, data = c.fetchone()
+        except:
+            return None
+        try:
+            state = State()
+            state = state.from_dict(json.loads(metadata))
+
+            t = state_types_registry().get(state.type_identifier)
+            state.data = t.from_bytes(data)
+            return state
+        except:
+            logging.exception(f"Cache failed to recover {key}")
+            return None
+
+    def contains(self, key):
+        c=self.connection.cursor()        
+        c.execute(f"""
+        SELECT
+          count(*)
+        FROM {self.table}
+        WHERE key=?
+        """, [key])
+
+        try:
+            (count,) = c.fetchone()
+            return count>0
+        except:
+            traceback.print_exc()
+            print("SQL Contains failed")
+            return False
+
+    def store(self, state):
+        key = state.query
+        metadata = json.dumps(state.as_dict())
+            
+        t = state_types_registry().get(state.type_identifier)
+        try:
+            b, mime = t.as_bytes(state.data)
+        except NotImplementedError:
+            return False
+        self.connection.execute(f"DELETE FROM {self.table} WHERE key=?",[key])
+        self.connection.execute(f"INSERT INTO {self.table} (key, metadata, data) VALUES (?, ?, ?)", [key, metadata, b])
+        self.connection.commit()
+        return True
+
+    def __str__(self):
+        return f"SQL cache {self.table}"
+        
+    def __repr__(self):
+        return f"SQLCache(table='{self.table}')"
