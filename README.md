@@ -16,6 +16,9 @@ Please visit [LiQuer website](https://orest-d.github.io/liquer/) for more info.
 pip install liquer-framework
 ```
 
+# News
+2020-11-08 - v3.2 - Support for matplotlib figures, SQL cache and other minor changes
+
 # TODO
 
 - [x] improve command catalogue (in progress)
