@@ -5,7 +5,56 @@ from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 import numpy as np
 from liquer.commands import command
+import pickle
 
+class MatplotlibFigureStateType(StateType):
+    def identifier(self):
+        return "matplotlibfigure"
+
+    def default_extension(self):
+        return "pickle"
+
+    def is_type_of(self, data):
+        return isinstance(data, pd.DataFrame)
+
+    def as_bytes(self, data, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        assert self.is_type_of(data)
+        mimetype = mimetype_from_extension(extension)
+        if extension in ("html", "htm"):
+            output = StringIO()
+            data.to_html(output, index=False)
+            return output.getvalue().encode("utf-8"), mimetype
+        elif extension in ("pkl", "pickle"):
+            output = BytesIO()
+            pickle.dump(data, output)
+            return output.getvalue(), mimetype
+        elif extension in ("png", "svg", "pdf", "ps", "eps"):
+            output = BytesIO()
+            data.savefig(output, dpi=300, format=extension)
+            return output.getvalue(), mimetype
+        else:
+            raise Exception(
+                f"Serialization: file extension {extension} is not supported by Matplotlib Figure type.")
+
+    def from_bytes(self, b: bytes, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        f = BytesIO()
+        f.write(b)
+        f.seek(0)
+
+        if extension in ("pickle", "pkl"):
+            return pd.read_pickle(f)
+        raise Exception(
+            f"Deserialization: file extension {extension} is not supported by Matplotlib Figure type.")
+
+    def copy(self, data):
+        return data.copy()
+
+MATPLOTLIB_FIGURE_STATE_TYPE = MatplotlibFigureStateType()
+register_state_type(plt.Figure, MATPLOTLIB_FIGURE_STATE_TYPE)
 
 @command
 def mpl(state, *series):
