@@ -18,6 +18,7 @@ pip install liquer-framework
 
 # News
 2020-11-08 - v3.2 - Support for matplotlib figures, SQL cache and other minor changes
+2020-11-09 - v3.3 - SQL cache with base64 encoding, cache cleaning
 
 # TODO
 

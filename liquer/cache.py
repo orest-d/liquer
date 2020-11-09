@@ -7,6 +7,7 @@ from liquer.state import State
 from liquer.parser import all_splits, encode, decode
 import logging
 import traceback
+import base64
 
 """
 Cache defines a mechanism for caching state for a query (or a subquery).
@@ -86,6 +87,10 @@ class CacheCombine(CacheMixin):
         self.cache1 = cache1
         self.cache2 = cache2
 
+    def clean(self):
+        self.cache1.clean()
+        self.cache2.clean()
+
     def get(self, key):
         value = self.cache1.get(key)
         if value is not None:
@@ -116,6 +121,9 @@ class CacheIfHasAttributes(CacheMixin):
         self.cache = cache
         self.attributes = attributes
 
+    def clean(self):
+        self.cache.clean()
+
     def get(self, key):
         return self.cache.get(key)
 
@@ -138,6 +146,9 @@ class CacheIfHasNotAttributes(CacheMixin):
     def __init__(self,cache, *attributes):
         self.cache = cache
         self.attributes = attributes
+
+    def clean(self):
+        self.cache.clean()
 
     def get(self, key):
         return self.cache.get(key)
@@ -163,6 +174,9 @@ class CacheAttributeCondition(CacheMixin):
         self.attribute = attribute
         self.value = value
         self.equals = equals
+
+    def clean(self):
+        self.cache.clean()
 
     def get(self, key):
         return self.cache.get(key)
@@ -192,6 +206,9 @@ class CacheAttributeCondition(CacheMixin):
 
 class NoCache(CacheMixin):
     """Trivial cache object which does not cache any state"""
+    def clean(self):
+        pass
+
     def get(self, key):
         return None
 
@@ -215,6 +232,9 @@ class MemoryCache(CacheMixin):
     for long running services. 
     """
     def __init__(self):
+        self.storage = {}
+
+    def clean(self):
         self.storage = {}
 
     def get(self, key):
@@ -254,6 +274,12 @@ class FileCache(CacheMixin):
             makedirs(path)
         except FileExistsError:
             pass
+
+    def clean(self):
+        import glob
+        for f in glob.glob(os.path.join(self.path,"*")):
+            logging.debug(f"Removing cache file {f}")
+            os.remove(f)
 
     def to_path(self, key, prefix="state_", extension="json"):
         "Construct file path from a key and optionally prefix and file extension."
@@ -322,15 +348,17 @@ class FileCache(CacheMixin):
 
 class SQLCache(CacheMixin):
     """Store cache in a SQL database.
+    Tested with sqlite3.
+    For databases without BLOB support (e.g. Hive) use SQLStringCache.
     """
     def __init__(self, connection=None, table="liquer_cache"):
         self.connection = connection
         self.table = table
         try:
             query = f"""CREATE TABLE {table} (
-                key      VARCHAR(2000),
+                query    VARCHAR(2000),
                 metadata TEXT,
-                data     BLOB
+                bdata    BLOB
             )
             """
             print (query)
@@ -341,19 +369,24 @@ class SQLCache(CacheMixin):
             traceback.print_exc()
 
     @classmethod
-    def from_sqlite(cls, path, table="liquer_cache"):
+    def from_sqlite(cls, path=":memory:", table="liquer_cache"):
         import sqlite3
         connection = sqlite3.connect(path)
         return cls(connection=connection, table=table)
+
+    def clean(self):
+        c=self.connection.cursor()        
+        c.execute(f"""DELETE FROM {self.table}""")
+        self.connection.commit()
 
     def get(self, key):
         c=self.connection.cursor()        
         c.execute(f"""
         SELECT
           metadata,
-          data
+          bdata
         FROM {self.table}
-        WHERE key=?
+        WHERE query=?
         """, [key])
 
         try:
@@ -377,7 +410,7 @@ class SQLCache(CacheMixin):
         SELECT
           count(*)
         FROM {self.table}
-        WHERE key=?
+        WHERE query=?
         """, [key])
 
         try:
@@ -397,8 +430,8 @@ class SQLCache(CacheMixin):
             b, mime = t.as_bytes(state.data)
         except NotImplementedError:
             return False
-        self.connection.execute(f"DELETE FROM {self.table} WHERE key=?",[key])
-        self.connection.execute(f"INSERT INTO {self.table} (key, metadata, data) VALUES (?, ?, ?)", [key, metadata, b])
+        self.connection.execute(f"DELETE FROM {self.table} WHERE query=?",[key])
+        self.connection.execute(f"INSERT INTO {self.table} (query, metadata, bdata) VALUES (?, ?, ?)", [key, metadata, b])
         self.connection.commit()
         return True
 
@@ -407,3 +440,86 @@ class SQLCache(CacheMixin):
         
     def __repr__(self):
         return f"SQLCache(table='{self.table}')"
+
+class SQLStringCache(SQLCache):
+    """Store cache in a SQL database.
+    Data are encoded into string before storing in the database.
+    This is suitable for databases without BLOB support (e.g. Hive).
+    By default base64 encoding is used.
+    To change the encoding override encode and decode methods.
+    """
+    def __init__(self, connection=None, table="liquer_cache", text_type="STRING"):
+        self.connection = connection
+        self.table = table
+        try:
+            query = f"""CREATE TABLE {table} (
+                query       VARCHAR(2000),
+                metadata    {text_type},
+                enc_data    {text_type}
+            )
+            """
+            print (query)
+            logging.debug(f"CACHE TABLE: {query}")
+            c=self.connection.cursor()        
+            c.execute(query)
+        except:
+            traceback.print_exc()
+
+    @classmethod
+    def from_sqlite(cls, path=":memory:", table="liquer_cache"):
+        import sqlite3
+        connection = sqlite3.connect(path)
+        return cls(connection=connection, table=table, text_type="TEXT")
+
+    def encode(self, b):
+        return base64.b64encode(b)
+
+    def decode(self, s):
+        return base64.b64decode(s)
+
+    def get(self, key):
+        c=self.connection.cursor()        
+        c.execute(f"""
+        SELECT
+          metadata,
+          enc_data
+        FROM {self.table}
+        WHERE query=?
+        """, [key])
+
+        try:
+            metadata, enc_data = c.fetchone()
+        except:
+            return None
+        try:
+            data = self.decode(enc_data)
+            state = State()
+            state = state.from_dict(json.loads(metadata))
+
+            t = state_types_registry().get(state.type_identifier)
+            state.data = t.from_bytes(data)
+            return state
+        except:
+            logging.exception(f"Cache failed to recover {key}")
+            return None
+
+    def store(self, state):
+        key = state.query
+        metadata = json.dumps(state.as_dict())
+            
+        t = state_types_registry().get(state.type_identifier)
+        try:
+            b, mime = t.as_bytes(state.data)
+        except NotImplementedError:
+            return False
+        enc_data = self.encode(b)
+        self.connection.execute(f"DELETE FROM {self.table} WHERE query=?",[key])
+        self.connection.execute(f"INSERT INTO {self.table} (query, metadata, enc_data) VALUES (?, ?, ?)", [key, metadata, enc_data])
+        self.connection.commit()
+        return True
+
+    def __str__(self):
+        return f"SQL string cache {self.table}"
+        
+    def __repr__(self):
+        return f"SQLStringCache(table='{self.table}')"

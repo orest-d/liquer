@@ -81,6 +81,14 @@ window.vue = new Vue({
                 this.mode = "iframe";
             }
         },
+        clean_cache:function(){
+            console.log("Clean cache called");
+            this.$http.get(this.url_prefix + "/clean_cache").then(function (response) {
+                console.log("Clean cache result:",response.body);
+                this.info("Cache cleaned");
+            }.bind(this), function (reason) { this.error("Cache cleaning error", reason); }.bind(this));
+
+        },
         load: function (query) {
             this.xlsx_link="";
             this.csv_link="";
@@ -137,6 +145,12 @@ window.vue = new Vue({
                             }
                             this.csv_link = this.url_prefix+query_basis+"/"+filename+".csv";
                             this.xlsx_link = this.url_prefix+query_basis+"/"+filename+".xlsx";
+                        }
+                        if (this.state.type_identifier == "matplotlibfigure") {
+                            if (extension=="") {
+                                console.log("matplotlibfigure -> append .png");
+                                path += "/image.png";
+                            }
                         }
                         if (this.state.extension == "json" || path.endsWith(".json")) {
                             this.status = "LOADING";
