@@ -8,6 +8,7 @@ from liquer.parser import all_splits, encode, decode
 import logging
 import traceback
 import base64
+import numpy as np
 
 """
 Cache defines a mechanism for caching state for a query (or a subquery).
@@ -50,7 +51,9 @@ def cached_part(query, cache=None):
     if cache is None:
         cache = get_cache()
 
-    if isinstance(cache, NoCache):  # Just an optimization - to avoid looping over all query splits
+    if isinstance(
+        cache, NoCache
+    ):  # Just an optimization - to avoid looping over all query splits
         return State(), encode(decode(query))
 
     for key, remainder in all_splits(query):
@@ -65,25 +68,32 @@ def cached_part(query, cache=None):
     # Should never get here, but this is a sensible default:
     return State(), encode(decode(query))
 
+
 class CacheMixin:
     """Adds various cache combinator helpers"""
+
     def __add__(self, cache):
-        return CacheCombine(self,cache)
-    def if_contains(self,*attributes):
+        return CacheCombine(self, cache)
+
+    def if_contains(self, *attributes):
         "Cache if state contains all attributes"
-        return CacheIfHasAttributes(self,*attributes)
-    def if_not_contains(self,*attributes):
+        return CacheIfHasAttributes(self, *attributes)
+
+    def if_not_contains(self, *attributes):
         "Cache if state contains none of the attributes"
-        return CacheIfHasNotAttributes(self,*attributes)
+        return CacheIfHasNotAttributes(self, *attributes)
+
     def if_attribute_equal(self, attribute, value):
         "Cache if state attribute is equal to value"
         return CacheAttributeCondition(self, attribute, value, True)
+
     def if_attribute_not_equal(self, attribute, value):
         "Cache if state attribute is not equal to value"
         return CacheAttributeCondition(self, attribute, value, False)
 
+
 class CacheCombine(CacheMixin):
-    def __init__(self,cache1, cache2):
+    def __init__(self, cache1, cache2):
         self.cache1 = cache1
         self.cache2 = cache2
 
@@ -112,12 +122,13 @@ class CacheCombine(CacheMixin):
 
     def __str__(self):
         return f"{str(self.cache1)} + {str(self.cache2)}"
-        
+
     def __repr__(self):
         return f"{repr(self.cache1)} + {repr(self.cache2)}"
 
+
 class CacheIfHasAttributes(CacheMixin):
-    def __init__(self,cache, *attributes):
+    def __init__(self, cache, *attributes):
         self.cache = cache
         self.attributes = attributes
 
@@ -138,12 +149,13 @@ class CacheIfHasAttributes(CacheMixin):
 
     def __str__(self):
         return f"({str(self.cache)} containing {', '.join(self.attributes)})"
-        
+
     def __repr__(self):
         return f"CacheIfHasAttributes({repr(self.cache)}, {', '.join(map(repr,self.attributes))})"
 
+
 class CacheIfHasNotAttributes(CacheMixin):
-    def __init__(self,cache, *attributes):
+    def __init__(self, cache, *attributes):
         self.cache = cache
         self.attributes = attributes
 
@@ -164,12 +176,13 @@ class CacheIfHasNotAttributes(CacheMixin):
 
     def __str__(self):
         return f"({str(self.cache)} not containing {', '.join(self.attributes)})"
-        
+
     def __repr__(self):
         return f"CacheIfHasNotAttributes({repr(self.cache)}, {', '.join(map(repr,self.attributes))})"
 
+
 class CacheAttributeCondition(CacheMixin):
-    def __init__(self,cache, attribute, value, equals=True):
+    def __init__(self, cache, attribute, value, equals=True):
         self.cache = cache
         self.attribute = attribute
         self.value = value
@@ -199,13 +212,14 @@ class CacheAttributeCondition(CacheMixin):
             return f"({str(self.cache)} when {self.attribute}=={self.value})"
         else:
             return f"({str(self.cache)} when {self.attribute}!={self.value})"
-        
+
     def __repr__(self):
         return f"CacheAttributeCondition({repr(self.cache)}, {repr(self.attribute)}, {repr(self.value)}, {self.equals})"
 
 
 class NoCache(CacheMixin):
     """Trivial cache object which does not cache any state"""
+
     def clean(self):
         pass
 
@@ -229,8 +243,9 @@ class MemoryCache(CacheMixin):
     """Simple cache which stores all the states in a dictionary.
     Note that continuous heavy use of the system with MemoryCache
     may lead to filling the memory, therefore this is not ideal
-    for long running services. 
+    for long running services.
     """
+
     def __init__(self):
         self.storage = {}
 
@@ -253,7 +268,7 @@ class MemoryCache(CacheMixin):
 
     def __str__(self):
         return "Memory cache"
-        
+
     def __repr__(self):
         return "MemoryCache()"
 
@@ -263,11 +278,12 @@ class FileCache(CacheMixin):
     in a specified directory of a local filesystem.
     Two files are created: one for the state metadata and the other one with
     serialized version of the state data.
-    
+
     Note that no mechanism for maintaining freshness or constraining file size
     is provided. This may lead to filling the space on the filesystem,
     therefore this is not ideal for long running public web-services.
     """
+
     def __init__(self, path):
         self.path = path
         try:
@@ -277,16 +293,23 @@ class FileCache(CacheMixin):
 
     def clean(self):
         import glob
-        for f in glob.glob(os.path.join(self.path,"*")):
+
+        for f in glob.glob(os.path.join(self.path, "*")):
             logging.debug(f"Removing cache file {f}")
             os.remove(f)
 
     def to_path(self, key, prefix="state_", extension="json"):
         "Construct file path from a key and optionally prefix and file extension."
         m = hashlib.md5()
-        m.update(key.encode('utf-8'))
+        m.update(key.encode("utf-8"))
         digest = m.hexdigest()
         return os.path.join(self.path, f"{prefix}{digest}.{extension}")
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
 
     def get(self, key):
         state_path = self.to_path(key)
@@ -296,11 +319,10 @@ class FileCache(CacheMixin):
         else:
             return None
         t = state_types_registry().get(state.type_identifier)
-        path = self.to_path(key, prefix="data_",
-                            extension=t.default_extension())
+        path = self.to_path(key, prefix="data_", extension=t.default_extension())
         if os.path.exists(path):
             try:
-                state.data = t.from_bytes(open(path, "rb").read())
+                state.data = t.from_bytes(self.decode(open(path, "rb").read()))
                 return state
             except:
                 logging.exception(f"Cache failed to recover {key}")
@@ -314,8 +336,7 @@ class FileCache(CacheMixin):
         else:
             return False
         t = state_types_registry().get(state.type_identifier)
-        path = self.to_path(key, prefix="data_",
-                            extension=t.default_extension())
+        path = self.to_path(key, prefix="data_", extension=t.default_extension())
         if os.path.exists(path):
             return True
         else:
@@ -328,42 +349,77 @@ class FileCache(CacheMixin):
         except:
             logging.exception(f"Cache writing error: {state.query}")
             return False
-            
+
         t = state_types_registry().get(state.type_identifier)
-        path = self.to_path(state.query, prefix="data_",
-                            extension=t.default_extension())
+        path = self.to_path(
+            state.query, prefix="data_", extension=t.default_extension()
+        )
         with open(path, "wb") as f:
             try:
                 b, mime = t.as_bytes(state.data)
-                f.write(b)
+                f.write(self.encode(b))
             except NotImplementedError:
                 return False
         return True
 
     def __str__(self):
         return f"File cache at {self.path}"
-        
+
     def __repr__(self):
         return f"FileCache('{self.path}')"
+
+class XORFileCache(FileCache):
+    def __init__(self, path, code):
+        super().__init__(path)
+        self.code=np.frombuffer(code, dtype=np.uint8)
+
+    def code_of_length(self, n):
+        if n<=len(self.code):
+            return self.code[:n]
+        else:
+            return np.tile(self.code, int(n/len(self.code))+1)[:n]
+
+    def encode(self, b):
+        ba = np.frombuffer(b, dtype=np.uint8)
+        return (ba ^ self.code_of_length(len(b))).tobytes()
+
+    def decode(self, s):
+        return self.encode(s)
+
 
 class SQLCache(CacheMixin):
     """Store cache in a SQL database.
     Tested with sqlite3.
     For databases without BLOB support (e.g. Hive) use SQLStringCache.
     """
-    def __init__(self, connection=None, table="liquer_cache"):
+
+    def __init__(
+        self,
+        connection=None,
+        table="liquer_cache",
+        metadata_type="TEXT",
+        state_data_type="BLOB",
+        delete_before_insert=False,
+    ):
         self.connection = connection
         self.table = table
+        self.metadata_type = metadata_type
+        self.state_data_type = state_data_type
+        self.delete_before_insert = delete_before_insert
+        self._available_keys = None
+        self.init()
+
+    def init(self):
         try:
-            query = f"""CREATE TABLE {table} (
-                query    VARCHAR(2000),
-                metadata TEXT,
-                bdata    BLOB
+            query = f"""CREATE TABLE {self.table} (
+                query         VARCHAR(2000),
+                metadata      {self.metadata_type},
+                state_data    {self.state_data_type}
             )
             """
-            print (query)
+            print(query)
             logging.debug(f"CACHE TABLE: {query}")
-            c=self.connection.cursor()        
+            c = self.connection.cursor()
             c.execute(query)
         except:
             traceback.print_exc()
@@ -371,23 +427,55 @@ class SQLCache(CacheMixin):
     @classmethod
     def from_sqlite(cls, path=":memory:", table="liquer_cache"):
         import sqlite3
+
         connection = sqlite3.connect(path)
         return cls(connection=connection, table=table)
 
+    @property
+    def available_keys(self):
+        if self._available_keys is None:
+            c = self.connection.cursor()
+            c.execute(
+                f"""
+            SELECT
+              query
+            FROM {self.table}
+            """
+            )
+
+            try:
+                self._available_keys = [x[0] for x in c.fetchall()]
+            except:
+                traceback.print_exc()
+                print("SQL available_keys failed")
+                return None
+        return self._available_keys
+
     def clean(self):
-        c=self.connection.cursor()        
-        c.execute(f"""DELETE FROM {self.table}""")
+        c = self.connection.cursor()
+        c.execute(f"""DROP TABLE {self.table}""")
+        self._available_keys=[]
+        self.init()
         self.connection.commit()
 
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
     def get(self, key):
-        c=self.connection.cursor()        
-        c.execute(f"""
+        c = self.connection.cursor()
+        c.execute(
+            f"""
         SELECT
           metadata,
-          bdata
+          state_data
         FROM {self.table}
         WHERE query=?
-        """, [key])
+        """,
+            [key],
+        )
 
         try:
             metadata, data = c.fetchone()
@@ -398,48 +486,40 @@ class SQLCache(CacheMixin):
             state = state.from_dict(json.loads(metadata))
 
             t = state_types_registry().get(state.type_identifier)
-            state.data = t.from_bytes(data)
+            state.data = t.from_bytes(self.decode(data))
             return state
         except:
             logging.exception(f"Cache failed to recover {key}")
             return None
 
     def contains(self, key):
-        c=self.connection.cursor()        
-        c.execute(f"""
-        SELECT
-          count(*)
-        FROM {self.table}
-        WHERE query=?
-        """, [key])
-
-        try:
-            (count,) = c.fetchone()
-            return count>0
-        except:
-            traceback.print_exc()
-            print("SQL Contains failed")
-            return False
+        return key in self.available_keys
 
     def store(self, state):
         key = state.query
         metadata = json.dumps(state.as_dict())
-            
+
         t = state_types_registry().get(state.type_identifier)
         try:
             b, mime = t.as_bytes(state.data)
         except NotImplementedError:
             return False
-        self.connection.execute(f"DELETE FROM {self.table} WHERE query=?",[key])
-        self.connection.execute(f"INSERT INTO {self.table} (query, metadata, bdata) VALUES (?, ?, ?)", [key, metadata, b])
+        self._available_keys=None
+        if self.delete_before_insert:
+            self.connection.execute(f"DELETE FROM {self.table} WHERE query=?", [key])
+        self.connection.execute(
+            f"INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)",
+            [key, metadata, self.encode(b)],
+        )
         self.connection.commit()
         return True
 
     def __str__(self):
         return f"SQL cache {self.table}"
-        
+
     def __repr__(self):
         return f"SQLCache(table='{self.table}')"
+
 
 class SQLStringCache(SQLCache):
     """Store cache in a SQL database.
@@ -448,26 +528,26 @@ class SQLStringCache(SQLCache):
     By default base64 encoding is used.
     To change the encoding override encode and decode methods.
     """
-    def __init__(self, connection=None, table="liquer_cache", text_type="STRING"):
-        self.connection = connection
-        self.table = table
-        try:
-            query = f"""CREATE TABLE {table} (
-                query       VARCHAR(2000),
-                metadata    {text_type},
-                enc_data    {text_type}
-            )
-            """
-            print (query)
-            logging.debug(f"CACHE TABLE: {query}")
-            c=self.connection.cursor()        
-            c.execute(query)
-        except:
-            traceback.print_exc()
+
+    def __init__(
+        self,
+        connection=None,
+        table="liquer_cache",
+        text_type="STRING",
+        delete_before_insert=False,
+    ):
+        super().__init__(
+            connection=connection,
+            table=table,
+            metadata_type=text_type,
+            state_data_type=text_type,
+            delete_before_insert=delete_before_insert,
+        )
 
     @classmethod
     def from_sqlite(cls, path=":memory:", table="liquer_cache"):
         import sqlite3
+
         connection = sqlite3.connect(path)
         return cls(connection=connection, table=table, text_type="TEXT")
 
@@ -477,49 +557,8 @@ class SQLStringCache(SQLCache):
     def decode(self, s):
         return base64.b64decode(s)
 
-    def get(self, key):
-        c=self.connection.cursor()        
-        c.execute(f"""
-        SELECT
-          metadata,
-          enc_data
-        FROM {self.table}
-        WHERE query=?
-        """, [key])
-
-        try:
-            metadata, enc_data = c.fetchone()
-        except:
-            return None
-        try:
-            data = self.decode(enc_data)
-            state = State()
-            state = state.from_dict(json.loads(metadata))
-
-            t = state_types_registry().get(state.type_identifier)
-            state.data = t.from_bytes(data)
-            return state
-        except:
-            logging.exception(f"Cache failed to recover {key}")
-            return None
-
-    def store(self, state):
-        key = state.query
-        metadata = json.dumps(state.as_dict())
-            
-        t = state_types_registry().get(state.type_identifier)
-        try:
-            b, mime = t.as_bytes(state.data)
-        except NotImplementedError:
-            return False
-        enc_data = self.encode(b)
-        self.connection.execute(f"DELETE FROM {self.table} WHERE query=?",[key])
-        self.connection.execute(f"INSERT INTO {self.table} (query, metadata, enc_data) VALUES (?, ?, ?)", [key, metadata, enc_data])
-        self.connection.commit()
-        return True
-
     def __str__(self):
         return f"SQL string cache {self.table}"
-        
+
     def __repr__(self):
         return f"SQLStringCache(table='{self.table}')"

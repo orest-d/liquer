@@ -50,7 +50,9 @@ class DataframeStateType(StateType):
         elif extension in ("pkl", "pickle"):
             output = ResilientBytesIO()
             data.to_pickle(output)
-            return output.getvalue(), mimetype
+            b=output.getvalue()
+            output.really_close()
+            return b, mimetype
         elif extension == "xlsx":
             output = BytesIO()
             writer = pd.ExcelWriter(output, engine='xlsxwriter')
