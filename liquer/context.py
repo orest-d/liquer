@@ -1,6 +1,6 @@
 import traceback
 from liquer.state import State
-from liquer.parser import encode, decode, parse, TransformQuerySegment
+from liquer.parser import encode, decode, parse, TransformQuerySegment, Query
 from liquer.cache import cached_part, get_cache
 from liquer.commands import command_registry
 from liquer.state_types import encode_state_data, state_types_registry
@@ -193,10 +193,18 @@ class Context(object):
     def evaluate(self, query, cache=None):
         print(f"{'- '*self.level}EVALUATE {query}")
         """Evaluate query, returns a State, cache the output in supplied cache"""
+        if self.query is not None:
+            return self.child_context().evaluate(query)
         if isinstance(query, str):
             self.raw_query = query
             self.query = parse(query)
             query = self.query
+        elif isinstance(query, Query):
+            self.raw_query = query.encode()
+            self.query = query
+        else:
+            raise Exception(f"Unsupported query type: {type(query)}")
+
         if cache is None:
             cache = self.cache()
 
@@ -277,7 +285,7 @@ class Context(object):
                 if q in local_cache:
                     result += local_cache[q]
                 else:
-                    qr = str(self.evaluate(q).get())
+                    qr = str(self.child_context().evaluate(q).get())
                     local_cache[q] = qr
                     result += qr
         return result
