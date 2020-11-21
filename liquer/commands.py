@@ -375,6 +375,14 @@ class SequenceArgumentParser(ArgumentParser):
         return parsed_arguments, parsed_meta, args
 
 
+class ContextArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return None, args
+
+    def parse_meta(self, metadata, args, context=None):
+        return context, (context, metadata), args
+
+
 class IntArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
         return int(args[0]), args[1:]
@@ -570,6 +578,7 @@ class ArgvArgumentParser(ListArgumentParser):
 
 
 GENERIC_AP = ArgumentParser()
+CONTEXT_AP = ContextArgumentParser()
 INT_AP = IntArgumentParser()
 FLOAT_AP = FloatArgumentParser()
 BOOLEAN_AP = BooleanArgumentParser()
@@ -604,6 +613,25 @@ def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
     sig = inspect.signature(f)
     for argname in list(sig.parameters):
         arg = dict(name=argname, label=identifier_to_label(argname))
+        if argname == "context":
+            p = sig.parameters[argname]
+            if p.default != inspect.Parameter.empty:
+                if p.default is not None:
+                    raise Exception(
+                        f"Default value for context in command {name} should be None"
+                    )
+                arg["default"] = p.default
+            if argname in annotations:
+                raise Exception(
+                    f"Context in command {name} should not have type annotations"
+                )
+            arg["multiple"] = False
+            arg["optional"] = True
+            arg["type"] = "context"
+            arg["editor"] = "ignore"
+            arguments.append(arg)
+            continue
+
         arg_type = None
         if argname in annotations:
             arg_annotation = annotations[argname]
@@ -653,7 +681,12 @@ def argument_parser_from_command_metadata(command_metadata):
             break
         arg_type = arg.get("type")
         ap += dict(
-            str=GENERIC_AP, int=INT_AP, float=FLOAT_AP, bool=BOOLEAN_AP, list=LIST_AP
+            context=CONTEXT_AP,
+            str=GENERIC_AP,
+            int=INT_AP,
+            float=FLOAT_AP,
+            bool=BOOLEAN_AP,
+            list=LIST_AP,
         ).get(arg_type, GENERIC_AP)
     return ap
 
@@ -679,7 +712,7 @@ class CommandExecutable(object):
         args = list(args) + [
             a["default"]
             for a in self.metadata.arguments[len(args) :]
-            if not a["multiple"]
+            if not a["multiple"] and a["name"]!="context"
         ]
         try:
             argv, argmeta, remainder = self.argument_parser.parse_meta(
@@ -687,14 +720,20 @@ class CommandExecutable(object):
             )
         except ArgumentParserException as e:
             raise ArgumentParserException(
-                f"{e.original_message} while executing '{self.metadata.name}'", position=e.position, query=query
+                f"{e.original_message} while executing '{self.metadata.name}'",
+                position=e.position,
+                query=query,
             ) from e
         if len(remainder) != 0:
-            position = remainder[0].position if isinstance(remainder[0], ActionParameter) else None                
+            position = (
+                remainder[0].position
+                if isinstance(remainder[0], ActionParameter)
+                else None
+            )
             raise ArgumentParserException(
                 f"Too many arguments for '{self.metadata.name}': {repr(remainder)}",
                 position=position,
-                query=query
+                query=query,
             )
         state_arg = state if self.metadata.state_argument["pass_state"] else state.get()
         result = self.f(state_arg, *argv)
@@ -714,24 +753,28 @@ class FirstCommandExecutable(CommandExecutable):
         args = list(args) + [
             a["default"]
             for a in self.metadata.arguments[len(args) :]
-            if not a["multiple"]
+            if not a["multiple"] and a["name"]!="context"
         ]
         try:
             argv, argmeta, remainder = self.argument_parser.parse_meta(
-                self.metadata.arguments, args
+                self.metadata.arguments, args, context=context
             )
         except ArgumentParserException as e:
             raise ArgumentParserException(
                 f"{e.original_message} while executing '{self.metadata.name}'",
                 position=e.position,
-                query=query
+                query=query,
             ) from e
         if len(remainder) != 0:
-            position = remainder[0].position if isinstance(remainder[0], ActionParameter) else None                
+            position = (
+                remainder[0].position
+                if isinstance(remainder[0], ActionParameter)
+                else None
+            )
             raise ArgumentParserException(
                 f"Too many arguments for '{self.metadata.name}': {repr(remainder)}",
                 position=position,
-                query=query
+                query=query,
             )
         result = self.f(*argv)
         if isinstance(result, State):

@@ -22,6 +22,12 @@ class TestQuery:
         with pytest.raises(ArgumentParserException):
             evaluate("intpar-abc").get()
 
+    def test_evaluate_with_context(self):
+        @first_command
+        def cc(context=None, x=123):
+            return f"{context.raw_query}:{x}"
+        assert evaluate("cc").get() == "cc:123"
+
     def test_cache_control(self):
         from liquer.cache import MemoryCache, set_cache, get_cache
         @command

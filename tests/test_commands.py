@@ -23,6 +23,15 @@ class TestArgumentParser:
         assert parser.parse_meta(metadata, ["abc", "123", "23.4", "T", "xxx"]) == (
             ["abc", 123, 23.4, True], [("abc",111), (123,222), (23.4,333), (True,444)], ["xxx"])
 
+    def test_argument_parse_meta_with_context(self):
+        parser = GENERIC_AP + CONTEXT_AP + INT_AP + FLOAT_AP + BOOLEAN_AP
+        metadata = [111, "ctx", 222, 333, 444]
+        class MyContext:
+            raw_query="query"
+        context=MyContext()
+        assert parser.parse_meta(metadata, ["abc", "123", "23.4", "T", "xxx"], context=context) == (
+            ["abc", context, 123, 23.4, True], [("abc",111), (context,"ctx"), (123,222), (23.4,333), (True,444)], ["xxx"])
+
     def test_argument_parser_add(self):
         parser = GENERIC_AP + INT_AP
         parser += FLOAT_AP
