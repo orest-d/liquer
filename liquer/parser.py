@@ -133,8 +133,10 @@ class Position:
 class ActionParameter(object):
     def __init__(self, position=None):
         self.position = position or Position()
+
     def __repr__(self):
         return f"{self.__class__.__name__}({repr(self.position)})"
+
     def __str__(self):
         return f"{self.__class__.__name__} at {self.position}"
 
@@ -160,13 +162,15 @@ class StringActionParameter(ActionParameter):
         self.string = string
 
     def encode(self):
-        return self.string
+#        encoded = self.string.replace("~","~~").replace("/","~/").replace("://","~P")
+        encoded = encode_token(self.string)
+        return encoded
 
     def __repr__(self):
         return f"StringActionParameter({repr(self.string)}, {repr(self.position)})"
 
     def __str__(self):
-        return self.encode()
+        return self.string
 
 
 class ResourceName(ActionParameter):
@@ -277,6 +281,12 @@ class TransformQuerySegment(object):
     def is_action_request(self):
         return len(self.query) == 1 and self.filename is None
 
+    def action(self):
+        if self.is_action_request():
+            return self.query[0]
+        else:
+            return None
+
     def encode(self):
         query = "/".join(x.encode() for x in self.query)
         if self.filename is not None:
@@ -289,6 +299,26 @@ class TransformQuerySegment(object):
                 return f"{self.header.encode()}/{query}"
             else:
                 return self.header.encode()
+
+    def append(self, q):
+        if q is None:
+            return self
+        if isinstance(q, TransformQuerySegment):
+            self.query.extend(q.query)
+            self.filename=q.filename
+            return self
+        if isinstance(q, Query):
+            if q.is_transform_query():
+                return self.append(q.segments[0])
+            else:
+                raise Exception(f"Appending general query {q} to transform query {self.encode()} not supported")
+        if isinstance(q, ActionRequest):
+            self.query.append(q)
+            return self
+        if isinstance(q, str):
+            return self.append(parse(q))
+
+        raise Exception(f"Transform query {self.encode()} can't append object {repr(q)}")
 
     def __add__(self, q):
         if q is None:
@@ -351,7 +381,10 @@ class Query(object):
         self.absolute = absolute
 
     def is_empty(self):
-        return len(self.segments)==0
+        return len(self.segments) == 0
+
+    def is_transform_query(self):
+        return len(self.segments)==1 and isinstance(self.segments[0], TransformQuerySegment)
 
     def predecessor(self):
         if len(self.segments):
@@ -381,6 +414,25 @@ class Query(object):
         qs = TransformQuerySegment(SegmentHeader(name, level=level))
         self.segments.append(qs)
         return qs
+    
+    def last_transform_query_segment(self):
+        if not self.is_empty():
+            if isinstance(self.segments[-1], TransformQuerySegment):
+                return self.segments[-1]
+        return self.create_segment()
+
+    def with_action(self, name:str, *parameters):
+        assert type(name)==str
+        typedparam = []
+        for p in parameters:
+            if isinstance(p, ActionParameter):
+                typedparam.append(p)
+            else:
+                assert type(p) in (str, int, float, bool)
+                typedparam.append(StringActionParameter(str(p)))
+        
+        self.last_transform_query_segment().append(ActionRequest(name, typedparam))
+        return self
 
     def encode(self):
         return ("/" if self.absolute else "") + "/".join(
@@ -412,7 +464,7 @@ resource_name = (
     .setParseAction(_resource_name_parse_action)
     .setName("resource_name")
 )
-parameter_text = Regex("[a-zA-Z0-9_.]+").setName("parameter_text")
+parameter_text = Regex("[a-zA-Z0-9_+.]+").setName("parameter_text")
 percent_encoding = Regex("%[0-9a-fA-F][0-9a-fA-F]").setName("percent_encoding")
 parse_query = Forward()
 
@@ -422,6 +474,26 @@ tilde_entity = (
 minus_entity = (
     Literal("~_").setParseAction(lambda s, loc, toks: ["-"]).setName("minus_entity")
 )
+islash_entity = (
+    Literal("~I").setParseAction(lambda s, loc, toks: ["/"]).setName("islash_entity")
+)
+slash_entity = (
+    Literal("~/").setParseAction(lambda s, loc, toks: ["/"]).setName("slash_entity")
+)
+
+https_entity = (
+    Literal("~H").setParseAction(lambda s, loc, toks: ["https://"]).setName("https_entity")
+)
+http_entity = (
+    Literal("~h").setParseAction(lambda s, loc, toks: ["http://"]).setName("http_entity")
+)
+file_entity = (
+    Literal("~f").setParseAction(lambda s, loc, toks: ["file://"]).setName("file_entity")
+)
+protocol_entity = (
+    Literal("~P").setParseAction(lambda s, loc, toks: ["://"]).setName("protocol_entity")
+)
+ 
 negative_number_entity = (
     Regex("~[0-9]")
     .setParseAction(lambda s, loc, toks: ["-" + toks[0][1:]])
@@ -435,7 +507,17 @@ end_entity = Literal("~E")
 expand_entity = Literal("~X~").suppress() + parse_query + end_entity.suppress()
 
 entities = (
-    tilde_entity | minus_entity | negative_number_entity | space_entity | expand_entity
+    tilde_entity
+    | minus_entity
+    | negative_number_entity
+    | space_entity
+    | expand_entity
+    | islash_entity
+    | slash_entity
+    | http_entity
+    | https_entity
+    | file_entity
+    | protocol_entity
 )
 
 

@@ -281,6 +281,7 @@ def split_df(state, *columns):
 def tsplit_df(state, *columns):
     """Split of dataframe by columns (version of split_df expecting a first row with tags)
     """
+    from liquer.parser import parse
     state = qtsplit_df(state, *columns)
     df = state.get().copy()
 
@@ -296,7 +297,8 @@ def tsplit_df(state, *columns):
     if split_link_type is None:
         split_link_type = "url"
 
-    df.loc[:,link_column] = [""]+[evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in list(df[query_column])[1:]]
+#    df.loc[:,link_column] = [""]+[evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in list(df[query_column])[1:]]
+    df.loc[:,link_column] = [""]+[evaluate(parse(q).with_action("link",split_link_type).encode()).get() for q in list(df[query_column])[1:]]
     return state.with_data(df)
 
 @command

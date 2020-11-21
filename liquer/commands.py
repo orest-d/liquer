@@ -338,13 +338,13 @@ class IntArgumentParser(ArgumentParser):
             except:
                 raise ArgumentParserException(
                     f'''Error parsing integer argument '{metadata["name"]}' from string {repr(args[0])}''')
-        elif isinstance(args, StringActionParameter):
+        elif isinstance(args[0], StringActionParameter):
             try:
                 value = int(args[0].string)
             except:
                 raise ArgumentParserException(
                     f'''Error parsing integer argument '{metadata["name"]}' at {args[0].position} from {repr(args[0].string)}''')
-        elif isinstance(args, ActionParameter):
+        elif isinstance(args[0], ActionParameter):
             raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in IntArgumentParser")
         else:
             try:
@@ -367,13 +367,13 @@ class FloatArgumentParser(ArgumentParser):
             except:
                 raise ArgumentParserException(
                     f'''Error parsing float argument '{metadata["name"]}' from string {repr(args[0])}''')
-        elif isinstance(args, StringActionParameter):
+        elif isinstance(args[0], StringActionParameter):
             try:
                 value = float(args[0].string)
             except:
                 raise ArgumentParserException(
                     f'''Error parsing float argument '{metadata["name"]}' at {args[0].position} from {repr(args[0].string)}''')
-        elif isinstance(args, ActionParameter):
+        elif isinstance(args[0], ActionParameter):
             raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in FloatArgumentParser")
         else:
             try:
@@ -397,14 +397,14 @@ class BooleanArgumentParser(ArgumentParser):
             except:
                 raise ArgumentParserException(
                     f'''Error parsing boolean argument '{metadata["name"]}' from string {repr(args[0])}''')
-        elif isinstance(args, StringActionParameter):
+        elif isinstance(args[0], StringActionParameter):
             try:
                 value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
                             f=False, false=False).get(str(args[0].string).lower(), False)
             except:
                 raise ArgumentParserException(
                     f'''Error parsing boolean argument '{metadata["name"]}' at {args[0].position} from value {repr(args[0].string)}''')
-        elif isinstance(args, ActionParameter):
+        elif isinstance(args[0], ActionParameter):
             raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in BooleanArgumentParser")
         else:
             try:
@@ -577,7 +577,7 @@ class FirstCommandExecutable(CommandExecutable):
             argv, argmeta, remainder = self.argument_parser.parse_meta(
                 self.metadata.arguments, args)
         except ArgumentParserException as e:
-            raise ArgumentParserException(f"While executing '{self.metadata.name}': {e}")
+            raise ArgumentParserException(f"Bad argument while executing '{self.metadata.name}': {e}")
         if len(remainder) != 0:
             raise ArgumentParserException(
                 f"Too many arguments for '{self.metadata.name}': {repr(remainder)}")
