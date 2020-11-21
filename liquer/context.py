@@ -158,7 +158,7 @@ class Context(object):
             )
         else:
             try:
-                state = command(old_state, *action.parameters)
+                state = command(old_state, *action.parameters, context=self)
             except Exception as e:
                 traceback.print_exc()
                 state.log_exception(message=str(e), traceback=traceback.format_exc())
@@ -205,7 +205,7 @@ class Context(object):
             return state
 
         p, r = query.predecessor()
-        print(f"{'- '*self.level}  PROCESS Predecesor:{p} Action: {r}")
+        print(f"{'- '*self.level}  PROCESS Predecessor:{p} Action: {r}")
         if p is None or p.is_empty():
             state = self.create_initial_state()
             print(f"{'- '*self.level}  INITIAL STATE")

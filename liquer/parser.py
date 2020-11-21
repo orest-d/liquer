@@ -129,7 +129,21 @@ class Position:
             return "Position()"
         return f"Position(offset={self.offset}, line={self.line}, column={self.column})"
 
+class QueryException(Exception):
+    def __init__(self, message, position=None, query=None):
+        self.original_message=message
+        if position is not None:
+            message+=f" at {position}"
+            if query is not None:
+                message+=f":\n  query: {query[:position.offset]}\n     {' '*position.offset}--> {query[position.offset:]}"
+        else:
+            if query is not None:
+                message+=f":\n  query: {query}"
 
+        super().__init__(message)
+        self.position=position
+        self.query=query
+        
 class ActionParameter(object):
     def __init__(self, position=None):
         self.position = position or Position()

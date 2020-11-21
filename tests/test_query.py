@@ -5,7 +5,7 @@ Unit tests for LiQuer State object.
 '''
 import pytest
 from liquer.query import *
-from liquer.commands import command, first_command, reset_command_registry
+from liquer.commands import command, first_command, reset_command_registry, ArgumentParserException
 
 
 class TestQuery:
@@ -14,6 +14,13 @@ class TestQuery:
         def abc():
             return 123
         assert evaluate("abc").get() == 123
+
+    def test_parse_error(self):
+        @first_command
+        def intpar(x=0):
+            return 123
+        with pytest.raises(ArgumentParserException):
+            evaluate("intpar-abc").get()
 
     def test_cache_control(self):
         from liquer.cache import MemoryCache, set_cache, get_cache

@@ -8,7 +8,7 @@ import pickle
 import types
 import traceback
 import base64
-from liquer.parser import StringActionParameter, ActionParameter
+from liquer.parser import StringActionParameter, ActionParameter, QueryException
 
 
 """This module is responsible for registering commands
@@ -31,10 +31,13 @@ the "mainstream" way of command registration is by simply decorating a function 
 """
 
 CommandMetadata = namedtuple(
-    "CommandMetadata", ["name", "label", "module", "doc", "state_argument", "arguments", "attributes"])
+    "CommandMetadata",
+    ["name", "label", "module", "doc", "state_argument", "arguments", "attributes"],
+)
 
 
-_remote_registration=False
+_remote_registration = False
+
 
 def is_remote_registration_enabled():
     """Returns true if remote registration is enabled.
@@ -43,9 +46,10 @@ def is_remote_registration_enabled():
     WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
     therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
     (e.g. on localhost or intranet where only trusted users have access).
-    This is on by default on Jupyter server extension.    
+    This is on by default on Jupyter server extension.
     """
     return _remote_registration
+
 
 def enable_remote_registration():
     """Enable remote registration service
@@ -53,15 +57,17 @@ def enable_remote_registration():
     WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
     therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
     (e.g. on localhost or intranet where only trusted users have access).
-    This is on by default on Jupyter server extension.    
+    This is on by default on Jupyter server extension.
     """
     global _remote_registration
     _remote_registration = True
+
 
 def disable_remote_registration():
     "Disable remote registration service"
     global _remote_registration
     _remote_registration = True
+
 
 class RegisterRemoteMixin:
     def register_remote_serialized(self, b):
@@ -73,37 +79,51 @@ class RegisterRemoteMixin:
                 ns = metadata.attributes.get("ns", "root")
                 return dict(
                     message=f"Function {f.__name__} in namespace {ns} is registered as command",
-                    status="OK")
+                    status="OK",
+                )
             except:
                 return dict(
                     message="Error while registering command",
                     traceback=traceback.format_exc(),
-                    status="ERROR")
-        else:    
+                    status="ERROR",
+                )
+        else:
             return dict(
-                message="Remote command registration is disabled.",
-                status="ERROR")
+                message="Remote command registration is disabled.", status="ERROR"
+            )
+
     @classmethod
     def encode_registration(cls, f, metadata, modify=False):
         code = marshal.dumps(f.__code__)
-        return b'B'+pickle.dumps((code, f.__name__, f.__defaults__, f.__closure__, metadata._asdict(), modify))
+        return b"B" + pickle.dumps(
+            (
+                code,
+                f.__name__,
+                f.__defaults__,
+                f.__closure__,
+                metadata._asdict(),
+                modify,
+            )
+        )
 
     @classmethod
     def encode_registration_base64(cls, f, metadata, modify=False):
-        return b'E'+base64.urlsafe_b64encode(cls.encode_registration(f, metadata, modify))
+        return b"E" + base64.urlsafe_b64encode(
+            cls.encode_registration(f, metadata, modify)
+        )
 
     @classmethod
     def decode_registration(cls, b):
         assert type(b) == bytes
-        if b[0] == b'E'[0]:
-            print("DECODE E:",b[:20])
+        if b[0] == b"E"[0]:
+            print("DECODE E:", b[:20])
             print()
-            b=base64.urlsafe_b64decode(b[1:])
-        print("DECODE B:",b[:20])
+            b = base64.urlsafe_b64decode(b[1:])
+        print("DECODE B:", b[:20])
         print()
         print()
-        assert b[0]==b"B"[0]
-        b=b[1:]
+        assert b[0] == b"B"[0]
+        b = b[1:]
 
         code, name, defaults, closure, metadata, modify = pickle.loads(b)
         bc = marshal.loads(code)
@@ -113,33 +133,40 @@ class RegisterRemoteMixin:
 
 class RemoteCommandRegistry(RegisterRemoteMixin, object):
     """Remote command registry allows to register commands into a remote LiQuer server, e.g. Jupyter server extension"""
+
     def __init__(self, url, use_get_method=False):
         self.url = url
         self.use_get_method = use_get_method
+
     def register_command(self, f, metadata, modify=False):
         import requests
+
         url = self.url
-        url += "" if url[-1]=="/" else "/"
+        url += "" if url[-1] == "/" else "/"
 
         if self.use_get_method:
             b = self.encode_registration_base64(f, metadata, modify)
             encoded = b.decode("ascii")
-            response = requests.get(url=url+encoded)
+            response = requests.get(url=url + encoded)
         else:
             b = self.encode_registration(f, metadata, modify)
-            response = requests.post(url = url, data = b)
+            response = requests.post(url=url, data=b)
 
         if response.ok:
-            response=response.json()
-            if response["status"]!="OK":
-                print (response.get("traceback",""))
-                raise Exception("Remote registration failed: "+response.get("message", f"Error registering {f.__name__}"))
+            response = response.json()
+            if response["status"] != "OK":
+                print(response.get("traceback", ""))
+                raise Exception(
+                    "Remote registration failed: "
+                    + response.get("message", f"Error registering {f.__name__}")
+                )
         else:
             response.raise_for_status()
 
 
 class CommandRegistry(RegisterRemoteMixin, object):
     """Class responsible for registering all commands and their metadata"""
+
     def __init__(self):
         """Create empty command registry"""
         self.executables = {}
@@ -148,7 +175,7 @@ class CommandRegistry(RegisterRemoteMixin, object):
 
     def is_doubleregistered(self, executable, metadata):
         """Returns True if the same function is already registered as a command.
-        Another function registered under the same name would return False. 
+        Another function registered under the same name would return False.
         """
         name = metadata.name
         ns = metadata.attributes.get("ns", "root")
@@ -157,8 +184,10 @@ class CommandRegistry(RegisterRemoteMixin, object):
 
         if name in self.executables[ns]:
             registered = self.metadata[ns][name]
-            return (name == registered.name and
-                    executable.inner_id() == self.executables[ns][name].inner_id())
+            return (
+                name == registered.name
+                and executable.inner_id() == self.executables[ns][name].inner_id()
+            )
         return False
 
     def register_command(self, f, metadata, modify=False):
@@ -194,7 +223,10 @@ class CommandRegistry(RegisterRemoteMixin, object):
 
     def as_dict(self):
         """Returns dictionary representation of the registry, safe to serialize as json"""
-        return {ns: {name: cmd._asdict() for name, cmd in metadata.items()} for ns, metadata in self.metadata.items()}
+        return {
+            ns: {name: cmd._asdict() for name, cmd in metadata.items()}
+            for ns, metadata in self.metadata.items()
+        }
 
     def evaluate_command(self, state, qcommand: list):
         if not state.is_volatile():
@@ -203,25 +235,31 @@ class CommandRegistry(RegisterRemoteMixin, object):
         ns, command, metadata = self.resolve_command(state, command_name)
         if command is None:
             print(f"Unknown command: {command_name}")
-            return state.with_data(None).log_error(message=f"Unknown command: {command_name}")
+            return state.with_data(None).log_error(
+                message=f"Unknown command: {command_name}"
+            )
         else:
             try:
                 state = command(state, *qcommand[1:])
             except Exception as e:
                 traceback.print_exc()
-                state.log_exception(message=str(
-                    e), traceback=traceback.format_exc())
+                state.log_exception(message=str(e), traceback=traceback.format_exc())
                 state.exception = e
         arguments = getattr(state, "arguments", None)
         state.commands.append(qcommand)
-        state.extended_commands.append(dict(
-            command_name=command_name,
-            ns=ns,
-            qcommand=qcommand,
-            command_metadata=metadata._asdict(),
-            arguments=arguments))
+        state.extended_commands.append(
+            dict(
+                command_name=command_name,
+                ns=ns,
+                qcommand=qcommand,
+                command_metadata=metadata._asdict(),
+                arguments=arguments,
+            )
+        )
         state.query = encode(state.commands)
-        state.attributes = {key:value for key, value in state.attributes.items() if key[0].isupper()}
+        state.attributes = {
+            key: value for key, value in state.attributes.items() if key[0].isupper()
+        }
         if metadata is not None:
             state.attributes.update(metadata.attributes)
 
@@ -248,6 +286,7 @@ class CommandRegistry(RegisterRemoteMixin, object):
 
 _command_registry = None
 
+
 def command_registry():
     """Return global the command registry object"""
     global _command_registry
@@ -264,14 +303,18 @@ def remote_command_registry(url, use_get_method=False):
     _command_registry = RemoteCommandRegistry(url, use_get_method=use_get_method)
     return _command_registry
 
+
 def reset_command_registry():
     """Create empty global command registry"""
     global _command_registry
     _command_registry = CommandRegistry()
     return _command_registry
 
-class ArgumentParserException(Exception):
-    pass
+
+class ArgumentParserException(QueryException):
+    def __init__(self, message, position=None, query=None):
+        super().__init__(message, position, query)
+
 
 class ArgumentParser(object):
     is_argv = False
@@ -283,22 +326,27 @@ class ArgumentParser(object):
         return args[0], args[1:]
 
     def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
         if isinstance(args[0], str):
             return args[0], (args[0], metadata), args[1:]
         elif isinstance(args[0], StringActionParameter):
             return args[0].string, (args[0].string, metadata), args[1:]
         elif isinstance(args[0], ActionParameter):
-            raise ArgumentParserException(f"Unsupported action parameter {repr(args[0])}  in ArgumentParser")        
+            raise ArgumentParserException(
+                f"Unsupported action parameter {repr(args[0])}  in ArgumentParser",
+                position=args[0].position,
+                query=query,
+            )
         else:
             return args[0], (args[0], metadata), args[1:]
-            
+
 
 class SequenceArgumentParser(ArgumentParser):
     def __init__(self, *sequence):
         self.sequence = list(sequence)
 
     def __add__(self, ap):
-        return SequenceArgumentParser(*(self.sequence+[ap]))
+        return SequenceArgumentParser(*(self.sequence + [ap]))
 
     def __iadd__(self, ap):
         self.sequence.append(ap)
@@ -332,26 +380,38 @@ class IntArgumentParser(ArgumentParser):
         return int(args[0]), args[1:]
 
     def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
         if isinstance(args[0], str):
             try:
                 value = int(args[0])
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing integer argument '{metadata["name"]}' from string {repr(args[0])}''')
+                    f"""Error parsing integer argument '{metadata["name"]}' from string {repr(args[0])}""",
+                    query=query,
+                )
         elif isinstance(args[0], StringActionParameter):
             try:
                 value = int(args[0].string)
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing integer argument '{metadata["name"]}' at {args[0].position} from {repr(args[0].string)}''')
+                    f"""Error parsing integer argument '{metadata["name"]}' from {repr(args[0].string)}""",
+                    position=args[0].position,
+                    query=query,
+                )
         elif isinstance(args[0], ActionParameter):
-            raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in IntArgumentParser")
+            raise ArgumentParserException(
+                f"Unsupported action parameter type {repr(args[0])} in IntArgumentParser",
+                position=args[0].position,
+                query=query,
+            )
         else:
             try:
                 value = int(args[0])
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing integer argument '{metadata["name"]}' from object {repr(args[0])}''')
+                    f"""Error parsing integer argument '{metadata["name"]}' from object {repr(args[0])}""",
+                    query=query,
+                )
 
         return value, (value, metadata), args[1:]
 
@@ -361,58 +421,118 @@ class FloatArgumentParser(ArgumentParser):
         return float(args[0]), args[1:]
 
     def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
         if isinstance(args[0], str):
             try:
                 value = float(args[0])
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing float argument '{metadata["name"]}' from string {repr(args[0])}''')
+                    f"""Error parsing float argument '{metadata["name"]}' from string {repr(args[0])}""",
+                    query=query,
+                )
         elif isinstance(args[0], StringActionParameter):
             try:
                 value = float(args[0].string)
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing float argument '{metadata["name"]}' at {args[0].position} from {repr(args[0].string)}''')
+                    f"""Error parsing float argument '{metadata["name"]}' from {repr(args[0].string)}""",
+                    position=args[0].position,
+                    query=query,
+                )
         elif isinstance(args[0], ActionParameter):
-            raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in FloatArgumentParser")
+            raise ArgumentParserException(
+                f"Unsupported action parameter type {repr(args[0])} in FloatArgumentParser",
+                position=args[0].position,
+                query=query,
+            )
         else:
             try:
                 value = float(args[0])
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing float argument '{metadata["name"]}' from object {repr(args[0])}''')
+                    f"""Error parsing float argument '{metadata["name"]}' from object {repr(args[0])}""",
+                    query=query,
+                )
 
         return value, (value, metadata), args[1:]
 
 
 class BooleanArgumentParser(ArgumentParser):
     def parse(self, metadata, args):
-        return dict(y=True, yes=True, n=False, no=False, t=True, true=True, f=False, false=False).get(str(args[0]).lower(), False), args[1:]
+        return (
+            dict(
+                y=True,
+                yes=True,
+                n=False,
+                no=False,
+                t=True,
+                true=True,
+                f=False,
+                false=False,
+            ).get(str(args[0]).lower(), False),
+            args[1:],
+        )
 
     def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
         if isinstance(args[0], str):
             try:
-                value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
-                            f=False, false=False).get(str(args[0]).lower(), False)
+                value = dict(
+                    y=True,
+                    yes=True,
+                    n=False,
+                    no=False,
+                    t=True,
+                    true=True,
+                    f=False,
+                    false=False,
+                ).get(str(args[0]).lower(), False)
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing boolean argument '{metadata["name"]}' from string {repr(args[0])}''')
+                    f"""Error parsing boolean argument '{metadata["name"]}' from string {repr(args[0])}""",
+                    query=query,
+                )
         elif isinstance(args[0], StringActionParameter):
             try:
-                value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
-                            f=False, false=False).get(str(args[0].string).lower(), False)
+                value = dict(
+                    y=True,
+                    yes=True,
+                    n=False,
+                    no=False,
+                    t=True,
+                    true=True,
+                    f=False,
+                    false=False,
+                ).get(str(args[0].string).lower(), False)
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing boolean argument '{metadata["name"]}' at {args[0].position} from value {repr(args[0].string)}''')
+                    f"""Error parsing boolean argument '{metadata["name"]}' at {args[0].position} from value {repr(args[0].string)}""",
+                    position=args[0].position,
+                    query=query,
+                )
         elif isinstance(args[0], ActionParameter):
-            raise ArgumentParserException(f"Unsupported action parameter type {repr(args[0])} in BooleanArgumentParser")
+            raise ArgumentParserException(
+                f"Unsupported action parameter type {repr(args[0])} in BooleanArgumentParser",
+                position=args[0].position,
+                query=query,
+            )
         else:
             try:
-                value = dict(y=True, yes=True, n=False, no=False, t=True, true=True,
-                            f=False, false=False).get(str(args[0]).lower(), False)
+                value = dict(
+                    y=True,
+                    yes=True,
+                    n=False,
+                    no=False,
+                    t=True,
+                    true=True,
+                    f=False,
+                    false=False,
+                ).get(str(args[0]).lower(), False)
             except:
                 raise ArgumentParserException(
-                    f'''Error parsing boolean argument '{metadata["name"]}' from object {repr(args[0])}''')
+                    f"""Error parsing boolean argument '{metadata["name"]}' from object {repr(args[0])}""",
+                    query=query,
+                )
 
         return value, (value, metadata), args[1:]
 
@@ -422,14 +542,25 @@ class ListArgumentParser(ArgumentParser):
         return args, []
 
     def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+
         value = []
         for x in args:
             if isinstance(x, str):
                 value.append(x)
             elif isinstance(x, StringActionParameter):
                 value.append(x.string)
+            elif isinstance(x, ActionParameter):
+                raise ArgumentParserException(
+                    f"Unsupported action parameter type {repr(x)} in ListArgumentParser",
+                    position=x.position,
+                    query=query,
+                )
             else:
-                raise ArgumentParserException(f"Unsupported action parameter type {repr(x)} in ListArgumentParser")
+                raise ArgumentParserException(
+                    f"Unsupported action parameter object {repr(x)} in ListArgumentParser",
+                    query=query,
+                )
 
         return value, (value, metadata), []
 
@@ -453,13 +584,13 @@ def identifier_to_label(identifier):
     txt = identifier.replace("_", " ")
     txt = txt.replace(" id", "ID")
     txt = dict(url="URL").get(txt, txt)
-    txt = txt[0].upper()+txt[1:]
+    txt = txt[0].upper() + txt[1:]
     return txt
 
 
 def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
     """Extract command metadata structure from a callable.
-    Function interprets function name, document string, argument names and annotations into command metadata. 
+    Function interprets function name, document string, argument names and annotations into command metadata.
     """
     name = f.__name__
     doc = f.__doc__
@@ -502,14 +633,15 @@ def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
     else:
         state_argument = None
 
-    return CommandMetadata(name=name,
-                           label=identifier_to_label(name),
-                           module=module,
-                           doc=doc,
-                           state_argument=state_argument,
-                           arguments=arguments,
-                           attributes=attributes
-                           )
+    return CommandMetadata(
+        name=name,
+        label=identifier_to_label(name),
+        module=module,
+        doc=doc,
+        state_argument=state_argument,
+        arguments=arguments,
+        attributes=attributes,
+    )
 
 
 def argument_parser_from_command_metadata(command_metadata):
@@ -521,11 +653,7 @@ def argument_parser_from_command_metadata(command_metadata):
             break
         arg_type = arg.get("type")
         ap += dict(
-            str=GENERIC_AP,
-            int=INT_AP,
-            float=FLOAT_AP,
-            bool=BOOLEAN_AP,
-            list=LIST_AP
+            str=GENERIC_AP, int=INT_AP, float=FLOAT_AP, bool=BOOLEAN_AP, list=LIST_AP
         ).get(arg_type, GENERIC_AP)
     return ap
 
@@ -545,19 +673,30 @@ class CommandExecutable(object):
     def inner_id(self):
         return id(self.f)
 
-    def __call__(self, state, *args):
-        args = list(args) + [a["default"]
-                             for a in self.metadata.arguments[len(args):] if not a["multiple"]]
+    def __call__(self, state, *args, context=None):
+        query = None if context is None else context.raw_query
+
+        args = list(args) + [
+            a["default"]
+            for a in self.metadata.arguments[len(args) :]
+            if not a["multiple"]
+        ]
         try:
             argv, argmeta, remainder = self.argument_parser.parse_meta(
-                self.metadata.arguments, args)
+                self.metadata.arguments, args, context=context
+            )
         except ArgumentParserException as e:
-            raise ArgumentParserException(f"While executing '{self.metadata.name}': {e}")
-        if len(remainder) != 0:
             raise ArgumentParserException(
-                f"Too many arguments for '{self.metadata.name}': {repr(remainder)}")
-        state_arg = state if self.metadata.state_argument["pass_state"] else state.get(
-        )
+                f"{e.original_message} while executing '{self.metadata.name}'", position=e.position, query=query
+            ) from e
+        if len(remainder) != 0:
+            position = remainder[0].position if isinstance(remainder[0], ActionParameter) else None                
+            raise ArgumentParserException(
+                f"Too many arguments for '{self.metadata.name}': {repr(remainder)}",
+                position=position,
+                query=query
+            )
+        state_arg = state if self.metadata.state_argument["pass_state"] else state.get()
         result = self.f(state_arg, *argv)
         if isinstance(result, State):
             result.arguments = argmeta
@@ -570,17 +709,30 @@ class CommandExecutable(object):
 class FirstCommandExecutable(CommandExecutable):
     """Wrapper around a registered first command"""
 
-    def __call__(self, state, *args):
-        args = list(args) + [a["default"]
-                             for a in self.metadata.arguments[len(args):] if not a["multiple"]]
+    def __call__(self, state, *args, context=None):
+        query = None if context is None else context.raw_query
+        args = list(args) + [
+            a["default"]
+            for a in self.metadata.arguments[len(args) :]
+            if not a["multiple"]
+        ]
         try:
             argv, argmeta, remainder = self.argument_parser.parse_meta(
-                self.metadata.arguments, args)
+                self.metadata.arguments, args
+            )
         except ArgumentParserException as e:
-            raise ArgumentParserException(f"Bad argument while executing '{self.metadata.name}': {e}")
-        if len(remainder) != 0:
             raise ArgumentParserException(
-                f"Too many arguments for '{self.metadata.name}': {repr(remainder)}")
+                f"{e.original_message} while executing '{self.metadata.name}'",
+                position=e.position,
+                query=query
+            ) from e
+        if len(remainder) != 0:
+            position = remainder[0].position if isinstance(remainder[0], ActionParameter) else None                
+            raise ArgumentParserException(
+                f"Too many arguments for '{self.metadata.name}': {repr(remainder)}",
+                position=position,
+                query=query
+            )
         result = self.f(*argv)
         if isinstance(result, State):
             result.arguments = argmeta
@@ -592,11 +744,11 @@ class FirstCommandExecutable(CommandExecutable):
 
 def command(*arg, **kwarg):
     """Register a callable as a command.
-    Callable is expected to take a state data as a first argument. 
+    Callable is expected to take a state data as a first argument.
 
     This function typically can be used as a decorator.
     As a decorator it can be used directly (@command) or it can have parameters,
-    e.g. @command(ns="MyNameSpace") 
+    e.g. @command(ns="MyNameSpace")
     """
     if len(arg) == 1:
         assert callable(arg[0])
@@ -625,7 +777,8 @@ def first_command(*arg, **kwarg):
         if "ns" not in kwarg:
             kwarg["ns"] = "root"
         metadata = command_metadata_from_callable(
-            f, has_state_argument=False, attributes=kwarg)
+            f, has_state_argument=False, attributes=kwarg
+        )
         command_registry().register_command(f, metadata)
         return f
     else:
