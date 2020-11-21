@@ -8,12 +8,20 @@ from liquer.parser import encode, decode
 from liquer.query import evaluate
 from liquer.state import State
 
+class ResilientBytesIO(BytesIO):
+    "Workaround to prevent closing the stream"
+    def close(self):
+        pass  # Refuse to close to avoid pandas bug
+
+    def really_close(self):
+        super().close()
+
 class DataframeStateType(StateType):
     def identifier(self):
         return "dataframe"
 
     def default_extension(self):
-        return "csv"
+        return "pickle"
 
     def is_type_of(self, data):
         return isinstance(data, pd.DataFrame)
@@ -39,6 +47,12 @@ class DataframeStateType(StateType):
             output = StringIO()
             data.to_html(output, index=False)
             return output.getvalue().encode("utf-8"), mimetype
+        elif extension in ("pkl", "pickle"):
+            output = ResilientBytesIO()
+            data.to_pickle(output)
+            b=output.getvalue()
+            output.really_close()
+            return b, mimetype
         elif extension == "xlsx":
             output = BytesIO()
             writer = pd.ExcelWriter(output, engine='xlsxwriter')
@@ -66,6 +80,8 @@ class DataframeStateType(StateType):
             return pd.read_csv(f, sep="\t")
         elif extension == "json":
             return pd.read_json(f)
+        elif extension in ("pickle", "pkl"):
+            return pd.read_pickle(f)
         elif extension == "xlsx":
             return pd.read_excel(f)
         elif extension == "msgpack":

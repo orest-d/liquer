@@ -58,6 +58,9 @@ MIMETYPES = dict(
     wasm="application/wasm",
     mid="audio/midi",
     midi="audio/midi",
+    pdf="application/pdf",
+    ps="application/postscript",
+    eps="image/eps"
 )
 
 def mimetype_from_extension(extension):

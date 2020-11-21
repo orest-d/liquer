@@ -91,6 +91,9 @@
                         <v-list-item @click="goto(query_basis+'/gui')" />
                         <v-list-item-title>Edit</v-list-item-title>
                         </v-list-item>
+                        <v-list-item @click="clean_cache()" />
+                        <v-list-item-title>Clean cache</v-list-item-title>
+                        </v-list-item>
                         <v-list-item v-for="(item, i) in context_menu" :key="i" @click="goto_rel(item.link)" />
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
                         </v-list-item>

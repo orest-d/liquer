@@ -23,6 +23,11 @@ class TestCache:
         assert not cache.contains("xyz")
         assert cache.get("xyz") == None
 
+        cache.clean()
+        assert not cache.contains("abc")
+        assert cache.get("abc") == None
+
+
     def test_memory(self):
         state = State().with_data(123)
         state.query = "abc"
@@ -35,6 +40,46 @@ class TestCache:
 
         assert not cache.contains("xyz")
         assert cache.get("xyz") == None
+
+        cache.clean()
+        assert not cache.contains("abc")
+        assert cache.get("abc") == None
+
+
+    def test_sqlite(self):
+        state = State().with_data(123)
+        state.query = "abc"
+        cache = SQLCache.from_sqlite()
+        assert not cache.contains("abc")
+        cache.store(state)
+
+        assert cache.contains("abc")
+        assert cache.get("abc").get() == 123
+
+        assert not cache.contains("xyz")
+        assert cache.get("xyz") == None
+
+        cache.clean()
+        assert not cache.contains("abc")
+        assert cache.get("abc") == None
+
+    def test_sqlite_string(self):
+        state = State().with_data(123)
+        state.query = "abc"
+        cache = SQLStringCache.from_sqlite()
+        assert not cache.contains("abc")
+        cache.store(state)
+
+        assert cache.contains("abc")
+        assert cache.get("abc").get() == 123
+
+        assert not cache.contains("xyz")
+        assert cache.get("xyz") == None
+
+        cache.clean()
+        assert not cache.contains("abc")
+        assert cache.get("abc") == None
+
 
     def test_filecache(self):
         state = State().with_data(123)
@@ -49,6 +94,28 @@ class TestCache:
 
             assert not cache.contains("xyz")
             assert cache.get("xyz") == None
+
+            cache.clean()
+            assert not cache.contains("abc")
+            assert cache.get("abc") == None
+
+    def test_xorfilecache(self):
+        state = State().with_data(123)
+        state.query = "abc"
+        with tempfile.TemporaryDirectory() as cachepath:
+            cache = XORFileCache(cachepath, b"**")
+            assert not cache.contains("abc")
+            cache.store(state)
+
+            assert cache.contains("abc")
+            assert cache.get("abc").get() == 123
+
+            assert not cache.contains("xyz")
+            assert cache.get("xyz") == None
+
+            cache.clean()
+            assert not cache.contains("abc")
+            assert cache.get("abc") == None
 
     def test_cached_part(self):
         cache = MemoryCache()

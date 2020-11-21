@@ -4,7 +4,7 @@ import base64
 from liquer.commands import command, first_command
 from liquer.parser import encode, decode
 from liquer.state_types import encode_state_data
-
+from liquer.cache import get_cache
 
 @command
 def let(state, name, value):
@@ -110,3 +110,8 @@ def ns(state, *namespaces):
     state.vars["active_namespaces"] = namespaces
     
     return state
+
+@first_command
+def clean_cache():
+    get_cache().clean()
+    return "Cache cleaned"
