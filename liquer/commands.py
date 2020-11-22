@@ -228,7 +228,7 @@ class CommandRegistry(RegisterRemoteMixin, object):
             for ns, metadata in self.metadata.items()
         }
 
-    def evaluate_command(self, state, qcommand: list):
+    def evaluate_command_old(self, state, qcommand: list):
         if not state.is_volatile():
             state = state.clone()
         command_name = qcommand[0]

@@ -94,47 +94,47 @@ class TestCommands:
         result = command_registry().executables["root"]["test_callable"](State(), "1")
         assert result.get() == 124
 
-    def test_evaluate_command(self):
-        reset_command_registry()
-        @command
-        def test_callable(state, a: int, b=123):  # has state as a first argument
-            return a+b
-        cmd = ["test_callable", "1"]
-        result = command_registry().evaluate_command(
-            State(), cmd)
-        assert result.get() == 124
-        assert result.metadata["commands"][-1] == cmd
+#    def test_evaluate_command(self):
+#        reset_command_registry()
+#        @command
+#        def test_callable(state, a: int, b=123):  # has state as a first argument
+#            return a+b
+#        cmd = ["test_callable", "1"]
+#        result = command_registry().evaluate_command(
+#            State(), cmd)
+#        assert result.get() == 124
+#        assert result.metadata["commands"][-1] == cmd
 
-    def test_evaluate_command_with_attributes(self):
-        reset_command_registry()
-        @command(ABC="def")
-        def test_callable(state, a: int, b=123):  # has state as a first argument
-            return a+b
-        cmd = ["test_callable", "1"]
-        result = command_registry().evaluate_command(
-            State(), cmd)
-        assert result.get() == 124
-        assert result.metadata["commands"][-1] == cmd
-        assert result.metadata["attributes"]["ABC"] == "def"
+#    def test_evaluate_command_with_attributes(self):
+#        reset_command_registry()
+#        @command(ABC="def")
+#        def test_callable(state, a: int, b=123):  # has state as a first argument
+#            return a+b
+#        cmd = ["test_callable", "1"]
+#        result = command_registry().evaluate_command(
+#            State(), cmd)
+#        assert result.get() == 124
+#        assert result.metadata["commands"][-1] == cmd
+#        assert result.metadata["attributes"]["ABC"] == "def"
 
-    def test_evaluate_chaining_attributes(self):
-        reset_command_registry()
-        @command(ABC="def")
-        def test_callable1(state, a: int, b=123):  # has state as a first argument
-            return a+b
-        @command
-        def test_callable2(state):  # has state as a first argument
-            return state
-        cmd1 = ["test_callable1", "1"]
-        cmd2 = ["test_callable2"]
-        state1 = command_registry().evaluate_command(
-            State(), cmd1)
-        assert state1.get() == 124
-        assert state1.metadata["attributes"]["ABC"] == "def"
-        state2 = command_registry().evaluate_command(
-            state1, cmd2)
-        assert state2.get() == 124
-        assert state2.metadata["attributes"]["ABC"] == "def"
+#    def test_evaluate_chaining_attributes(self):
+#        reset_command_registry()
+#        @command(ABC="def")
+#        def test_callable1(state, a: int, b=123):  # has state as a first argument
+#            return a+b
+#        @command
+#        def test_callable2(state):  # has state as a first argument
+#            return state
+#        cmd1 = ["test_callable1", "1"]
+#        cmd2 = ["test_callable2"]
+#        state1 = command_registry().evaluate_command(
+#            State(), cmd1)
+#        assert state1.get() == 124
+#        assert state1.metadata["attributes"]["ABC"] == "def"
+#        state2 = command_registry().evaluate_command(
+#            state1, cmd2)
+#        assert state2.get() == 124
+#        assert state2.metadata["attributes"]["ABC"] == "def"
 
     def test_evaluate_chaining_exceptions(self):
         import importlib
@@ -162,23 +162,23 @@ class TestCommands:
         assert state2.metadata["attributes"].get("ns")!="testns"
         assert "context_menu" not in state2.metadata["attributes"]
 
-    def test_state_command(self):
-        reset_command_registry()
-        @command
-        def statecommand(state):  # has state as a first argument
-            assert isinstance(state, State)
-            return 123+state.get()
-        assert command_registry().evaluate_command(
-            State().with_data(1), ["statecommand"]).get() == 124
+#    def test_state_command(self):
+#        reset_command_registry()
+#        @command
+#        def statecommand(state):  # has state as a first argument
+#            assert isinstance(state, State)
+#            return 123+state.get()
+#        assert command_registry().evaluate_command(
+#            State().with_data(1), ["statecommand"]).get() == 124
 
-    def test_nonstate_command(self):
-        reset_command_registry()
-        @command
-        def nonstatecommand(x: int):  # has state as a first argument
-            assert x == 1
-            return 123+x
-        assert command_registry().evaluate_command(
-            State().with_data(1), ["nonstatecommand"]).get() == 124
+#    def test_nonstate_command(self):
+#        reset_command_registry()
+#        @command
+#        def nonstatecommand(x: int):  # has state as a first argument
+#            assert x == 1
+#            return 123+x
+#        assert command_registry().evaluate_command(
+#            State().with_data(1), ["nonstatecommand"]).get() == 124
 
     def test_as_dict(self):
         reset_command_registry()

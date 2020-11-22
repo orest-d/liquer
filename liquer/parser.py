@@ -203,9 +203,9 @@ class ResourceName(ActionParameter):
 
 
 class ActionRequest(object):
-    def __init__(self, name: str, parameters: list, position=None):
+    def __init__(self, name: str, parameters=None, position=None):
         self.name = name
-        self.parameters = parameters
+        self.parameters = [] if parameters is None else parameters 
         self.position = position or Position()
 
     @classmethod
