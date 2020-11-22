@@ -108,17 +108,36 @@ class CacheCombine(CacheMixin):
         else:
             return self.cache2.get(key)
 
+    def get_metadata(self, key):
+        value = self.cache1.get_metadata(key)
+        if value is not None:
+            return value
+        else:
+            return self.cache2.get_metadata(key)
+
     def store(self, state):
         if self.cache1.store(state):
             return True
         else:
             return self.cache2.store(state)
 
+    def store_metadata(self, metadata):
+        if self.cache1.store_metadata(state):
+            return True
+        else:
+            return self.cache2.store_metadata(state)
+
     def contains(self, key):
         if self.cache1.contains(key):
             return True
         else:
             return self.cache2.contains(key)
+
+    def keys(self):
+        for key in self.cache1.keys():
+            yield key
+        for key in self.cache2.keys():
+            yield key
 
     def __str__(self):
         return f"{str(self.cache1)} + {str(self.cache2)}"
@@ -138,14 +157,26 @@ class CacheIfHasAttributes(CacheMixin):
     def get(self, key):
         return self.cache.get(key)
 
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
     def store(self, state):
         if all(state.metadata["attributes"].get(a, False) for a in self.attributes):
             return self.cache.store(state)
         else:
             return False
 
+    def store_metadata(self, metadata):
+        if all(metadata["attributes"].get(a, False) for a in self.attributes):
+            return self.cache.store_metadata(metadata)
+        else:
+            return False
+
     def contains(self, key):
         return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
 
     def __str__(self):
         return f"({str(self.cache)} containing {', '.join(self.attributes)})"
@@ -165,14 +196,26 @@ class CacheIfHasNotAttributes(CacheMixin):
     def get(self, key):
         return self.cache.get(key)
 
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
     def store(self, state):
         if any(state.metadata["attributes"].get(a, False) for a in self.attributes):
             return False
         else:
             return self.cache.store(state)
 
+    def store_metadata(self, metadata):
+        if any(metadata["attributes"].get(a, False) for a in self.attributes):
+            return False
+        else:
+            return self.cache.store_metadata(metadata)
+
     def contains(self, key):
         return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
 
     def __str__(self):
         return f"({str(self.cache)} not containing {', '.join(self.attributes)})"
@@ -194,6 +237,9 @@ class CacheAttributeCondition(CacheMixin):
     def get(self, key):
         return self.cache.get(key)
 
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
     def store(self, state):
         state_attribute_value = state.metadata["attributes"].get(self.attribute)
         if self.equals:
@@ -204,8 +250,21 @@ class CacheAttributeCondition(CacheMixin):
                 return self.cache.store(state)
         return False
 
+    def store_metadata(self, metadata):
+        state_attribute_value = metadata["attributes"].get(self.attribute)
+        if self.equals:
+            if state_attribute_value == self.value:
+                return self.cache.store_metadata(metadata)
+        else:
+            if state_attribute_value != self.value:
+                return self.cache.store_metadata(metadata)
+        return False
+
     def contains(self, key):
         return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
 
     def __str__(self):
         if self.equals:
@@ -226,11 +285,20 @@ class NoCache(CacheMixin):
     def get(self, key):
         return None
 
+    def get_metadata(self, key):
+        return None
+
     def store(self, state):
+        return False
+
+    def store_metadata(self, state):
         return False
 
     def contains(self, key):
         return False
+
+    def keys(self):
+        return []
 
     def __str__(self):
         return "No cache"
@@ -259,12 +327,29 @@ class MemoryCache(CacheMixin):
         else:
             return state.clone()
 
+    def get_metadata(self, key):
+        state = self.storage.get(key)
+        if state is None:
+            return None
+        else:
+            return dict(**state.metadata)
+
     def store(self, state):
         self.storage[state.query] = state.clone()
         return True
 
+    def store_metadata(self, metadata):
+        key = metadata["query"]
+        self.storage[key] = self.storage.get(key, State())
+        self.storage[key].metadata = metadata
+
+        return True
+
     def contains(self, key):
         return key in self.storage
+
+    def keys(self):
+        return self.storage.keys()
 
     def __str__(self):
         return "Memory cache"
@@ -312,13 +397,13 @@ class FileCache(CacheMixin):
         return s
 
     def get(self, key):
-        state_path = self.to_path(key)
-        if os.path.exists(state_path):
-            state = State()
-            state = state.from_dict(json.loads(open(state_path).read()))
-        else:
+        metadata = self.get_metadata(key)
+        if metadata is None:
             return None
-        t = state_types_registry().get(state.type_identifier)
+        state = State()
+        state.metadata = metadata
+
+        t = state_types_registry().get(metadata["type_identifier"])
         path = self.to_path(key, prefix="data_", extension=t.default_extension())
         if os.path.exists(path):
             try:
@@ -328,6 +413,13 @@ class FileCache(CacheMixin):
                 logging.exception(f"Cache failed to recover {key}")
                 return None
 
+    def get_metadata(self, key):
+        state_path = self.to_path(key)
+        if os.path.exists(state_path):
+            return json.loads(open(state_path).read())
+        else:
+            return None
+
     def contains(self, key):
         state_path = self.to_path(key)
         if os.path.exists(state_path):
@@ -335,19 +427,22 @@ class FileCache(CacheMixin):
             state = state.from_dict(json.loads(open(state_path).read()))
         else:
             return False
-        t = state_types_registry().get(state.type_identifier)
-        path = self.to_path(key, prefix="data_", extension=t.default_extension())
-        if os.path.exists(path):
-            return True
-        else:
-            return False
+        return True
+#        t = state_types_registry().get(state.type_identifier)
+#        path = self.to_path(key, prefix="data_", extension=t.default_extension())
+#        if os.path.exists(path):
+#            return True
+#        else:
+#            return False
+
+    def keys(self):
+        import glob
+        for f in glob.glob(os.path.join(self.path, "state_*.json")):
+            metadata = json.loads(open(f).read())
+            yield metadata["query"]
 
     def store(self, state):
-        try:
-            with open(self.to_path(state.query), "w") as f:
-                f.write(json.dumps(state.as_dict()))
-        except:
-            logging.exception(f"Cache writing error: {state.query}")
+        if not self.store_metadata(state.metadata):
             return False
 
         t = state_types_registry().get(state.type_identifier)
@@ -362,22 +457,32 @@ class FileCache(CacheMixin):
                 return False
         return True
 
+    def store_metadata(self, metadata):
+        try:
+            with open(self.to_path(metadata["query"]), "w") as f:
+                f.write(json.dumps(metadata))
+        except:
+            logging.exception(f"Cache writing error: {metadata['query']}")
+            return False
+        return True
+
     def __str__(self):
         return f"File cache at {self.path}"
 
     def __repr__(self):
         return f"FileCache('{self.path}')"
 
+
 class XORFileCache(FileCache):
     def __init__(self, path, code):
         super().__init__(path)
-        self.code=np.frombuffer(code, dtype=np.uint8)
+        self.code = np.frombuffer(code, dtype=np.uint8)
 
     def code_of_length(self, n):
-        if n<=len(self.code):
+        if n <= len(self.code):
             return self.code[:n]
         else:
-            return np.tile(self.code, int(n/len(self.code))+1)[:n]
+            return np.tile(self.code, int(n / len(self.code)) + 1)[:n]
 
     def encode(self, b):
         ba = np.frombuffer(b, dtype=np.uint8)
@@ -429,7 +534,7 @@ class SQLCache(CacheMixin):
         import sqlite3
 
         connection = sqlite3.connect(path)
-        return cls(connection=connection, table=table)
+        return cls(connection=connection, table=table, delete_before_insert=True)
 
     @property
     def available_keys(self):
@@ -454,7 +559,7 @@ class SQLCache(CacheMixin):
     def clean(self):
         c = self.connection.cursor()
         c.execute(f"""DROP TABLE {self.table}""")
-        self._available_keys=[]
+        self._available_keys = []
         self.init()
         self.connection.commit()
 
@@ -492,8 +597,33 @@ class SQLCache(CacheMixin):
             logging.exception(f"Cache failed to recover {key}")
             return None
 
+    def get_metadata(self, key):
+        c = self.connection.cursor()
+        c.execute(
+            f"""
+        SELECT
+          metadata
+        FROM {self.table}
+        WHERE query=?
+        """,
+            [key],
+        )
+
+        try:
+            (metadata,) = c.fetchone()
+        except:
+            return None
+        try:
+            return json.loads(metadata)
+        except:
+            logging.exception(f"Cache failed to recover metadata {key}")
+            return None
+
     def contains(self, key):
         return key in self.available_keys
+
+    def keys(self):
+        return self.available_keys
 
     def store(self, state):
         key = state.query
@@ -504,12 +634,26 @@ class SQLCache(CacheMixin):
             b, mime = t.as_bytes(state.data)
         except NotImplementedError:
             return False
-        self._available_keys=None
+        self._available_keys = None
         if self.delete_before_insert:
             self.connection.execute(f"DELETE FROM {self.table} WHERE query=?", [key])
         self.connection.execute(
             f"INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)",
             [key, metadata, self.encode(b)],
+        )
+        self.connection.commit()
+        return True
+
+    def store_metadata(self, metadata):
+        key = metadata["query"]
+        metadata = json.dumps(metadata)
+
+        self._available_keys = None
+        if self.delete_before_insert:
+            self.connection.execute(f"DELETE FROM {self.table} WHERE query=?", [key])
+        self.connection.execute(
+            f"INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)",
+            [key, metadata, None],
         )
         self.connection.commit()
         return True

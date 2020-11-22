@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-'''
+"""
 Unit tests for LiQuer State object.
-'''
+"""
 import pytest
 from liquer.cache import *
 from liquer.state import State
@@ -27,40 +27,62 @@ class TestCache:
         assert not cache.contains("abc")
         assert cache.get("abc") == None
 
-
     def test_memory(self):
         state = State().with_data(123)
         state.query = "abc"
         cache = MemoryCache()
         assert not cache.contains("abc")
+        assert list(cache.keys()) == []
+
         cache.store(state)
 
         assert cache.contains("abc")
+        assert list(cache.keys()) == ["abc"]
         assert cache.get("abc").get() == 123
+        assert cache.get_metadata("abc")["query"] == "abc"
+        assert cache.store_metadata(dict(query="abc", mymetafield="Hello"))
+        assert cache.get_metadata("abc")["mymetafield"] == "Hello"
 
         assert not cache.contains("xyz")
         assert cache.get("xyz") == None
 
+        assert not cache.contains("xxx")
+        assert cache.store_metadata(dict(query="xxx", mymetafield="Hello"))
+        assert cache.contains("xxx")
+        assert sorted(cache.keys()) == ["abc", "xxx"]
+
         cache.clean()
         assert not cache.contains("abc")
+        assert list(cache.keys()) == []
         assert cache.get("abc") == None
-
 
     def test_sqlite(self):
         state = State().with_data(123)
         state.query = "abc"
         cache = SQLCache.from_sqlite()
         assert not cache.contains("abc")
+        assert list(cache.keys()) == []
+
         cache.store(state)
 
         assert cache.contains("abc")
+        assert list(cache.keys()) == ["abc"]
         assert cache.get("abc").get() == 123
+        assert cache.get_metadata("abc")["query"] == "abc"
+        assert cache.store_metadata(dict(query="abc", mymetafield="Hello"))
+        assert cache.get_metadata("abc")["mymetafield"] == "Hello"
 
         assert not cache.contains("xyz")
         assert cache.get("xyz") == None
 
+        assert not cache.contains("xxx")
+        assert cache.store_metadata(dict(query="xxx", mymetafield="Hello"))
+        assert cache.contains("xxx")
+        assert sorted(cache.keys()) == ["abc", "xxx"]
+
         cache.clean()
         assert not cache.contains("abc")
+        assert list(cache.keys()) == []
         assert cache.get("abc") == None
 
     def test_sqlite_string(self):
@@ -80,23 +102,33 @@ class TestCache:
         assert not cache.contains("abc")
         assert cache.get("abc") == None
 
-
     def test_filecache(self):
         state = State().with_data(123)
         state.query = "abc"
         with tempfile.TemporaryDirectory() as cachepath:
             cache = FileCache(cachepath)
             assert not cache.contains("abc")
+            assert list(cache.keys()) == []
             cache.store(state)
 
             assert cache.contains("abc")
+            assert list(cache.keys()) == ["abc"]
             assert cache.get("abc").get() == 123
+            assert cache.get_metadata("abc")["query"] == "abc"
+            assert cache.store_metadata(dict(query="abc", mymetafield="Hello"))
+            assert cache.get_metadata("abc")["mymetafield"] == "Hello"
 
             assert not cache.contains("xyz")
             assert cache.get("xyz") == None
 
+            assert not cache.contains("xxx")
+            assert cache.store_metadata(dict(query="xxx", mymetafield="Hello"))
+            assert cache.contains("xxx")
+            assert sorted(cache.keys()) == ["abc", "xxx"]
+
             cache.clean()
             assert not cache.contains("abc")
+            assert list(cache.keys()) == []
             assert cache.get("abc") == None
 
     def test_xorfilecache(self):
@@ -153,11 +185,13 @@ class TestCache:
 
     def test_cache_rules(self):
         from liquer import evaluate, first_command
+
         cache1 = MemoryCache()
         cache2 = MemoryCache()
         cache3 = MemoryCache()
 
         set_cache(cache1.if_contains("abc") + cache2.if_not_contains("xyz") + cache3)
+
         @first_command(abc=True)
         def command1():
             return "C1"
@@ -190,14 +224,20 @@ class TestCache:
         assert cache2.storage["command3"].get() == "C3"
 
         set_cache(None)
- 
+
     def test_cache_attribute_equality_rules(self):
         from liquer import evaluate, first_command
+
         cache1 = MemoryCache()
         cache2 = MemoryCache()
         cache3 = MemoryCache()
 
-        set_cache(cache1.if_attribute_equal("abc",123) + cache2.if_attribute_not_equal("xyz",456) + cache3)
+        set_cache(
+            cache1.if_attribute_equal("abc", 123)
+            + cache2.if_attribute_not_equal("xyz", 456)
+            + cache3
+        )
+
         @first_command(abc=123)
         def command1a():
             return "C1"
