@@ -36,12 +36,21 @@ pip install liquer-framework
 - [x] meta extension
 - [x] command/query GUI
 - [x] simple GUI
+
+- [x] advanced query parser
+- [x] improved error reporting with positions in a query
+
+- [ ] sub-queries as arguments
+- [ ] automatic dependent query recording via a context
+- [ ] debugging via context
+- [ ] resources
+- [ ] read/write of metadata independent from data
+- [ ] messages and progress report via context
 - [ ] remote liquer service as cache
-- [ ] automatic dependent query recording
+- [ ] dependency management
 - [ ] implied volatile (query result dependent on a volatile query should be volatile)
+
 - [ ] attributes to prevent cloning and caching
-- [ ] prevent crashing on non-cloneable types - automatic volatile ?
 - [ ] keras history support
 - [ ] numpy support
-- [ ] fix volatility logic - now just the state does not get cloned 
 - [ ] parquet support

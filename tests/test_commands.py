@@ -103,7 +103,7 @@ class TestCommands:
         result = command_registry().evaluate_command(
             State(), cmd)
         assert result.get() == 124
-        assert result.commands[-1] == cmd
+        assert result.metadata["commands"][-1] == cmd
 
     def test_evaluate_command_with_attributes(self):
         reset_command_registry()
@@ -114,8 +114,8 @@ class TestCommands:
         result = command_registry().evaluate_command(
             State(), cmd)
         assert result.get() == 124
-        assert result.commands[-1] == cmd
-        assert result.attributes["ABC"] == "def"
+        assert result.metadata["commands"][-1] == cmd
+        assert result.metadata["attributes"]["ABC"] == "def"
 
     def test_evaluate_chaining_attributes(self):
         reset_command_registry()
@@ -130,11 +130,11 @@ class TestCommands:
         state1 = command_registry().evaluate_command(
             State(), cmd1)
         assert state1.get() == 124
-        assert state1.attributes["ABC"] == "def"
+        assert state1.metadata["attributes"]["ABC"] == "def"
         state2 = command_registry().evaluate_command(
             state1, cmd2)
         assert state2.get() == 124
-        assert state2.attributes["ABC"] == "def"
+        assert state2.metadata["attributes"]["ABC"] == "def"
 
     def test_evaluate_chaining_exceptions(self):
         import importlib
@@ -153,14 +153,14 @@ class TestCommands:
             return state
         state1 = evaluate("ns-testns/test_callable1-1")
         assert state1.get() == 124
-        assert state1.attributes["ABC"] == "def"
-        assert state1.attributes["ns"] == "testns"
-        assert state1.attributes["context_menu"] == "menu"
+        assert state1.metadata["attributes"]["ABC"] == "def"
+        assert state1.metadata["attributes"]["ns"] == "testns"
+        assert state1.metadata["attributes"]["context_menu"] == "menu"
         state2 = evaluate("ns-testns/test_callable1-1/test_callable2")
         assert state2.get() == 124
-        assert state2.attributes["ABC"] == "def"
-        assert state2.attributes.get("ns")!="testns"
-        assert "context_menu" not in state2.attributes
+        assert state2.metadata["attributes"]["ABC"] == "def"
+        assert state2.metadata["attributes"].get("ns")!="testns"
+        assert "context_menu" not in state2.metadata["attributes"]
 
     def test_state_command(self):
         reset_command_registry()

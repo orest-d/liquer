@@ -259,6 +259,7 @@ def split_df(state, *columns):
     - link is generated and put into link column (state variable link_column)
     The split_link_type state variable is used to determine the link type; url by default. 
     """
+    from liquer.parser import parse
     state = qsplit_df(state, *columns)
     df = state.get().copy()
 
@@ -274,7 +275,8 @@ def split_df(state, *columns):
     if split_link_type is None:
         split_link_type = "url"
 
-    df.loc[:,link_column] = [evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in df[query_column]]
+#    df.loc[:,link_column] = [evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in df[query_column]]
+    df.loc[:,link_column] = [evaluate(parse(q).with_action("link",split_link_type).encode()).get() for q in df[query_column]]
     return state.with_data(df)
 
 @command

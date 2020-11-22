@@ -139,7 +139,7 @@ class CacheIfHasAttributes(CacheMixin):
         return self.cache.get(key)
 
     def store(self, state):
-        if all(state.attributes.get(a, False) for a in self.attributes):
+        if all(state.metadata["attributes"].get(a, False) for a in self.attributes):
             return self.cache.store(state)
         else:
             return False
@@ -166,7 +166,7 @@ class CacheIfHasNotAttributes(CacheMixin):
         return self.cache.get(key)
 
     def store(self, state):
-        if any(state.attributes.get(a, False) for a in self.attributes):
+        if any(state.metadata["attributes"].get(a, False) for a in self.attributes):
             return False
         else:
             return self.cache.store(state)
@@ -195,7 +195,7 @@ class CacheAttributeCondition(CacheMixin):
         return self.cache.get(key)
 
     def store(self, state):
-        state_attribute_value = state.attributes.get(self.attribute)
+        state_attribute_value = state.metadata["attributes"].get(self.attribute)
         if self.equals:
             if state_attribute_value == self.value:
                 return self.cache.store(state)

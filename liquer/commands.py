@@ -246,8 +246,8 @@ class CommandRegistry(RegisterRemoteMixin, object):
                 state.log_exception(message=str(e), traceback=traceback.format_exc())
                 state.exception = e
         arguments = getattr(state, "arguments", None)
-        state.commands.append(qcommand)
-        state.extended_commands.append(
+        state.metadata["commands"].append(qcommand)
+        state.metadata["extended_commands"].append(
             dict(
                 command_name=command_name,
                 ns=ns,
@@ -256,12 +256,12 @@ class CommandRegistry(RegisterRemoteMixin, object):
                 arguments=arguments,
             )
         )
-        state.query = encode(state.commands)
-        state.attributes = {
-            key: value for key, value in state.attributes.items() if key[0].isupper()
+        state.query = encode(state.metadata["commands"])
+        state.metadata["attributes"] = {
+            key: value for key, value in state.metadata["attributes"].items() if key[0].isupper()
         }
         if metadata is not None:
-            state.attributes.update(metadata.attributes)
+            state.metadata["attributes"].update(metadata.attributes)
 
         return state
 
