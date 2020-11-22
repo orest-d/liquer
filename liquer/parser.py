@@ -208,6 +208,19 @@ class ActionRequest(object):
         self.parameters = parameters
         self.position = position or Position()
 
+    @classmethod
+    def from_arguments(cls, name:str, *parameters):
+        assert type(name)==str
+        typedparam = []
+        for p in parameters:
+            if isinstance(p, ActionParameter):
+                typedparam.append(p)
+            else:
+                assert type(p) in (str, int, float, bool)
+                typedparam.append(StringActionParameter(str(p)))
+        
+        return cls(name, typedparam)
+
     def encode(self):
         if len(self.parameters):
             p = "-".join(x.encode() for x in self.parameters)
@@ -435,17 +448,8 @@ class Query(object):
                 return self.segments[-1]
         return self.create_segment()
 
-    def with_action(self, name:str, *parameters):
-        assert type(name)==str
-        typedparam = []
-        for p in parameters:
-            if isinstance(p, ActionParameter):
-                typedparam.append(p)
-            else:
-                assert type(p) in (str, int, float, bool)
-                typedparam.append(StringActionParameter(str(p)))
-        
-        self.last_transform_query_segment().append(ActionRequest(name, typedparam))
+    def with_action(self, name:str, *parameters):        
+        self.last_transform_query_segment().append(ActionRequest.from_arguments(name, *parameters))
         return self
 
     def encode(self):

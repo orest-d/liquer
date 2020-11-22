@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 '''
-Unit tests for LiQuer parser.
+Unit tests for LiQuer argument parser and command registry.
 '''
 import pytest
 from liquer.commands import *
