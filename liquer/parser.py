@@ -221,6 +221,21 @@ class ActionRequest(object):
         
         return cls(name, typedparam)
 
+    def to_list(self):
+        lst = [self.name] 
+        for x in self.parameters:
+            if isinstance(x, StringActionParameter):
+                lst.append(x.string)
+            elif isinstance(x, LinkActionParameter):
+                lst.append(x.encode())
+            else:
+                raise Exception(f"Unsupported action parameter type: {type(x)} ({repr(x)})")
+        return lst
+
+    @classmethod
+    def from_list(cls, lst):
+        return cls.from_arguments(lst[0], *lst[1:])
+
     def encode(self):
         if len(self.parameters):
             p = "-".join(x.encode() for x in self.parameters)
@@ -412,6 +427,15 @@ class Query(object):
 
     def is_transform_query(self):
         return len(self.segments)==1 and isinstance(self.segments[0], TransformQuerySegment)
+    
+    def is_action_request(self):
+        return self.is_transform_query() and self.segments[0].is_action_request()
+
+    def action(self):
+        if self.is_action_request():
+            return self.segments[0].action()
+        else:
+            return None
 
     def predecessor(self):
         if len(self.segments):

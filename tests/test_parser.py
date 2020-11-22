@@ -76,19 +76,20 @@ class TestNewParser:
         assert action.parameters[2].string == " a-b "
 
     def test_parse_escaped_parameter(self):
-        res = parameter.parseString("abc~~~_~0%21",True)
+        res = parameter.parseString("abc~~~_~0%21", True)
         assert res[0].string == "abc~--0!"
 
     def test_parse_filename(self):
         q = parse("abc/def/file.txt")
         assert q.segments[0].filename == "file.txt"
+
     def test_parse_segments(self):
         q = parse("abc/def/-/xxx/-q/qqq")
         assert len(q.segments) == 3
         assert q.segments[0].header is None
         assert q.segments[1].header.name == ""
         assert q.segments[2].header.name == "q"
-    
+
     def test_predecessor1(self):
         query = parse("ghi/jkl/file.txt")
         p, r = query.predecessor()
@@ -143,11 +144,61 @@ class TestNewParser:
     def test_all_predecessors1(self):
         p = [p.encode() for p, r in parse("ghi/jkl/file.txt").all_predecessors()]
         assert p == ["ghi/jkl/file.txt", "ghi/jkl", "ghi", ""]
-        r = [(None if r is None else r.encode()) for p, r in parse("ghi/jkl/file.txt").all_predecessors()]
+        r = [
+            (None if r is None else r.encode())
+            for p, r in parse("ghi/jkl/file.txt").all_predecessors()
+        ]
         assert r == [None, "file.txt", "jkl/file.txt", "ghi/jkl/file.txt"]
 
     def test_all_predecessors2(self):
-        p = [p.encode() for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()]
-        assert p == ["-R/abc/def/-/ghi/jkl/file.txt", "-R/abc/def/-/ghi/jkl", "-R/abc/def/-/ghi", "-R/abc/def"]
-        r = [(None if r is None else r.encode()) for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()]
+        p = [
+            p.encode()
+            for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()
+        ]
+        assert p == [
+            "-R/abc/def/-/ghi/jkl/file.txt",
+            "-R/abc/def/-/ghi/jkl",
+            "-R/abc/def/-/ghi",
+            "-R/abc/def",
+        ]
+        r = [
+            (None if r is None else r.encode())
+            for p, r in parse("-R/abc/def/-/ghi/jkl/file.txt").all_predecessors()
+        ]
         assert r == [None, "-/file.txt", "-/jkl/file.txt", "-/ghi/jkl/file.txt"]
+
+
+class TestQueryElements:
+    def test_simple_action_request(self):
+        action = ActionRequest("name")
+        assert action.name == "name"
+        assert action.encode() == "name"
+        assert (
+            repr(action).replace(" ", "").replace("\n", "")
+            == "ActionRequest('name',[],Position())"
+        )
+
+    def test_action_request_from_arguments(self):
+        action = ActionRequest.from_arguments("name")
+        assert action.name == "name"
+        assert action.encode() == "name"
+        assert (
+            repr(action).replace(" ", "").replace("\n", "")
+            == "ActionRequest('name',[],Position())"
+        )
+        action = ActionRequest.from_arguments("act", 123, 456.7)
+        assert action.encode() == "act-123-456.7"
+        action = ActionRequest.from_arguments("negative", -123, -456.7)
+        assert action.encode() == "negative-~_123-~_456.7"
+
+    def test_action_request_list_conversion(self):
+        action = ActionRequest.from_list(["name",1])
+        assert action.name == "name"
+        assert action.encode() == "name-1"
+        assert action.to_list() == ["name", "1"]
+
+    def test_action_from_query(self):
+        action = parse("name-1").action()
+        assert action.name == "name"
+        assert action.encode() == "name-1"
+

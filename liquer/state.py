@@ -37,10 +37,11 @@ def set_var(name, value):
 
 
 class State(object):
-    def __init__(self):
-        self.data = None
+    def __init__(self, data=None, metadata=None, context=None):
+        self.data = data
         self.exception=None
-        self.metadata = dict(
+        self.context=context
+        self.metadata = metadata if metadata is not None else dict(
             query="",
             sources=[],
             log=[],
