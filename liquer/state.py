@@ -114,7 +114,7 @@ class State(object):
         return self
 
     def is_volatile(self):
-        return self.metadata["attributes"].get("volatile", False)
+        return self.metadata.get("attributes",{}).get("volatile", False)
 
     def set_volatile(self, flag):
         self.metadata["attributes"]["volatile"] = flag
@@ -133,35 +133,50 @@ class State(object):
 
     def log_command(self, qv, number):
         """Log a command"""
-        self.metadata["log"].append(dict(kind="command", qv=qv, command_number=number))
+        if self.context is None:
+            self.metadata["log"].append(dict(kind="command", qv=qv, command_number=number))
+        else:
+            self.context.log_action(qv,number)
         return self
 
     def log_error(self, message):
         """Log an error message"""
-        self.metadata["log"].append(dict(kind="error", message=message))
-        self.is_error = True
-        self.metadata["message"] = message
+        if self.context is None:
+            self.metadata["log"].append(dict(kind="error", message=message))
+            self.is_error = True
+            self.metadata["message"] = message
+        else:
+            self.context.error(message)
         return self
 
     def log_warning(self, message):
         """Log a warning message"""
-        self.metadata["log"].append(dict(kind="warning", message=message))
-        self.metadata["message"] = message
+        if self.context is None:
+            self.metadata["log"].append(dict(kind="warning", message=message))
+            self.metadata["message"] = message
+        else:
+            self.context.warning(message)
         return self
 
     def log_exception(self, message, traceback):
         """Log an exception"""
-        self.metadata["log"].append(
-            dict(kind="error", message=message, traceback=traceback)
-        )
-        self.is_error = True
-        self.metadata["message"] = message
+        if self.context is None:
+            self.metadata["log"].append(
+                dict(kind="error", message=message, traceback=traceback)
+            )
+            self.is_error = True
+            self.metadata["message"] = message
+        else:
+            self.context.exception(message, traceback)
         return self
 
     def log_info(self, message):
         """Log a message (info)"""
-        self.metadata["log"].append(dict(kind="info", message=message))
-        self.metadata["message"] = message
+        if self.context is None:
+            self.metadata["log"].append(dict(kind="info", message=message))
+            self.metadata["message"] = message
+        else:
+            self.context.info(message)
         return self
 
     def as_dict(self):

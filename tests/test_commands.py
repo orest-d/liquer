@@ -162,6 +162,31 @@ class TestCommands:
         assert state2.metadata["attributes"].get("ns")!="testns"
         assert "context_menu" not in state2.metadata["attributes"]
 
+    def test_evaluate_chaining_volatile(self):
+        import importlib
+        from liquer import evaluate
+        import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+        reset_command_registry() # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.basic)
+
+        @first_command(volatile=True)
+        def test_volatile():
+            return 123
+        @first_command
+        def test_nonvolatile():
+            return 234
+        @command
+        def test_callable2(x):  # has state as a first argument
+            return x*10
+        state1 = evaluate("test_volatile/test_callable2")
+        assert state1.get() == 1230
+        assert state1.is_volatile()
+        state2 = evaluate("test_nonvolatile/test_callable2")
+        assert state2.get() == 2340
+        assert not state2.is_volatile()
+
 #    def test_state_command(self):
 #        reset_command_registry()
 #        @command

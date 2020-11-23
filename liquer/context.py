@@ -1,6 +1,6 @@
 import traceback
 from liquer.state import State
-from liquer.parser import encode, decode, parse, TransformQuerySegment, Query
+from liquer.parser import encode, decode, parse, TransformQuerySegment, Query, ActionRequest
 from liquer.cache import cached_part, get_cache
 from liquer.commands import command_registry
 from liquer.state_types import encode_state_data, state_types_registry
@@ -27,15 +27,71 @@ class Context(object):
         self.parent_context = parent_context
         self.level = level
         self.direct_subqueries=[]
-        self.messages=[]
         self.progress_indicators=[]
+        self.log=[]
+        self.is_error=False
+        self.message=""
+        self.debug_messages=False
+
+    def metadata(self):
+        return dict(
+            query=self.raw_query,
+            log=self.log[:],
+            is_error=self.is_error,
+            direct_subqueries = self.direct_subqueries,
+            progress_indicators=self.progress_indicators,
+            message=self.message
+        )
+
+    def log_dict(self,d):
+        self.log.append(d)
+        if "message" in d:
+            self.message=d["message"]
+        return self
+
+    def log_action(self, qv, number=0):
+        """Log a command"""
+        if isinstance(qv, ActionRequest):
+            qv=qv.to_list()
+        return self.log_dict(dict(kind="command", qv=qv, command_number=number))
+
+    def error(self, message):
+        """Log an error message"""
+        self.is_error = True
+        print ("ERROR:    ",message)
+        return self.log_dict(dict(kind="error", message=message))
+
+    def warning(self, message):
+        """Log a warning message"""
+        print ("WARNING:  ",message)
+        return self.log_dict(dict(kind="warning", message=message))
+
+    def exception(self, message, traceback):
+        """Log an exception"""
+        self.is_error = True
+        print ("ERROR (x):",message)
+        return self.log_dict(
+            dict(kind="error", message=message, traceback=traceback)
+        )
+
+    def info(self, message):
+        """Log a message (info)"""
+        print ("INFO:     ",message)
+        self.log_dict(dict(kind="info", message=message))
+        return self
+
+    def debug(self, message):
+        """Log a message (info)"""
+        if self.debug_messages:
+            print ("DEBUG:    ",message)
+            self.log_dict(dict(kind="debug", message=message))
+        return self
 
     def child_context(self):
         return self.__class__(parent_context=self, level=self.level + 1)
 
     def root_context(self):
         return self if self.parent_context is None else self.parent_context.root_context()
-
 
     def log_subquery(self, query:str):
         assert type(query)==str
@@ -52,9 +108,11 @@ class Context(object):
         return state_types_registry()
 
     def evaluate_action(self, state: State, action, cache=None):
-        print(f"{'- '*self.level}  EVALUATE ACTION '{action}' on '{state.query}'")
+        self.debug(f"{'- '*self.level}  EVALUATE ACTION '{action}' on '{state.query}'")
         cache = cache or self.cache()
         cr = self.command_registry()
+
+        state.context=self
 
         if isinstance(action, TransformQuerySegment):
             if action.is_filename():
@@ -66,40 +124,42 @@ class Context(object):
         old_state = state if is_volatile else state.clone()
 
         state = state.next_state()
+        state.context=self
 
-        ns, command, metadata = cr.resolve_command(state, action.name)
+        ns, command, cmd_metadata = cr.resolve_command(state, action.name)
         if command is None:
-            print(f"Unknown action: {action.name} at {action.position}")
-            return state.with_data(None).log_error(
-                message=f"Unknown action {action.name} at {action.position}"
-            )
+            self.error(f"Unknown action: {action.name} at {action.position}")
         else:
             try:
                 state = command(old_state, *action.parameters, context=self)
+                assert type(state.metadata) is dict
             except Exception as e:
                 traceback.print_exc()
-                state.log_exception(message=str(e), traceback=traceback.format_exc())
+                self.exception(message=str(e), traceback=traceback.format_exc())
                 state.exception = e
         arguments = getattr(state, "arguments", None)
-        state.metadata["commands"].append(f"action {action.encode()} at {action.position}")
-        state.metadata["extended_commands"].append(
+        metadata = self.metadata()
+        metadata["commands"]=metadata.get("commands",[]) + [action.to_list()]
+        metadata["extended_commands"]=metadata.get("extended_commands",[])+[
             dict(
                 command_name=action.name,
                 ns=ns,
-                qcommand=f"action {action.encode()} at {action.position}",
-                command_metadata=metadata._asdict(),
+                qcommand=action.to_list(),
+                action=f"{action.encode()} at {action.position}",
+                command_metadata=cmd_metadata._asdict(),
                 arguments=arguments,
             )
-        )
-        state.metadata["query"] = self.raw_query
-        state.metadata["attributes"] = {
+        ]
+        metadata["query"] = self.raw_query
+        metadata["attributes"] = {
             key: value for key, value in state.metadata["attributes"].items() if key[0].isupper()
         }
 
-        if metadata is not None:
-            state.metadata["attributes"].update(metadata.attributes)
-        state.set_volatile(is_volatile)
-        state.log_info(f"Action {action.encode()} at {action.position} completed")
+        if cmd_metadata is not None:
+            metadata["attributes"] = dict(metadata.get("attributes",{}), **cmd_metadata.attributes)
+        self.info(f"Action {action.encode()} at {action.position} completed")
+        state.metadata.update(metadata)
+        state.set_volatile(is_volatile or state.is_volatile())
         return state
 
     def create_initial_state(self):
@@ -108,7 +168,7 @@ class Context(object):
         return state
 
     def evaluate(self, query, cache=None):
-        print(f"{'- '*self.level}EVALUATE {query}")
+        self.debug(f"{'- '*self.level}EVALUATE {query}")
         """Evaluate query, returns a State, cache the output in supplied cache"""
         if self.query is not None:
             return self.child_context().evaluate(query)
@@ -130,21 +190,21 @@ class Context(object):
             return state
 
         p, r = query.predecessor()
-        print(f"{'- '*self.level}  PROCESS Predecessor:{p} Action: {r}")
+        self.debug(f"{'- '*self.level}  PROCESS Predecessor:{p} Action: {r}")
         if p is None or p.is_empty():
             state = self.create_initial_state()
-            print(f"{'- '*self.level}  INITIAL STATE")
+            self.debug(f"{'- '*self.level}  INITIAL STATE")
         else:
             state = self.child_context().evaluate(p, cache=cache)
 
         if state.is_error:
             state = state.next_state()
             state.query = query.encode()
-            print(f"{'- '*self.level}  ERROR in '{state.query}'")
+            self.debug(f"{'- '*self.level}  ERROR in '{state.query}'")
             return state
 
         if r is None:
-            print(
+            self.debug(
                 f"{'- '*self.level}  RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'"
             )
             state.query = query.encode()
@@ -155,7 +215,7 @@ class Context(object):
 
         if state.metadata["caching"] and not state.is_error and not state.is_volatile():
             cache.store(state)
-        print(f"{'- '*self.level}  RETURN '{state.query}' AFTER ACTION '{r}'")
+        self.debug(f"{'- '*self.level}  RETURN '{state.query}' AFTER ACTION '{r}'")
         return state
 
     def evaluate_and_save(self, query, target_directory=None, target_file=None):

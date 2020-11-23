@@ -24,7 +24,7 @@ class TestContext:
         assert result.get() == 124
         assert (
             result.metadata["commands"][-1]
-            == "action test_callable-1 at (unknown position)"
+            == ["test_callable", "1"]
         )
 
     def test_evaluate_command_with_attributes(self):
@@ -40,7 +40,7 @@ class TestContext:
         assert result.get() == 124
         assert (
             result.metadata["commands"][-1]
-            == "action test_callable-1 at (unknown position)"
+            == ["test_callable", "1"]
         )
         assert result.metadata["attributes"]["ABC"] == "def"
 

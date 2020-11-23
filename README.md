@@ -39,16 +39,17 @@ pip install liquer-framework
 
 - [x] advanced query parser
 - [x] improved error reporting with positions in a query
+- [x] read/write of metadata independent from data
 
 - [ ] sub-queries as arguments
 - [ ] automatic dependent query recording via a context
 - [ ] debugging via context
-- [ ] resources
-- [ ] read/write of metadata independent from data
 - [ ] messages and progress report via context
+- [ ] implied volatile (query result dependent on a volatile query should be volatile)
+
 - [ ] remote liquer service as cache
 - [ ] dependency management
-- [ ] implied volatile (query result dependent on a volatile query should be volatile)
+- [ ] resources
 
 - [ ] attributes to prevent cloning and caching
 - [ ] keras history support
