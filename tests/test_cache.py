@@ -85,6 +85,23 @@ class TestCache:
         assert list(cache.keys()) == []
         assert cache.get("abc") == None
 
+    def test_sqlite_store_metadata_disabled(self):
+        state = State().with_data(123)
+        state.query = "abc"
+        cache = SQLCache.from_sqlite()
+        cache.store_metadata_enabled=False
+        assert not cache.contains("abc")
+        assert list(cache.keys()) == []
+
+        cache.store(state)
+
+        assert cache.contains("abc")
+        assert list(cache.keys()) == ["abc"]
+        assert cache.get("abc").get() == 123
+        assert cache.get_metadata("abc")["query"] == "abc"
+        assert not cache.store_metadata(dict(query="abc", mymetafield="Hello"))
+        assert cache.get_metadata("abc").get("mymetafield") is None
+
     def test_sqlite_string(self):
         state = State().with_data(123)
         state.query = "abc"
@@ -131,11 +148,31 @@ class TestCache:
             assert list(cache.keys()) == []
             assert cache.get("abc") == None
 
-    def test_xorfilecache(self):
+    def test_xor_file_cache(self):
         state = State().with_data(123)
         state.query = "abc"
         with tempfile.TemporaryDirectory() as cachepath:
             cache = XORFileCache(cachepath, b"**")
+            assert not cache.contains("abc")
+            cache.store(state)
+
+            assert cache.contains("abc")
+            assert cache.get("abc").get() == 123
+
+            assert not cache.contains("xyz")
+            assert cache.get("xyz") == None
+
+            cache.clean()
+            assert not cache.contains("abc")
+            assert cache.get("abc") == None
+
+    def test_fernet_file_cache(self):
+        from cryptography.fernet import Fernet
+        fernet_key = Fernet.generate_key()
+        state = State().with_data(123)
+        state.query = "abc"
+        with tempfile.TemporaryDirectory() as cachepath:
+            cache = FernetFileCache(cachepath, fernet_key)
             assert not cache.contains("abc")
             cache.store(state)
 

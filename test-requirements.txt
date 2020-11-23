@@ -6,4 +6,5 @@ pydot>=1.4.1
 sklearn
 libhxl
 Pygments
+cryptography
 -r requirements.txt

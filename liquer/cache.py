@@ -491,6 +491,18 @@ class XORFileCache(FileCache):
     def decode(self, s):
         return self.encode(s)
 
+class FernetFileCache(FileCache):
+    def __init__(self, path, fernet_key):
+        from cryptography.fernet import Fernet
+        super().__init__(path)
+        self.fernet = Fernet(fernet_key)
+
+    def encode(self, b):
+        return self.fernet.encrypt(b)
+
+    def decode(self, s):
+        return self.fernet.decrypt(s)
+
 
 class SQLCache(CacheMixin):
     """Store cache in a SQL database.
@@ -505,6 +517,7 @@ class SQLCache(CacheMixin):
         metadata_type="TEXT",
         state_data_type="BLOB",
         delete_before_insert=False,
+        store_metadata_enabled=True
     ):
         self.connection = connection
         self.table = table
@@ -512,6 +525,7 @@ class SQLCache(CacheMixin):
         self.state_data_type = state_data_type
         self.delete_before_insert = delete_before_insert
         self._available_keys = None
+        self.store_metadata_enabled=store_metadata_enabled
         self.init()
 
     def init(self):
@@ -645,18 +659,21 @@ class SQLCache(CacheMixin):
         return True
 
     def store_metadata(self, metadata):
-        key = metadata["query"]
-        metadata = json.dumps(metadata)
+        if self.store_metadata_enabled:
+            key = metadata["query"]
+            metadata = json.dumps(metadata)
 
-        self._available_keys = None
-        if self.delete_before_insert:
-            self.connection.execute(f"DELETE FROM {self.table} WHERE query=?", [key])
-        self.connection.execute(
-            f"INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)",
-            [key, metadata, None],
-        )
-        self.connection.commit()
-        return True
+            self._available_keys = None
+            if self.delete_before_insert:
+                self.connection.execute(f"DELETE FROM {self.table} WHERE query=?", [key])
+            self.connection.execute(
+                f"INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)",
+                [key, metadata, None],
+            )
+            self.connection.commit()
+            return True
+        else:
+            return False
 
     def __str__(self):
         return f"SQL cache {self.table}"
