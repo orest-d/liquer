@@ -1,9 +1,10 @@
 import logging
-from flask import Blueprint, jsonify, redirect, send_file, request, make_response
+from flask import Blueprint, jsonify, redirect, send_file, request, make_response, abort
 from liquer.query import evaluate
 from liquer.state_types import encode_state_data, state_types_registry
 from liquer.commands import command_registry
 from liquer.state import get_vars
+from liquer.cache import get_cache
 import io
 import traceback
 
@@ -38,7 +39,7 @@ def info():
 
 def response(state):
     """Create flask response from a State"""
-    filename = state.filename
+    filename = state.metadata.get("filename")
     extension = None
     if filename is not None:
         if "." in filename:
@@ -66,6 +67,53 @@ def serve(query):
     """Main service for evaluating queries"""
     return response(evaluate(query))
 
+@app.route('/cache/get/<path:query>')
+def cache_get(query):
+    """Get cached metadata"""
+    state = get_cache().get(query)
+    if state is None:
+        abort(404)
+    return response(state)
+
+@app.route('/cache/meta/<path:query>')
+def cache_get_metadata(query):
+    """Get cached metadata"""
+    metadata = get_cache().get_metadata(query)
+    if metadata == False:
+        metadata = dict(query = query, status = "not available", cached=False)
+    return jsonify(metadata)
+
+@app.route('/cache/meta/<path:query>', methods=["GET", "POST"])
+def cache_store_metadata(query):
+    """Get cached metadata"""
+    metadata = request.get_json(force=True)
+    try:
+        result_code = get_cache().store_metadata(metadata)
+        result = dict(query=query, result=result_code, status = "OK", message="OK", traceback="")
+    except Exception as e:
+        result = dict(query=query, result=False, status= "ERROR", message=str(e), traceback=traceback.format_exc())
+
+    return jsonify(result)
+
+@app.route('/cache/contains/<path:query>')
+def cache_contains(query):
+    """interface to cache contains"""
+    contains = get_cache().contains(query)
+    return jsonify(dict(query = query, cached=contains))
+
+@app.route('/cache/keys.json')
+def cache_keys():
+    """interface to cache keys"""
+    keys = dict(keys=list(get_cache().keys()))
+    return jsonify(keys)
+
+@app.route('/cache/clean')
+def cache_clean():
+    """interface to cache clean"""
+    get_cache().clean()
+    n=len(list(get_cache().keys()))
+    keys = dict(status="OK", message=f"Cache cleaned, {n} keys left")
+    return jsonify(keys)
 
 @app.route('/api/commands.json')
 def commands():

@@ -5,7 +5,7 @@ import sys
 sys.path.append("..")
 
 import logging
-import liquer.blueprint as bp
+import liquer.server.blueprint as bp
 import webbrowser
 from flask import Flask, make_response, redirect
 from liquer.cache import FileCache, set_cache
@@ -175,7 +175,7 @@ def index():
     """Link to a LiQuer main service page"""
     return redirect("/liquer/static/index.html")
 
-#set_cache(FileCache("cache"))
+set_cache(FileCache("cache"))
 
 if __name__ == '__main__':
     webbrowser.open("http://localhost:5000")
