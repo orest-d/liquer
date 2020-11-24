@@ -41,7 +41,7 @@ pip install liquer-framework
 - [x] improved error reporting with positions in a query
 - [x] read/write of metadata independent from data
 
-- [ ] sub-queries as arguments
+- [x] sub-queries as arguments
 - [x] automatic dependent query recording via a context
 - [x] debugging via context
 - [ ] messages and progress report via context
@@ -52,9 +52,13 @@ pip install liquer-framework
 - [x] proper encoding of file cache
 - [ ] cache remove key 
 
+- [ ] progress reporting GUI
+- [ ] process monitoring GUI
+- [ ] parallel execution of multiple queries
 - [ ] remote liquer service as cache
 - [ ] dependency management
 - [ ] resources
+- [ ] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
 
 - [ ] attributes to prevent cloning and caching
 - [ ] keras history support

@@ -1,6 +1,6 @@
 import traceback
 from liquer.state import State
-from liquer.parser import encode, decode, parse, TransformQuerySegment, Query, ActionRequest
+from liquer.parser import encode, decode, parse, TransformQuerySegment, Query, ActionRequest, StringActionParameter, ExpandedActionParameter, LinkActionParameter
 from liquer.cache import cached_part, get_cache
 from liquer.commands import command_registry
 from liquer.state_types import encode_state_data, state_types_registry
@@ -110,7 +110,7 @@ class Context(object):
         return state_types_registry()
 
     def evaluate_action(self, state: State, action, cache=None):
-        self.debug(f"{'- '*self.level}  EVALUATE ACTION '{action}' on '{state.query}'")
+        self.debug(f"EVALUATE ACTION '{action}' on '{state.query}'")
         cache = cache or self.cache()
         cr = self.command_registry()
 
@@ -132,8 +132,30 @@ class Context(object):
         if command is None:
             self.error(f"Unknown action: {action.name} at {action.position}")
         else:
+            parameters = []
+            for p in action.parameters:
+                if isinstance(p, StringActionParameter):
+                    parameters.append(p)
+                elif isinstance(p, LinkActionParameter):
+                    if p.link.absolute:
+                        self.debug(f"Expand absolute link parameter {p.link.encode()}")
+                        value = self.evaluate(p.link)
+                        if value.is_error:
+                            self.error(f"Link parameter error {p.link.encode()} at {p.position}")
+                        pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                        parameters.append(pp)
+                    else:
+                        self.debug(f"Expand relative link parameter {p.link.encode()} on {self.parent_query}")
+                        value = self.apply(p.link)
+                        if value.is_error:
+                            self.error(f"Link parameter error {p.link.encode()} at {p.position}")
+                        pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                        parameters.append(pp)
+                else:
+                    raise Exception(f"Unknown parameter type {type(p)} in {action.name} at {action.position}")
+
             try:
-                state = command(old_state, *action.parameters, context=self)
+                state = command(old_state, *parameters, context=self)
                 assert type(state.metadata) is dict
             except Exception as e:
                 traceback.print_exc()
@@ -169,8 +191,25 @@ class Context(object):
         state.query = ""
         return state
 
+    def apply(self, query):
+        self.debug(f"APPLY {query}")
+        if self.parent_query in (None,"","/"):
+            self.debug(f"  no parent query in apply {query}")
+            return self.evaluate(query)
+        if isinstance(query, str):
+            query = parse(query)
+        if query.absolute:
+            self.debug(f"  absolute link in apply {query}")
+            return self.evaluate(query)
+        tq = query.transform_query()
+        if tq is None:
+            raise Exception(f"Only transform query supported in apply ({query} on {self.parent_query})")
+        q = (parse(self.parent_query) + tq).encode()
+        self.debug(f"apply {query} on {self.parent_query} yields {q}")
+        return self.evaluate(q)
+
     def evaluate(self, query, cache=None):
-        self.debug(f"{'- '*self.level}EVALUATE {query}")
+        self.debug(f"EVALUATE {query}")
         """Evaluate query, returns a State, cache the output in supplied cache"""
         if self.query is not None:
             state = self.child_context().evaluate(query)

@@ -8,7 +8,7 @@ import pickle
 import types
 import traceback
 import base64
-from liquer.parser import StringActionParameter, ActionParameter, QueryException
+from liquer.parser import StringActionParameter, ActionParameter, QueryException, ExpandedActionParameter
 
 
 """This module is responsible for registering commands
@@ -331,6 +331,8 @@ class ArgumentParser(object):
             return args[0], (args[0], metadata), args[1:]
         elif isinstance(args[0], StringActionParameter):
             return args[0].string, (args[0].string, metadata), args[1:]
+        elif isinstance(args[0], ExpandedActionParameter):
+            return args[0].value, (args[0].value, metadata), args[1:]
         elif isinstance(args[0], ActionParameter):
             raise ArgumentParserException(
                 f"Unsupported action parameter {repr(args[0])}  in ArgumentParser",
@@ -406,6 +408,15 @@ class IntArgumentParser(ArgumentParser):
                     position=args[0].position,
                     query=query,
                 )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = int(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f"""Error parsing integer argument '{metadata["name"]}' from link {repr(args[0].link.encode())}""",
+                    position=args[0].position,
+                    query=query,
+                )
         elif isinstance(args[0], ActionParameter):
             raise ArgumentParserException(
                 f"Unsupported action parameter type {repr(args[0])} in IntArgumentParser",
@@ -447,6 +458,15 @@ class FloatArgumentParser(ArgumentParser):
                     position=args[0].position,
                     query=query,
                 )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = float(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f"""Error parsing float argument '{metadata["name"]}' from link {repr(args[0].link.encode())}""",
+                    position=args[0].position,
+                    query=query,
+                )
         elif isinstance(args[0], ActionParameter):
             raise ArgumentParserException(
                 f"Unsupported action parameter type {repr(args[0])} in FloatArgumentParser",
@@ -483,9 +503,8 @@ class BooleanArgumentParser(ArgumentParser):
 
     def parse_meta(self, metadata, args, context=None):
         query = None if context is None else context.raw_query
-        if isinstance(args[0], str):
-            try:
-                value = dict(
+        def to_bool(x):
+            return dict(
                     y=True,
                     yes=True,
                     n=False,
@@ -494,7 +513,10 @@ class BooleanArgumentParser(ArgumentParser):
                     true=True,
                     f=False,
                     false=False,
-                ).get(str(args[0]).lower(), False)
+                ).get(str(x).lower(), False)
+        if isinstance(args[0], str):
+            try:
+                value = to_bool(args[0])
             except:
                 raise ArgumentParserException(
                     f"""Error parsing boolean argument '{metadata["name"]}' from string {repr(args[0])}""",
@@ -502,19 +524,19 @@ class BooleanArgumentParser(ArgumentParser):
                 )
         elif isinstance(args[0], StringActionParameter):
             try:
-                value = dict(
-                    y=True,
-                    yes=True,
-                    n=False,
-                    no=False,
-                    t=True,
-                    true=True,
-                    f=False,
-                    false=False,
-                ).get(str(args[0].string).lower(), False)
+                value = to_bool(args[0].string)
             except:
                 raise ArgumentParserException(
-                    f"""Error parsing boolean argument '{metadata["name"]}' at {args[0].position} from value {repr(args[0].string)}""",
+                    f"""Error parsing boolean argument '{metadata["name"]}' from value {repr(args[0].string)}""",
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = to_bool(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f"""Error parsing boolean argument '{metadata["name"]}' from link {repr(args[0].link.encode())}""",
                     position=args[0].position,
                     query=query,
                 )
@@ -558,6 +580,8 @@ class ListArgumentParser(ArgumentParser):
                 value.append(x)
             elif isinstance(x, StringActionParameter):
                 value.append(x.string)
+            elif isinstance(x, ExpandedActionParameter):
+                value.append(x.value)
             elif isinstance(x, ActionParameter):
                 raise ArgumentParserException(
                     f"Unsupported action parameter type {repr(x)} in ListArgumentParser",

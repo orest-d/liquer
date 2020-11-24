@@ -86,3 +86,17 @@ class TestQuery:
         assert state.get()==1230
         assert state.metadata["direct_subqueries"]==["a"]
 
+    def test_link(self):
+        reset_command_registry()
+
+        @first_command
+        def value(x):
+            return int(x)
+
+        @command
+        def add(x,y):
+            return int(x)+int(y)
+
+        assert evaluate("value-1/add-2").get()==3 
+        assert evaluate("value-1/add-~X~/value-2~E").get()==3 
+        assert evaluate("value-1/add-~X~add-2~E").get()==4 

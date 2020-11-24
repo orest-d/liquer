@@ -156,18 +156,38 @@ class ActionParameter(object):
 
 
 class LinkActionParameter(ActionParameter):
-    def __init__(self, link: str, position=None):
+    def __init__(self, link, position=None):
         super().__init__(position)
         self.link = link
 
     def encode(self):
-        return self.link
+        return "~X~"+self.link.encode()+"~E"
 
     def __repr__(self):
-        return f"LinkActionParameter({repr(self.link)}, {repr(self.position)})"
+        return f"""LinkActionParameter(
+{indent(repr(self.link))},
+  {repr(self.position)})"""
 
     def __str__(self):
         return self.encode()
+
+class ExpandedActionParameter(ActionParameter):
+    def __init__(self, value, link, position=None):
+        super().__init__(position)
+        self.value = value
+        self.link = link
+
+    def encode(self):
+        return "~X~"+self.link.encode()+"~E"
+
+    def __repr__(self):
+        return f"""ExpandedActionParameter(
+{indent(repr(self.value))}
+{indent(repr(self.link))},
+  {repr(self.position)})"""
+
+    def __str__(self):
+        return str(self.value)
 
 
 class StringActionParameter(ActionParameter):
@@ -427,7 +447,13 @@ class Query(object):
 
     def is_transform_query(self):
         return len(self.segments)==1 and isinstance(self.segments[0], TransformQuerySegment)
-    
+
+    def transform_query(self):
+        if self.is_transform_query():
+            return self.segments[0]
+        else:
+            return None
+
     def is_action_request(self):
         return self.is_transform_query() and self.segments[0].is_action_request()
 
@@ -475,6 +501,10 @@ class Query(object):
     def with_action(self, name:str, *parameters):        
         self.last_transform_query_segment().append(ActionRequest.from_arguments(name, *parameters))
         return self
+
+    def __add__(self, tq):
+        assert isinstance(tq, TransformQuerySegment)
+        return Query(self.segments+[tq], absolute=self.absolute)
 
     def encode(self):
         return ("/" if self.absolute else "") + "/".join(
@@ -546,14 +576,17 @@ space_entity = (
 )
 end_entity = Literal("~E")
 
-expand_entity = Literal("~X~").suppress() + parse_query + end_entity.suppress()
+def _expand_entity_parse_action(s, loc, toks):
+    position = Position.from_loc(loc, s)
+    return LinkActionParameter(toks[0], position=position)
+
+expand_entity = (Literal("~X~").suppress() + parse_query + end_entity.suppress()).setParseAction(_expand_entity_parse_action).setName("space_entity")
 
 entities = (
     tilde_entity
     | minus_entity
     | negative_number_entity
     | space_entity
-    | expand_entity
     | islash_entity
     | slash_entity
     | http_entity
@@ -570,9 +603,9 @@ def _parameter_parse_action(s, loc, toks):
 
 
 parameter = (
-    ZeroOrMore(parameter_text | entities | percent_encoding)
+    expand_entity | (ZeroOrMore(parameter_text | entities | percent_encoding)
     .setParseAction(_parameter_parse_action)
-    .setName("parameter")
+    .setName("parameter")) 
 )
 
 
@@ -812,3 +845,5 @@ if __name__ == "__main__":
     #    print(repr(expand_entity.parseString("~X~abc~E", True)))
     #    print(repr(parse("-/def-~X~abc~E")))
     print(parse("abc/def/-/xxx/-q/qqq"))
+    print(parse("abc/def/-/xxx/-q/qqq-abc-~X~xxx/yyy~E-def"))
+    print(repr(parse("abc/def/-/xxx/-q/qqq-abc-~X~xxx/yyy~E-def")))
