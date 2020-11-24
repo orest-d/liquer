@@ -42,7 +42,7 @@ pip install liquer-framework
 - [x] read/write of metadata independent from data
 
 - [ ] sub-queries as arguments
-- [ ] automatic dependent query recording via a context
+- [x] automatic dependent query recording via a context
 - [x] debugging via context
 - [ ] messages and progress report via context
 - [x] implied volatile (query result dependent on a volatile query should be volatile)

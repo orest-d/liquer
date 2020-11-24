@@ -71,3 +71,18 @@ class TestQuery:
             return "world"
         assert evaluate_template("Hello, $who$!") == "Hello, world!"
  
+    def test_subquery(self):
+        reset_command_registry()
+
+        @first_command
+        def a():
+            return 123
+
+        @first_command
+        def b(context):
+            return context.evaluate("a").get()*10
+
+        state = evaluate("b") 
+        assert state.get()==1230
+        assert state.metadata["direct_subqueries"]==["a"]
+

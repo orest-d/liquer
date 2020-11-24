@@ -27,6 +27,7 @@ class Context(object):
         self.parent_context = parent_context
         self.level = level
         self.direct_subqueries=[]
+        self.parent_query=None
         self.progress_indicators=[]
         self.log=[]
         self.is_error=False
@@ -36,10 +37,11 @@ class Context(object):
     def metadata(self):
         return dict(
             query=self.raw_query,
+            parent_query=self.parent_query,
             log=self.log[:],
             is_error=self.is_error,
-            direct_subqueries = self.direct_subqueries,
-            progress_indicators=self.progress_indicators,
+            direct_subqueries = self.direct_subqueries[:],
+            progress_indicators=self.progress_indicators[:],
             message=self.message
         )
 
@@ -171,7 +173,12 @@ class Context(object):
         self.debug(f"{'- '*self.level}EVALUATE {query}")
         """Evaluate query, returns a State, cache the output in supplied cache"""
         if self.query is not None:
-            return self.child_context().evaluate(query)
+            state = self.child_context().evaluate(query)
+            if not isinstance(query, str):
+                query=query.encode()
+            self.direct_subqueries.append(query)
+            return state
+
         if isinstance(query, str):
             self.raw_query = query
             self.query = parse(query)
@@ -190,22 +197,24 @@ class Context(object):
             return state
 
         p, r = query.predecessor()
-        self.debug(f"{'- '*self.level}  PROCESS Predecessor:{p} Action: {r}")
+        self.debug(f"PROCESS Predecessor:{p} Action: {r}")
         if p is None or p.is_empty():
+            self.parent_query=""
             state = self.create_initial_state()
-            self.debug(f"{'- '*self.level}  INITIAL STATE")
+            self.debug(f"INITIAL STATE")
         else:
+            self.parent_query=p.encode()
             state = self.child_context().evaluate(p, cache=cache)
 
         if state.is_error:
             state = state.next_state()
             state.query = query.encode()
-            self.debug(f"{'- '*self.level}  ERROR in '{state.query}'")
+            self.debug(f"ERROR in '{state.query}'")
             return state
 
         if r is None:
             self.debug(
-                f"{'- '*self.level}  RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'"
+                f"RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'"
             )
             state.query = query.encode()
             return state
@@ -215,7 +224,7 @@ class Context(object):
 
         if state.metadata["caching"] and not state.is_error and not state.is_volatile():
             cache.store(state)
-        self.debug(f"{'- '*self.level}  RETURN '{state.query}' AFTER ACTION '{r}'")
+        self.debug(f"RETURN '{state.query}' AFTER ACTION '{r}'")
         return state
 
     def evaluate_and_save(self, query, target_directory=None, target_file=None):
@@ -262,7 +271,12 @@ class Context(object):
                 if q in local_cache:
                     result += local_cache[q]
                 else:
-                    qr = str(self.child_context().evaluate(q).get())
+                    state = self.evaluate(q)
+                    if state.is_error:
+                        self.error(f"Template failed to expand {q}")
+                        qr=f"ERROR({q})"
+                    else:
+                        qr=str(state.get())
                     local_cache[q] = qr
                     result += qr
         return result
