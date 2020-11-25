@@ -119,7 +119,7 @@ class State(object):
     def set_volatile(self, flag):
         self.metadata["attributes"]["volatile"] = flag
         return self
-
+    
     def get(self):
         """Get data from the state"""
         if self.is_error:

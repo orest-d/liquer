@@ -5,7 +5,7 @@ from liquer.cache import cached_part, get_cache
 from liquer.commands import command_registry
 from liquer.state_types import encode_state_data, state_types_registry
 import os.path
-
+from datetime import datetime
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
     try:
@@ -23,6 +23,9 @@ def find_queries_in_template(template: str, prefix: str, sufix: str):
 class Context(object):
     def __init__(self, parent_context=None, level=0):
         self.raw_query = None
+        self.status="none"
+        self.started=""
+        self.created=""
         self.query = None
         self.parent_context = parent_context
         self.level = level
@@ -36,19 +39,57 @@ class Context(object):
 
     def metadata(self):
         return dict(
+            status=self.status,
             query=self.raw_query,
             parent_query=self.parent_query,
             log=self.log[:],
             is_error=self.is_error,
             direct_subqueries = self.direct_subqueries[:],
             progress_indicators=self.progress_indicators[:],
-            message=self.message
+            message=self.message,
+            started = self.started,
+            updated = self.now(),
+            created = self.created
         )
+
+    def store_metadata(self):
+        self.cache().store_metadata(self.metadata())
+
+    def new_progress_indicator(self):
+        i=1
+        for x in self.progress_indicators:
+            i=max(int(x["id"]),i)
+        self.progress_indicators.append(dict(id=i+1, step=0, total_steps=None, message=""))
+        return i+1
+
+    def remove_progress_indicator(self, identifier):
+        self.progress_indicators = [x for x in self.progress_indicators if x["id"]!=identifier]
+
+    def progress_indicator_index(self, identifier):
+        if identifier is None:
+            if len(self.progress_indicators):
+                return len(self.progress_indicators)-1
+            self.new_progress_indicator()
+            return len(self.progress_indicators)-1
+
+        for i, x in enumerate(self.progress_indicators):
+            if x["id"]==identifier:
+                return i
+        return None
+
+    def now(self):
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def progress(self, step=0, total_steps=None, message="", identifier=None):
+        index = self.progress_indicator_index(identifier)
+        self.progress_indicators[index].update(dict(step=step, total_steps=total_steps, message=message))
+        self.store_metadata()
 
     def log_dict(self,d):
         self.log.append(d)
         if "message" in d:
             self.message=d["message"]
+        self.store_metadata()
         return self
 
     def log_action(self, qv, number=0):
@@ -60,6 +101,7 @@ class Context(object):
     def error(self, message):
         """Log an error message"""
         self.is_error = True
+        self.status="error"
         print ("ERROR:    ",message)
         return self.log_dict(dict(kind="error", message=message))
 
@@ -71,6 +113,7 @@ class Context(object):
     def exception(self, message, traceback):
         """Log an exception"""
         self.is_error = True
+        self.status="error"
         print ("ERROR (x):",message)
         return self.log_dict(
             dict(kind="error", message=message, traceback=traceback)
@@ -111,6 +154,8 @@ class Context(object):
 
     def evaluate_action(self, state: State, action, cache=None):
         self.debug(f"EVALUATE ACTION '{action}' on '{state.query}'")
+        self.status="action"
+        self.store_metadata()
         cache = cache or self.cache()
         cr = self.command_registry()
 
@@ -133,6 +178,8 @@ class Context(object):
             self.error(f"Unknown action: {action.name} at {action.position}")
         else:
             parameters = []
+            self.status="evaluate arguments"
+            self.store_metadata()
             for p in action.parameters:
                 if isinstance(p, StringActionParameter):
                     parameters.append(p)
@@ -152,6 +199,8 @@ class Context(object):
                         pp = ExpandedActionParameter(value.get(), p.link, p.position)
                         parameters.append(pp)
                 else:
+                    self.status="error"
+                    self.store_metadata()
                     raise Exception(f"Unknown parameter type {type(p)} in {action.name} at {action.position}")
 
             try:
@@ -184,6 +233,8 @@ class Context(object):
         self.info(f"Action {action.encode()} at {action.position} completed")
         state.metadata.update(metadata)
         state.set_volatile(is_volatile or state.is_volatile())
+        self.status="action done"
+        self.store_metadata()
         return state
 
     def create_initial_state(self):
@@ -209,6 +260,7 @@ class Context(object):
         return self.evaluate(q)
 
     def evaluate(self, query, cache=None):
+        self.status="started"
         self.debug(f"EVALUATE {query}")
         """Evaluate query, returns a State, cache the output in supplied cache"""
         if self.query is not None:
@@ -227,6 +279,7 @@ class Context(object):
             self.query = query
         else:
             raise Exception(f"Unsupported query type: {type(query)}")
+        self.store_metadata()
 
         if cache is None:
             cache = self.cache()
@@ -240,14 +293,20 @@ class Context(object):
         if p is None or p.is_empty():
             self.parent_query=""
             state = self.create_initial_state()
+            state.metadata["created"]=self.now()
             self.debug(f"INITIAL STATE")
         else:
             self.parent_query=p.encode()
+            self.status="evaluate parent"
+            self.store_metadata()
             state = self.child_context().evaluate(p, cache=cache)
 
         if state.is_error:
+            self.status="error"
+            self.store_metadata()
             state = state.next_state()
             state.query = query.encode()
+            state.metadata["created"]=self.now()
             self.debug(f"ERROR in '{state.query}'")
             return state
 
@@ -256,14 +315,25 @@ class Context(object):
                 f"RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'"
             )
             state.query = query.encode()
+            state.metadata["created"]=self.now()
+            state.metadata["state"]="ready"
             return state
 
         state = self.evaluate_action(state, r)
         state.query = query.encode()
+        state.metadata["created"]=self.now()
+        state.metadata["state"]="ready"
+        
 
         if state.metadata["caching"] and not state.is_error and not state.is_volatile():
+            self.status="cache"
+            self.store_metadata()
             cache.store(state)
-        self.debug(f"RETURN '{state.query}' AFTER ACTION '{r}'")
+        else:
+            if not cache.remove(state.query):
+                self.status="obsolete"
+                self.store_metadata()
+
         return state
 
     def evaluate_and_save(self, query, target_directory=None, target_file=None):

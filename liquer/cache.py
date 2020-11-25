@@ -116,16 +116,20 @@ class CacheCombine(CacheMixin):
             return self.cache2.get_metadata(key)
 
     def store(self, state):
+        self.remove(state.query)
         if self.cache1.store(state):
             return True
         else:
             return self.cache2.store(state)
 
     def store_metadata(self, metadata):
-        if self.cache1.store_metadata(state):
+        if self.cache1.store_metadata(metadata):
             return True
         else:
-            return self.cache2.store_metadata(state)
+            return self.cache2.store_metadata(metadata)
+
+    def remove(self, key):
+        return self.cache1.remove(key) and self.cache2.remove(key)
 
     def contains(self, key):
         if self.cache1.contains(key):
@@ -161,16 +165,20 @@ class CacheIfHasAttributes(CacheMixin):
         return self.cache.get_metadata(key)
 
     def store(self, state):
-        if all(state.metadata["attributes"].get(a, False) for a in self.attributes):
+        self.remove(state.query)
+        if all(state.metadata.get("attributes",{}).get(a, False) for a in self.attributes):
             return self.cache.store(state)
         else:
             return False
 
     def store_metadata(self, metadata):
-        if all(metadata["attributes"].get(a, False) for a in self.attributes):
+        if all(metadata.get("attributes",{}).get(a, False) for a in self.attributes):
             return self.cache.store_metadata(metadata)
         else:
             return False
+
+    def remove(self, key):
+        return self.cache.remove(key)
 
     def contains(self, key):
         return self.cache.contains(key)
@@ -200,16 +208,20 @@ class CacheIfHasNotAttributes(CacheMixin):
         return self.cache.get_metadata(key)
 
     def store(self, state):
-        if any(state.metadata["attributes"].get(a, False) for a in self.attributes):
+        self.remove(state.query)
+        if any(state.metadata.get("attributes",{}).get(a, False) for a in self.attributes):
             return False
         else:
             return self.cache.store(state)
 
     def store_metadata(self, metadata):
-        if any(metadata["attributes"].get(a, False) for a in self.attributes):
+        if any(metadata.get("attributes",{}).get(a, False) for a in self.attributes):
             return False
         else:
             return self.cache.store_metadata(metadata)
+
+    def remove(self, key):
+        return self.cache.remove(key)
 
     def contains(self, key):
         return self.cache.contains(key)
@@ -241,7 +253,8 @@ class CacheAttributeCondition(CacheMixin):
         return self.cache.get_metadata(key)
 
     def store(self, state):
-        state_attribute_value = state.metadata["attributes"].get(self.attribute)
+        self.remove(state.query)
+        state_attribute_value = state.metadata.get("attributes",{}).get(self.attribute)
         if self.equals:
             if state_attribute_value == self.value:
                 return self.cache.store(state)
@@ -251,7 +264,7 @@ class CacheAttributeCondition(CacheMixin):
         return False
 
     def store_metadata(self, metadata):
-        state_attribute_value = metadata["attributes"].get(self.attribute)
+        state_attribute_value = metadata.get("attributes",{}).get(self.attribute)
         if self.equals:
             if state_attribute_value == self.value:
                 return self.cache.store_metadata(metadata)
@@ -259,6 +272,9 @@ class CacheAttributeCondition(CacheMixin):
             if state_attribute_value != self.value:
                 return self.cache.store_metadata(metadata)
         return False
+
+    def remove(self, key):
+        return self.cache.remove(key)
 
     def contains(self, key):
         return self.cache.contains(key)
@@ -294,6 +310,9 @@ class NoCache(CacheMixin):
     def store_metadata(self, state):
         return False
 
+    def remove(self, key):
+        return False
+
     def contains(self, key):
         return False
 
@@ -322,9 +341,12 @@ class MemoryCache(CacheMixin):
 
     def get(self, key):
         state = self.storage.get(key)
+
         if state is None:
             return None
         else:
+            if state.metadata.get("status") != "ready":
+                return None
             return state.clone()
 
     def get_metadata(self, key):
@@ -335,6 +357,9 @@ class MemoryCache(CacheMixin):
             return dict(**state.metadata)
 
     def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata["status"]="ready" 
         self.storage[state.query] = state.clone()
         return True
 
@@ -343,6 +368,11 @@ class MemoryCache(CacheMixin):
         self.storage[key] = self.storage.get(key, State())
         self.storage[key].metadata = metadata
 
+        return True
+
+    def remove(self, key):
+        if key in self.storage:
+            del self.storage[key]
         return True
 
     def contains(self, key):
@@ -400,6 +430,8 @@ class FileCache(CacheMixin):
         metadata = self.get_metadata(key)
         if metadata is None:
             return None
+        if metadata.get("status") != "ready":
+            return None
         state = State()
         state.metadata = metadata
 
@@ -420,6 +452,19 @@ class FileCache(CacheMixin):
         else:
             return None
 
+    def remove(self, key):
+        metadata = self.get_metadata(key)
+        t = state_types_registry().get(metadata["type_identifier"])
+        path = self.to_path(key, prefix="data_", extension=t.default_extension())
+        if os.path.exists(path):
+            os.remove(path)
+
+        state_path = self.to_path(key)
+        if os.path.exists(state_path):
+            os.remove(state_path)
+
+        return True
+
     def contains(self, key):
         state_path = self.to_path(key)
         if os.path.exists(state_path):
@@ -428,20 +473,26 @@ class FileCache(CacheMixin):
         else:
             return False
         return True
-#        t = state_types_registry().get(state.type_identifier)
-#        path = self.to_path(key, prefix="data_", extension=t.default_extension())
-#        if os.path.exists(path):
-#            return True
-#        else:
-#            return False
+
+    #        t = state_types_registry().get(state.type_identifier)
+    #        path = self.to_path(key, prefix="data_", extension=t.default_extension())
+    #        if os.path.exists(path):
+    #            return True
+    #        else:
+    #            return False
 
     def keys(self):
         import glob
+
         for f in glob.glob(os.path.join(self.path, "state_*.json")):
             metadata = json.loads(open(f).read())
             yield metadata["query"]
 
     def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata["status"]="ready" 
+
         if not self.store_metadata(state.metadata):
             return False
 
@@ -491,9 +542,11 @@ class XORFileCache(FileCache):
     def decode(self, s):
         return self.encode(s)
 
+
 class FernetFileCache(FileCache):
     def __init__(self, path, fernet_key):
         from cryptography.fernet import Fernet
+
         super().__init__(path)
         self.fernet = Fernet(fernet_key)
 
@@ -517,7 +570,7 @@ class SQLCache(CacheMixin):
         metadata_type="TEXT",
         state_data_type="BLOB",
         delete_before_insert=False,
-        store_metadata_enabled=True
+        store_metadata_enabled=True,
     ):
         self.connection = connection
         self.table = table
@@ -525,7 +578,7 @@ class SQLCache(CacheMixin):
         self.state_data_type = state_data_type
         self.delete_before_insert = delete_before_insert
         self._available_keys = None
-        self.store_metadata_enabled=store_metadata_enabled
+        self.store_metadata_enabled = store_metadata_enabled
         self.init()
 
     def init(self):
@@ -598,11 +651,14 @@ class SQLCache(CacheMixin):
 
         try:
             metadata, data = c.fetchone()
+            metadata = json.loads(metadata)
+            if metadata.get("status") != "ready":
+                return None
         except:
             return None
         try:
             state = State()
-            state = state.from_dict(json.loads(metadata))
+            state = state.from_dict(metadata)
 
             t = state_types_registry().get(state.type_identifier)
             state.data = t.from_bytes(self.decode(data))
@@ -640,6 +696,10 @@ class SQLCache(CacheMixin):
         return self.available_keys
 
     def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata["status"]="ready" 
+
         key = state.query
         metadata = json.dumps(state.as_dict())
 
@@ -665,7 +725,9 @@ class SQLCache(CacheMixin):
 
             self._available_keys = None
             if self.delete_before_insert:
-                self.connection.execute(f"DELETE FROM {self.table} WHERE query=?", [key])
+                self.connection.execute(
+                    f"DELETE FROM {self.table} WHERE query=?", [key]
+                )
             self.connection.execute(
                 f"INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)",
                 [key, metadata, None],
@@ -674,6 +736,13 @@ class SQLCache(CacheMixin):
             return True
         else:
             return False
+
+    def remove(self, key):
+        self.connection.execute(
+            f"DELETE FROM {self.table} WHERE query=?", [key]
+        )
+        self.connection.commit()
+        return True
 
     def __str__(self):
         return f"SQL cache {self.table}"

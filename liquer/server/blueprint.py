@@ -95,6 +95,12 @@ def cache_store_metadata(query):
 
     return jsonify(result)
 
+@app.route('/cache/remove/<path:query>')
+def cache_remove(query):
+    """interface to cache remove"""
+    r = get_cache().remove(query)
+    return jsonify(dict(query = query, removed=r))
+
 @app.route('/cache/contains/<path:query>')
 def cache_contains(query):
     """interface to cache contains"""

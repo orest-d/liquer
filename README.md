@@ -44,13 +44,13 @@ pip install liquer-framework
 - [x] sub-queries as arguments
 - [x] automatic dependent query recording via a context
 - [x] debugging via context
-- [ ] messages and progress report via context
+- [x] messages and progress report via context
 - [x] implied volatile (query result dependent on a volatile query should be volatile)
 
 - [x] optional metadata storage in SQL - to support Hive
 - [ ] SQL cache working on Hive
 - [x] proper encoding of file cache
-- [ ] cache remove key 
+- [x] cache remove key 
 
 - [ ] progress reporting GUI
 - [ ] process monitoring GUI
