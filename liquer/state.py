@@ -5,8 +5,12 @@ from liquer.state_types import (
     mimetype_from_extension,
 )
 from copy import deepcopy
+from liquer.parser import QueryException, Position
 
 _vars = None
+
+class EvaluationException(QueryException):
+    pass
 
 
 def get_vars():
@@ -95,12 +99,16 @@ class State(object):
         self.metadata["type_identifier"] = value
 
 
-    def with_caching(self, caching=True):
-        """Enables or disables caching for this state"""
-        # TODO: Make sure caching is propagated to dependent states
-        # TODO: Examples and documentation
-        self.metadata["caching"] = caching
-        return self
+#    def with_caching(self, caching=True):
+#        """Enables or disables caching for this state"""
+#        # TODO: Make sure caching is propagated to dependent states
+#        # TODO: Examples and documentation
+#        print(f"QUERY {self.query}\nWITH CACHING {caching}")
+#        if self.context is not None:
+#            self.context.caching = caching
+#            print(f"set context {id(self.context)} caching {self.context.caching}")
+#        self.metadata["caching"] = caching
+#        return self
 
     def with_data(self, data):
         """Set the data"""
@@ -123,9 +131,17 @@ class State(object):
     def get(self):
         """Get data from the state"""
         if self.is_error:
-            print("\n".join(m.get("traceback", "") for m in self.metadata["log"]))
+            tb = "\n".join(m.get("traceback", "") for m in self.metadata["log"])
+            print(tb)
+            position=None
+            query=None
+            for entry in self.metadata["log"]:
+               if entry.get("kind")=="error":
+                   position = Position.from_dict(entry.get("position"))
+                   query=entry.get("query")
+
             if self.exception is None:
-                raise Exception(self.metadata["message"])
+                raise EvaluationException(tb+"\n"+self.metadata["message"],position=position, query=query)
             else:
                 raise self.exception
 

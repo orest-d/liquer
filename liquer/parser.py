@@ -116,6 +116,16 @@ class Position:
     def from_loc(cls, loc, string):
         return cls(loc, line=lineno(loc, string), column=col(loc, string))
 
+    @classmethod
+    def from_dict(cls, d):
+        if d is None:
+            return cls()
+        else:
+            return cls(offset=d["offset"], line=d["line"], column=d["column"])
+
+    def to_dict(self):
+        return dict(offset=self.offset, line=self.line, column=self.column)
+
     def __str__(self):
         if self.line == 0:
             return "(unknown position)"

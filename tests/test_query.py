@@ -19,7 +19,7 @@ class TestQuery:
         @first_command
         def intpar(x=0):
             return 123
-        with pytest.raises(ArgumentParserException):
+        with pytest.raises(Exception):
             evaluate("intpar-abc").get()
 
     def test_evaluate_with_context(self):
@@ -30,13 +30,15 @@ class TestQuery:
 
     def test_cache_control(self):
         from liquer.cache import MemoryCache, set_cache, get_cache
-        @command
-        def cached(state):
-            return state.with_caching(True).with_data(123)
+        @first_command
+        def cached(context):
+            context.enable_cache()
+            return 123
 
         @command
-        def cache_off(state):
-            return state.with_caching(False).with_data(234)
+        def cache_off(x, context):
+            context.disable_cache()
+            return 234
 
         set_cache(MemoryCache())
 
@@ -100,3 +102,18 @@ class TestQuery:
         assert evaluate("value-1/add-2").get()==3 
         assert evaluate("value-1/add-~X~/value-2~E").get()==3 
         assert evaluate("value-1/add-~X~add-2~E").get()==4 
+
+    def test_link_error(self):
+        reset_command_registry()
+
+        @first_command
+        def make_error():
+            raise Exception("Error in make_error")
+
+        @command
+        def concat(x,y=1):
+            return str(x)+str(y)
+
+        assert evaluate("concat-2/concat-3").get()=="None23"
+        with pytest.raises(Exception):
+            assert evaluate("concat-4/concat-~X~concat-5/make_error~E").get()
