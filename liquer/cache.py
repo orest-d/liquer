@@ -408,7 +408,7 @@ class FileCache(CacheMixin):
 
     def clean(self):
         import glob
-
+        print(f"Clean {self}")
         for f in glob.glob(os.path.join(self.path, "*")):
             logging.debug(f"Removing cache file {f}")
             os.remove(f)
@@ -429,8 +429,10 @@ class FileCache(CacheMixin):
     def get(self, key):
         metadata = self.get_metadata(key)
         if metadata is None:
+            print(f"(FileCache) Metadata missing: {key}")
             return None
         if metadata.get("status") != "ready":
+            print(f"(FileCache) Not ready {key}; ",metadata.get("status"))
             return None
         state = State()
         state.metadata = metadata
@@ -442,22 +444,28 @@ class FileCache(CacheMixin):
                 state.data = t.from_bytes(self.decode(open(path, "rb").read()))
                 return state
             except:
+                traceback.print_exc()
                 logging.exception(f"Cache failed to recover {key}")
                 return None
 
     def get_metadata(self, key):
         state_path = self.to_path(key)
         if os.path.exists(state_path):
-            return json.loads(open(state_path).read())
+            try:
+                return json.loads(open(state_path).read())
+            except:
+                traceback.print_exc()
+                return None
         else:
             return None
 
     def remove(self, key):
         metadata = self.get_metadata(key)
-        t = state_types_registry().get(metadata["type_identifier"])
-        path = self.to_path(key, prefix="data_", extension=t.default_extension())
-        if os.path.exists(path):
-            os.remove(path)
+        if "type_identifier" in  metadata:
+            t = state_types_registry().get(metadata["type_identifier"])
+            path = self.to_path(key, prefix="data_", extension=t.default_extension())
+            if os.path.exists(path):
+                os.remove(path)
 
         state_path = self.to_path(key)
         if os.path.exists(state_path):

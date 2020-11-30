@@ -56,11 +56,12 @@ pip install liquer-framework
 - [ ] process monitoring GUI
 - [ ] parallel execution of multiple queries
 - [ ] remote liquer service as cache
+- [ ] debug transform query
 - [ ] dependency management
 - [ ] resources
 - [ ] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
 
-- [ ] attributes to prevent cloning and caching
+- [ ] attribute to prevent cloning
 - [ ] keras history support
 - [ ] numpy support
 - [ ] parquet support

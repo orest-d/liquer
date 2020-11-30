@@ -10,7 +10,10 @@ window.vue = new Vue({
         query_basis: '',
         message: "",
         html: "",
+        url_submit_prefix: "/liquer/submit/",
         url_prefix: "/liquer/q/",
+        url_meta_prefix: "/liquer/cache/meta/",
+        metadata:null,
         external_link: "",
         xlsx_link: "",
         csv_link: "",
@@ -30,7 +33,7 @@ window.vue = new Vue({
             console.log("Update", window.location.hash);
             this.route = window.location.hash.slice("1");
             if (this.route.length>0){
-                this.load(this.route);
+                this.submit_query(this.route);
             }
             else{
                 this.load("state/state.json");
@@ -59,7 +62,7 @@ window.vue = new Vue({
                     link = this.query_basis+'/'+link;
                 }
                 window.location.href = "#" + link;
-                this.load(link);
+                this.submit_query(link);
             }
             else {
                 this.update_link=true;
@@ -89,9 +92,44 @@ window.vue = new Vue({
             }.bind(this), function (reason) { this.error("Cache cleaning error", reason); }.bind(this));
 
         },
+        load_metadata: function (query) {
+            console.log("Load metadata", query);
+            this.$http.get(this.url_meta_prefix + query).then(function (response) {
+                response.json().then(function (data) {
+                    this.metadata = data;
+                });
+            });
+        },
+        refresh_metadata: function() {
+            console.log("Refresh metadata", this.query);
+            this.$http.get(this.url_meta_prefix + this.query).then(function (response) {
+                response.json().then(function (data) {
+                    this.metadata = data;
+                    if (data==null || this.metadata.status!="ready"){
+                        window.setTimeout(this.refresh_metadata, 500);
+                    }
+                    else{
+                        if (this.metadata.status=="ready"){
+                            this.load(this.query);
+                        }
+                    }
+                }.bind(this), function (reason) { this.error("Json error (refresh metadata)", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("API call error (refresh metadata)", reason); }.bind(this));
+        },
+        submit_query: function (query) {
+            console.log("Submit", query);
+            this.query=query;
+            this.$http.get(this.url_submit_prefix + query).then(function (response) {
+                response.json().then(function (data) {
+                    this.metadata = data;
+                    this.refresh_metadata();
+                }.bind(this), function (reason) { this.error("Json error (submit query)", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("API call error (submit query)", reason); }.bind(this));
+        },
         load: function (query) {
             this.xlsx_link="";
             this.csv_link="";
+            this.load_metadata(query);
             if (this.update_link){
                 console.log("Update link prevented loading");
                 this.update_link=false;
@@ -122,6 +160,7 @@ window.vue = new Vue({
                     response.json().then(function (data) {
                         this.data = null;
                         this.state = data;
+                        this.metadata=data;
                         try {
                             this.menu = this.state.vars.menu;
                         }

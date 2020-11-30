@@ -111,7 +111,8 @@ def ns(state, *namespaces):
     
     return state
 
-@first_command
+@first_command(volatile=True)
 def clean_cache():
+    print(f"clean cache {get_cache()}")
     get_cache().clean()
     return "Cache cleaned"

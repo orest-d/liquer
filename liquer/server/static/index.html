@@ -4,7 +4,7 @@
 <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.6.95/css/materialdesignicons.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.1.12/dist/vuetify.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.3.19/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
     <style>
@@ -69,6 +69,7 @@
                     </v-list>
                 </v-menu>
                 <v-spacer></v-spacer>
+                <v-progress-circular v-if="status=='LOADING'" indeterminate color="primary"></v-progress-circular>
                 <v-toolbar-items>
                     <v-btn :href="xlsx_link" color="green" v-if="mode=='dataframe'">xlsx</v-btn>
                     <v-btn :href="csv_link" color="orange" v-if="mode=='dataframe'">csv</v-btn>
@@ -101,11 +102,64 @@
                 </v-menu>
             </v-app-bar>
             <v-content>
-                <div class="download" v-if="status=='LOADING'"></div>
+                <!--div class="download" v-if="status=='LOADING'"></div-->
                 <span v-html="html"></span>
+
+                <v-container class="fill-height" fluid v-if="metadata.status!='ready'">
+                    <v-row>
+                        <v-col>
+                            <h4>{{metadata.query}}</h4>
+                            <v-chip>{{metadata.status}}</v-chip>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <div>{{metadata.message}}</div>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <p v-for="p in metadata.progress_indicators">
+                                <v-progress-linear v-if="p.total_steps != null" v-model="p.step*100/p.total_steps"
+                                    color="primary" height="25">
+                                    <span>{{ p.message }}</span>
+                                </v-progress-linear>
+                                <v-progress-circular v-if="p.total_steps == null" indeterminate color="primary">
+                                </v-progress-circular>
+                                <span v-if="p.total_steps == null">{{ p.message }}</span>
+                            </p>
+                            <ul>
+                                <li v-for="item in metadata.log">
+                                    <div v-if="item.kind=='error'">
+                                        <v-icon color="red">error</v-icon>
+                                        {{item.message}}
+                                        <pre>{{item.traceback}}</pre>
+                                    </div>
+                                    <div v-if="item.kind=='warning'">
+                                        <v-icon color="yellow">mdi-warning</v-icon>{{item.message}}
+                                    </div>
+                                    <div v-if="item.kind=='info'">
+                                        <v-icon color="green">mdi-info</v-icon>{{item.message}}
+                                    </div>
+                                    <div v-if="item.kind=='debug'">
+                                        <v-icon color="orange">mdi-bug</v-icon>{{item.message}}
+                                    </div>
+                                    <div v-if="item.kind=='command'">
+                                        </template>
+                                        <v-icon color="primary">mdi-label</v-icon>
+                                        <span>{{item.command_number}}</span>
+                                        <v-chip label outline v-for="cmd in item.qv">{{cmd}}
+                                        </v-chip>
+                                    </div>
+                                </li>
+                            </ul>
+                        </v-col>
+                    </v-row>
+                </v-container>
                 <v-container class="fill-height" fluid v-if="mode==''">
 
                 </v-container>
+
                 <v-container class="fill-height" fluid v-if="mode=='inspect'">
 
                     <v-container fluid>
@@ -151,7 +205,7 @@
                                         <td>
                                             <ul>
                                                 <li v-for="item in state.log">
-                                                    <div v-if="item.state=='error'">
+                                                    <div v-if="item.kind=='error'">
                                                         <v-icon color="red">error</v-icon>
                                                         {{item.message}}
                                                         <pre>{{item.traceback}}</pre>
@@ -161,6 +215,9 @@
                                                     </div>
                                                     <div v-if="item.kind=='info'">
                                                         <v-icon color="green">mdi-info</v-icon>{{item.message}}
+                                                    </div>
+                                                    <div v-if="item.kind=='debug'">
+                                                        <v-icon color="orange">mdi-bug</v-icon>{{item.message}}
                                                     </div>
                                                     <div v-if="item.kind=='command'">
                                                         </template>
@@ -296,7 +353,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.1.12/dist/vuetify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.3.19/dist/vuetify.min.js"></script>
     <script src="liquer.js"></script>
 </body>
 

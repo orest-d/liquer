@@ -17,6 +17,7 @@ from liquer.commands import command_registry
 from liquer.state_types import encode_state_data, state_types_registry
 import os.path
 from datetime import datetime
+import json
 
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
@@ -48,7 +49,8 @@ class Context(object):
         self.is_error = False
         self.message = ""
         self.debug_messages = False
-        self.caching=True
+        self.caching = True
+        self.enable_store_metadata=True
 
     def metadata(self):
         return dict(
@@ -63,7 +65,7 @@ class Context(object):
             started=self.started,
             updated=self.now(),
             created=self.created,
-            caching=self.caching
+            caching=self.caching,
         )
 
     def enable_cache(self, enable=True):
@@ -78,7 +80,8 @@ class Context(object):
         return State(metadata=self.metadata(), context=self)
 
     def store_metadata(self):
-        self.cache().store_metadata(self.metadata())
+        if self.raw_query is not None and self.enable_store_metadata:
+            self.cache().store_metadata(self.metadata())
 
     def new_progress_indicator(self):
         i = 1
@@ -273,20 +276,37 @@ class Context(object):
                 assert type(state.metadata) is dict
             except EvaluationException as ee:
                 print("EE:", qe)
-                #traceback.print_exc()
-                state.is_error=True
+                # traceback.print_exc()
+                state.is_error = True
                 state.exception = ee
             except Exception as e:
                 traceback.print_exc()
-                state.is_error=True
+                state.is_error = True
                 self.exception(
                     message=str(e),
                     position=action.position,
                     query=self.raw_query,
                     traceback=traceback.format_exc(),
                 )
-                state.exception = EvaluationException(traceback.format_exc()+"\n"+str(e), position=action.position, query=self.raw_query)
+                state.exception = EvaluationException(
+                    traceback.format_exc() + "\n" + str(e),
+                    position=action.position,
+                    query=self.raw_query,
+                )
         arguments = getattr(state, "arguments", None)
+        if arguments is not None:
+
+            def to_arg(x):
+                try:
+                    s = json.dumps(x)
+                    if len(s) > 100:
+                        return {"arg": "TOO BIG"}
+                    return x
+                except:
+                    return {"arg": "NO JSON"}
+
+            arguments = [to_arg(a) for a in arguments]
+
         metadata = self.metadata()
         metadata["commands"] = metadata.get("commands", []) + [action.to_list()]
         metadata["extended_commands"] = metadata.get("extended_commands", []) + [
@@ -347,14 +367,16 @@ class Context(object):
         return self.evaluate(q)
 
     def evaluate(self, query, cache=None):
+        """Evaluate query, returns a State, cache the output in supplied cache"""
+        self.enable_store_metadata=False
         self.status = "started"
         self.debug(f"EVALUATE {query}")
-        """Evaluate query, returns a State, cache the output in supplied cache"""
         if self.query is not None:
             state = self.child_context().evaluate(query)
             if not isinstance(query, str):
                 query = query.encode()
             self.direct_subqueries.append(query)
+            self.enable_store_metadata=True
             return state
 
         if isinstance(query, str):
@@ -365,15 +387,20 @@ class Context(object):
             self.raw_query = query.encode()
             self.query = query
         else:
+            self.enable_store_metadata=True
             raise Exception(f"Unsupported query type: {type(query)}")
-        self.store_metadata()
 
         if cache is None:
             cache = self.cache()
 
+        self.debug(f"Using cache {repr(cache)}")
+        self.debug(f"Try cache {query}")
         state = cache.get(query.encode())
         if state is not None:
+            self.debug(f"Cache hit {query}")
             return state
+        self.enable_store_metadata=True
+        self.debug(f"Cache miss {query}")
 
         p, r = query.predecessor()
         self.debug(f"PROCESS Predecessor:{p} Action: {r}")
@@ -401,21 +428,25 @@ class Context(object):
             self.debug(f"RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'")
             state.query = query.encode()
             state.metadata["created"] = self.now()
-            state.metadata["state"] = "ready"
+            state.metadata["status"] = "ready"
             return state
 
         state = self.evaluate_action(state, r)
         state.query = query.encode()
         state.metadata["created"] = self.now()
-        state.metadata["state"] = "ready"
+        state.metadata["status"] = "ready"
 
-        if state.metadata.get("caching", True) and not state.is_error and not state.is_volatile():
-            print("CACHE",state.query)
-            self.status = "cache"
-            self.store_metadata()
+        if (
+            state.metadata.get("caching", True)
+            and not state.is_error
+            and not state.is_volatile()
+        ):
+            print("CACHE", state.query)
+#            self.status = "cache"
+#            self.store_metadata()
             cache.store(state)
         else:
-            print("REMOVE CACHE",state.query)
+            print("REMOVE CACHE", state.query)
             if not cache.remove(state.query):
                 self.status = "obsolete"
                 self.store_metadata()
