@@ -3,7 +3,7 @@
 
 <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.6.95/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.9.95/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.3.19/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 
@@ -128,173 +128,170 @@
                                 </v-progress-circular>
                                 <span v-if="p.total_steps == null">{{ p.message }}</span>
                             </p>
-                            <ul>
-                                <li v-for="item in metadata.log">
-                                    <div v-if="item.kind=='error'">
-                                        <v-icon color="red">error</v-icon>
-                                        {{item.message}}
-                                        <pre>{{item.traceback}}</pre>
-                                    </div>
-                                    <div v-if="item.kind=='warning'">
-                                        <v-icon color="yellow">mdi-warning</v-icon>{{item.message}}
-                                    </div>
-                                    <div v-if="item.kind=='info'">
-                                        <v-icon color="green">mdi-info</v-icon>{{item.message}}
-                                    </div>
-                                    <div v-if="item.kind=='debug'">
-                                        <v-icon color="orange">mdi-bug</v-icon>{{item.message}}
-                                    </div>
-                                    <div v-if="item.kind=='command'">
-                                        </template>
-                                        <v-icon color="primary">mdi-label</v-icon>
-                                        <span>{{item.command_number}}</span>
-                                        <v-chip label outline v-for="cmd in item.qv">{{cmd}}
-                                        </v-chip>
-                                    </div>
-                                </li>
-                            </ul>
+                            <div v-for="item in metadata.log.slice(Math.max(metadata.log.length - 5, 0))">
+                                <div v-if="item.kind=='error'">
+                                    <v-icon color="red">mdi-alert-circle</v-icon>
+                                    {{item.message}}
+                                    <pre>{{item.traceback}}</pre>
+                                </div>
+                                <div v-if="item.kind=='warning'">
+                                    <v-icon color="orange">mdi-alert</v-icon>{{item.message}}
+                                </div>
+                                <div v-if="item.kind=='info'">
+                                    <v-icon color="blue">mdi-information-outline</v-icon>
+                                    {{item.message}}
+                                </div>
+                                <div v-if="item.kind=='debug'">
+                                    <v-icon color="yellow">mdi-bug</v-icon>{{item.message}}
+                                </div>
+                                <div v-if="item.kind=='command'">
+                                    </template>
+                                    <v-icon color="gray">mdi-label</v-icon>
+                                    <span>{{item.command_number}}</span>
+                                    <v-chip label outline v-for="cmd in item.qv">{{cmd}}
+                                    </v-chip>
+                                </div>
+                            </div>
                         </v-col>
                     </v-row>
                 </v-container>
+
                 <v-container class="fill-height" fluid v-if="mode==''">
 
                 </v-container>
 
                 <v-container class="fill-height" fluid v-if="mode=='inspect'">
-
-                    <v-container fluid>
-                        <v-row>
-                            <v-card width="100%">
-                                <v-toolbar color="secondary" dark>
-                                    <v-toolbar-title>Execution</v-toolbar-title>
-                                </v-toolbar>
-
-                                <table>
-                                    <tr>
-                                        <th>
-                                            Query
-                                        </th>
-                                        <td>{{state.query}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th v-if="state.is_error">
-                                            <v-chip color="red">Error</v-chip>
-                                        </th>
-                                        <th v-else>
-                                            <v-chip color="green">Ok</v-chip>
-                                        </th>
-                                        <td>{{state.message}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Filename</th>
-                                        <td>{{state.filename}} <a :href="state.url">(open)</a>
-                                            <v-chip>{{state.extension}}</v-chip>
-                                            <v-chip>{{state.mime}}</v-chip>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Sources</th>
-                                        <td>
-                                            <ul>
-                                                <li v-for="url in state.sources"><a :href="url">{{url}}</a></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Log</th>
-                                        <td>
-                                            <ul>
-                                                <li v-for="item in state.log">
-                                                    <div v-if="item.kind=='error'">
-                                                        <v-icon color="red">error</v-icon>
-                                                        {{item.message}}
-                                                        <pre>{{item.traceback}}</pre>
-                                                    </div>
-                                                    <div v-if="item.kind=='warning'">
-                                                        <v-icon color="yellow">mdi-warning</v-icon>{{item.message}}
-                                                    </div>
-                                                    <div v-if="item.kind=='info'">
-                                                        <v-icon color="green">mdi-info</v-icon>{{item.message}}
-                                                    </div>
-                                                    <div v-if="item.kind=='debug'">
-                                                        <v-icon color="orange">mdi-bug</v-icon>{{item.message}}
-                                                    </div>
-                                                    <div v-if="item.kind=='command'">
-                                                        </template>
-                                                        <v-icon color="primary">mdi-label</v-icon>
-                                                        <span>{{item.command_number}}</span>
-                                                        <v-chip label outline v-for="cmd in item.qv">{{cmd}}
-                                                        </v-chip>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </v-card>
-                        </v-row>
-                        <v-row>
-                            <v-card width="100%">
-                                <v-toolbar color="secondary" dark>
-                                    <v-toolbar-title>Command Sequence</v-toolbar-title>
-                                </v-toolbar>
-                                <table>
-                                    <tr>
-                                        <th>Command</th>
-                                        <th>Namespace</th>
-                                        <th>Parameters</th>
-                                    </tr>
-                                    <tr v-for="c in state.extended_commands">
-                                        <td><a :href="'#ns-meta/help-'+c.command_name+'-'+c.ns">{{c.command_name}}</a>
-                                        </td>
-                                        <td>{{c.ns}}</td>
-                                        <td>
-                                            <ul>
-                                                <li v-for="arg in c.arguments">
-                                                    <em>{{arg[1].label}}</em>:
-                                                    <span>{{arg[0]}}&nbsp;</span>
-                                                </li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </v-card>
-                        </v-row>
-                        <v-row>
-                            <v-card width="100%">
-                                <v-toolbar color="secondary" dark>
-                                    <v-toolbar-title>Attributes</v-toolbar-title>
-                                </v-toolbar>
-                                <table>
-                                    <tr>
-                                        <th>Attribute</th>
-                                        <th>Value</th>
-                                    </tr>
-                                    <tr v-for="(value,name) in state.attributes">
-                                        <th>{{name}}</th>
-                                        <td>{{value}}</td>
-                                    </tr>
-                                </table>
-                            </v-card>
-                        </v-row>
-                        <v-row>
-                            <v-card width="100%">
-                                <v-toolbar color="secondary" dark>
-                                    <v-toolbar-title>State Variables</v-toolbar-title>
-                                </v-toolbar>
-                                <table>
-                                    <tr>
-                                        <th>Variable</th>
-                                        <th>Value</th>
-                                    </tr>
-                                    <tr v-for="(value,name) in state.vars">
-                                        <th>{{name}}</th>
-                                        <td>{{value}}</td>
-                                    </tr>
-                                </table>
-                            </v-card>
-                        </v-row>
-                    </v-container>
+                    <v-row>                    
+                        <v-card width="100%">
+                            <v-toolbar color="secondary" dark>
+                                <v-toolbar-title>Execution</v-toolbar-title>
+                            </v-toolbar>
+                            <table>
+                                <tr>
+                                    <th>
+                                        Query
+                                    </th>
+                                    <td>{{state.query}}</td>
+                                </tr>
+                                <tr>
+                                    <th v-if="state.is_error">
+                                        <v-chip color="red">Error</v-chip>
+                                    </th>
+                                    <th v-else>
+                                        <v-chip color="green">Ok</v-chip>
+                                    </th>
+                                    <td>{{state.message}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Filename</th>
+                                    <td>{{state.filename}} <a :href="state.url">(open)</a>
+                                        <v-chip>{{state.extension}}</v-chip>
+                                        <v-chip>{{state.mime}}</v-chip>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Sources</th>
+                                    <td>
+                                        <ul>
+                                            <li v-for="url in state.sources"><a :href="url">{{url}}</a></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Log</th>
+                                    <td>
+                                        <ul>
+                                            <li v-for="item in state.log">
+                                                <div v-if="item.kind=='error'">
+                                                    <v-icon color="red">mdi-alert-circle</v-icon>
+                                                    {{item.message}}
+                                                    <pre>{{item.traceback}}</pre>
+                                                </div>
+                                                <div v-if="item.kind=='warning'">
+                                                    <v-icon color="orange">mdi-alert</v-icon>{{item.message}}
+                                                </div>
+                                                <div v-if="item.kind=='info'">
+                                                    <v-icon color="blue">mdi-information-outline</v-icon>
+                                                    {{item.message}}
+                                                </div>
+                                                <div v-if="item.kind=='debug'">
+                                                    <v-icon color="yellow">mdi-bug</v-icon>{{item.message}}
+                                                </div>
+                                                <div v-if="item.kind=='command'">
+                                                    </template>
+                                                    <v-icon color="gray">mdi-label</v-icon>
+                                                    <span>{{item.command_number}}</span>
+                                                    <v-chip label outline v-for="cmd in item.qv">{{cmd}}
+                                                    </v-chip>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </v-card>
+                    </v-row>
+                    <v-row>
+                        <v-card width="100%">
+                            <v-toolbar color="secondary" dark>
+                                <v-toolbar-title>Command Sequence</v-toolbar-title>
+                            </v-toolbar>
+                            <table>
+                                <tr>
+                                    <th>Command</th>
+                                    <th>Namespace</th>
+                                    <th>Parameters</th>
+                                </tr>
+                                <tr v-for="c in state.extended_commands">
+                                    <td><a :href="'#ns-meta/help-'+c.command_name+'-'+c.ns">{{c.command_name}}</a>
+                                    </td>
+                                    <td>{{c.ns}}</td>
+                                    <td>
+                                        <ul>
+                                            <li v-for="arg in c.arguments">
+                                                <em v-if="arg.length>=1">{{arg[1].label}}</em>:
+                                                <span v-if="arg.length>=0">{{arg[0]}}&nbsp;</span>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </v-card>
+                    </v-row>
+                    <v-row>
+                        <v-card width="100%">
+                            <v-toolbar color="secondary" dark>
+                                <v-toolbar-title>Attributes</v-toolbar-title>
+                            </v-toolbar>
+                            <table>
+                                <tr>
+                                    <th>Attribute</th>
+                                    <th>Value</th>
+                                </tr>
+                                <tr v-for="(value,name) in state.attributes">
+                                    <th>{{name}}</th>
+                                    <td>{{value}}</td>
+                                </tr>
+                            </table>
+                        </v-card>
+                    </v-row>
+                    <v-row>
+                        <v-card width="100%">
+                            <v-toolbar color="secondary" dark>
+                                <v-toolbar-title>State Variables</v-toolbar-title>
+                            </v-toolbar>
+                            <table>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Value</th>
+                                </tr>
+                                <tr v-for="(value,name) in state.vars">
+                                    <th>{{name}}</th>
+                                    <td>{{value}}</td>
+                                </tr>
+                            </table>
+                        </v-card>
+                    </v-row>
                 </v-container>
                 <v-container class="fill-height" fluid v-if="mode=='iframe'">
                     <iframe width="100%" height="100%" :src="external_link" frameBorder="0"></iframe>
@@ -351,7 +348,7 @@
         </v-app>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.3.19/dist/vuetify.min.js"></script>
     <script src="liquer.js"></script>

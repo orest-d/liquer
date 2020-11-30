@@ -1,5 +1,10 @@
-window.vue = new Vue({
+window.vue =new Vue({
     el: '#app',
+    vuetify: new Vuetify({
+      icons: {
+        iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
+      },          
+    }),
     data: {
         route: "",
         search:"",

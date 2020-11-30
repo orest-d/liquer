@@ -84,6 +84,7 @@ def start2(count1=10, count2=10, context=None):
             i, count1, message=f"Outer loop {i} out of {count1}", identifier=p1
         )
         p2 = context.new_progress_indicator()
+        context.info(f"Step {i} started")
         for j in range(count2):
             print(i, j)
             context.progress(
@@ -91,6 +92,7 @@ def start2(count1=10, count2=10, context=None):
             )
             context.progress(j, message=f"Undifferentiated {j}", identifier=p3)
             sleep(0.1)
+        context.info(f"Step {i} finished")
         context.remove_progress_indicator(p2)
     return "Done"
 
