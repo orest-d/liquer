@@ -116,3 +116,20 @@ def clean_cache():
     print(f"clean cache {get_cache()}")
     get_cache().clean()
     return "Cache cleaned"
+
+@first_command(volatile=True)
+def queries_status(include_ready=False):
+    cache = get_cache()
+    data=[]
+    for key in sorted(cache.keys()):
+        metadata = cache.get_metadata(key)
+        d=dict(
+            query=key,
+            status=metadata.get("status","unknown"),
+            updated=metadata.get("updated","?"),
+            message=metadata.get("message",""),
+            progress=metadata.get("progress_indicators",[])[:2]
+        )
+        if include_ready or d["status"]!="ready":
+            data.append(d)
+    return data

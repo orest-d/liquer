@@ -110,6 +110,7 @@
                         <v-col>
                             <h4>{{metadata.query}}</h4>
                             <v-chip>{{metadata.status}}</v-chip>
+                            <v-chip>{{metadata.updated}}</v-chip>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -213,6 +214,12 @@
                                     <td>{{state.query}}</td>
                                 </tr>
                                 <tr>
+                                    <th>
+                                        Parent
+                                    </th>
+                                    <td>{{state.parent_query}}</td>
+                                </tr>
+                                <tr>
                                     <th v-if="state.is_error">
                                         <v-chip color="red">Error</v-chip>
                                     </th>
@@ -227,6 +234,10 @@
                                         <v-chip>{{state.extension}}</v-chip>
                                         <v-chip>{{state.mime}}</v-chip>
                                     </td>
+                                </tr>
+                                <tr>
+                                    <th>Created</th>
+                                    <td>{{state.created}}</td>
                                 </tr>
                                 <tr>
                                     <th>Sources</th>
@@ -268,6 +279,25 @@
                                     </td>
                                 </tr>
                             </table>
+                        </v-card>
+                    </v-row>
+                    <v-row>
+                        <v-card width="100%">
+                            <v-toolbar color="secondary" dark>
+                                <v-toolbar-title>References</v-toolbar-title>
+                            </v-toolbar>
+                            <h4 v-if="state.argument_queries.length">Argument queries</h4>
+                            <ul>
+                                <li v-for="q in state.argument_queries">
+                                    <a :href="url_prefix+q.query">{{q.description}}</a>
+                                </li>
+                            </ul>
+                            <h4>Direct sub-queries</h4>
+                            <ul>
+                                <li v-for="q in state.direct_subqueries">
+                                    <a :href="url_prefix+q.query">{{q.description}}</a>
+                                </li>
+                            </ul>
                         </v-card>
                     </v-row>
                     <v-row>

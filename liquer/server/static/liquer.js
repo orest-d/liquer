@@ -24,6 +24,7 @@ window.vue = new Vue({
         xlsx_link: "",
         csv_link: "",
         mode: "",
+        queries_status:[],
         commands: [],
         menu: [
             {
@@ -160,6 +161,15 @@ window.vue = new Vue({
                 }.bind(this), function (reason) { this.error("Json error (submit query)", reason); }.bind(this));
             }.bind(this), function (reason) { this.error("API call error (submit query)", reason); }.bind(this));
         },
+        get_queries_status: function (query) {
+            console.log("Submit", query);
+            this.query = query;
+            this.$http.get(this.url_prefix + "ns-meta/queries_status/queries_status.json").then(function (response) {
+                response.json().then(function (data) {
+                    this.queries_status = data;
+                }.bind(this), function (reason) { this.error("Json error (get_queries_status)", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("API call error (get_queries_status)", reason); }.bind(this));
+        },
         load: function (query) {
             this.xlsx_link = "";
             this.csv_link = "";
@@ -284,15 +294,6 @@ window.vue = new Vue({
             }
             catch (error) {
                 return { value: "?", label: "?", type: "?" };
-            }
-        },
-        kind_is:function(item, index, kind){
-            console.log("kind_is",item, index, kind,this.metadata_log[index]);
-            try{
-                return item.kind==kind;
-            }
-            catch{
-                return false;
             }
         }
     },
