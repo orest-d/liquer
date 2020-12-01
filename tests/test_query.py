@@ -86,7 +86,7 @@ class TestQuery:
 
         state = evaluate("b") 
         assert state.get()==1230
-        assert state.metadata["direct_subqueries"]==["a"]
+        assert state.metadata["direct_subqueries"][0]["query"]=="a"
 
     def test_link(self):
         reset_command_registry()

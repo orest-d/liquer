@@ -249,8 +249,9 @@
                                     <td>
                                         <ul>
                                             <li v-for="arg in c.arguments">
-                                                <em v-if="arg.length>=1">{{arg[1].label}}</em>:
-                                                <span v-if="arg.length>=0">{{arg[0]}}&nbsp;</span>
+                                                <span>{{safearg(arg).label}}:</span>
+                                                <b>{{safearg(arg).value}}</b>
+                                                <em>({{safearg(arg).type}})</em>
                                             </li>
                                         </ul>
                                     </td>

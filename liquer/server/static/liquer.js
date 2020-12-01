@@ -248,6 +248,14 @@ window.vue =new Vue({
                     }.bind(this), function (reason) { this.error("Json error (state)", reason); }.bind(this));
                 }.bind(this), function (reason) { this.error("State loading error", reason); }.bind(this));
             }
+        },
+        safearg:function(arg){
+            try{
+                return {value:arg[0],label:arg[1].label,type:arg[1].type};
+            }
+            catch(error){
+                return {value:"?",label:"?",type:"?"};
+            }
         }
     },
     computed: {

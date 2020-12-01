@@ -34,29 +34,33 @@ def find_queries_in_template(template: str, prefix: str, sufix: str):
 
 
 class Context(object):
-    def __init__(self, parent_context=None, level=0):
-        self.raw_query = None
-        self.status = "none"
-        self.started = ""
-        self.created = ""
-        self.query = None
-        self.parent_context = parent_context
-        self.level = level
-        self.direct_subqueries = []
-        self.parent_query = None
+    def __init__(self, parent_context=None, debug=False):
+        self.parent_context = parent_context # parent context - when in child context
+
+        self.raw_query = None # String with the evaluated query
+        self.query = None     # Query object of the evaluated query
+        self.status = "none"  # Status: ready, error...
+        self.is_error = False # True is evaluation failed
+        self.started = ""     # Evaluation start time
+        self.created = ""     # Created time (evaluation finished)
+
+        self.direct_subqueries = []       # list of subqueries specified as dictionaries with description and query        
+        self.parent_query = None          # parent query or None
+        self.argument_queries = []        # list of argument subqueries specified as dictionaries with description and query
+
         self.progress_indicators = []
-        self.log = []
-        self.is_error = False
-        self.message = ""
-        self.debug_messages = False
-        self.caching = True
-        self.enable_store_metadata=True
+        self.log = []                     # log of messages as a list of dictionaries
+        self.message = ""                 # Last message from the log
+        self.debug_messages = debug       # Turn the debug messages on/off
+        self.caching = True               # caching of the results enabled
+        self.enable_store_metadata = True # flag to controll storing of metadata
 
     def metadata(self):
         return dict(
             status=self.status,
             query=self.raw_query,
             parent_query=self.parent_query,
+            argument_queries=self.argument_queries,
             log=self.log[:],
             is_error=self.is_error,
             direct_subqueries=self.direct_subqueries[:],
@@ -186,17 +190,19 @@ class Context(object):
         return self
 
     def child_context(self):
-        return self.__class__(parent_context=self, level=self.level + 1)
+        return self.__class__(parent_context=self)
 
     def root_context(self):
         return (
             self if self.parent_context is None else self.parent_context.root_context()
         )
 
-    def log_subquery(self, query: str):
+    def log_subquery(self, query: str, description=None):
         assert type(query) == str
         if query not in self.direct_subqueries:
-            self.direct_subqueries.append(query)
+            if description is None:
+                description = query
+            self.direct_subqueries.append(dict(description=description, query=query))
 
     def command_registry(self):
         return command_registry()
@@ -240,6 +246,12 @@ class Context(object):
                     parameters.append(p)
                 elif isinstance(p, LinkActionParameter):
                     if p.link.absolute:
+                        self.argument_queries.append(
+                            dict(
+                                description=f"{p.link.encode()} at {p.position}",
+                                query=p.link.encode(),
+                            )
+                        )
                         self.debug(f"Expand absolute link parameter {p.link.encode()}")
                         value = self.evaluate(p.link)
                         if value.is_error:
@@ -251,6 +263,12 @@ class Context(object):
                         pp = ExpandedActionParameter(value.get(), p.link, p.position)
                         parameters.append(pp)
                     else:
+                        self.argument_queries.append(
+                            dict(
+                                description=f"{p.link.encode()} at {p.position}",
+                                query=p.link.encode(),
+                            )
+                        )
                         self.debug(
                             f"Expand relative link parameter {p.link.encode()} on {self.parent_query}"
                         )
@@ -296,14 +314,15 @@ class Context(object):
         arguments = getattr(state, "arguments", None)
         if arguments is not None:
 
-            def to_arg(x):
+            def to_arg(arg):
+                x, meta = arg
                 try:
                     s = json.dumps(x)
                     if len(s) > 100:
-                        return {"arg": "TOO BIG"}
-                    return x
+                        return [s[:50], meta]
+                    return [x, meta]
                 except:
-                    return {"arg": "NO JSON"}
+                    return [None, meta]
 
             arguments = [to_arg(a) for a in arguments]
 
@@ -347,16 +366,27 @@ class Context(object):
         state.query = ""
         return state
 
-    def apply(self, query):
+    @classmethod
+    def to_query(cls, query):
+        if query is None:
+            return "", Query()
+        if isinstance(query, str):
+            return query, parse(query)
+        elif isinstance(query, Query):
+            return query.encode(), query
+        else:
+            raise Exception(f"Unsupported query type: {type(query)}")
+
+    def apply(self, query, description=None):
         self.debug(f"APPLY {query}")
         if self.parent_query in (None, "", "/"):
             self.debug(f"  no parent query in apply {query}")
-            return self.evaluate(query)
+            return self.evaluate(query, description=description)
         if isinstance(query, str):
             query = parse(query)
         if query.absolute:
             self.debug(f"  absolute link in apply {query}")
-            return self.evaluate(query)
+            return self.evaluate(query, description=description)
         tq = query.transform_query()
         if tq is None:
             raise Exception(
@@ -364,31 +394,23 @@ class Context(object):
             )
         q = (parse(self.parent_query) + tq).encode()
         self.debug(f"apply {query} on {self.parent_query} yields {q}")
-        return self.evaluate(q)
+        return self.evaluate(q, description=description)
 
-    def evaluate(self, query, cache=None):
+    def evaluate(self, query, cache=None, description=None):
         """Evaluate query, returns a State, cache the output in supplied cache"""
-        self.enable_store_metadata=False
+        self.enable_store_metadata = False # Prevents overwriting cache with metadata
         self.status = "started"
         self.debug(f"EVALUATE {query}")
         if self.query is not None:
             state = self.child_context().evaluate(query)
             if not isinstance(query, str):
                 query = query.encode()
-            self.direct_subqueries.append(query)
-            self.enable_store_metadata=True
+            self.enable_store_metadata = True
+            self.log_subquery(query=query, description=description)
             return state
 
-        if isinstance(query, str):
-            self.raw_query = query
-            self.query = parse(query)
-            query = self.query
-        elif isinstance(query, Query):
-            self.raw_query = query.encode()
-            self.query = query
-        else:
-            self.enable_store_metadata=True
-            raise Exception(f"Unsupported query type: {type(query)}")
+        self.raw_query, query = self.to_query(query)
+        self.query = query
 
         if cache is None:
             cache = self.cache()
@@ -399,7 +421,8 @@ class Context(object):
         if state is not None:
             self.debug(f"Cache hit {query}")
             return state
-        self.enable_store_metadata=True
+        self.enable_store_metadata = True  # Metadata can be only written after trying to read from cache,
+                                           # so that cache does not get overwritten
         self.debug(f"Cache miss {query}")
 
         p, r = query.predecessor()
@@ -442,8 +465,8 @@ class Context(object):
             and not state.is_volatile()
         ):
             print("CACHE", state.query)
-#            self.status = "cache"
-#            self.store_metadata()
+            #            self.status = "cache"
+            #            self.store_metadata()
             cache.store(state)
         else:
             print("REMOVE CACHE", state.query)
