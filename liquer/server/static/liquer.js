@@ -1,13 +1,13 @@
-window.vue =new Vue({
+window.vue = new Vue({
     el: '#app',
     vuetify: new Vuetify({
-      icons: {
-        iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
-      },          
+        icons: {
+            iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
+        },
     }),
     data: {
         route: "",
-        search:"",
+        search: "",
         status: "OK",
         state: null,
         data: null,
@@ -18,29 +18,32 @@ window.vue =new Vue({
         url_submit_prefix: "/liquer/submit/",
         url_prefix: "/liquer/q/",
         url_meta_prefix: "/liquer/cache/meta/",
-        metadata:null,
+        metadata: null,
+        metadata_log: [{ kind: "info", message: "Initial log" }],
         external_link: "",
         xlsx_link: "",
         csv_link: "",
         mode: "",
-        commands:[],
+        commands: [],
         menu: [
-            {title:"Help", items:[
-                {title:"Homepage", link:"https://orest-d.github.io/liquer/"},
-                {title:"Commands", link:"ns-meta/flat_commands_nodoc/to_df"},
-           ]}
+            {
+                title: "Help", items: [
+                    { title: "Homepage", link: "https://orest-d.github.io/liquer/" },
+                    { title: "Commands", link: "ns-meta/flat_commands_nodoc/to_df" },
+                ]
+            }
         ],
-        context_menu:[]
+        context_menu: []
     },
     vuetify: new Vuetify(),
     methods: {
         update_route: function () {
             console.log("Update", window.location.hash);
             this.route = window.location.hash.slice("1");
-            if (this.route.length>0){
+            if (this.route.length > 0) {
                 this.submit_query(this.route);
             }
-            else{
+            else {
                 this.load("state/state.json");
             }
         },
@@ -60,17 +63,17 @@ window.vue =new Vue({
         goto_rel: function (link) {
             console.log("GOTO REL", link);
             if (link.indexOf(":") == -1) {
-                if (link.startsWith('/')){
+                if (link.startsWith('/')) {
                     link = link.slice(1);
                 }
-                else{
-                    link = this.query_basis+'/'+link;
+                else {
+                    link = this.query_basis + '/' + link;
                 }
                 window.location.href = "#" + link;
                 this.submit_query(link);
             }
             else {
-                this.update_link=true;
+                this.update_link = true;
                 window.location.href = "#";
                 this.external_link = link;
                 this.mode = "iframe";
@@ -80,19 +83,19 @@ window.vue =new Vue({
             console.log("GOTO", link);
             if (link.indexOf(":") == -1) {
                 window.location.href = "#" + link;
-                this.load(link);
+                this.submit_query(link);
             }
             else {
-                this.update_link=true;
+                this.update_link = true;
                 window.location.href = "#";
                 this.external_link = link;
                 this.mode = "iframe";
             }
         },
-        clean_cache:function(){
+        clean_cache: function () {
             console.log("Clean cache called");
             this.$http.get(this.url_prefix + "/clean_cache").then(function (response) {
-                console.log("Clean cache result:",response.body);
+                console.log("Clean cache result:", response.body);
                 this.info("Cache cleaned");
             }.bind(this), function (reason) { this.error("Cache cleaning error", reason); }.bind(this));
 
@@ -101,20 +104,46 @@ window.vue =new Vue({
             console.log("Load metadata", query);
             this.$http.get(this.url_meta_prefix + query).then(function (response) {
                 response.json().then(function (data) {
-                    this.metadata = data;
+                    if (data == null) {
+                        this.metadata = { status: "undefined", log: [] };
+                    }
+                    else {
+                        this.metadata = data;
+                    }
+                    try {
+                        this.metadata_log = this.metadata.log;
+                    }
+                    catch (error) {
+                        console.log(error);
+                        this.metadata_log = [{ kind: "info", message: "No valid metadata yet (load_metadata)" }];
+                    }
                 });
             });
         },
-        refresh_metadata: function() {
+        refresh_metadata: function () {
             console.log("Refresh metadata", this.query);
             this.$http.get(this.url_meta_prefix + this.query).then(function (response) {
                 response.json().then(function (data) {
-                    this.metadata = data;
-                    if (data==null || this.metadata.status!="ready"){
+                    console.log(data);
+                    if (data == null) {
+                        this.metadata = { status: "undefined", log: [] };
+                    }
+                    else {
+                        this.metadata = data;
+                    }
+                    try {
+                        this.metadata_log = this.metadata.log;
+                    }
+                    catch (error) {
+                        console.log(error);
+                        this.metadata_log = [{ kind: "info", message: "No valid metadata yet (refresh_metadata)" }];
+                    }
+                    if (data == null || (this.metadata.status != "ready" && this.metadata.status != "error")) {
+                        console.log("refresh",this.metadata.status);
                         window.setTimeout(this.refresh_metadata, 500);
                     }
-                    else{
-                        if (this.metadata.status=="ready"){
+                    else {
+                        if (this.metadata.status == "ready") {
                             this.load(this.query);
                         }
                     }
@@ -123,7 +152,7 @@ window.vue =new Vue({
         },
         submit_query: function (query) {
             console.log("Submit", query);
-            this.query=query;
+            this.query = query;
             this.$http.get(this.url_submit_prefix + query).then(function (response) {
                 response.json().then(function (data) {
                     this.metadata = data;
@@ -132,40 +161,40 @@ window.vue =new Vue({
             }.bind(this), function (reason) { this.error("API call error (submit query)", reason); }.bind(this));
         },
         load: function (query) {
-            this.xlsx_link="";
-            this.csv_link="";
+            this.xlsx_link = "";
+            this.csv_link = "";
             this.load_metadata(query);
-            if (this.update_link){
+            if (this.update_link) {
                 console.log("Update link prevented loading");
-                this.update_link=false;
+                this.update_link = false;
                 return;
             }
             console.log("Load", query);
-            var q = query.split("/").filter(function(x){return x.length;});
-            
+            var q = query.split("/").filter(function (x) { return x.length; });
+
             this.query = query;
             if (q.length > 0) {
                 var last = q[q.length - 1];
                 var path = query;
                 var query_basis = query;
-                var extension="";
-                var filename=last.replace("-","_");
+                var extension = "";
+                var filename = last.replace("-", "_");
                 if (last.indexOf("-") == -1 && last.indexOf(".") != -1) {
                     query_basis = q.slice(0, q.length - 1).join("/");
                     var v = last.split(".");
                     filename = v[0];
-                    extension = v[v.length-1];
+                    extension = v[v.length - 1];
                 }
-                this.query_basis=query_basis;
+                this.query_basis = query_basis;
                 this.status = "LOADING";
                 this.mode = "";
-                console.log("query_basis",query_basis)
+                console.log("query_basis", query_basis)
                 console.log("Load state", this.url_prefix + query_basis + "/state/state.json");
                 this.$http.get(this.url_prefix + query_basis + "/state/state.json").then(function (response) {
                     response.json().then(function (data) {
                         this.data = null;
                         this.state = data;
-                        this.metadata=data;
+                        this.metadata = data;
                         try {
                             this.menu = this.state.vars.menu;
                         }
@@ -181,17 +210,17 @@ window.vue =new Vue({
 
                         this.html = "";
                         this.info("State loaded.");
-                        
+
                         if (this.state.type_identifier == "dataframe") {
-                            if (extension=="") {
+                            if (extension == "") {
                                 console.log("dataframe -> append .json");
                                 path += "/data.json";
                             }
-                            this.csv_link = this.url_prefix+query_basis+"/"+filename+".csv";
-                            this.xlsx_link = this.url_prefix+query_basis+"/"+filename+".xlsx";
+                            this.csv_link = this.url_prefix + query_basis + "/" + filename + ".csv";
+                            this.xlsx_link = this.url_prefix + query_basis + "/" + filename + ".xlsx";
                         }
                         if (this.state.type_identifier == "matplotlibfigure") {
-                            if (extension=="") {
+                            if (extension == "") {
                                 console.log("matplotlibfigure -> append .png");
                                 path += "/image.png";
                             }
@@ -216,12 +245,12 @@ window.vue =new Vue({
                             this.mode = "iframe";
                         }
                         else if (this.state.extension == "png" ||
-                                 this.state.extension == "jpg" ||
-                                 this.state.extension == "jpeg" ||
-                                 path.endsWith(".png") ||
-                                 path.endsWith(".jpg") ||
-                                 path.endsWith(".svg") ||
-                                 path.endsWith(".jpeg")) {
+                            this.state.extension == "jpg" ||
+                            this.state.extension == "jpeg" ||
+                            path.endsWith(".png") ||
+                            path.endsWith(".jpg") ||
+                            path.endsWith(".svg") ||
+                            path.endsWith(".jpeg")) {
                             console.log("image mode");
                             this.external_link = this.url_prefix + path;
                             this.mode = "image";
@@ -249,12 +278,21 @@ window.vue =new Vue({
                 }.bind(this), function (reason) { this.error("State loading error", reason); }.bind(this));
             }
         },
-        safearg:function(arg){
-            try{
-                return {value:arg[0],label:arg[1].label,type:arg[1].type};
+        safearg: function (arg) {
+            try {
+                return { value: arg[0], label: arg[1].label, type: arg[1].type };
             }
-            catch(error){
-                return {value:"?",label:"?",type:"?"};
+            catch (error) {
+                return { value: "?", label: "?", type: "?" };
+            }
+        },
+        kind_is:function(item, index, kind){
+            console.log("kind_is",item, index, kind,this.metadata_log[index]);
+            try{
+                return item.kind==kind;
+            }
+            catch{
+                return false;
             }
         }
     },
@@ -298,10 +336,10 @@ window.vue =new Vue({
         },
         commands_headers: function () {
             return [
-                {text:"Namespace", value:"ns"},
-                {text:"Command", value:"name"},
-                {text:"Description", value:"doc"},
-                {text:"Example", value:"example_link"},
+                { text: "Namespace", value: "ns" },
+                { text: "Command", value: "name" },
+                { text: "Description", value: "doc" },
+                { text: "Example", value: "example_link" },
             ];
         },
         commands_rows: function () {
@@ -310,6 +348,15 @@ window.vue =new Vue({
             }
             else {
                 return this.commands;
+            }
+        },
+        metadata_log_slice: function () {
+            try {
+                return this.metadata_log.slice(Math.max(metadata.log.length - 5, 0));
+            }
+            catch (error) {
+                console.log(error);
+                return [{ kind: "info", message: "Empty log" }];
             }
         }
 

@@ -47,6 +47,7 @@ set_var(
                 dict(title="Start", link="start"),
                 dict(title="Start long", link="start-200"),
                 dict(title="Start 2", link="start2"),
+                dict(title="Nested", link="start-50/nested"),
             ],
         )
     ],
@@ -70,7 +71,7 @@ def start(count=5, context=None):
         print(i)
         context.progress(i, count, message=f"Step {i} out of {count}")
         sleep(0.1)
-    return "Done"
+    return f"Done {count}"
 
 
 @first_command
@@ -94,8 +95,17 @@ def start2(count1=10, count2=10, context=None):
             sleep(0.1)
         context.info(f"Step {i} finished")
         context.remove_progress_indicator(p2)
-    return "Done"
+    return f"Done {count1}x{count2}"
 
+
+@command
+def nested(x, count1=5, count2=5, context=None):
+    context.info("Nested command")
+    text = "Nested: "+str(x)+"\n"
+    for i in context.progress_iter(range(count1)):
+        context.info(f"Nested command iteration {i}")
+        text += str(context.evaluate(f"start-{count2+i}").get())+"\n"
+    return text
 
 @app.route("/liquer/submit/<path:query>")
 def detached_serve(query):
@@ -115,3 +125,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    #print(evaluate("start-50/nested").get())

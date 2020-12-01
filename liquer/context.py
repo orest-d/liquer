@@ -35,25 +35,39 @@ def find_queries_in_template(template: str, prefix: str, sufix: str):
 
 class Context(object):
     def __init__(self, parent_context=None, debug=False):
-        self.parent_context = parent_context # parent context - when in child context
+        self.parent_context = parent_context  # parent context - when in child context
 
-        self.raw_query = None # String with the evaluated query
-        self.query = None     # Query object of the evaluated query
+        self.raw_query = None  # String with the evaluated query
+        self.query = None  # Query object of the evaluated query
         self.status = "none"  # Status: ready, error...
-        self.is_error = False # True is evaluation failed
-        self.started = ""     # Evaluation start time
-        self.created = ""     # Created time (evaluation finished)
+        self.is_error = False  # True is evaluation failed
+        self.started = ""  # Evaluation start time
+        self.created = ""  # Created time (evaluation finished)
 
-        self.direct_subqueries = []       # list of subqueries specified as dictionaries with description and query        
-        self.parent_query = None          # parent query or None
-        self.argument_queries = []        # list of argument subqueries specified as dictionaries with description and query
+        self.direct_subqueries = (
+            []
+        )  # list of subqueries specified as dictionaries with description and query
+        self.parent_query = None  # parent query or None
+        self.argument_queries = (
+            []
+        )  # list of argument subqueries specified as dictionaries with description and query
 
-        self.progress_indicators = []
-        self.log = []                     # log of messages as a list of dictionaries
-        self.message = ""                 # Last message from the log
-        self.debug_messages = debug       # Turn the debug messages on/off
-        self.caching = True               # caching of the results enabled
-        self.enable_store_metadata = True # flag to controll storing of metadata
+        self.progress_indicators = []  # progress indicators as a list of dictionaries
+        self.log = []  # log of messages as a list of dictionaries
+        self.child_progress_indicators = []  # progress indicator of a child
+        self.child_log = []  # log of messages from child queries
+        self.message = ""  # Last message from the log
+        self.debug_messages = debug  # Turn the debug messages on/off
+        self.caching = True  # caching of the results enabled
+        self.enable_store_metadata = True  # flag to controll storing of metadata
+
+        self.last_report_time=None # internal time stamp of the last report
+
+    def can_report(self):
+        if self.last_report_time is None:
+            self.last_report_time = datetime.now()
+        return True
+        return (datetime.now()-self.last_report_time).total_seconds()>0.1
 
     def metadata(self):
         return dict(
@@ -65,6 +79,8 @@ class Context(object):
             is_error=self.is_error,
             direct_subqueries=self.direct_subqueries[:],
             progress_indicators=self.progress_indicators[:],
+            child_progress_indicators=self.child_progress_indicators,
+            child_log=self.child_log,
             message=self.message,
             started=self.started,
             updated=self.now(),
@@ -83,9 +99,11 @@ class Context(object):
     def create_state(self):
         return State(metadata=self.metadata(), context=self)
 
-    def store_metadata(self):
+    def store_metadata(self, force=False):
         if self.raw_query is not None and self.enable_store_metadata:
-            self.cache().store_metadata(self.metadata())
+            if force or self.can_report():
+                self.cache().store_metadata(self.metadata())
+                self.last_report_time = datetime.now()
 
     def new_progress_indicator(self):
         i = 1
@@ -100,6 +118,9 @@ class Context(object):
         self.progress_indicators = [
             x for x in self.progress_indicators if x["id"] != identifier
         ]
+        if self.parent_context is not None:
+            self.parent_context.remove_child_progress(self.raw_query)
+        
 
     def progress_indicator_index(self, identifier):
         if identifier is None:
@@ -118,16 +139,76 @@ class Context(object):
 
     def progress(self, step=0, total_steps=None, message="", identifier=None):
         index = self.progress_indicator_index(identifier)
-        self.progress_indicators[index].update(
-            dict(step=step, total_steps=total_steps, message=message)
-        )
+        progress = dict(step=step, total_steps=total_steps, message=message)
+        self.progress_indicators[index].update(progress)
+
         self.store_metadata()
 
+        if self.parent_context is not None:
+            d = dict(origin=self.raw_query, **progress)
+            self.parent_context.log_child_progress(d)
+
+    def progress_iter(self, iterator):
+        try:
+            total_steps = len(iterator)
+        except:
+            total_steps = None
+        identifier = self.new_progress_indicator()
+        for i,x in enumerate(iterator):
+            self.progress(i, total_steps=total_steps, message=f"{i+1}" if total_steps is None else f"{i+1}/{total_steps}", identifier=identifier)
+            yield x
+        self.remove_progress_indicator(identifier)
+        
+    def remove_child_progress(self, origin):
+        "Remove all child progress indicators from a given origin"
+        self.child_progress_indicators = [
+            x
+            for x in self.child_progress_indicators
+            if x.get("origin") != origin
+        ]
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.remove_child_progress(origin)
+
+    def log_child_progress(self, d):
+        "Put dictionary with a child progress entry into the child progress indicators and notify parent"
+        self.child_progress_indicators = [
+            x
+            for x in self.child_progress_indicators
+            if x.get("origin") != d.get("origin")
+        ]
+        print(f"log_child_progress {d} in {self.raw_query}")
+        self.child_progress_indicators.append(d)
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.log_child_progress(d)
+        return self
+
     def log_dict(self, d):
+        "Put dictionary with a log entry into the log"
         self.log.append(d)
         if "message" in d:
             self.message = d["message"]
+        self.store_metadata(force = (d.get("kind")=="error"))
+        if self.parent_context is not None:
+            if d.get("origin") is None:
+                d = dict(origin=self.raw_query, **d)
+            self.parent_context.log_child_dict(d)
+        return self
+
+    def log_child_dict(self, d):
+        "Put dictionary with a child log entry into the child log"
+        d = dict(**d)
+        if d.get("origin") is None:
+            if self.parent_context is None:
+                d["origin"] = None
+            else:
+                d["origin"] = self.parent_context.raw_query
+        self.child_log.append(d)
+        self.child_log = self.child_log[:5]
         self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.log_child_dict(d)
         return self
 
     def log_action(self, qv, number=0):
@@ -216,7 +297,7 @@ class Context(object):
     def evaluate_action(self, state: State, action, cache=None):
         self.debug(f"EVALUATE ACTION '{action}' on '{state.query}'")
         self.status = "action"
-        self.store_metadata()
+        self.store_metadata(force=True)
         cache = cache or self.cache()
         cr = self.command_registry()
 
@@ -240,7 +321,7 @@ class Context(object):
         else:
             parameters = []
             self.status = "evaluate arguments"
-            self.store_metadata()
+            self.store_metadata(force=True)
             for p in action.parameters:
                 if isinstance(p, StringActionParameter):
                     parameters.append(p)
@@ -282,18 +363,20 @@ class Context(object):
                         parameters.append(pp)
                 else:
                     self.status = "error"
-                    self.store_metadata()
+                    self.store_metadata(force=True)
                     raise EvaluationException(
                         f"Unknown parameter type {type(p)} in {action.name}",
                         position=action.position,
                         query=self.raw_query,
                     )
+            self.status = "evaluate action"
+            self.store_metadata(force=True)
 
             try:
                 state = command(old_state, *parameters, context=self)
                 assert type(state.metadata) is dict
             except EvaluationException as ee:
-                print("EE:", qe)
+                print("EE:", ee)
                 # traceback.print_exc()
                 state.is_error = True
                 state.exception = ee
@@ -328,13 +411,17 @@ class Context(object):
 
         metadata = self.metadata()
         metadata["commands"] = metadata.get("commands", []) + [action.to_list()]
+        try:
+            cmd_metadata_d = cmd_metadata._asdict()
+        except:
+            cmd_metadata_d = {}
         metadata["extended_commands"] = metadata.get("extended_commands", []) + [
             dict(
                 command_name=action.name,
                 ns=ns,
                 qcommand=action.to_list(),
                 action=f"{action.encode()} at {action.position}",
-                command_metadata=cmd_metadata._asdict(),
+                command_metadata=cmd_metadata_d,
                 arguments=arguments,
             )
         ]
@@ -350,15 +437,21 @@ class Context(object):
                 metadata.get("attributes", {}), **cmd_metadata.attributes
             )
 
-        if state.is_error:
+        metadata["caching"]=metadata.get("caching",True) and state.metadata.get("caching",True)
+        is_error=state.is_error
+        self.status = "action done"
+
+        if is_error:
             self.info(f"Action {action.encode()} at {action.position} failed")
+            state.metadata.update(metadata)
+            state.status="error"
+            state.is_error=True
         else:
             self.info(f"Action {action.encode()} at {action.position} completed")
-
-        state.metadata.update(metadata)
+            state.metadata.update(metadata)
         state.set_volatile(is_volatile or state.is_volatile())
-        self.status = "action done"
-        self.store_metadata()
+
+        cache.store_metadata(state.metadata)
         return state
 
     def create_initial_state(self):
@@ -398,15 +491,21 @@ class Context(object):
 
     def evaluate(self, query, cache=None, description=None):
         """Evaluate query, returns a State, cache the output in supplied cache"""
-        self.enable_store_metadata = False # Prevents overwriting cache with metadata
+        self.enable_store_metadata = False  # Prevents overwriting cache with metadata
         self.status = "started"
         self.debug(f"EVALUATE {query}")
         if self.query is not None:
+            print(f"Subquery {query} called from {self.query.encode()}")
             state = self.child_context().evaluate(query)
             if not isinstance(query, str):
                 query = query.encode()
-            self.enable_store_metadata = True
             self.log_subquery(query=query, description=description)
+            if state.is_error:
+                print("Subquery failed")
+                for d in state.metadata.get("log",[]):
+                    self.log_dict(d)
+            self.enable_store_metadata = True
+            self.store_metadata(force=True)
             return state
 
         self.raw_query, query = self.to_query(query)
@@ -421,8 +520,10 @@ class Context(object):
         if state is not None:
             self.debug(f"Cache hit {query}")
             return state
-        self.enable_store_metadata = True  # Metadata can be only written after trying to read from cache,
-                                           # so that cache does not get overwritten
+        self.enable_store_metadata = (
+            True  # Metadata can be only written after trying to read from cache,
+        )
+        # so that cache does not get overwritten
         self.debug(f"Cache miss {query}")
 
         p, r = query.predecessor()
@@ -435,7 +536,7 @@ class Context(object):
         else:
             self.parent_query = p.encode()
             self.status = "evaluate parent"
-            self.store_metadata()
+            self.store_metadata(force=True)
             state = self.child_context().evaluate(p, cache=cache)
 
         if state.is_error:
@@ -469,10 +570,13 @@ class Context(object):
             #            self.store_metadata()
             cache.store(state)
         else:
-            print("REMOVE CACHE", state.query)
-            if not cache.remove(state.query):
-                self.status = "obsolete"
-                self.store_metadata()
+            if state.is_error:
+                cache.store_metadata(state.metadata)
+            else:
+                print("REMOVE CACHE", state.query)
+                if not cache.remove(state.query):
+                    self.status = "obsolete"
+                    self.store_metadata()
 
         return state
 
@@ -520,7 +624,7 @@ class Context(object):
                 if q in local_cache:
                     result += local_cache[q]
                 else:
-                    state = self.evaluate(q)
+                    state = self.evaluate(q, description=f"template expansion of {q}")
                     if state.is_error:
                         self.error(f"Template failed to expand {q}")
                         qr = f"ERROR({q})"

@@ -101,7 +101,7 @@
                     </v-list>
                 </v-menu>
             </v-app-bar>
-            <v-content>
+            <v-main>
                 <!--div class="download" v-if="status=='LOADING'"></div-->
                 <span v-html="html"></span>
 
@@ -128,27 +128,66 @@
                                 </v-progress-circular>
                                 <span v-if="p.total_steps == null">{{ p.message }}</span>
                             </p>
-                            <div v-for="item in metadata.log.slice(Math.max(metadata.log.length - 5, 0))">
-                                <div v-if="item.kind=='error'">
-                                    <v-icon color="red">mdi-alert-circle</v-icon>
-                                    {{item.message}}
-                                    <pre>{{item.traceback}}</pre>
+                            <p v-for="p in metadata.child_progress_indicators">
+                                <v-progress-linear v-if="p.total_steps != null" v-model="p.step*100/p.total_steps"
+                                    color="secondary" height="25">
+                                    <span>{{ p.message }}</span>
+                                </v-progress-linear>
+                                <v-progress-circular v-if="p.total_steps == null" indeterminate color="secondary">
+                                </v-progress-circular>
+                                <span v-if="p.total_steps == null">{{ p.message }}</span>
+                            </p>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <div v-for="(xitem, index) in metadata_log_slice">
+                                <div v-if="xitem.kind=='info'">
+                                    <v-icon color="blue">mdi-information-outline</v-icon>
+                                    {{xitem.message}}
                                 </div>
-                                <div v-if="item.kind=='warning'">
+                                <div v-if="xitem.kind=='error'">
+                                    <v-icon color="red">mdi-alert-circle</v-icon>
+                                    {{xitem.message}}
+                                    <pre>{{xitem.traceback}}</pre>
+                                </div>
+                                <div v-if="xitem.kind=='warning'">
                                     <v-icon color="orange">mdi-alert</v-icon>{{item.message}}
                                 </div>
-                                <div v-if="item.kind=='info'">
-                                    <v-icon color="blue">mdi-information-outline</v-icon>
-                                    {{item.message}}
+                                <div v-if="xitem.kind=='debug'">
+                                    <v-icon color="yellow">mdi-bug</v-icon>{{xitem.message}}
                                 </div>
-                                <div v-if="item.kind=='debug'">
-                                    <v-icon color="yellow">mdi-bug</v-icon>{{item.message}}
-                                </div>
-                                <div v-if="item.kind=='command'">
+                                <div v-if="xitem.kind=='command'">
                                     </template>
                                     <v-icon color="gray">mdi-label</v-icon>
-                                    <span>{{item.command_number}}</span>
-                                    <v-chip label outline v-for="cmd in item.qv">{{cmd}}
+                                    <span>{{xitem.command_number}}</span>
+                                    <v-chip label outline v-for="cmd in xitem.qv">{{cmd}}
+                                    </v-chip>
+                                </div>
+                            </div>
+                        </v-col>
+                        <v-col>
+                            <div v-for="(xitem, index) in metadata.child_log">
+                                <div v-if="xitem.kind=='info'">
+                                    <v-icon color="blue">mdi-information-outline</v-icon>
+                                    {{xitem.message}}
+                                </div>
+                                <div v-if="xitem.kind=='error'">
+                                    <v-icon color="red">mdi-alert-circle</v-icon>
+                                    {{xitem.message}}
+                                    <pre>{{xitem.traceback}}</pre>
+                                </div>
+                                <div v-if="xitem.kind=='warning'">
+                                    <v-icon color="orange">mdi-alert</v-icon>{{item.message}}
+                                </div>
+                                <div v-if="xitem.kind=='debug'">
+                                    <v-icon color="yellow">mdi-bug</v-icon>{{xitem.message}}
+                                </div>
+                                <div v-if="xitem.kind=='command'">
+                                    </template>
+                                    <v-icon color="gray">mdi-label</v-icon>
+                                    <span>{{xitem.command_number}}</span>
+                                    <v-chip label outline v-for="cmd in xitem.qv">{{cmd}}
                                     </v-chip>
                                 </div>
                             </div>
@@ -161,7 +200,7 @@
                 </v-container>
 
                 <v-container class="fill-height" fluid v-if="mode=='inspect'">
-                    <v-row>                    
+                    <v-row>
                         <v-card width="100%">
                             <v-toolbar color="secondary" dark>
                                 <v-toolbar-title>Execution</v-toolbar-title>
@@ -314,32 +353,32 @@
                         </v-flex>
                     </v-layout>
                 </v-container>
-            </v-content>
-            <v-container class="fill-height" v-if="mode=='commands'">
-                <v-card v-if="commands!=null">
-                    <v-card-title>
-                        List of commands
-                        <v-spacer></v-spacer>
-                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
-                            hide-details>
-                        </v-text-field>
-                    </v-card-title>
+                </v-content>
+                <v-container class="fill-height" v-if="mode=='commands'">
+                    <v-card v-if="commands!=null">
+                        <v-card-title>
+                            List of commands
+                            <v-spacer></v-spacer>
+                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
+                                hide-details>
+                            </v-text-field>
+                        </v-card-title>
 
-                    <v-data-table :headers="commands_headers" :items="commands_rows" :search="search"
-                        class="elevation-1">
-                        <template v-slot:item.name="{ item }">
-                            <a :href="'#ns-meta/help-'+item.name+'-'+item.ns">{{item.name}}</a>
-                        </template>
-                        <template v-slot:item.example_link="{ item }">
-                            <a v-if="item.example_link" :href="'#'+item.example_link">{{item.example_link}}</a>
-                        </template>
-                        <template v-slot:item.doc="{ item }">
-                            {{item.doc.split('\n')[0]}}
-                        </template>
-                    </v-data-table>
-                </v-card>
-            </v-container>
-            </v-content>
+                        <v-data-table :headers="commands_headers" :items="commands_rows" :search="search"
+                            class="elevation-1">
+                            <template v-slot:item.name="{ item }">
+                                <a :href="'#ns-meta/help-'+item.name+'-'+item.ns">{{item.name}}</a>
+                            </template>
+                            <template v-slot:item.example_link="{ item }">
+                                <a v-if="item.example_link" :href="'#'+item.example_link">{{item.example_link}}</a>
+                            </template>
+                            <template v-slot:item.doc="{ item }">
+                                {{item.doc.split('\n')[0]}}
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-container>
+            </v-main>
             <v-footer padless>
                 <v-chip :color="status_color">{{status}}</v-chip>&nbsp;&nbsp;<span>{{message}}</span>
                 <v-spacer></v-spacer>
@@ -349,7 +388,7 @@
         </v-app>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.3.19/dist/vuetify.min.js"></script>
     <script src="liquer.js"></script>
