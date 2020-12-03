@@ -292,6 +292,48 @@ class CacheAttributeCondition(CacheMixin):
         return f"CacheAttributeCondition({repr(self.cache)}, {repr(self.attribute)}, {repr(self.value)}, {self.equals})"
 
 
+class CacheProxy:
+    def __init__(self, cache):
+        self.cache = cache
+
+    def clean(self):
+        print("(CacheProxy) clean()")
+        self.cache.clean()
+
+    def get(self, key):
+        print(f"(CacheProxy) get({key})")
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        print(f"(CacheProxy) get_metadata({key})")
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        print(f"(CacheProxy) store()")
+        return self.cache.store(state)
+
+    def store_metadata(self, metadata):
+        print(f"(CacheProxy) store_metadata()")
+        return self.cache.store_metadata(metadata)
+
+    def remove(self, key):
+        print(f"(CacheProxy) remove({key})")
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        print(f"(CacheProxy) contains({key})")
+        return self.cache.contains(key)
+
+    def keys(self):
+        print(f"(CacheProxy) keys()")
+        return self.cache.keys()
+
+    def __str__(self):
+        return f"CacheProxy of {str(self.cache)}"
+
+    def __repr__(self):
+        return f"CacheProxy({repr(self.cache)})"
+
 class NoCache(CacheMixin):
     """Trivial cache object which does not cache any state"""
 

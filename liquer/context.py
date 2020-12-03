@@ -554,11 +554,15 @@ class Context(object):
             state.metadata["created"] = self.now()
             state.metadata["status"] = "ready"
             return state
+        elif r.is_filename():
+            state.metadata["filename"] = r.filename
+            state.metadata["extension"] = ".".join(r.filename.split(".")[1:])
 
         state = self.evaluate_action(state, r)
         state.query = query.encode()
         state.metadata["created"] = self.now()
         state.metadata["status"] = "ready"
+        
 
         if (
             state.metadata.get("caching", True)
@@ -588,6 +592,7 @@ class Context(object):
         Returns a state.
         """
 
+        print(f"*** Evaluate and save {query} started")
         state = self.evaluate(query)
         data = state.get()
         reg = self.state_types_registry()
@@ -595,17 +600,18 @@ class Context(object):
 
         path = target_file
         if path is None:
-            if state.extension is None:
+            if  state.metadata.get("extension") is None:
                 b, mime, typeid = encode_state_data(data)
                 path = t.default_filename()
             else:
-                b, mime, typeid = encode_state_data(data, extension=state.extension)
+                b, mime, typeid = encode_state_data(data, extension=state.metadata["extension"])
                 path = (
-                    t.default_filename() if state.filename is None else state.filename
+                    t.default_filename() if state.metadata.get("filename") is None else state.metadata["filename"]
                 )
             if target_directory is not None:
                 path = os.path.join(target_directory, path)
 
+        print(f"*** Evaluate and save {query} to {path}")
         with open(path, "wb") as f:
             f.write(b)
 

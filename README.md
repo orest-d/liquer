@@ -52,7 +52,7 @@ pip install liquer-framework
 - [x] proper encoding of file cache
 - [x] cache remove key 
 
-- [ ] progress reporting GUI
+- [x] progress reporting GUI
 - [ ] process monitoring GUI
 - [ ] parallel execution of multiple queries
 - [ ] remote liquer service as cache
