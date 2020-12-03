@@ -48,13 +48,14 @@ pip install liquer-framework
 - [x] implied volatile (query result dependent on a volatile query should be volatile)
 
 - [x] optional metadata storage in SQL - to support Hive
-- [ ] SQL cache working on Hive
 - [x] proper encoding of file cache
 - [x] cache remove key 
 
 - [x] progress reporting GUI
-- [ ] process monitoring GUI
-- [ ] parallel execution of multiple queries
+- [x] process monitoring GUI
+- [x] parallel execution of multiple queries
+
+- [ ] SQL cache working on Hive
 - [ ] remote liquer service as cache
 - [ ] debug transform query
 - [ ] dependency management
