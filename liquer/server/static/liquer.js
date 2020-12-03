@@ -161,14 +161,20 @@ window.vue = new Vue({
                 }.bind(this), function (reason) { this.error("Json error (submit query)", reason); }.bind(this));
             }.bind(this), function (reason) { this.error("API call error (submit query)", reason); }.bind(this));
         },
-        get_queries_status: function (query) {
-            console.log("Submit", query);
-            this.query = query;
+        get_queries_status: function () {
+            console.log("get_queries_status");
             this.$http.get(this.url_prefix + "ns-meta/queries_status/queries_status.json").then(function (response) {
                 response.json().then(function (data) {
                     this.queries_status = data;
+                    if (this.mode=="queries_status"){
+                        window.setTimeout(this.get_queries_status, 500);
+                    }
                 }.bind(this), function (reason) { this.error("Json error (get_queries_status)", reason); }.bind(this));
             }.bind(this), function (reason) { this.error("API call error (get_queries_status)", reason); }.bind(this));
+        },
+        query_status_mode:function(){
+            this.mode="queries_status";
+            this.get_queries_status();
         },
         load: function (query) {
             this.xlsx_link = "";

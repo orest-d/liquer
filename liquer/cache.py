@@ -293,40 +293,41 @@ class CacheAttributeCondition(CacheMixin):
 
 
 class CacheProxy:
-    def __init__(self, cache):
+    def __init__(self, cache, verbose=False):
         self.cache = cache
+        self.verbose=verbose
 
     def clean(self):
-        print("(CacheProxy) clean()")
+        if self.verbose: print("(CacheProxy) clean()")
         self.cache.clean()
 
     def get(self, key):
-        print(f"(CacheProxy) get({key})")
+        if self.verbose: print(f"(CacheProxy) get({key})")
         return self.cache.get(key)
 
     def get_metadata(self, key):
-        print(f"(CacheProxy) get_metadata({key})")
+        if self.verbose: print(f"(CacheProxy) get_metadata({key})")
         return self.cache.get_metadata(key)
 
     def store(self, state):
-        print(f"(CacheProxy) store()")
+        if self.verbose: print(f"(CacheProxy) store()")
         return self.cache.store(state)
 
     def store_metadata(self, metadata):
-        print(f"(CacheProxy) store_metadata()")
+        if self.verbose: print(f"(CacheProxy) store_metadata()")
         return self.cache.store_metadata(metadata)
 
     def remove(self, key):
-        print(f"(CacheProxy) remove({key})")
+        if self.verbose: print(f"(CacheProxy) remove({key})")
         return self.cache.remove(key)
 
     def contains(self, key):
-        print(f"(CacheProxy) contains({key})")
+        if self.verbose: print(f"(CacheProxy) contains({key})")
         return self.cache.contains(key)
 
     def keys(self):
-        print(f"(CacheProxy) keys()")
-        return self.cache.keys()
+        if self.verbose: print(f"(CacheProxy) keys()")
+        return list(self.cache.keys())
 
     def __str__(self):
         return f"CacheProxy of {str(self.cache)}"

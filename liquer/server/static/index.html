@@ -84,19 +84,39 @@
                     </template>
                     <v-list>
                         <v-list-item @click="mode='commands'" />
+                        <v-list-item-icon>
+                            <v-icon>mdi-clipboard-list</v-icon>
+                        </v-list-item-icon>
                         <v-list-item-title>Commands</v-list-item-title>
                         </v-list-item>
                         <v-list-item @click="mode='inspect'" />
+                        <v-list-item-icon>
+                            <v-icon>mdi-information</v-icon>
+                        </v-list-item-icon>
                         <v-list-item-title>Inspect</v-list-item-title>
                         </v-list-item>
-                        <v-list-item @click="goto(query_basis+'/gui')" />
-                        <v-list-item-title>Edit</v-list-item-title>
+                        <v-list-item @click="query_status_mode()" />
+                        <v-list-item-icon>
+                            <v-icon>mdi-monitor-dashboard</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Running queries</v-list-item-title>
                         </v-list-item>
-                        <v-list-item @click="clean_cache()" />
-                        <v-list-item-title>Clean cache</v-list-item-title>
+
+                        <v-list-item @click="goto(query_basis+'/gui')" />
+                        <v-list-item-icon>
+                            <v-icon>mdi-pencil</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Edit</v-list-item-title>
                         </v-list-item>
                         <v-list-item v-for="(item, i) in context_menu" :key="i" @click="goto_rel(item.link)" />
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                        <v-list-item @click="clean_cache()" />
+                        <v-list-item-icon>
+                            <v-icon color="red">mdi-delete</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Clean cache</v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
@@ -198,6 +218,37 @@
 
                 <v-container class="fill-height" fluid v-if="mode==''">
 
+                </v-container>
+
+                <v-container class="fill-height" fluid v-if="mode=='queries_status'">
+                    <v-row>
+                        <h1>Running queries</h1>
+                    </v-row>
+                    <v-row>
+                        <table>
+                            <tr v-for="item in queries_status">
+                                <td>{{item.query}}</td>
+                                <td><v-chip>{{item.status}}</v-chip></td>
+                                <td>{{item.updated}}</td>
+                                <td>{{item.message}}</td>
+                                <td style="min-width: 30%;">
+                                    <v-row>
+
+                                        <v-col v-for="p in item.progress">
+                                            <v-progress-linear  v-if="p.total_steps != null"
+                                            v-model="p.step*100/p.total_steps" color="primary" height="12">
+                                            <span style="font-size: 8pt;">{{ p.message }}</span>
+                                        </v-progress-linear>
+                                        <v-progress-circular v-if="p.total_steps == null" indeterminate color="primary">
+                                        </v-progress-circular>
+                                        <span v-if="p.total_steps == null">{{ p.message }}</span>
+                                        </v-col>
+                                </v-row>
+                                
+                                </td>
+                            </tr>
+                        </table>
+                    </v-row>
                 </v-container>
 
                 <v-container class="fill-height" fluid v-if="mode=='inspect'">

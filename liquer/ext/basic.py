@@ -119,17 +119,31 @@ def clean_cache():
 
 @first_command(volatile=True)
 def queries_status(include_ready=False):
-    cache = get_cache()
-    data=[]
-    for key in sorted(cache.keys()):
-        metadata = cache.get_metadata(key)
-        d=dict(
-            query=key,
-            status=metadata.get("status","unknown"),
-            updated=metadata.get("updated","?"),
-            message=metadata.get("message",""),
-            progress=metadata.get("progress_indicators",[])[:2]
-        )
-        if include_ready or d["status"]!="ready":
-            data.append(d)
-    return data
+    import traceback
+    try:
+        cache = get_cache()
+        data=[]
+        for key in sorted(cache.keys()):
+            metadata = cache.get_metadata(key)
+            if metadata is None:
+                continue
+            progress = metadata.get("progress_indicators",[]) + metadata.get("child_progress_indicators",[])
+            d=dict(
+                query=key,
+                status=metadata.get("status","unknown"),
+                updated=metadata.get("updated","?"),
+                message=metadata.get("message",""),
+                progress=progress[:3]
+            )
+            if include_ready or d["status"]!="ready":
+                data.append((key,d))
+        data = [x[1] for x in sorted(data)]
+        return data
+    except:
+        return [dict(
+                query="",
+                status="not available",
+                updated="",
+                message=traceback.format_exc(),
+                progress=[]
+            )]

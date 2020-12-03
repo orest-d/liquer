@@ -62,6 +62,7 @@ class Context(object):
         self.enable_store_metadata = True  # flag to controll storing of metadata
 
         self.last_report_time=None # internal time stamp of the last report
+        self._progress_indicator_identifier=1 # counter for creating unique progress identifiers
 
     def can_report(self):
         if self.last_report_time is None:
@@ -79,7 +80,7 @@ class Context(object):
             is_error=self.is_error,
             direct_subqueries=self.direct_subqueries[:],
             progress_indicators=self.progress_indicators[:],
-            child_progress_indicators=self.child_progress_indicators,
+            child_progress_indicators=self.child_progress_indicators[:],
             child_log=self.child_log,
             message=self.message,
             started=self.started,
@@ -106,13 +107,11 @@ class Context(object):
                 self.last_report_time = datetime.now()
 
     def new_progress_indicator(self):
-        i = 1
-        for x in self.progress_indicators:
-            i = max(int(x["id"]), i)
+        self._progress_indicator_identifier+=1
         self.progress_indicators.append(
-            dict(id=i + 1, step=0, total_steps=None, message="")
+            dict(id=self._progress_indicator_identifier, step=0, total_steps=None, message="")
         )
-        return i + 1
+        return self._progress_indicator_identifier
 
     def remove_progress_indicator(self, identifier):
         self.progress_indicators = [
@@ -137,16 +136,25 @@ class Context(object):
     def now(self):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    def progress(self, step=0, total_steps=None, message="", identifier=None):
+    def progress(self, step=0, total_steps=None, message="", identifier=None, autoremove=True):
         index = self.progress_indicator_index(identifier)
+            
         progress = dict(step=step, total_steps=total_steps, message=message)
         self.progress_indicators[index].update(progress)
+
+        removed=False
+        if autoremove and total_steps is not None and step>=total_steps:
+            self.remove_progress_indicator(index)
+            removed=True
 
         self.store_metadata()
 
         if self.parent_context is not None:
-            d = dict(origin=self.raw_query, **progress)
-            self.parent_context.log_child_progress(d)
+            if removed:
+                self.parent_context.remove_child_progress(self.raw_query)
+            else:
+                d = dict(origin=self.raw_query, **progress)
+                self.parent_context.log_child_progress(d)
 
     def progress_iter(self, iterator):
         try:
@@ -177,7 +185,6 @@ class Context(object):
             for x in self.child_progress_indicators
             if x.get("origin") != d.get("origin")
         ]
-        print(f"log_child_progress {d} in {self.raw_query}")
         self.child_progress_indicators.append(d)
         self.store_metadata()
         if self.parent_context is not None:
@@ -373,6 +380,7 @@ class Context(object):
             self.store_metadata(force=True)
 
             try:
+                
                 state = command(old_state, *parameters, context=self)
                 assert type(state.metadata) is dict
             except EvaluationException as ee:
@@ -495,6 +503,7 @@ class Context(object):
         self.status = "started"
         self.debug(f"EVALUATE {query}")
         if self.query is not None:
+            self.enable_store_metadata = True
             print(f"Subquery {query} called from {self.query.encode()}")
             state = self.child_context().evaluate(query)
             if not isinstance(query, str):
@@ -504,8 +513,9 @@ class Context(object):
                 print("Subquery failed")
                 for d in state.metadata.get("log",[]):
                     self.log_dict(d)
-            self.enable_store_metadata = True
+#            self.enable_store_metadata = True
             self.store_metadata(force=True)
+            self.enable_store_metadata = False
             return state
 
         self.raw_query, query = self.to_query(query)

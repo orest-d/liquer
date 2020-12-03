@@ -67,6 +67,13 @@ def serve(query):
     """Main service for evaluating queries"""
     return response(evaluate(query))
 
+@app.route("/submit/<path:query>")
+def detached_serve(query):
+    """Main service for evaluating queries"""
+    from liquer.pool import evaluate_in_background
+    evaluate_in_background(query)
+    return jsonify(dict(status="OK", message="Submitted", query=query))
+
 @app.route('/cache/get/<path:query>')
 def cache_get(query):
     """Get cached metadata"""

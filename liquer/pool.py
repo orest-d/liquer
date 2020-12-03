@@ -114,8 +114,11 @@ def evaluate_in_background(query):
     global _worker_config
     print(f"Evaluate {query} in background")
     if _worker_config is None:
-        raise Exception("Please configure the cache using set_local_cache_constructor or set_central_cache")
-    get_pool().apply_async(_evaluate_worker,[query, _worker_config], callback=print)
+        print("WARNING: Evaluated in main process")
+        print("         Please configure the cache using set_local_cache_constructor or set_central_cache")
+        return evaluate(query)
+    else:
+        return get_pool().apply_async(_evaluate_worker,[query, _worker_config], callback=print)
 
 def evaluate_and_save_in_background(query, target_directory=None, target_file=None):
     """Like evaluate_and_save, but returns immediately and runs in the background.
@@ -124,6 +127,8 @@ def evaluate_and_save_in_background(query, target_directory=None, target_file=No
     global _worker_config
     print(f"Evaluate and save {query} in background")
     if _worker_config is None:
-        raise Exception("Please configure the cache using set_local_cache_constructor or set_central_cache")
-    get_pool().apply_async(_evaluate_and_save_worker,[query, target_directory, target_file, _worker_config], callback=print)
+        print("WARNING: Evaluated in main process")
+        print("         Please configure the cache using set_local_cache_constructor or set_central_cache")
+        return evaluate_and_save(query, target_directory=target_directory, target_file=target_file)
+    return get_pool().apply_async(_evaluate_and_save_worker,[query, target_directory, target_file, _worker_config], callback=print)
 

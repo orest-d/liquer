@@ -18,7 +18,7 @@ def greet(greeting, who="world"):
     return f"{greeting}, {who}!"
 
 if __name__=="__main__":
-    set_central_cache(MemoryCache())
+    set_central_cache(MemoryCache()) # without configuring cache, the evaluation will run in the main process
 
 #    evaluate_and_save("hello/greet/hello_greet.txt")
 #    evaluate_and_save("hello/greet-everybody/hello_greet_everybody.txt")

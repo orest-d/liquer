@@ -16,7 +16,8 @@ import liquer.ext.lq_hxl
 import liquer.ext.lq_python
 import liquer.ext.lq_pygments
 
-import multiprocessing as mp
+
+from liquer.pool import set_central_cache
 
 app = Flask(__name__)
 logging.basicConfig()
@@ -36,7 +37,6 @@ def index():
     """Link to a LiQuer main service page"""
     return redirect("/liquer/static/index.html")
 
-set_cache(FileCache("cache"))
 
 set_var(
     "menu",
@@ -53,15 +53,6 @@ set_var(
     ],
 )
 
-_pool = None
-
-
-def pool():
-    global _pool
-    if _pool is None:
-        _pool = mp.Pool(8)
-    return _pool
-
 
 @first_command
 def start(count=5, context=None):
@@ -69,7 +60,7 @@ def start(count=5, context=None):
 
     for i in range(count):
         print(i)
-        context.progress(i, count, message=f"Step {i} out of {count}")
+        context.progress(i+1, count, message=f"Step {i+1} out of {count}")
         sleep(0.1)
     return f"Done {count}"
 
@@ -78,12 +69,12 @@ def start(count=5, context=None):
 def start2(count1=10, count2=10, context=None):
     from time import sleep
 
-    p1 = context.new_progress_indicator()
+    p1 = context.new_progress_indicator() # low level progress reporting - create progress report handle
     p3 = context.new_progress_indicator()
     for i in range(count1):
         context.progress(
             i, count1, message=f"Outer loop {i} out of {count1}", identifier=p1
-        )
+        ) # do the report with the andle
         p2 = context.new_progress_indicator()
         context.info(f"Step {i} started")
         for j in range(count2):
@@ -95,6 +86,9 @@ def start2(count1=10, count2=10, context=None):
             sleep(0.1)
         context.info(f"Step {i} finished")
         context.remove_progress_indicator(p2)
+    context.remove_progress_indicator(p1) #remove the handle after use
+    context.remove_progress_indicator(p3) #remove the handle after use
+
     return f"Done {count1}x{count2}"
 
 
@@ -107,22 +101,9 @@ def nested(x, count1=5, count2=5, context=None):
         text += str(context.evaluate(f"start-{count2+i}").get())+"\n"
     return text
 
-@app.route("/liquer/submit/<path:query>")
-def detached_serve(query):
-    """Main service for evaluating queries"""
-    pool().apply_async(detached_process_evaluate, args=[query])
-    return jsonify(dict(status="OK", message="Submitted", query=query))
-
-
-def detached_process_evaluate(query):
-    set_cache(FileCache("cache"))
-    evaluate(query)
-
-def main():
-    set_cache(FileCache("cache"))
-    webbrowser.open("http://localhost:5000")
-    app.run(debug=True, threaded=True)
 
 if __name__ == "__main__":
-    main()
-    #print(evaluate("start-50/nested").get())
+    set_central_cache(FileCache("cache"))
+#    set_cache(FileCache("cache"))           # the solution will still work with without the pool (evaluation in main process) 
+    webbrowser.open("http://localhost:5000")
+    app.run(debug=True, threaded=True)
