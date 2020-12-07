@@ -21,6 +21,7 @@ pip install liquer-framework
 2020-11-09 - v3.3 - SQL cache with base64 encoding, cache cleaning
 2020-11-11 - v3.4 - XOR file cache allows simple encoding of cached data
 2020-12-06 - v4.0 - big change: introduced context, parser, pool and progress monitoring
+2020-12-07 - v4.1 - fixing buf in file cache remove
 
 # TODO
 

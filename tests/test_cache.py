@@ -14,6 +14,8 @@ class TestCache:
         state = State().with_data(123)
         state.query = "abc"
         cache = NoCache()
+        cache.remove("abc") # Try to remove key from empty cache
+
         assert not cache.contains("abc")
         cache.store(state)
 
@@ -31,6 +33,7 @@ class TestCache:
         state = State().with_data(123)
         state.query = "abc"
         cache = MemoryCache()
+        cache.remove("abc") # Try to remove key from empty cache
         assert not cache.contains("abc")
         assert list(cache.keys()) == []
 
@@ -60,6 +63,7 @@ class TestCache:
         state = State().with_data(123)
         state.query = "abc"
         cache = SQLCache.from_sqlite()
+        cache.remove("abc") # Try to remove key from empty cache
         assert not cache.contains("abc")
         assert list(cache.keys()) == []
 
@@ -89,6 +93,7 @@ class TestCache:
         state = State().with_data(123)
         state.query = "abc"
         cache = SQLCache.from_sqlite()
+        cache.remove("abc") # Try to remove key from empty cache
         cache.store_metadata_enabled=False
         assert not cache.contains("abc")
         assert list(cache.keys()) == []
@@ -106,6 +111,7 @@ class TestCache:
         state = State().with_data(123)
         state.query = "abc"
         cache = SQLStringCache.from_sqlite()
+        cache.remove("abc") # Try to remove key from empty cache
         assert not cache.contains("abc")
         cache.store(state)
 
@@ -124,6 +130,7 @@ class TestCache:
         state.query = "abc"
         with tempfile.TemporaryDirectory() as cachepath:
             cache = FileCache(cachepath)
+            cache.remove("abc") # Try to remove key from empty cache
             assert not cache.contains("abc")
             assert list(cache.keys()) == []
             cache.store(state)
@@ -153,6 +160,7 @@ class TestCache:
         state.query = "abc"
         with tempfile.TemporaryDirectory() as cachepath:
             cache = XORFileCache(cachepath, b"**")
+            cache.remove("abc") # Try to remove key from empty cache
             assert not cache.contains("abc")
             cache.store(state)
 
@@ -173,6 +181,7 @@ class TestCache:
         state.query = "abc"
         with tempfile.TemporaryDirectory() as cachepath:
             cache = FernetFileCache(cachepath, fernet_key)
+            cache.remove("abc") # Try to remove key from empty cache
             assert not cache.contains("abc")
             cache.store(state)
 

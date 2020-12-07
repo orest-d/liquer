@@ -504,6 +504,8 @@ class FileCache(CacheMixin):
 
     def remove(self, key):
         metadata = self.get_metadata(key)
+        if metadata is None:
+            return True
         if "type_identifier" in  metadata:
             t = state_types_registry().get(metadata["type_identifier"])
             path = self.to_path(key, prefix="data_", extension=t.default_extension())
