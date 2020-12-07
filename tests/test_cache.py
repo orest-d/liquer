@@ -195,6 +195,29 @@ class TestCache:
             assert not cache.contains("abc")
             assert cache.get("abc") == None
 
+    def test_fernet_file_cache_bad_key(self):
+        from cryptography.fernet import Fernet
+        fernet_key = Fernet.generate_key()
+        new_fernet_key = Fernet.generate_key()
+        state = State().with_data(123)
+        state.query = "abc"
+        with tempfile.TemporaryDirectory() as cachepath:
+            cache = FernetFileCache(cachepath, fernet_key)
+            cache.remove("abc") # Try to remove key from empty cache
+            assert not cache.contains("abc")
+            cache.store(state)
+
+            assert cache.contains("abc")
+            assert cache.get("abc").get() == 123
+
+            cache_with_new_key = FernetFileCache(cachepath, new_fernet_key)
+            assert not cache_with_new_key.contains("abc")
+            assert cache_with_new_key.get("abc") is None
+            cache_with_new_key.store(state)
+            assert cache_with_new_key.contains("abc")
+            assert cache_with_new_key.get("abc").get() == 123
+
+
     def test_cached_part(self):
         cache = MemoryCache()
         state, remainder = cached_part("abc", cache)

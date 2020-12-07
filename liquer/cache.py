@@ -469,6 +469,18 @@ class FileCache(CacheMixin):
     def decode(self, s):
         return s
 
+    def encode_metadata(self, b):
+        return self.encode(b.encode("utf-8"))
+
+    def decode_metadata(self, s):
+        s = self.decode(s)
+        if isinstance(s, str):
+            return s
+        elif isinstance(s, bytes):
+            return s.decode("utf-8")
+        else:
+            raise Exception(f"Unsupported type: {type(s)}")
+
     def get(self, key):
         metadata = self.get_metadata(key)
         if metadata is None:
@@ -491,16 +503,18 @@ class FileCache(CacheMixin):
                 logging.exception(f"Cache failed to recover {key}")
                 return None
 
-    def get_metadata(self, key):
-        state_path = self.to_path(key)
+    def _load_metadata(self, state_path):
         if os.path.exists(state_path):
             try:
-                return json.loads(open(state_path).read())
+                return json.loads(self.decode_metadata(open(state_path,"rb").read()))
             except:
                 traceback.print_exc()
                 return None
         else:
             return None
+
+    def get_metadata(self, key):
+        return self._load_metadata(self.to_path(key))
 
     def remove(self, key):
         metadata = self.get_metadata(key)
@@ -522,7 +536,11 @@ class FileCache(CacheMixin):
         state_path = self.to_path(key)
         if os.path.exists(state_path):
             state = State()
-            state = state.from_dict(json.loads(open(state_path).read()))
+            metadata = self._load_metadata(state_path)
+            if metadata is None:
+                return False
+            else:
+                return metadata.get("query")==key
         else:
             return False
         return True
@@ -538,8 +556,9 @@ class FileCache(CacheMixin):
         import glob
 
         for f in glob.glob(os.path.join(self.path, "state_*.json")):
-            metadata = json.loads(open(f).read())
-            yield metadata["query"]
+            metadata = self._load_metadata(f)
+            if metadata is not None:
+                yield metadata["query"]
 
     def store(self, state):
         if state.is_error:
@@ -563,8 +582,8 @@ class FileCache(CacheMixin):
 
     def store_metadata(self, metadata):
         try:
-            with open(self.to_path(metadata["query"]), "w") as f:
-                f.write(json.dumps(metadata))
+            with open(self.to_path(metadata["query"]), "wb") as f:
+                f.write(self.encode_metadata(json.dumps(metadata)))
         except:
             logging.exception(f"Cache writing error: {metadata['query']}")
             return False
