@@ -22,6 +22,7 @@ pip install liquer-framework
 2020-11-11 - v3.4 - XOR file cache allows simple encoding of cached data
 2020-12-06 - v4.0 - big change: introduced context, parser, pool and progress monitoring
 2020-12-07 - v4.1 - fixing buf in file cache remove
+2020-12-07 - v4.2 - Fernet file cache support for metadata encoding and change of keys
 
 # TODO
 
