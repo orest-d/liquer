@@ -590,7 +590,7 @@ def _expand_entity_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
     return LinkActionParameter(toks[0], position=position)
 
-expand_entity = (Literal("~X~").suppress() + parse_query + end_entity.suppress()).setParseAction(_expand_entity_parse_action).setName("space_entity")
+expand_entity = (Literal("~X~").suppress() + parse_query + end_entity.suppress()).setParseAction(_expand_entity_parse_action).setName("expand_entity")
 
 entities = (
     tilde_entity

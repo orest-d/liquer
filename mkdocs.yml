@@ -1,5 +1,7 @@
 site_name: LiQuer Docs
 nav:
 - Home : 'index.md'
-- User Guide : 'guide.md'
+- "User Guide":
+  - Query syntax: 'query.md'
+  - General guide : 'guide.md'
 - Examples : 'examples.md'

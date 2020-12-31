@@ -58,12 +58,28 @@ pip install liquer-framework
 - [x] process monitoring GUI
 - [x] parallel execution of multiple queries
 
+- [ ] state variables in context
+- [ ] html preview
+- [ ] improve scheduling - prevent same queries to be scheduled
+- [ ] gui mode in metadata (batch scheduling command -> view progress)
+- [ ] state enum in context
+- [ ] color coding of state in GUI query monitoring
+
+- [ ] report template
+- [ ] wasm library in frontend
+- [ ] configurable frontend
+- [ ] liquer frontent project
+
 - [ ] SQL cache working on Hive
 - [ ] remote liquer service as cache
 - [ ] debug transform query
 - [ ] dependency management
 - [ ] resources
 - [ ] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
+
+- [ ] better chart library
+- [ ] better pandas functions (eq, lt, gt, leq, geq, isin, notin, between, groupby, random)
+- [ ] conventions and ML library 
 
 - [ ] attribute to prevent cloning
 - [ ] keras history support
