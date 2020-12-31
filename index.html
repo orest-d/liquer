@@ -49,8 +49,18 @@
                             <li class="active">
                                 <a href=".">Home</a>
                             </li>
-                            <li >
-                                <a href="guide/">User Guide</a>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="query/">Query syntax</a>
+</li>
+                                    
+<li >
+    <a href="guide/">General guide</a>
+</li>
+                                </ul>
                             </li>
                             <li >
                                 <a href="examples/">Examples</a>
@@ -69,7 +79,7 @@
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="guide/">
+                                <a rel="prev" href="query/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -82,34 +92,48 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#welcome-to-liquer">Welcome to LiQuer</a></li>
+            <li><a href="#three-use-cases-two-more">Three use-cases + two more</a></li>
             <li><a href="#hello-world">Hello, world!</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="welcome-to-liquer">Welcome to LiQuer</h1>
-<p>LiQuer is a leightweighted framework that turns ordinary python functions into
-a flexible web service with just a couple of lines of code.
-In fact just one line. A very short line... </p>
-<p>OK, this not exactly true: yes, to make a function available as a web service,
-you just need to use a simple decorator (<code>@command</code> or perhaps <code>@first_command</code>),
-but there have to be as well some import statements and a little code (which you can copy and paste from examples)
-to configure and start flask.</p>
-<p>LiQuer is a flexible tool targeted at data scientists, helping to create web applications
-working with manupulating tables (or other data), creating charts, images, reports or interactive applications.
-The core of Liquer is a small query language, which represents 
-a sequence of transformations (or "commands") as a string safe to use as a part of URL.</p>
-<p>For example: if you would like to read a csv file, filter it,
-expose it a xlsx or make a chart out of it, cache it and make all that awailable as a web service - LiQuer does all this out of the box.</p>
-<p>And when it is not supported out of the box ... that's where LiQuer really shines!
-LiQuer is designed to make web-services very easy - even when you are not an expert on web application development.</p>
-<p>LiQuer tries to find a sweet among these values:
-- simple things simple, complex things possible (convention over configuration)
-- modularity and extensibility (it should be possible to override or change anything - within reason)
-- technology neutral (limit necessary dependencies, decide what packages you want to use)
-- feature completeness (Most important features should be supported out of the box - but they need to be enabled to keep neutrality.)
-- safety should be achievable</p>
-<p>LiQuer sorce is <a href="https://github.com/orest-d/liquer">here</a></p>
+<p>LiQuer is a leightweighted open-source framework (see <a href="https://github.com/orest-d/liquer">repo</a> )
+covering a large number of usecases
+associated with machine learning, data science and other computational experimentation tasks
+requiring flexible analysis.</p>
+<p>LiQuer is a versatile tool - it helps to create interactive dashboards and web applications,
+working with tables, creating charts, images, reports - but as well non-interactive batch processes.
+The core of Liquer is a minimalistic query language, that represents 
+a sequence of actions as a compact (but still human readable) string, or as URL "link".
+(Hence the name Link Query.) The second pillar of LiQuer is metadata: LiQuer always keeps track of metadata associated with the data.
+LiQuer queries can
+* execute interactively in a browser,
+* execute non-interactively in a batch,
+* referenced in reports,
+* efficiently cache the final and intermediate results,
+* improve the transparency, traceability and discoverability by the use of metadata - and more.</p>
+<p>Design of LiQuer is guided by the following principles:</p>
+<ul>
+<li><strong>Simplicity and flexibility</strong> - Make simple things simple, complex things possible.</li>
+<li><strong>Batteries included</strong> - Provide useful features and integration of 3rd party libraries out of the box in a modular way.</li>
+<li><strong>Don't stand in the way - collaborate!</strong> - Do not force one way of doing things. Be technology neutral and integrate well 
+with other libraries and frameworks. LiQuer-enabled code should run as well without the framework and thus using LiQuer should be low risk in terms of dependencies. Make all parts modular, replaceable and customizable.</li>
+</ul>
+<p><strong>LiQuer is extremely easy to use</strong> - just decorate ordinary python functions with a simple decorator.
+LiQuer provides integration of essential data-science tools like Pandas, Scikit-Learn and Keras without having a hard dependency on these frameworks - you need them only when you are going to use them.
+LiQuer's main web-framework is Flask (because of its simplicity), but other frameworks can easily be supported (there is a basic Tornado support available, others will follow as needed).</p>
+<p>LiQuer enabled code can be used (in most cases) exactly the same way as if LiQuer would not be there - so no LiQuer knowledge is needed to use your code.
+That makes it easy for newcommers to use the existing code, but as well start quickly contributing to a LiQuer-enabled code base.</p>
+<h2 id="three-use-cases-two-more">Three use-cases + two more</h2>
+<p>LiQuer was born from three quite different use-cases:
+* When preparing the presentation on a larger demographics dataset, we have had many questions in mind: What if we show the results ony for the students? How is the geographic distribution? How is the geographics distribution of students? Can we show it graphically? Can we see the raw data in a spreadsheet? The questions started to multiply. There were too many questions to prepare a slide for each possibility and the Jupyter notebooks were too technical for the end-users. We needed to have some interface flexible enough to express all these demands in a simple form...
+* We have been contributing to a large effort of consolidating data scraped from multiple sources. This has been usually performed by batch jobs, sometimes by specialized proxies. Proxy approach seems very promissing - data is fresh, on demand and there is no trouble with batch job monitoring - but proxies are not simple to construct. If only there would be a way how to make a flexible universal proxy, that would support tasks like filtering, basic processing and some visualization...
+* When preparing an implementation of an important complex machine learning model in production, many questions about model reliability, expected performance, monitoring and ethical concerns have been raised. We have been producing report after report, presentation after presentation and we needed to document all the aspects of the model development in a concise,  transparent and reproducible way. A single data scientist can perform several analytic tasks a day - and a small team can easily create several hundreds of artefacts (reports, charts, data sets, numerical experiments) per month. It is very easy to loose track of what exactly has been done and how. It is difficult to refer to all those calculations and document them in such a way that they can be reproduced: it is not practical to have several hundred scripts and/or document several hundred ways of how the scripts can be configured. If there only would be a way to represent all those calculations in a concise way - and possibly refer to them via URLs...</p>
+<p>After LiQuer was created, there appered more and more ways how to use it:
+* Data scientists often store intermediate results to accelerate the development. LiQuer provides two natural ingrediences for a cache: a) each step of the pipeline has a natural key and b) each result has a defined way how to deal with serialization (which format to use or whether the data is serializable at all). Metadata can be used to control the caching mechanism - e.g. prevent caching of sensitive data to support GDPR compliance.
+* Metadata allow discoverability and traceability of all the artefacts - all data sets, filters and reports can be equipped with tags and searchable from an user interface. This can be a big help for knowledge sharing. Data can be (in somo cases automatically) equipped with supplementary informations like required access rights, persons to contact, pointers to source code or SQL queries.</p>
 <h2 id="hello-world">Hello, world!</h2>
 <p>Let's start with a Hello, world! example:</p>
 <pre><code class="python">from liquer import *
@@ -129,21 +153,25 @@ print (evaluate(&quot;hello/greet-everybody&quot;).get())
 <p>What is happening here? There are two functions: <code>hello</code> and <code>greet</code>.
 Both of them are turned into "commands" with the decorators (<code>@first_command</code> and <code>@command</code>).
 This means, that they are "published" and can be called via a web interface.
-To make the example simple, we just call them by calling <code>evaluate</code>.
+In this example, we just call them via the <code>evaluate</code> function.
 Evaluate accepts a LiQuer query, which consists out of a chain of slash-separated commands;
-output of each command becomes an input of a next command.
-Hence <code>@first_command</code>: a command first in the chain that does not need any input from
-a previous command.</p>
-<p>For example <code>hello/greet</code> calls function hello() and then passes the return value as a
+output of each command becomes an input of a next command.</p>
+<p>What is at the beginning of the chain? As you might have guessed, it is <em>None</em>.
+However, to avoid passing meaningless arguments - and to highlight that some commands are meant to be "the first command" in the pipeline, there is the <code>@first_command</code> decorator. The only difference between the <code>@first_command</code> and <code>@command</code>
+if that the <code>@first_command</code> does not get the first argument from the previous step. (If such a command appears in the middle of a query, the query before the first_command is effectively ignored.)</p>
+<p>The complete query <code>hello/greet</code> calls function hello() and then passes the return value as a
 first argument of greet - i.e. <code>hello/greet</code> is equivalent to <code>greet(hello())</code>.</p>
 <p>Commands can as well pass arguments to the functions, which are dash-separated,
 i.e. <code>hello/greet-everybody</code> query is equivalent to python expression <code>greet(hello(), "everybody")</code>.
 This way multiple function calls can be combined in a single query, which may combine
 data fetching, filters, various analysis/calculations with parameters and visualizations.</p>
 <p>Of course, the arguments must be represented as strings in the query. LiQuer takes care of
-proper escaping and type conversion.
-The result of the query returned by <code>evaluate</code> is wrapped in a <code>State</code> object.
-<code>State</code> object contains various metadata useful for debugging and tracking the data source - e.g. the query itself.</p></div>
+proper escaping and type conversion.</p>
+<p>LiQuer always keeps track of the metadata associated with the data.
+Metadata contain various supplementary data useful e.g. for debugging and tracking the data source - e.g. the query itself.
+Metadata can be enhanced by the user in several ways.</p>
+<p>The combination of data and metadata is the <code>State</code> object. The <code>State</code> object is as well returned by <code>evaluate</code>.
+The main payload (the "data") is extracted from <code>State</code> using the <code>get()</code> method.</p></div>
         </div>
 
         <footer class="col-md-12">
@@ -226,5 +254,5 @@ The result of the query returned by <code>evaluate</code> is wrapped in a <code>
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2019-06-20 20:57:35
+Build Date UTC : 2020-12-31 12:02:09
 -->
