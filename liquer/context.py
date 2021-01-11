@@ -18,7 +18,7 @@ from liquer.state_types import encode_state_data, state_types_registry
 import os.path
 from datetime import datetime
 import json
-
+from enum import Enum
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
     try:
@@ -33,13 +33,23 @@ def find_queries_in_template(template: str, prefix: str, sufix: str):
         yield template, None
 
 
+class Status(Enum):
+    NONE = "none"
+    EVALUATING_PARENT = "evaluating parent"
+    EVALUATION = "evaluation"
+    EVALUATING_DEPENDENCIES = "evaluating dependencies"
+    FINISHED = "finished"
+    READY = "ready"
+    ERROR = "error"
+    OBSOLETE = "obsolete"
+
 class Context(object):
     def __init__(self, parent_context=None, debug=False):
         self.parent_context = parent_context  # parent context - when in child context
 
         self.raw_query = None  # String with the evaluated query
         self.query = None  # Query object of the evaluated query
-        self.status = "none"  # Status: ready, error...
+        self.status = Status.NONE  # Status: ready, error...
         self.is_error = False  # True is evaluation failed
         self.started = ""  # Evaluation start time
         self.created = ""  # Created time (evaluation finished)
@@ -72,7 +82,7 @@ class Context(object):
 
     def metadata(self):
         return dict(
-            status=self.status,
+            status=self.status.value,
             query=self.raw_query,
             parent_query=self.parent_query,
             argument_queries=self.argument_queries,
@@ -227,7 +237,7 @@ class Context(object):
     def error(self, message, position=None, query=None):
         """Log an error message"""
         self.is_error = True
-        self.status = "error"
+        self.status = Status.ERROR
         if position is None:
             print("ERROR:    ", message)
         else:
@@ -249,7 +259,7 @@ class Context(object):
     def exception(self, message, traceback, position=None, query=None):
         """Log an exception"""
         self.is_error = True
-        self.status = "error"
+        self.status = Status.ERROR
         if position is None:
             print("EXCEPTION:", message)
         else:
@@ -303,7 +313,7 @@ class Context(object):
 
     def evaluate_action(self, state: State, action, cache=None):
         self.debug(f"EVALUATE ACTION '{action}' on '{state.query}'")
-        self.status = "action"
+        self.status = Status.EVALUATION
         self.store_metadata(force=True)
         cache = cache or self.cache()
         cr = self.command_registry()
@@ -327,7 +337,7 @@ class Context(object):
             self.error(f"Unknown action: {action.name} at {action.position}")
         else:
             parameters = []
-            self.status = "evaluate arguments"
+            self.status = Status.EVALUATING_DEPENDENCIES
             self.store_metadata(force=True)
             for p in action.parameters:
                 if isinstance(p, StringActionParameter):
@@ -369,14 +379,14 @@ class Context(object):
                         pp = ExpandedActionParameter(value.get(), p.link, p.position)
                         parameters.append(pp)
                 else:
-                    self.status = "error"
+                    self.status = Status.ERROR
                     self.store_metadata(force=True)
                     raise EvaluationException(
                         f"Unknown parameter type {type(p)} in {action.name}",
                         position=action.position,
                         query=self.raw_query,
                     )
-            self.status = "evaluate action"
+            self.status = Status.EVALUATION
             self.store_metadata(force=True)
 
             try:
@@ -447,14 +457,15 @@ class Context(object):
 
         metadata["caching"]=metadata.get("caching",True) and state.metadata.get("caching",True)
         is_error=state.is_error
-        self.status = "action done"
 
         if is_error:
+            self.status = Status.ERROR
             self.info(f"Action {action.encode()} at {action.position} failed")
             state.metadata.update(metadata)
             state.status="error"
             state.is_error=True
         else:
+            self.status = Status.FINISHED
             self.info(f"Action {action.encode()} at {action.position} completed")
             state.metadata.update(metadata)
         state.set_volatile(is_volatile or state.is_volatile())
@@ -500,7 +511,7 @@ class Context(object):
     def evaluate(self, query, cache=None, description=None):
         """Evaluate query, returns a State, cache the output in supplied cache"""
         self.enable_store_metadata = False  # Prevents overwriting cache with metadata
-        self.status = "started"
+        self.status = Status.EVALUATION
         self.debug(f"EVALUATE {query}")
         if self.query is not None:
             self.enable_store_metadata = True
@@ -545,12 +556,12 @@ class Context(object):
             self.debug(f"INITIAL STATE")
         else:
             self.parent_query = p.encode()
-            self.status = "evaluate parent"
+            self.status = Status.EVALUATING_PARENT
             self.store_metadata(force=True)
             state = self.child_context().evaluate(p, cache=cache)
 
         if state.is_error:
-            self.status = "error"
+            self.status = Status.ERROR
             self.store_metadata()
             state = state.next_state()
             state.query = query.encode()
@@ -589,7 +600,7 @@ class Context(object):
             else:
                 print("REMOVE CACHE", state.query)
                 if not cache.remove(state.query):
-                    self.status = "obsolete"
+                    self.status = Status.OBSOLETE
                     self.store_metadata()
 
         return state

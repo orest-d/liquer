@@ -49,7 +49,7 @@ class DataframeStateType(StateType):
             return output.getvalue().encode("utf-8"), mimetype
         elif extension in ("pkl", "pickle"):
             output = ResilientBytesIO()
-            data.to_pickle(output)
+            data.to_pickle(output, compression=None)
             b=output.getvalue()
             output.really_close()
             return b, mimetype
@@ -81,7 +81,7 @@ class DataframeStateType(StateType):
         elif extension == "json":
             return pd.read_json(f)
         elif extension in ("pickle", "pkl"):
-            return pd.read_pickle(f)
+            return pd.read_pickle(f, compression=None)
         elif extension == "xlsx":
             return pd.read_excel(f)
         elif extension == "msgpack":

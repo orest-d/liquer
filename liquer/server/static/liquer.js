@@ -161,6 +161,10 @@ window.vue = new Vue({
                 }.bind(this), function (reason) { this.error("Json error (submit query)", reason); }.bind(this));
             }.bind(this), function (reason) { this.error("API call error (submit query)", reason); }.bind(this));
         },
+        inspect_query: function (query){
+            this.mode="inspect";
+            this.submit_query(query);
+        },
         get_queries_status: function () {
             console.log("get_queries_status");
             this.$http.get(this.url_prefix + "ns-meta/queries_status/queries_status.json").then(function (response) {
@@ -301,9 +305,42 @@ window.vue = new Vue({
             catch (error) {
                 return { value: "?", label: "?", type: "?" };
             }
+        },
+        data_status_color: function (status) {
+            if (status == "none") {
+                return "gray";
+            }
+            if (status == "obsolete") {
+                return "gray";
+            }
+            if (status == "finished") {
+                return "gray";
+            }
+            if (status == "ready") {
+                return "blue";
+            }
+            if (status == "evaluating parent") {
+                return "yellow";
+            }
+            if (status == "evaluating dependencies") {
+                return "orange";
+            }
+            if (status == "evaluation") {
+                return "green";
+            }
+            if (status == "error") {
+                return "red";
+            }
+            return "gray";
         }
     },
     computed: {
+        waiting_mode: function(){
+            return (this.presentation_mode && (this.metadata.status!='ready'));
+        },
+        presentation_mode: function(){
+            return ((this.mode == "iframe") || (this.mode=='dataframe') || (this.mode=='image'));
+        },
         status_color: function () {
             if (this.status == "OK") {
                 return "green";
