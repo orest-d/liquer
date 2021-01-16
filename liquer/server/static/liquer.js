@@ -165,6 +165,11 @@ window.vue = new Vue({
             this.mode="inspect";
             this.submit_query(query);
         },
+        view_query: function (query){
+            this.mode="iframe";
+            this.query = query;
+            this.refresh_metadata();
+        },
         get_queries_status: function () {
             console.log("get_queries_status");
             this.$http.get(this.url_prefix + "ns-meta/queries_status/queries_status.json").then(function (response) {

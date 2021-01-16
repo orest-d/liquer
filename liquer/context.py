@@ -18,7 +18,8 @@ from liquer.state_types import encode_state_data, state_types_registry
 import os.path
 from datetime import datetime
 import json
-from enum import Enum
+from liquer.constants import Status
+import liquer.util as util
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
     try:
@@ -32,16 +33,6 @@ def find_queries_in_template(template: str, prefix: str, sufix: str):
     except ValueError:
         yield template, None
 
-
-class Status(Enum):
-    NONE = "none"
-    EVALUATING_PARENT = "evaluating parent"
-    EVALUATION = "evaluation"
-    EVALUATING_DEPENDENCIES = "evaluating dependencies"
-    FINISHED = "finished"
-    READY = "ready"
-    ERROR = "error"
-    OBSOLETE = "obsolete"
 
 class Context(object):
     def __init__(self, parent_context=None, debug=False):
@@ -144,7 +135,7 @@ class Context(object):
         return None
 
     def now(self):
-        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        return util.now()
 
     def progress(self, step=0, total_steps=None, message="", identifier=None, autoremove=True):
         index = self.progress_indicator_index(identifier)
@@ -166,14 +157,18 @@ class Context(object):
                 d = dict(origin=self.raw_query, **progress)
                 self.parent_context.log_child_progress(d)
 
-    def progress_iter(self, iterator):
+    def progress_iter(self, iterator, show_value=False):
         try:
             total_steps = len(iterator)
         except:
             total_steps = None
         identifier = self.new_progress_indicator()
         for i,x in enumerate(iterator):
-            self.progress(i, total_steps=total_steps, message=f"{i+1}" if total_steps is None else f"{i+1}/{total_steps}", identifier=identifier)
+            if total_steps is None:
+                message = f"{x} ({i+1})" if show_value else f"{i+1}"
+            else:
+                message = f"{x} ({i+1}/{total_steps})" if show_value else f"{i+1}/{total_steps}"
+            self.progress(i, total_steps=total_steps, message=message, identifier=identifier)
             yield x
         self.remove_progress_indicator(identifier)
         

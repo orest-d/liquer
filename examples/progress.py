@@ -15,6 +15,7 @@ import liquer.ext.lq_pandas
 import liquer.ext.lq_hxl
 import liquer.ext.lq_python
 import liquer.ext.lq_pygments
+from time import sleep
 
 
 from liquer.pool import set_central_cache
@@ -48,6 +49,8 @@ set_var(
                 dict(title="Start long", link="start-200"),
                 dict(title="Start 2", link="start2"),
                 dict(title="Nested", link="start-50/nested"),
+                dict(title="Long nested", link="start-50/nested/nested/nested-10-10/nested-20-20/nested"),
+                dict(title="Recursive", link="recursive-5"),
             ],
         )
     ],
@@ -56,8 +59,6 @@ set_var(
 
 @first_command
 def start(count=5, context=None):
-    from time import sleep
-
     for i in range(count):
         print(i)
         context.progress(i+1, count, message=f"Step {i+1} out of {count}")
@@ -99,6 +100,20 @@ def nested(x, count1=5, count2=5, context=None):
     for i in context.progress_iter(range(count1)):
         context.info(f"Nested command iteration {i}")
         text += str(context.evaluate(f"start-{count2+i}").get())+"\n"
+    return text
+
+@first_command
+def recursive(count=5, context=None):
+    context.info(f"Recursive command {count}")
+    if count>0:
+        text=""
+        x = str(context.evaluate(f"recursive-{count-1}").get())+"\n"
+        for i in context.progress_iter(range(count), True):
+            text += x
+            sleep(0.1)
+        text+="\n"
+    else:
+        return "*"
     return text
 
 

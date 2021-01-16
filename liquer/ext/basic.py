@@ -5,6 +5,8 @@ from liquer.commands import command, first_command
 from liquer.parser import encode, decode
 from liquer.state_types import encode_state_data
 from liquer.cache import get_cache
+from liquer.constants import Status
+
 
 @command
 def let(state, name, value):
@@ -118,7 +120,7 @@ def clean_cache():
     return "Cache cleaned"
 
 @first_command(volatile=True)
-def queries_status(include_ready=False):
+def queries_status(include_ready=False, reduce=True):
     import traceback
     try:
         cache = get_cache()
@@ -135,9 +137,22 @@ def queries_status(include_ready=False):
                 message=metadata.get("message",""),
                 progress=progress[:3]
             )
-            if include_ready or d["status"]!="ready":
+            if include_ready or d["status"]!=Status.READY.value:
                 data.append((key,d))
         data = [x[1] for x in sorted(data)]
+        if reduce and len(data):
+            reduced_data = [data[0]]
+            for d, next_d in zip(data[1:],data[2:]):
+                previous_d = reduced_data[-1]
+                if not (
+                    previous_d["status"] == Status.EVALUATING_PARENT.value
+                    and d["status"] == Status.EVALUATING_PARENT.value
+                    and d["query"].startswith(previous_d["query"])
+                    and next_d["query"].startswith(d["query"])
+                ):
+                    reduced_data.append(d)
+            reduced_data.append(data[-1])
+            data = reduced_data            
         return data
     except:
         return [dict(

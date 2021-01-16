@@ -62,8 +62,8 @@ pip install liquer-framework
 - [ ] html preview
 - [ ] improve scheduling - prevent same queries to be scheduled
 - [ ] gui mode in metadata (batch scheduling command -> view progress)
-- [ ] state enum in context
-- [ ] color coding of state in GUI query monitoring
+- [x] state enum in context
+- [x] color coding of state in GUI query monitoring
 
 - [ ] report template
 - [ ] wasm library in frontend

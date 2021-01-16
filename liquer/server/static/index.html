@@ -237,12 +237,13 @@
                                                 <v-chip :color="data_status_color(item.status)">{{item.status}}</v-chip>
                                             </v-col>
                                             <v-col>
-                                                <v-btn @click="inspect_query(item.query)">Inspect</v-btn>
-                                                <v-btn @click="submit_query(item.query)">Submit</v-btn>
-                                                {{item.updated}}
+                                                <v-btn @click="inspect_query(item.query)" fab small><v-icon>mdi-information</v-icon></v-btn>
+                                                <v-btn @click="view_query(item.query)" fab small><v-icon>mdi-monitor-dashboard</v-icon></v-btn>
+                                                <v-chip>{{item.updated}}</v-chip>
                                             </v-col>
                                             <v-col>{{item.message}}</v-col>
-                                            <v-col v-for="p in item.progress">
+                                            <v-col>
+                                                <template v-for="p in item.progress">
                                                 <v-progress-linear v-if="p.total_steps != null"
                                                     v-model="p.step*100/p.total_steps" color="primary" height="12">
                                                     <span style="font-size: 8pt;">{{ p.message }}</span>
@@ -251,6 +252,7 @@
                                                     color="primary">
                                                 </v-progress-circular>
                                                 <span v-if="p.total_steps == null">{{ p.message }}</span>
+                                                </template>
                                             </v-col>
                                         </v-row>
                                     </template>
