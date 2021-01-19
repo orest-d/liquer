@@ -162,6 +162,11 @@
                     </v-row>
                     <v-row>
                         <v-col>
+                            <span v-html="metadata.html_preview"></span>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
                             <div v-for="(xitem, index) in metadata_log_slice">
                                 <div v-if="xitem.kind=='info'">
                                     <v-icon color="blue">mdi-information-outline</v-icon>

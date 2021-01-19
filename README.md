@@ -24,6 +24,7 @@ pip install liquer-framework
 2020-12-07 - v4.1 - fixing buf in file cache remove
 2020-12-07 - v4.2 - Fernet file cache support for metadata encoding and change of keys
 2021-01-16 - v4.3 - Improvements of the query monitoring UI
+2021-01-19 - v4.4 - state variables in context, html_preview
 
 # TODO
 
@@ -60,7 +61,7 @@ pip install liquer-framework
 - [x] parallel execution of multiple queries
 
 - [x] state variables in context
-- [ ] html preview
+- [x] html preview
 - [ ] improve scheduling - prevent same queries to be scheduled
 - [x] state enum in context
 - [x] color coding of state in GUI query monitoring

@@ -100,6 +100,10 @@ def nested(x, count1=5, count2=5, context=None):
     for i in context.progress_iter(range(count1)):
         context.info(f"Nested command iteration {i}")
         text += str(context.evaluate(f"start-{count2+i}").get())+"\n"
+        context.set_html_preview(f"""
+        <h1>Nested command</h1>
+        <pre>{text}</pre
+        """)
     return text
 
 @first_command
@@ -111,6 +115,10 @@ def recursive(count=5, context=None):
         for i in context.progress_iter(range(count), True):
             text += x
             sleep(0.1)
+            context.set_html_preview(f"""
+            <h1>Nested command</h1>
+            <pre>{text}</pre
+            """)
         text+="\n"
     else:
         return "*"

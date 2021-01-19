@@ -50,12 +50,21 @@ class Vars(dict):
             self._modified_vars.add(name)
             self[name] = value
 
+    def __getstate__(self):
+        return (self._modified_vars, dict(self))
+
+    def __setstate__(self, x):
+        mv, d = x
+        super().__setattr__("_modified_vars", mv)
+        self.clear()
+        self.update(d)
+        
     def get_modified(self):
         return {key: self[key] for key in self._modified_vars}
 
 
 class Context(object):
-    def __init__(self, parent_context=None, debug=True):
+    def __init__(self, parent_context=None, debug=False):
         self.parent_context = parent_context  # parent context - when in child context
 
         self.raw_query = None  # String with the evaluated query
@@ -119,6 +128,7 @@ class Context(object):
 
     def set_html_preview(self, html):
         self.html_preview = html
+        self.store_metadata()
         return self
 
     def enable_cache(self, enable=True):
