@@ -59,10 +59,9 @@ pip install liquer-framework
 - [x] process monitoring GUI
 - [x] parallel execution of multiple queries
 
-- [ ] state variables in context
+- [x] state variables in context
 - [ ] html preview
 - [ ] improve scheduling - prevent same queries to be scheduled
-- [ ] gui mode in metadata (batch scheduling command -> view progress)
 - [x] state enum in context
 - [x] color coding of state in GUI query monitoring
 
@@ -81,6 +80,9 @@ pip install liquer-framework
 - [ ] better chart library
 - [ ] better pandas functions (eq, lt, gt, leq, geq, isin, notin, between, groupby, random)
 - [ ] conventions and ML library 
+
+- [ ] remove menu from state variables
+- [ ] consolidate is_error and status
 
 - [ ] attribute to prevent cloning
 - [ ] keras history support

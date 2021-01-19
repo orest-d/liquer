@@ -6,8 +6,8 @@ Unit tests for LiQuer execution context.
 import pytest
 from liquer.context import *
 from liquer.parser import ActionRequest
-from liquer.state import State
-from liquer.commands import reset_command_registry, command
+from liquer.state import State, set_var
+from liquer.commands import reset_command_registry, command, first_command
 
 
 class TestContext:
@@ -96,3 +96,42 @@ class TestContext:
             .get()
             == 124
         )
+
+    def test_vars_context(self):
+        reset_command_registry()
+        set_var("test_var","INITIAL")
+        
+        @first_command
+        def varcommand(context=None):
+            is_initial = context.vars.test_var == "INITIAL"
+            context.vars.test_var = "MODIFIED"
+            return is_initial
+
+        @command
+        def check1(state, context=None):
+            print(f"Check1: ",state.vars["test_var"])
+            return state.vars["test_var"] == "MODIFIED"
+
+        @command
+        def check2(state, context=None):
+            print(f"Check2: ",context.vars.test_var)
+            return context.vars.test_var == "MODIFIED"
+
+        assert Context().evaluate("varcommand").get() == True
+        assert Context().evaluate("check1").get() == False
+        assert Context().evaluate("check2").get() == False       
+        assert Context().evaluate("varcommand/check1").get() == True
+        assert Context().evaluate("varcommand/check2").get() == True
+    
+    def test_vars(self):
+        v = Vars()
+        assert len(v) == 0
+        v.x=123
+        assert dict(v)=={"x":123}
+        assert v.get_modified()=={"x":123} 
+        v = Vars(x=1234)
+        assert len(v) == 1
+        assert v.get_modified()=={} 
+        v.y=123
+        assert dict(v)=={"x":1234, "y":123}
+        assert v.get_modified()=={"y":123} 

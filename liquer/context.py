@@ -1,5 +1,5 @@
 import traceback
-from liquer.state import State, EvaluationException
+from liquer.state import State, EvaluationException, vars_clone
 from liquer.parser import (
     encode,
     decode,
@@ -21,6 +21,7 @@ import json
 from liquer.constants import Status
 import liquer.util as util
 
+
 def find_queries_in_template(template: str, prefix: str, sufix: str):
     try:
         start = template.index(prefix)
@@ -34,8 +35,27 @@ def find_queries_in_template(template: str, prefix: str, sufix: str):
         yield template, None
 
 
+class Vars(dict):
+    def __init__(self, *arg, **kwarg):
+        super().__init__(*arg, **kwarg)
+        self._modified_vars = set()
+
+    def __getattr__(self, name):
+        return self[name]
+
+    def __setattr__(self, name, value):
+        if name == "_modified_vars":
+            super().__setattr__(name, value)
+        else:
+            self._modified_vars.add(name)
+            self[name] = value
+
+    def get_modified(self):
+        return {key: self[key] for key in self._modified_vars}
+
+
 class Context(object):
-    def __init__(self, parent_context=None, debug=False):
+    def __init__(self, parent_context=None, debug=True):
         self.parent_context = parent_context  # parent context - when in child context
 
         self.raw_query = None  # String with the evaluated query
@@ -62,14 +82,19 @@ class Context(object):
         self.caching = True  # caching of the results enabled
         self.enable_store_metadata = True  # flag to controll storing of metadata
 
-        self.last_report_time=None # internal time stamp of the last report
-        self._progress_indicator_identifier=1 # counter for creating unique progress identifiers
+        self.last_report_time = None  # internal time stamp of the last report
+        self._progress_indicator_identifier = (
+            1  # counter for creating unique progress identifiers
+        )
+
+        self.vars = Vars(vars_clone())
+        self.html_preview = ""
 
     def can_report(self):
         if self.last_report_time is None:
             self.last_report_time = datetime.now()
         return True
-        return (datetime.now()-self.last_report_time).total_seconds()>0.1
+        return (datetime.now() - self.last_report_time).total_seconds() > 0.1
 
     def metadata(self):
         return dict(
@@ -88,7 +113,13 @@ class Context(object):
             updated=self.now(),
             created=self.created,
             caching=self.caching,
+            vars=dict(self.vars),
+            html_preview=self.html_preview,
         )
+
+    def set_html_preview(self, html):
+        self.html_preview = html
+        return self
 
     def enable_cache(self, enable=True):
         self.caching = enable
@@ -108,9 +139,14 @@ class Context(object):
                 self.last_report_time = datetime.now()
 
     def new_progress_indicator(self):
-        self._progress_indicator_identifier+=1
+        self._progress_indicator_identifier += 1
         self.progress_indicators.append(
-            dict(id=self._progress_indicator_identifier, step=0, total_steps=None, message="")
+            dict(
+                id=self._progress_indicator_identifier,
+                step=0,
+                total_steps=None,
+                message="",
+            )
         )
         return self._progress_indicator_identifier
 
@@ -120,7 +156,6 @@ class Context(object):
         ]
         if self.parent_context is not None:
             self.parent_context.remove_child_progress(self.raw_query)
-        
 
     def progress_indicator_index(self, identifier):
         if identifier is None:
@@ -137,16 +172,18 @@ class Context(object):
     def now(self):
         return util.now()
 
-    def progress(self, step=0, total_steps=None, message="", identifier=None, autoremove=True):
+    def progress(
+        self, step=0, total_steps=None, message="", identifier=None, autoremove=True
+    ):
         index = self.progress_indicator_index(identifier)
-            
+
         progress = dict(step=step, total_steps=total_steps, message=message)
         self.progress_indicators[index].update(progress)
 
-        removed=False
-        if autoremove and total_steps is not None and step>=total_steps:
+        removed = False
+        if autoremove and total_steps is not None and step >= total_steps:
             self.remove_progress_indicator(index)
-            removed=True
+            removed = True
 
         self.store_metadata()
 
@@ -163,21 +200,25 @@ class Context(object):
         except:
             total_steps = None
         identifier = self.new_progress_indicator()
-        for i,x in enumerate(iterator):
+        for i, x in enumerate(iterator):
             if total_steps is None:
                 message = f"{x} ({i+1})" if show_value else f"{i+1}"
             else:
-                message = f"{x} ({i+1}/{total_steps})" if show_value else f"{i+1}/{total_steps}"
-            self.progress(i, total_steps=total_steps, message=message, identifier=identifier)
+                message = (
+                    f"{x} ({i+1}/{total_steps})"
+                    if show_value
+                    else f"{i+1}/{total_steps}"
+                )
+            self.progress(
+                i, total_steps=total_steps, message=message, identifier=identifier
+            )
             yield x
         self.remove_progress_indicator(identifier)
-        
+
     def remove_child_progress(self, origin):
         "Remove all child progress indicators from a given origin"
         self.child_progress_indicators = [
-            x
-            for x in self.child_progress_indicators
-            if x.get("origin") != origin
+            x for x in self.child_progress_indicators if x.get("origin") != origin
         ]
         self.store_metadata()
         if self.parent_context is not None:
@@ -201,7 +242,7 @@ class Context(object):
         self.log.append(d)
         if "message" in d:
             self.message = d["message"]
-        self.store_metadata(force = (d.get("kind")=="error"))
+        self.store_metadata(force=(d.get("kind") == "error"))
         if self.parent_context is not None:
             if d.get("origin") is None:
                 d = dict(origin=self.raw_query, **d)
@@ -385,7 +426,7 @@ class Context(object):
             self.store_metadata(force=True)
 
             try:
-                
+
                 state = command(old_state, *parameters, context=self)
                 assert type(state.metadata) is dict
             except EvaluationException as ee:
@@ -450,19 +491,27 @@ class Context(object):
                 metadata.get("attributes", {}), **cmd_metadata.attributes
             )
 
-        metadata["caching"]=metadata.get("caching",True) and state.metadata.get("caching",True)
-        is_error=state.is_error
+        metadata["caching"] = metadata.get("caching", True) and state.metadata.get(
+            "caching", True
+        )
+        is_error = state.is_error
 
         if is_error:
             self.status = Status.ERROR
             self.info(f"Action {action.encode()} at {action.position} failed")
             state.metadata.update(metadata)
-            state.status="error"
-            state.is_error=True
+            state.status = Status.ERROR.value
+            state.is_error = True
         else:
             self.status = Status.FINISHED
             self.info(f"Action {action.encode()} at {action.position} completed")
+            state_vars = dict(self.vars)
+            state_vars.update(state.vars)
+            state_vars.update(self.vars.get_modified())
+            self.vars = Vars(state_vars)
+            metadata["vars"] = dict(state_vars)
             state.metadata.update(metadata)
+
         state.set_volatile(is_volatile or state.is_volatile())
 
         cache.store_metadata(state.metadata)
@@ -508,6 +557,7 @@ class Context(object):
         self.enable_store_metadata = False  # Prevents overwriting cache with metadata
         self.status = Status.EVALUATION
         self.debug(f"EVALUATE {query}")
+        self.vars = Vars(vars_clone())
         if self.query is not None:
             self.enable_store_metadata = True
             print(f"Subquery {query} called from {self.query.encode()}")
@@ -517,9 +567,9 @@ class Context(object):
             self.log_subquery(query=query, description=description)
             if state.is_error:
                 print("Subquery failed")
-                for d in state.metadata.get("log",[]):
+                for d in state.metadata.get("log", []):
                     self.log_dict(d)
-#            self.enable_store_metadata = True
+            #            self.enable_store_metadata = True
             self.store_metadata(force=True)
             self.enable_store_metadata = False
             return state
@@ -554,7 +604,6 @@ class Context(object):
             self.status = Status.EVALUATING_PARENT
             self.store_metadata(force=True)
             state = self.child_context().evaluate(p, cache=cache)
-
         if state.is_error:
             self.status = Status.ERROR
             self.store_metadata()
@@ -563,7 +612,7 @@ class Context(object):
             state.metadata["created"] = self.now()
             self.debug(f"ERROR in '{state.query}'")
             return state
-
+        self.vars = Vars(state.vars)
         if r is None:
             self.debug(f"RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'")
             state.query = query.encode()
@@ -578,7 +627,6 @@ class Context(object):
         state.query = query.encode()
         state.metadata["created"] = self.now()
         state.metadata["status"] = "ready"
-        
 
         if (
             state.metadata.get("caching", True)
@@ -616,13 +664,17 @@ class Context(object):
 
         path = target_file
         if path is None:
-            if  state.metadata.get("extension") is None:
+            if state.metadata.get("extension") is None:
                 b, mime, typeid = encode_state_data(data)
                 path = t.default_filename()
             else:
-                b, mime, typeid = encode_state_data(data, extension=state.metadata["extension"])
+                b, mime, typeid = encode_state_data(
+                    data, extension=state.metadata["extension"]
+                )
                 path = (
-                    t.default_filename() if state.metadata.get("filename") is None else state.metadata["filename"]
+                    t.default_filename()
+                    if state.metadata.get("filename") is None
+                    else state.metadata["filename"]
                 )
             if target_directory is not None:
                 path = os.path.join(target_directory, path)

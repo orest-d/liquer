@@ -6,10 +6,11 @@ Unit tests for LiQuer basic extension.
 import pytest
 from liquer.query import evaluate
 from liquer.state import set_var
-
+from liquer.cache import set_cache, NoCache
 
 class TestBasic:
     def test_vars(self):
+        set_cache(NoCache())
         import liquer.ext.basic
         assert evaluate("state_variable-abc").get() is None
         assert evaluate("let-abc-1/state_variable-abc").get() == "1"

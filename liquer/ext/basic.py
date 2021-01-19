@@ -13,7 +13,9 @@ def let(state, name, value):
     """Set the state variable
     Sets a state variable with 'name' to 'value'.
     """
+    print(f"LET vars={state.vars}")
     state.vars[name] = value
+    print(f"AFTER LET vars={state.vars}")
     return state
 
 
@@ -30,6 +32,7 @@ def state_variable(state, name):
     """Get the state variable value
     Useful mainly for debugging and testing
     """
+    print(f"STATE VARIABLE vars={state.vars}")
     return state.with_data(state.vars.get(name))
 
 
