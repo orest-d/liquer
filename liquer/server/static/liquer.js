@@ -16,6 +16,7 @@ window.vue = new Vue({
         message: "",
         html: "",
         url_submit_prefix: "/liquer/submit/",
+        url_remove_prefix: "/liquer/cache/remove/",
         url_prefix: "/liquer/q/",
         url_meta_prefix: "/liquer/cache/meta/",
         metadata: null,
@@ -160,6 +161,16 @@ window.vue = new Vue({
                     this.refresh_metadata();
                 }.bind(this), function (reason) { this.error("Json error (submit query)", reason); }.bind(this));
             }.bind(this), function (reason) { this.error("API call error (submit query)", reason); }.bind(this));
+        },
+        remove_query: function (query) {
+            console.log("Remove", query);
+            this.query = query;
+            this.$http.get(this.url_remove_prefix + query).then(function (response) {
+                response.json().then(function (data) {
+                    this.metadata = data;
+                    this.refresh_metadata();
+                }.bind(this), function (reason) { this.error("Json error (remove query)", reason); }.bind(this));
+            }.bind(this), function (reason) { this.error("API call error (remove query)", reason); }.bind(this));
         },
         inspect_query: function (query){
             this.mode="inspect";

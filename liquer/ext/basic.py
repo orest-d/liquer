@@ -121,6 +121,7 @@ def clean_cache():
 
 @first_command(volatile=True)
 def queries_status(include_ready=False, reduce=True):
+    import liquer.parser as lp
     import traceback
     try:
         cache = get_cache()
@@ -132,6 +133,7 @@ def queries_status(include_ready=False, reduce=True):
             progress = metadata.get("progress_indicators",[]) + metadata.get("child_progress_indicators",[])
             d=dict(
                 query=key,
+                short=lp.parse(key).short(),
                 status=metadata.get("status","none"),
                 updated=metadata.get("updated","?"),
                 message=metadata.get("message",""),

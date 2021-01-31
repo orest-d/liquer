@@ -489,6 +489,15 @@ class Query(object):
                 return None, None
         else:
             return None, None
+    def short(self):
+        _, r = self.predecessor()
+        if r is None:
+            q=str(self)
+            if len(self)>30:
+                q="..."+q[-30:]
+            return q
+        else:
+            return str(r)
 
     def all_predecessors(self):
         qp, qr = self, None

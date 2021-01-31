@@ -25,6 +25,7 @@ pip install liquer-framework
 2020-12-07 - v4.2 - Fernet file cache support for metadata encoding and change of keys
 2021-01-16 - v4.3 - Improvements of the query monitoring UI
 2021-01-19 - v4.4 - state variables in context, html_preview
+2021-01-31 - v4.5 - remove supported in query monitoring
 
 # TODO
 
