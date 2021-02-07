@@ -7,4 +7,5 @@ sklearn
 libhxl
 Pygments
 cryptography
+pyarrow
 -r requirements.txt

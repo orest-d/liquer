@@ -4,7 +4,7 @@
 Unit tests for LiQuer pandas support.
 '''
 import pandas as pd
-from liquer.query import evaluate
+from liquer.query import evaluate, evaluate_and_save
 from liquer.parser import encode_token
 from liquer.cache import set_cache, FileCache
 import os.path
@@ -205,3 +205,15 @@ class TestPandas:
         df = evaluate(f"df_from-{filename}/head_df-1").get()
         assert list(df.a) == [1]
         assert list(df.b) == [2]
+
+    def test_save_parquet(self):
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test.csv")
+        evaluate_and_save(f"df_from-{filename}/head_df-1/test.parquet")
+
+    def test_save_feather(self):
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+        filename = encode_token(os.path.dirname(
+            inspect.getfile(self.__class__))+"/test.csv")
+        evaluate_and_save(f"df_from-{filename}/head_df-1/test.feather")

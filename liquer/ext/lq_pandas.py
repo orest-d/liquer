@@ -53,6 +53,18 @@ class DataframeStateType(StateType):
             b=output.getvalue()
             output.really_close()
             return b, mimetype
+        elif extension == "parquet":
+            output = ResilientBytesIO()
+            data.to_parquet(output, engine="pyarrow")
+            b=output.getvalue()
+            output.really_close()
+            return b, mimetype
+        elif extension == "feather":
+            output = ResilientBytesIO()
+            data.to_feather(output)
+            b=output.getvalue()
+            output.really_close()
+            return b, mimetype
         elif extension == "xlsx":
             output = BytesIO()
             writer = pd.ExcelWriter(output, engine='xlsxwriter')
@@ -80,6 +92,10 @@ class DataframeStateType(StateType):
             return pd.read_csv(f, sep="\t")
         elif extension == "json":
             return pd.read_json(f)
+        elif extension == "parquet":
+            return pd.read_parquet(f)
+        elif extension == "feather":
+            return pd.read_feather(f)
         elif extension in ("pickle", "pkl"):
             return pd.read_pickle(f, compression=None)
         elif extension == "xlsx":

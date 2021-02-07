@@ -26,6 +26,7 @@ pip install liquer-framework
 2021-01-16 - v4.3 - Improvements of the query monitoring UI
 2021-01-19 - v4.4 - state variables in context, html_preview
 2021-01-31 - v4.5 - remove supported in query monitoring
+2021-01-31 - v4.6 - basic support for parquet and feather
 
 # TODO
 
@@ -89,4 +90,4 @@ pip install liquer-framework
 - [ ] attribute to prevent cloning
 - [ ] keras history support
 - [ ] numpy support
-- [ ] parquet support
+- [x] parquet support
