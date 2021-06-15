@@ -357,6 +357,67 @@ class Context(object):
     def state_types_registry(self):
         return state_types_registry()
 
+    def evaluate_parameter(self, p, action):
+        if isinstance(p, StringActionParameter):
+            return p
+        elif isinstance(p, LinkActionParameter):
+            if p.link.absolute:
+                self.argument_queries.append(
+                    dict(
+                        description=f"{p.link.encode()} at {p.position}",
+                        query=p.link.encode(),
+                    )
+                )
+                self.debug(f"Expand absolute link parameter {p.link.encode()}")
+                value = self.evaluate(p.link)
+                if value.is_error:
+                    self.error(
+                        f"Error while evaluating absolute link parameter {p.link.encode()} at {p.position}"
+                    )
+                    self.status = Status.ERROR
+                    self.store_metadata(force=True)
+
+                    raise EvaluationException(
+                        f"Error while evaluating absolute link parameter {p.link.encode()} in action {action.name}",
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                return pp
+            else:
+                self.argument_queries.append(
+                    dict(
+                        description=f"{p.link.encode()} at {p.position}",
+                        query=p.link.encode(),
+                    )
+                )
+                self.debug(
+                    f"Expand relative link parameter {p.link.encode()} on {self.parent_query}"
+                )
+                value = self.apply(p.link)
+                if value.is_error:
+                    self.error(
+                        f"Error while evaluating relative link parameter {p.link.encode()} at {p.position}"
+                    )
+                    self.status = Status.ERROR
+                    self.store_metadata(force=True)
+
+                    raise EvaluationException(
+                        f"Error while evaluating relative link parameter {p.link.encode()} in action {action.name}",
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                return pp
+        else:
+            self.status = Status.ERROR
+            self.store_metadata(force=True)
+            raise EvaluationException(
+                f"Unknown parameter type {type(p)} in {action.name}",
+                position=action.position,
+                query=self.raw_query,
+            )
+
     def evaluate_action(self, state: State, action, cache=None):
         self.debug(f"EVALUATE ACTION '{action}' on '{state.query}'")
         self.status = Status.EVALUATION
@@ -386,52 +447,7 @@ class Context(object):
             self.status = Status.EVALUATING_DEPENDENCIES
             self.store_metadata(force=True)
             for p in action.parameters:
-                if isinstance(p, StringActionParameter):
-                    parameters.append(p)
-                elif isinstance(p, LinkActionParameter):
-                    if p.link.absolute:
-                        self.argument_queries.append(
-                            dict(
-                                description=f"{p.link.encode()} at {p.position}",
-                                query=p.link.encode(),
-                            )
-                        )
-                        self.debug(f"Expand absolute link parameter {p.link.encode()}")
-                        value = self.evaluate(p.link)
-                        if value.is_error:
-                            self.error(
-                                f"Link parameter error {p.link.encode()} at {p.position}"
-                            )
-                            return self.create_state()
-
-                        pp = ExpandedActionParameter(value.get(), p.link, p.position)
-                        parameters.append(pp)
-                    else:
-                        self.argument_queries.append(
-                            dict(
-                                description=f"{p.link.encode()} at {p.position}",
-                                query=p.link.encode(),
-                            )
-                        )
-                        self.debug(
-                            f"Expand relative link parameter {p.link.encode()} on {self.parent_query}"
-                        )
-                        value = self.apply(p.link)
-                        if value.is_error:
-                            self.error(
-                                f"Link parameter error {p.link.encode()} at {p.position}"
-                            )
-                            return self.create_state()
-                        pp = ExpandedActionParameter(value.get(), p.link, p.position)
-                        parameters.append(pp)
-                else:
-                    self.status = Status.ERROR
-                    self.store_metadata(force=True)
-                    raise EvaluationException(
-                        f"Unknown parameter type {type(p)} in {action.name}",
-                        position=action.position,
-                        query=self.raw_query,
-                    )
+                parameters.append(self.evaluate_parameter(p, action))
             self.status = Status.EVALUATION
             self.store_metadata(force=True)
 
