@@ -8,7 +8,7 @@ class TestStore:
         assert str(tmpdir) in str(store)
         return store
 
-    def test_file_store_creation(self, tmpdir, store):
+    def test_file_store_creation(self, store):
         assert list(store.keys()) == []
         assert store.contains("x") is False
 
@@ -34,3 +34,13 @@ class TestStore:
         assert store.contains("a") is False
         assert list(store.keys()) == []
         assert store.listdir("") == []
+
+    def test_parent_key(self, store):
+        assert store.parent_key("") == None
+        assert store.parent_key("a") == ""
+        assert store.parent_key("a/b") == "a"
+
+class TestMemoryStore(TestStore):
+    @pytest.fixture
+    def store(self, tmpdir):
+        return MemoryStore()

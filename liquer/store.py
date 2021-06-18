@@ -1,8 +1,17 @@
 from os import makedirs, name, remove
 from pathlib import Path
 import json
+from io import BytesIO
 
 class Store:
+    def parent_key(self, key):
+        if key == "":
+            return None
+        return "/".join(key.split("/")[:-1])
+
+    def key_name(self, key):
+        return key.split("/")[-1]
+
     def get_bytes(self, key):
         pass
 
@@ -118,7 +127,9 @@ class FileStore(Store):
         self.path_for_key(key).mkdir(parents=True, exist_ok=True)
         (self.path_for_key(key) / self.METADATA).mkdir(parents=True, exist_ok=True)
 
-    def openbin(self, key, mode="r", buffering=-1):
+    def openbin(self, key, mode="rb", buffering=-1):
+        mode = dict(r="rb", w="wb").get(mode, mode)
+
         return open(self.path_for_key(key), mode)
 
     def __str__(self):
@@ -126,3 +137,87 @@ class FileStore(Store):
 
     def __repr__(self):
         return f"FileStore('self.path')"
+
+
+class MemoryStore(Store):
+    def __init__(self):
+        self.directories = set()
+        self.data = {}
+        self.metadata = {}
+    
+    def get_bytes(self, key):
+        return self.data[key]
+
+    def get_metadata(self, key):
+        if self.is_dir(key):
+            if key in ("",None):
+                return dict(key="", fileinfo=dict(name="", is_dir=True))
+            else:
+                return dict(key=key, fileinfo=dict(name="/".split(key)[-1], is_dir=True))
+        else:
+            return self.metadata[key]
+
+    def store(self, key, data, metadata):
+        self.makedir(self.parent_key(key))
+        self.data[key]=data
+        self.metadata[key]=metadata
+
+    def store_metadata(self, key, metadata):
+        self.metadata[key]=metadata
+
+    def remove(self, key):
+        try:
+            self.directories.remove(key)
+        except KeyError:
+            pass
+        try:
+            del self.data[key]
+        except KeyError:
+            pass
+        try:
+            del self.metadata[key]
+        except KeyError:
+            pass
+
+    def removedir(self, key):
+        if len(self.listdir(key))==0:
+            try:
+                self.directories.remove(key)
+            except KeyError:
+                pass
+
+    def contains(self, key):
+        return key in self.directories or key in self.data or key in self.metadata
+
+    def is_dir(self, key):
+        return key in self.directories
+
+    def keys(self):
+        k = set()
+        k.update(self.directories)
+        k.update(self.data.keys())
+        k.update(self.metadata.keys())
+        return sorted(k)
+
+    def listdir(self, key):
+        if key in ("",None):
+            return sorted(set(k.split("/")[0] for k in self.keys()))
+        if self.is_dir(key):
+            return [self.key_name(k) for k in self.keys() if self.parent_key(k)==key]
+            
+    def makedir(self, key):
+        while key not in (None, ""):
+            self.directories.add(key)
+            key = self.parent_key(key)
+
+    def openbin(self, key, mode="r", buffering=-1):
+        mode = dict(r="rb", w="wb").get(mode, mode)
+        if mode == "rb":
+            return BytesIO(self.data[key])
+        raise Exception("openbin not supported for write yet")
+
+    def __str__(self):
+        return f"Memory store"
+
+    def __repr__(self):
+        return f"MemoryStore()"
