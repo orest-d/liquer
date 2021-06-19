@@ -5,6 +5,7 @@ from liquer.state_types import encode_state_data, state_types_registry
 from liquer.commands import command_registry
 from liquer.state import get_vars
 from liquer.cache import get_cache
+from liquer.store import get_store
 import io
 import traceback
 
@@ -183,3 +184,107 @@ def register_command1():
     """
     data = request.get_data()
     return jsonify(command_registry().register_remote_serialized(data))
+
+
+
+@app.route('/api/store/data/<path:query>', methods=['GET'])
+def store_get(query):
+    store = get_store()
+    try:
+        metadata = store.get_metadata(query)
+        mimetype = metadata.get('mimetype', 'application/octet-stream')
+        r = make_response(get_store().get_bytes(query))
+        r.headers.set('Content-Type', mimetype)
+        return r
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/data/<path:query>', methods=['POST'])
+def store_set(query):
+    store = get_store()
+    try:
+        metadata = store.get_metadata(query)
+        data = request.get_data()
+        store.store(query, data, metadata)
+        return jsonify(dict(query=query, message="Data stored", status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/metadata/<path:query>', methods=['GET'])
+def store_get_metadata(query):
+    store = get_store()
+    metadata = store.get_metadata(query)
+    return jsonify(metadata)
+
+@app.route('/api/store/metadata/<path:query>', methods=['POST'])
+def store_set_metadata(query):
+    store = get_store()
+    try:
+        metadata = request.get_json(force=True)
+        store.store_metadata(query, metadata)
+        return jsonify(dict(query=query, message="Metadata stored", status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/remove/<path:query>')
+def store_remove(query):
+    store = get_store()
+    try:
+        store.remove(query)
+        return jsonify(dict(query=query, message=f"Removed {query}", status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/removedir/<path:query>')
+def store_removedir(query):
+    store = get_store()
+    try:
+        store.removedir(query)
+        return jsonify(dict(query=query, message=f"Removed directory {query}", status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/contains/<path:query>')
+def store_contains(query):
+    store = get_store()
+    try:
+        contains = store.contains(query)
+        return jsonify(dict(query=query, message=f"Contains {query}", contains=contains, status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/is_dir/<path:query>')
+def store_is_dir(query):
+    store = get_store()
+    try:
+        is_dir = store.is_dir(query)
+        return jsonify(dict(query=query, message=f"Is directory {query}", is_dir=is_dir, status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/keys')
+def store_keys():
+    store = get_store()
+    try:
+        keys = store.keys()
+        return jsonify(dict(query=None, message=f"Keys obtained", keys=keys, status="OK"))
+    except:
+        return jsonify(dict(query=None, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/listdir/<path:query>')
+def store_listdir(query):
+    store = get_store()
+    try:
+        listdir = store.listdir(query)
+        return jsonify(dict(query=query, message=f"Keys obtained", listdir=listdir, status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))
+
+@app.route('/api/store/makedir/<path:query>')
+def store_makedir(query):
+    store = get_store()
+    try:
+        store.makedir(query)
+        return jsonify(dict(query=query, message=f"Makedir succeeded", status="OK"))
+    except:
+        return jsonify(dict(query=query, message=traceback.format_exc(), status="ERROR"))

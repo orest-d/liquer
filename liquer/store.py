@@ -3,6 +3,18 @@ from pathlib import Path
 import json
 from io import BytesIO
 
+STORE=None
+def get_store():
+    global STORE
+    if STORE is None:
+        STORE = Store()
+    return STORE
+
+def set_store(store):
+    global STORE
+    STORE = store
+
+   
 class Store:
     def parent_key(self, key):
         if key == "":
@@ -13,10 +25,10 @@ class Store:
         return key.split("/")[-1]
 
     def get_bytes(self, key):
-        pass
+        return None
 
     def get_metadata(self, key):
-        pass
+        return None
 
     def store(self, key, data, metadata):
         pass
@@ -31,19 +43,22 @@ class Store:
         pass
 
     def contains(self, key):
-        pass
+        return False
+
+    def is_dir(self, key):
+        return key == ""
 
     def keys(self):
-        pass
+        return []
 
     def listdir(self, key):
-        pass
+        return []
 
     def makedir(self, key):
         pass
 
     def openbin(self, key, mode="r", buffering=-1):
-        pass
+        return None
 
     def __str__(self):
         return f"Empty store"
