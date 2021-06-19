@@ -543,6 +543,26 @@ class Context(object):
         cache.store_metadata(state.metadata)
         return state
 
+    def store(self):
+        from liquer.store import get_store
+        return get_store()
+
+    def evaluate_resource(self, resource_query):
+        self.info(f"Evaluate resource: {resource_query}")
+        if resource_query.header is not None:
+            raise Exception(f"Header not supported in resource query {resource_query}")
+        key = resource_query.path()
+        store = self.store()
+        state = self.create_initial_state()
+        try:
+            metadata = store.get_metadata(key)
+            data = store.get_bytes(key)
+            state = state.with_data(data)
+            state.metadata["resource_description"] = metadata
+        except:
+            self.exception(message = f"Error evaluating resource {resource_query}", traceback=traceback.format_exc(), position=resource_query.position, query=resource_query.encode())
+        return state
+
     def create_initial_state(self):
         state = State()
         state.query = ""
@@ -618,26 +638,33 @@ class Context(object):
         # so that cache does not get overwritten
         self.debug(f"Cache miss {query}")
 
-        p, r = query.predecessor()
-        self.debug(f"PROCESS Predecessor:{p} Action: {r}")
-        if p is None or p.is_empty():
-            self.parent_query = ""
-            state = self.create_initial_state()
-            state.metadata["created"] = self.now()
-            self.debug(f"INITIAL STATE")
-        else:
-            self.parent_query = p.encode()
-            self.status = Status.EVALUATING_PARENT
-            self.store_metadata(force=True)
-            state = self.child_context().evaluate(p, cache=cache)
-        if state.is_error:
-            self.status = Status.ERROR
-            self.store_metadata()
-            state = state.next_state()
+        if query.is_resource_query():
+            state = self.evaluate_resource(query.resource_query())
             state.query = query.encode()
             state.metadata["created"] = self.now()
-            self.debug(f"ERROR in '{state.query}'")
+            state.metadata["status"] = "ready"
             return state
+        else:
+            p, r = query.predecessor()
+            self.debug(f"PROCESS Predecessor:{p} Action: {r}")
+            if p is None or p.is_empty():
+                self.parent_query = ""
+                state = self.create_initial_state()
+                state.metadata["created"] = self.now()
+                self.debug(f"INITIAL STATE")
+            else:
+                self.parent_query = p.encode()
+                self.status = Status.EVALUATING_PARENT
+                self.store_metadata(force=True)
+                state = self.child_context().evaluate(p, cache=cache)
+            if state.is_error:
+                self.status = Status.ERROR
+                self.store_metadata()
+                state = state.next_state()
+                state.query = query.encode()
+                state.metadata["created"] = self.now()
+                self.debug(f"ERROR in '{state.query}'")
+                return state
         self.vars = Vars(state.vars)
         if r is None:
             self.debug(f"RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'")

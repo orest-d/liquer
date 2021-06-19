@@ -193,7 +193,7 @@ def store_get(query):
     try:
         metadata = store.get_metadata(query)
         mimetype = metadata.get('mimetype', 'application/octet-stream')
-        r = make_response(get_store().get_bytes(query))
+        r = make_response(store.get_bytes(query))
         r.headers.set('Content-Type', mimetype)
         return r
     except:

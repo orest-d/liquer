@@ -117,3 +117,13 @@ class TestQuery:
         assert evaluate("concat-2/concat-3").get()=="None23"
         with pytest.raises(Exception):
             assert evaluate("concat-4/concat-~X~concat-5/make_error~E").get()
+
+    def test_store(self):
+        import liquer.store as st 
+        st.set_store(st.MemoryStore())
+        store = st.get_store()
+        store.store("a/b", b"hello", {})
+        @command
+        def world(data):
+            return data.decode("utf-8") + " world"
+        assert evaluate("a/b/-/world").get() == "hello world"

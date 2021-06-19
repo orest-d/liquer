@@ -426,8 +426,19 @@ class ResourceQuerySegment(object):
         self.header = header
         self.query = query or []
 
+    @property
+    def position(self):
+        if self.header is not None:
+            return self.header.position
+        else:
+            if len(self.query):
+                return self.query[0].position
+
+    def path(self):
+        return "/".join(x.encode() for x in self.query)
+
     def encode(self):
-        query = "/".join(x.encode() for x in self.query)
+        query = self.path()
         if self.header is None or self.header.name in (None, ""):
             rqs = "-R"
         else:
@@ -460,6 +471,15 @@ class Query(object):
 
     def transform_query(self):
         if self.is_transform_query():
+            return self.segments[0]
+        else:
+            return None
+
+    def is_resource_query(self):
+        return len(self.segments)==1 and isinstance(self.segments[0], ResourceQuerySegment)
+
+    def resource_query(self):
+        if self.is_resource_query():
             return self.segments[0]
         else:
             return None
