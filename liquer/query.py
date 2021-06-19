@@ -8,14 +8,21 @@ def evaluate(query):
     return Context().evaluate(query)
 
 
-def evaluate_and_save(query, target_directory=None, target_file=None):
+def evaluate_and_save(
+    query, target_directory=None, target_file=None, target_resource_directory=None
+):
     """Evaluate query and save result.
     Output is saved either to
     - a target directory (current working directory by default) to a file deduced from the query, or
     - to target_file (if specified)
     Returns a state.
     """
-    return Context().evaluate_and_save(query, target_directory=target_directory, target_file=target_file)
+    return Context().evaluate_and_save(
+        query,
+        target_directory=target_directory,
+        target_file=target_file,
+        target_resource_directory=target_resource_directory,
+    )
 
 
 def evaluate_template(template: str, prefix="$", sufix="$"):

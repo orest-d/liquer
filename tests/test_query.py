@@ -120,6 +120,7 @@ class TestQuery:
 
     def test_store(self):
         import liquer.store as st 
+        reset_command_registry()
         st.set_store(st.MemoryStore())
         store = st.get_store()
         store.store("a/b", b"hello", {})
@@ -127,3 +128,15 @@ class TestQuery:
         def world(data):
             return data.decode("utf-8") + " world"
         assert evaluate("a/b/-/world").get() == "hello world"
+
+    def test_store_evaluate_and_save(self, tmpdir):
+        import liquer.store as st 
+        reset_command_registry()
+        st.set_store(st.MemoryStore())
+        store = st.get_store()
+        store.store("a/b", b"hello", {})
+        @command
+        def world(data):
+            return data.decode("utf-8") + " world"
+        evaluate_and_save("a/b/-/world/hello.txt", target_directory=str(tmpdir), target_resource_directory="results")
+        assert store.get_bytes("results/hello.txt") == b"hello world"

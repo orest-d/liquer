@@ -701,7 +701,7 @@ class Context(object):
 
         return state
 
-    def evaluate_and_save(self, query, target_directory=None, target_file=None):
+    def evaluate_and_save(self, query, target_directory=None, target_file=None, target_resource_directory=None):
         """Evaluate query and save result.
         Output is saved either to
         - a target directory (current working directory by default) to a file deduced from the query, or
@@ -735,6 +735,12 @@ class Context(object):
         print(f"*** Evaluate and save {query} to {path}")
         with open(path, "wb") as f:
             f.write(b)
+
+        if target_resource_directory is not None:
+            filename = os.path.split(path)[1]
+            key = target_resource_directory + "/" + filename
+            print(f"*** Store evaluated {query} to {key}")
+            self.store().store(key, b, state.metadata)
 
         return state
 
