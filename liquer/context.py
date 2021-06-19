@@ -732,9 +732,10 @@ class Context(object):
             if target_directory is not None:
                 path = os.path.join(target_directory, path)
 
-        print(f"*** Evaluate and save {query} to {path}")
-        with open(path, "wb") as f:
-            f.write(b)
+        if target_resource_directory is None or target_directory is not None:
+            print(f"*** Evaluate and save {query} to {path}")
+            with open(path, "wb") as f:
+                f.write(b)
 
         if target_resource_directory is not None:
             filename = os.path.split(path)[1]
