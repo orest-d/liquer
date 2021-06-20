@@ -44,3 +44,8 @@ class TestMemoryStore(TestStore):
     @pytest.fixture
     def store(self, tmpdir):
         return MemoryStore()
+
+class TestOverlayStore(TestStore):
+    @pytest.fixture
+    def store(self, tmpdir):
+        return OverlayStore(MemoryStore(),MemoryStore())

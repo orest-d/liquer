@@ -14,7 +14,7 @@ def set_store(store):
     global STORE
     STORE = store
 
-   
+
 class Store:
     def parent_key(self, key):
         if key == "":
@@ -236,3 +236,106 @@ class MemoryStore(Store):
 
     def __repr__(self):
         return f"MemoryStore()"
+
+class OverlayStore(Store):
+    """Overlay store combines two stores: overlay and fallback.
+    Overlay is used as a primary store for reading and writing.
+    The fallback is used only for reading if key is not found in the overlay store (and is not removed).
+    Thus the fallback store is never modified.
+    """
+    def __init__(self, overlay, fallback):
+        self.overlay = overlay
+        self.fallback = fallback
+        self.removed=set()
+    
+    def get_bytes(self, key):
+        if key not in self.removed:
+            if self.overlay.contains(key):
+                return self.overlay.get_bytes(key)
+            else:
+                return self.fallback.get_bytes(key)
+
+    def get_metadata(self, key):
+        if key not in self.removed:
+            if self.overlay.contains(key):
+                return self.overlay.get_metadata(key)
+            else:
+                return self.fallback.get_metadata(key)
+
+    def store(self, key, data, metadata):
+        try:
+            self.removed.remove(key)
+        except KeyError:
+            pass
+        return self.overlay.store(key, data, metadata)
+
+    def store_metadata(self, key, metadata):
+        try:
+            self.removed.remove(key)
+        except KeyError:
+            pass
+        return self.overlay.store_metadata(key, metadata)
+
+    def remove(self, key):
+        if key not in self.removed:
+            if self.overlay.contains(key):
+                self.overlay.remove(key)
+            if self.fallback.contains(key):
+                self.removed.add(key)
+
+    def removedir(self, key):
+        if self.contains(key):
+            if len(self.listdir(key))==0:
+                if self.overlay.contains(key):
+                    self.overlay.remove(key)
+                else:
+                    self.removed.add(key)
+
+    def contains(self, key):
+        if key in self.removed:
+            return False
+        else:
+            return self.overlay.contains(key) or self.fallback.contains(key)
+
+    def is_dir(self, key):
+        if key in self.removed:
+            return False
+        else:
+            if self.overlay.contains(key):
+                return self.overlay.is_dir(key)
+            else:
+                return self.fallback.is_dir(key)
+
+    def keys(self):
+        return sorted(set(self.overlay.keys()).union(self.fallback.keys()).difference(self.removed))
+
+    def listdir(self, key):
+        if key.endswith("/"):
+            key = key[:-1]
+        ld = self.overlay.listdir(key)
+        d = set() if ld is None else set(ld)
+        ld = self.fallback.listdir(key)
+        d = d if ld is None else d.union(ld)
+        return [x for x in sorted(d) if key+"/"+x not in self.removed]
+            
+    def makedir(self, key):
+        if key in self.removed:
+            self.removed.remove(key)
+        return self.overlay.makedir(key)
+
+    def openbin(self, key, mode="r", buffering=-1):
+        mode = dict(r="rb", w="wb").get(mode, mode)
+        if mode == "rb":
+            if self.overlay.contains(key):
+                return self.overlay.openbin(key, mode, buffering)
+            elif self.fallback.contains(key):
+                return self.fallback.openbin(key, mode, buffering)
+        elif mode == "wb":
+            return self.overlay.openbin(key, mode, buffering)
+
+
+    def __str__(self):
+        return f"Overlay of ({self.overlay}) over ({self.fallback})"
+
+    def __repr__(self):
+        return f"OverlayStore({repr(self.overlay)},{repr(self.fallback)})"
