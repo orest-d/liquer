@@ -77,7 +77,7 @@ pip install liquer-framework
 - [x] store implementations: memory, file, mounting, filesystem
 - [x] web api for store
 - [x] resources with recipes
-- [ ] decode resource command
+- [x] decode resource command
 - [ ] remote store (based on web api)
 - [ ] remote liquer service as cache
 - [ ] web store GUI

@@ -164,3 +164,57 @@ def queries_status(include_ready=False, reduce=True):
                 message=traceback.format_exc(),
                 progress=[]
             )]
+
+@command
+def dr(state, context=None):
+    """Decode resource
+    Decodes the bytes into a data structure. This is meant to be used in connection to a resource query.
+    Resource part of the query will typically fetch the data from a store and thus return bytes (together with metadata).
+    Command dr will convert the bytes (assuming proper metadata are provided) into a data structure.
+    The metadata must contain type_identifier in metadata or metadata['resource_metadata'], a filename with extension
+    or extension with known decoding. 
+    """
+    from liquer.state_types import state_types_registry
+    from liquer.parser import parse
+
+    type_identifier = state.metadata.get('type_identifier', state.metadata.get("resource_metadata",{}).get('type_identifier'))
+
+    if type_identifier in (None, "bytes"):
+        extension = state.metadata.get('extension')
+        if extension is None:
+            query = state.metadata.get("query")
+            if query is not None:
+                filename = parse(query).filename()
+            if filename is not None:
+                v = filename.split(".")
+                if len(v)>1:
+                    extension = v[-1]
+        context.info(f"Extension: {extension}")
+
+        type_identifier = dict(
+            json="generic",
+            djson="dictionary",
+            js="text",
+            txt='text',
+            html='text',
+            htm='text',
+            md='text',
+            xls='dataframe',
+            xlsx='dataframe',
+            ods='dataframe',
+            tsv='dataframe',
+            csv='dataframe',
+            css='text',
+            svg='text',
+            pkl="pickle",
+            pickle="pickle",
+            parquet="dataframe",
+            feather="dataframe"
+        ).get(extension)
+
+    if type_identifier is not None:
+        context.info(f"Type identifier: {type_identifier}")
+        t = state_types_registry().get(type_identifier)
+        return t.from_bytes(state.data, extension=extension)
+
+    return state

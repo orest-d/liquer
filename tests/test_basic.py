@@ -38,3 +38,4 @@ class TestBasic:
         ) == "http://localhost:1234/liquer/q/let-hello-world/state_variable-hello"
         set_var("server", "http://localhost")
         set_var("api_path", "/q/")
+

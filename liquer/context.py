@@ -562,9 +562,10 @@ class Context(object):
         state = self.create_initial_state()
         try:
             metadata = store.get_metadata(key)
+            print(f"STORE METADATA: {metadata}")
             data = store.get_bytes(key)
             state = state.with_data(data)
-            state.metadata["resource_description"] = metadata
+            state.metadata["resource_metadata"] = metadata
         except:
             self.exception(message = f"Error evaluating resource {resource_query}", traceback=traceback.format_exc(), position=resource_query.position, query=resource_query.encode())
         return state
