@@ -463,6 +463,15 @@ class Query(object):
         self.segments = segments or []
         self.absolute = absolute
 
+    def filename(self):
+        if len(self.segments):
+            segment = self.segments[-1]
+            if isinstance(segment, TransformQuerySegment) and segment.filename is not None:
+                return str(segment.filename)
+            if isinstance(segment, ResourceQuerySegment) and segment.query is not None and len(segment.query):
+                return str(segment.query[-1])
+        return None
+
     def is_empty(self):
         return len(self.segments) == 0
 

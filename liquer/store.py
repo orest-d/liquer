@@ -452,6 +452,7 @@ class RoutingStore(Store):
     def __repr__(self):
         return f"RoutingStore()"
 
+
 class KeyTranslatingStore(Store):
     def __init__(self,store):
         self.substore = store

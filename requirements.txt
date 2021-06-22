@@ -6,3 +6,4 @@ xlsxwriter>=1.1.2
 hdx-python-utilities>=1.6.2
 pyparsing>=2.4.0
 requests>=1.25.8
+pyyaml

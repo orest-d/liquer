@@ -73,11 +73,21 @@ pip install liquer-framework
 - [ ] configurable frontend
 - [ ] liquer frontent project
 
-- [ ] SQL cache working on Hive
+- [x] resources
+- [x] store implementations: memory, file, mounting, filesystem
+- [x] web api for store
+- [x] resources with recipes
+- [ ] decode resource command
+- [ ] remote store (based on web api)
 - [ ] remote liquer service as cache
-- [ ] debug transform query
+- [ ] web store GUI
+- [x] resources-based cache
+- [ ] filesystem from store
+- [ ] fuse access to store
 - [ ] dependency management
-- [ ] resources
+
+- [ ] SQL cache working on Hive
+- [ ] debug transform query
 - [ ] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
 
 - [ ] better chart library

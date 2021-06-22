@@ -153,3 +153,39 @@ class TestQuery:
             return data.decode("utf-8") + " world"
         evaluate_and_save("a/b/-/world/hello.txt", target_resource_directory="results")
         assert store.get_bytes("results/hello.txt") == b"hello world"
+
+
+    def test_recipe_store(self):
+        import liquer.store as st 
+        import liquer.context as c
+        reset_command_registry()
+        @first_command
+        def hello():
+            return "Hello"
+
+        store = c.RecipeStore(st.MemoryStore())
+        store.mount_recipe("my/hello.txt","hello")
+        assert store.contains("my/hello.txt")
+        assert store.get_bytes("my/hello.txt") == b"Hello"
+
+    def test_recipe_spec_store(self):
+        import liquer.store as st 
+        import liquer.context as c
+        reset_command_registry()
+        @first_command
+        def hello():
+            return "Hello"
+
+        store = c.RecipeSpecStore(st.MemoryStore())
+        store.store("results/recipes.yaml",b"""
+        subdir:
+            - hello/hello.txt
+        """,{})
+        assert "results/subdir/hello.txt" in store.recipes()
+        assert store.contains("results")
+        assert store.contains("results/subdir")
+        assert store.contains("results/subdir/hello.txt")
+        assert store.is_dir("results")
+        assert store.is_dir("results/subdir")
+        assert not store.is_dir("results/subdir/hello.txt")
+        assert store.get_bytes("results/subdir/hello.txt") == b"Hello"
