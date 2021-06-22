@@ -155,6 +155,41 @@ class TestCache:
             assert list(cache.keys()) == []
             assert cache.get("abc") == None
 
+    def test_storecache(self):
+        from liquer.store import MemoryStore
+        state = State().with_data(123)
+        state.query = "abc"
+
+        for cache in [
+            StoreCache(MemoryStore(),path=""),
+            StoreCache(MemoryStore(),path="xx"),
+            StoreCache(MemoryStore(),path="xx",flat=True)
+            ]:
+            cache.remove("abc") # Try to remove key from empty cache
+            assert not cache.contains("abc")
+            assert list(cache.keys()) == []
+            cache.store(state)
+
+            assert cache.contains("abc")
+            assert list(cache.keys()) == ["abc"]
+            assert cache.get("abc").get() == 123
+            assert cache.get_metadata("abc")["query"] == "abc"
+            assert cache.store_metadata(dict(query="abc", mymetafield="Hello"))
+            assert cache.get_metadata("abc")["mymetafield"] == "Hello"
+
+            assert not cache.contains("xyz")
+            assert cache.get("xyz") == None
+
+            assert not cache.contains("xxx")
+            assert cache.store_metadata(dict(query="xxx", mymetafield="Hello"))
+            assert cache.contains("xxx")
+            assert sorted(cache.keys()) == ["abc", "xxx"]
+
+            cache.clean()
+            assert not cache.contains("abc")
+            assert list(cache.keys()) == []
+            assert cache.get("abc") == None
+
     def test_xor_file_cache(self):
         state = State().with_data(123)
         state.query = "abc"

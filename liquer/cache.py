@@ -596,6 +596,151 @@ class FileCache(CacheMixin):
         return f"FileCache('{self.path}')"
 
 
+class StoreCache(CacheMixin):
+    """Simple cache similar to FileCache, but using a store module instead of a local filesystem.
+    """
+
+    def __init__(self, store, path, flat=False):
+        self.storage = store
+        self.path = path
+        if not self.storage.is_dir(path):
+            self.storage.makedir(path)
+        self.flat = flat
+
+    def clean(self):
+        import glob
+        print(f"Clean {self}")
+        path = "" if self.path in (None,"") else self.path + "/"
+        for key in self.storage.keys():
+            if not self.storage.is_dir(key) and key.startswith(path):
+                logging.debug(f"Removing cache file {key}")
+                self.storage.remove(key)
+        for _, key in sorted((-len(k.split("/")), k) for k in self.storage.keys()):
+            if self.storage.is_dir(key) and key.startswith(path):
+                try:
+                    logging.debug(f"Removing cache dir {key}")
+                    self.storage.removedir(key)
+                except:
+                    logging.debug(f"Failed to remove cache dir {key}")
+
+    def to_path(self, key, prefix="0state_"):
+        "Construct file path from a key and optionally prefix and file extension."
+        if self.flat:
+            m = hashlib.md5()
+            m.update(key.encode("utf-8"))
+            digest = m.hexdigest()
+            path = f"{self.path}/{prefix}{digest}.data"
+        else:
+            path = f"{self.path}/{key}/{prefix}.data"
+        if path.startswith("/"):
+            path = path[1:]
+        return path
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
+    def encode_metadata(self, b):
+        return self.encode(b.encode("utf-8"))
+
+    def decode_metadata(self, s):
+        s = self.decode(s)
+        if isinstance(s, str):
+            return s
+        elif isinstance(s, bytes):
+            return s.decode("utf-8")
+        else:
+            raise Exception(f"Unsupported type: {type(s)}")
+
+    def get(self, key):
+        print(f"GET {key}")
+        metadata = self.get_metadata(key)
+        print(f"  METADATA {metadata}")
+        if metadata is None:
+            print(f"(StoreCache) Metadata missing: {key}")
+            return None
+        if metadata.get("status") != "ready":
+            print(f"(StoreCache) Not ready {key}; ",metadata.get("status"))
+            return None
+        state = State()
+        state.metadata = metadata
+
+        t = state_types_registry().get(metadata["type_identifier"])
+        path = self.to_path(key)
+        if self.storage.contains(path):
+            try:
+                state.data = t.from_bytes(self.decode(self.storage.get_bytes(path)))
+                return state
+            except:
+                traceback.print_exc()
+                logging.exception(f"Cache failed to recover {key}")
+                return None
+
+    def _load_metadata(self, state_path):
+        if self.storage.contains(state_path) and not self.storage.is_dir(state_path):
+            return self.storage.get_metadata(state_path)
+
+    def get_metadata(self, key):
+        return self._load_metadata(self.to_path(key))
+
+    def remove(self, key):
+        try:
+            self.storage.remove(self.to_path(key))
+            return True
+        except:
+            traceback.print_exc()
+            return False
+
+    def contains(self, key):
+        state_path = self.to_path(key)
+        return self.storage.contains(state_path)
+
+    def keys(self):
+        path = self.path+"/"
+        for key in self.storage.keys():
+            if self.path in ("", None) or key.startswith(path):
+                if not self.storage.is_dir(key):
+                    metadata = self.storage.get_metadata(key)
+                    if "query" in  metadata:
+                        yield metadata["query"]
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata["status"]="ready" 
+
+        t = state_types_registry().get(state.type_identifier)
+        path = self.to_path(state.query)
+        if self.storage.is_supported(path):
+            try:
+                b, mime = t.as_bytes(state.data)
+                metadata = dict(**state.metadata)
+                metadata["mimetype"]=mime
+                self.storage.store(path, b, metadata)
+                return True
+            except:
+                return False
+        return False
+
+    def store_metadata(self, metadata):
+        try:
+            key = self.to_path(metadata["query"])
+            if self.storage.is_supported(key):
+                self.storage.store_metadata(key, metadata)
+                return True
+        except:
+            logging.exception(f"Cache metadata storing error: {metadata['query']}")
+            return False
+        return False
+
+    def __str__(self):
+        return f"Store cache at {self.path} based on {self.storage}"
+
+    def __repr__(self):
+        return f"FileCache({repr(self.storage)}, {repr(self.path)}, flat={self.flat})"
+
 class XORFileCache(FileCache):
     def __init__(self, path, code):
         super().__init__(path)

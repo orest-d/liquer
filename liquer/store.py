@@ -569,7 +569,6 @@ class MountPointStore(RoutingStore):
         if self.default_store is not None:
             return self.default_store
 
-
     def keys(self):
         prefixes=[]
         for prefix, store in reversed(self.routing_table):
