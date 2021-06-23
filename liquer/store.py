@@ -47,7 +47,7 @@ class Store(StoreMixin):
         return "/".join(key.split("/")[:-1])
 
     def key_name(self, key):
-        return key.split("/")[-1]
+        return str(key.split("/")[-1])
 
     def default_metadata(self, key, is_dir=False):
         return dict(key=key, fileinfo=dict(name=self.key_name(key), is_dir=is_dir))
@@ -140,7 +140,7 @@ class FileStore(Store):
                 else:
                     raise KeyNotFoundStoreException(key=key, store=self)
             metadata["key"] = key
-            metadata["fileinfo"]=dict(name=Path(p.name, is_dir = False))
+            metadata["fileinfo"]=dict(name=str(p.name), is_dir = False)
         return metadata
 
     def store(self, key, data, metadata):
@@ -216,7 +216,7 @@ class MemoryStore(Store):
             if key in ("",None):
                 return dict(key="", fileinfo=dict(name="", is_dir=True))
             else:
-                return dict(key=key, fileinfo=dict(name="/".split(key)[-1], is_dir=True))
+                return dict(key=str(key), fileinfo=dict(name=str("/".split(key)[-1]), is_dir=True))
         else:
             if key not in self.metadata:
                 raise KeyNotFoundStoreException(key=key, store=self)
@@ -660,7 +660,7 @@ class FileSystemStore(Store):
                 else:
                     raise KeyNotFoundStoreException(key=key, store=self)
             metadata["key"] = key
-            metadata["fileinfo"]=dict(name=self.key_name(key), is_dir = False)
+            metadata["fileinfo"]=dict(name=str(self.key_name(key)), is_dir = False)
         return metadata
 
     def store(self, key, data, metadata):

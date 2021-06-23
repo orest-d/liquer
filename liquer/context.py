@@ -562,12 +562,12 @@ class Context(object):
         state = self.create_initial_state()
         try:
             metadata = store.get_metadata(key)
-            print(f"STORE METADATA: {metadata}")
             data = store.get_bytes(key)
             state = state.with_data(data)
             state.metadata["resource_metadata"] = metadata
         except:
             self.exception(message = f"Error evaluating resource {resource_query}", traceback=traceback.format_exc(), position=resource_query.position, query=resource_query.encode())
+            traceback.print_exc()
         return state
 
     def create_initial_state(self):
@@ -852,7 +852,7 @@ class RecipeStore(Store):
         return False
 
     def keys(self):
-        return sorted(set(self.substore.keys()).union(self.recipes.keys()))
+        return sorted(set(self.substore.keys()).union(self.recipes().keys()))
 
     def listdir(self, key):
         d = set(self.substore.listdir(key))
@@ -895,7 +895,10 @@ class RecipeSpecStore(RecipeStore):
                         try:
                             query = parse(r)
                             filename = query.filename()
-                            rkey = f"{self.parent_key(key)}/{directory}/{filename}"
+                            parent = self.parent_key(key)
+                            if len(parent)>0 and not parent.endswith("/"):
+                                parent += "/"
+                            rkey = f"{parent}{directory}/{filename}"
                             recipes[rkey] = r
                         except:
                             pass

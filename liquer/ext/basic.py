@@ -177,6 +177,10 @@ def dr(state, context=None):
     from liquer.state_types import state_types_registry
     from liquer.parser import parse
 
+    if state.data is None:
+        context.error(f"Bytes expected, None received in dr from {state.query}")
+        return
+        
     type_identifier = state.metadata.get('type_identifier', state.metadata.get("resource_metadata",{}).get('type_identifier'))
 
     if type_identifier in (None, "bytes"):

@@ -733,11 +733,21 @@ class CommandExecutable(object):
     def __call__(self, state, *args, context=None):
         query = None if context is None else context.raw_query
 
-        args = list(args) + [
-            a["default"]
-            for a in self.metadata.arguments[len(args) :]
-            if not a["multiple"] and a["name"]!="context"
-        ]
+        args = list(args)
+        try:
+            position=args[-1].position
+        except:
+            position=None
+        for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
+            if not a.get("multiple", False) and a["name"]!="context":
+                if "default" in a:
+                    args.append(a["default"])
+                else:
+                    raise ArgumentParserException(
+                        f"Expected {a['name']} argument for {self.metadata.name}, no default",
+                        position=position,
+                        query=query,
+                    )
         try:
             argv, argmeta, remainder = self.argument_parser.parse_meta(
                 self.metadata.arguments, args, context=context
