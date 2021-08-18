@@ -29,6 +29,7 @@ pip install liquer-framework
 - 2021-01-31 - v4.6 - basic support for parquet and feather
 - 2021-06-22 - v4.7 - stores, resources and recipes
 - 2021-06-23 - v4.8 - multiple fixes
+- 2021-08-18 - v4.9 - small fixes
 
 # TODO
 
