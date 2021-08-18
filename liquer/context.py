@@ -855,7 +855,7 @@ class RecipeStore(Store):
         return sorted(set(self.substore.keys()).union(self.recipes().keys()))
 
     def listdir(self, key):
-        d = set(self.substore.listdir(key))
+        d = set(self.substore.listdir(key) or [])
         key_split = key.split("/")
         if len(key_split)== 1 and key_split[0]=="":
             key_split=[]
