@@ -135,3 +135,38 @@ class TestContext:
         v.y=123
         assert dict(v)=={"x":1234, "y":123}
         assert v.get_modified()=={"y":123} 
+
+class TestRecipes:
+    def test_recipes(self):
+        import liquer.store as st
+        reset_command_registry()
+
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        substore = st.MemoryStore()
+        substore.store("recipes.yaml",
+"""
+RECIPES:
+  - hello-RECIPES/hello1.txt
+subdir:
+  - hello-subdir/hello2.txt
+""",{})
+        substore.store("x/recipes.yaml",
+"""
+RECIPES:
+  - hello-RECIPES_X/hello3.txt
+subdir:
+  - hello-subdir_x/hello4.txt
+""",{})
+        store = RecipeSpecStore(substore)
+        assert "hello1.txt" in store.keys()
+        assert "subdir/hello2.txt" in store.keys()
+        assert "x/hello3.txt" in store.keys()
+        assert "x/subdir/hello4.txt" in store.keys()
+
+        assert store.get_bytes("hello1.txt") == b"Hello, RECIPES"
+        assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
+        assert store.get_bytes("x/hello3.txt") == b"Hello, RECIPES_X"
+        assert store.get_bytes("x/subdir/hello4.txt") == b"Hello, subdir_x"

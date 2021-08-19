@@ -17,19 +17,21 @@ pip install liquer-framework
 ```
 
 # News
-- 2020-11-08 - v3.2 - Support for matplotlib figures, SQL cache and other minor changes
-- 2020-11-09 - v3.3 - SQL cache with base64 encoding, cache cleaning
-- 2020-11-11 - v3.4 - XOR file cache allows simple encoding of cached data
-- 2020-12-06 - v4.0 - big change: introduced context, parser, pool and progress monitoring
-- 2020-12-07 - v4.1 - fixing buf in file cache remove
-- 2020-12-07 - v4.2 - Fernet file cache support for metadata encoding and change of keys
-- 2021-01-16 - v4.3 - Improvements of the query monitoring UI
-- 2021-01-19 - v4.4 - state variables in context, html_preview
-- 2021-01-31 - v4.5 - remove supported in query monitoring
-- 2021-01-31 - v4.6 - basic support for parquet and feather
-- 2021-06-22 - v4.7 - stores, resources and recipes
-- 2021-06-23 - v4.8 - multiple fixes
-- 2021-08-18 - v4.9 - small fixes
+
+- 2020-11-08 - v3.2  - Support for matplotlib figures, SQL cache and other minor changes
+- 2020-11-09 - v3.3  - SQL cache with base64 encoding, cache cleaning
+- 2020-11-11 - v3.4  - XOR file cache allows simple encoding of cached data
+- 2020-12-06 - v4.0  - big change: introduced context, parser, pool and progress monitoring
+- 2020-12-07 - v4.1  - fixing buf in file cache remove
+- 2020-12-07 - v4.2  - Fernet file cache support for metadata encoding and change of keys
+- 2021-01-16 - v4.3  - Improvements of the query monitoring UI
+- 2021-01-19 - v4.4  - state variables in context, html_preview
+- 2021-01-31 - v4.5  - remove supported in query monitoring
+- 2021-01-31 - v4.6  - basic support for parquet and feather
+- 2021-06-22 - v4.7  - stores, resources and recipes
+- 2021-06-23 - v4.8  - multiple fixes
+- 2021-08-18 - v4.9  - small fixes
+- 2021-08-19 - v4.10 - local recipes in RecipeSpecStore
 
 # TODO
 

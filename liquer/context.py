@@ -23,6 +23,7 @@ import liquer.util as util
 
 from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException
 from yaml import load, dump
+
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
@@ -65,7 +66,7 @@ class Vars(dict):
         super().__setattr__("_modified_vars", mv)
         self.clear()
         self.update(d)
-        
+
     def get_modified(self):
         return {key: self[key] for key in self._modified_vars}
 
@@ -566,7 +567,12 @@ class Context(object):
             state = state.with_data(data)
             state.metadata["resource_metadata"] = metadata
         except:
-            self.exception(message = f"Error evaluating resource {resource_query}", traceback=traceback.format_exc(), position=resource_query.position, query=resource_query.encode())
+            self.exception(
+                message=f"Error evaluating resource {resource_query}",
+                traceback=traceback.format_exc(),
+                position=resource_query.position,
+                query=resource_query.encode(),
+            )
             traceback.print_exc()
         return state
 
@@ -708,7 +714,14 @@ class Context(object):
 
         return state
 
-    def evaluate_and_save(self, query, target_directory=None, target_file=None, target_resource_directory=None, store=None):
+    def evaluate_and_save(
+        self,
+        query,
+        target_directory=None,
+        target_file=None,
+        target_resource_directory=None,
+        store=None,
+    ):
         """Evaluate query and save result.
         Output is saved either to
         - a target directory (current working directory by default) to a file deduced from the query, or
@@ -731,10 +744,14 @@ class Context(object):
                 data, extension=state.metadata["extension"]
             )
             filename = (
-                t.default_filename()
-                if state.metadata.get("filename") is None
-                else state.metadata["filename"]
-            ) if target_file is None else target_file
+                (
+                    t.default_filename()
+                    if state.metadata.get("filename") is None
+                    else state.metadata["filename"]
+                )
+                if target_file is None
+                else target_file
+            )
         if target_directory is None:
             path = filename
         else:
@@ -747,7 +764,11 @@ class Context(object):
 
         if target_resource_directory is not None:
             filename = os.path.split(path)[1]
-            key = target_resource_directory + "/" + filename
+            key = (
+                filename
+                if target_resource_directory == ""
+                else target_resource_directory + "/" + filename
+            )
             print(f"*** Store evaluated {query} to {key}")
             if store is None:
                 store = self.store()
@@ -779,6 +800,7 @@ class Context(object):
                     result += qr
         return result
 
+
 class RecipeStore(Store):
     def __init__(self, store, recipes=None, context=None):
         self.substore = store
@@ -789,7 +811,7 @@ class RecipeStore(Store):
             self.context = context
 
     def with_context(self, context):
-        return RecipeStore(self.substore, recipes = self.recipes, context=context)
+        return RecipeStore(self.substore, recipes=self.recipes, context=context)
 
     def mount_recipe(self, key, recipe):
         self._recipes[key] = recipe
@@ -798,10 +820,17 @@ class RecipeStore(Store):
     def make(self, key):
         query = self.recipes().get(key)
         if query is None:
-            raise KeyNotFoundStoreException(f"Key {key} not found, recipe unknown", key=key, store=self)
-        target_resource_directory=self.parent_key(key)
+            raise KeyNotFoundStoreException(
+                f"Key {key} not found, recipe unknown", key=key, store=self
+            )
+        target_resource_directory = self.parent_key(key)
         target_file = self.key_name(key)
-        self.context.evaluate_and_save(query, target_resource_directory=target_resource_directory, target_file=target_file, store=self.substore)
+        self.context.evaluate_and_save(
+            query,
+            target_resource_directory=target_resource_directory,
+            target_file=target_file,
+            store=self.substore,
+        )
 
     def recipes(self):
         return self._recipes
@@ -814,7 +843,7 @@ class RecipeStore(Store):
             return self.substore.get_bytes(key)
         self.make(key)
         return self.substore.get_bytes(key)
-        
+
     def get_metadata(self, key):
         if self.substore.contains(key):
             return self.substore.get_metadata(key)
@@ -837,7 +866,7 @@ class RecipeStore(Store):
         if self.substore.contains(key):
             return True
         for k in self.recipes():
-            if k==key or k.startswith(key+"/"):
+            if k == key or k.startswith(key + "/"):
                 return True
         return False
 
@@ -845,9 +874,9 @@ class RecipeStore(Store):
         if self.substore.is_dir(key):
             return True
         for k in self.recipes():
-            if k==key:
+            if k == key:
                 return False
-            if k.startswith(key+"/"):
+            if k.startswith(key + "/"):
                 return True
         return False
 
@@ -857,16 +886,15 @@ class RecipeStore(Store):
     def listdir(self, key):
         d = set(self.substore.listdir(key) or [])
         key_split = key.split("/")
-        if len(key_split)== 1 and key_split[0]=="":
-            key_split=[]
+        if len(key_split) == 1 and key_split[0] == "":
+            key_split = []
         key_depth = len(key_split)
 
         for k in self.recipes().keys():
-            if k.startswith(key+"/") or key in (None, ""):
+            if k.startswith(key + "/") or key in (None, ""):
                 v = k.split("/")
                 d.add(v[key_depth])
         return sorted(d)
-
 
     def makedir(self, key):
         return self.substore.makedir(key)
@@ -880,15 +908,22 @@ class RecipeStore(Store):
     def __repr__(self):
         return f"RecipeStore({repr(self.substore)}, recipes={repr(self.recipes())})"
 
+
 class RecipeSpecStore(RecipeStore):
+    RECIPES_FILE = "recipes.yaml"
+    LOCAL_RECIPES = "RECIPES"
+
     def recipes(self):
         import yaml
+
         recipes = {}
         for key in self.substore.keys():
             spec = None
-            if self.key_name(key)=="recipes.yaml" and not self.substore.is_dir(key):
+            if self.key_name(key) == self.RECIPES_FILE and not self.substore.is_dir(
+                key
+            ):
                 spec = yaml.load(self.substore.get_bytes(key), Loader=Loader)
-            if spec is not None: 
+            if spec is not None:
                 parent = self.parent_key(key)
                 for directory, items in spec.items():
                     for r in items:
@@ -896,9 +931,13 @@ class RecipeSpecStore(RecipeStore):
                             query = parse(r)
                             filename = query.filename()
                             parent = self.parent_key(key)
-                            if len(parent)>0 and not parent.endswith("/"):
+                            if len(parent) > 0 and not parent.endswith("/"):
                                 parent += "/"
-                            rkey = f"{parent}{directory}/{filename}"
+                            rkey = (
+                                f"{parent}{filename}"
+                                if directory == self.LOCAL_RECIPES
+                                else f"{parent}{directory}/{filename}"
+                            )
                             recipes[rkey] = r
                         except:
                             pass
