@@ -69,15 +69,27 @@ pip install liquer-framework
 
 - [x] state variables in context
 - [x] html preview
-- [ ] improve scheduling - prevent same queries to be scheduled
 - [x] state enum in context
 - [x] color coding of state in GUI query monitoring
 
+- [ ] timestamp in context log messages
+- [ ] human readable metadata extract and store report
+- [ ] encoded store
+- [ ] file-system paths and url links to physical file in store (when possible) 
+- [ ] original link in recipes store
+- [ ] ignore dot directories in recipes store in order to support jupyter notebooks
+- [ ] configurable frontend
+- [ ] prevent caching data in store
+- [ ] integrate pointcloud explorer
+- [ ] split context to mixins
+- [ ] update Jupyter plugin
+
+- [ ] improve scheduling - prevent same queries to be scheduled
 - [ ] report template
 - [ ] wasm library in frontend
-- [ ] configurable frontend
 - [ ] liquer frontent project
 
+- [ ] dependency injection input type
 - [x] resources
 - [x] store implementations: memory, file, mounting, filesystem
 - [x] web api for store

@@ -71,6 +71,16 @@ class Vars(dict):
         return {key: self[key] for key in self._modified_vars}
 
 
+def timestamp():
+    date = datetime.now()
+    return date.isoformat()
+
+
+def log_time():
+    date = datetime.now()
+    return date.strftime("%H:%M:%S")
+
+
 class Context(object):
     def __init__(self, parent_context=None, debug=False):
         self.parent_context = parent_context  # parent context - when in child context
@@ -79,6 +89,7 @@ class Context(object):
         self.query = None  # Query object of the evaluated query
         self.status = Status.NONE  # Status: ready, error...
         self.is_error = False  # True is evaluation failed
+
         self.started = ""  # Evaluation start time
         self.created = ""  # Created time (evaluation finished)
 
@@ -107,12 +118,6 @@ class Context(object):
         self.vars = Vars(vars_clone())
         self.html_preview = ""
 
-    def can_report(self):
-        if self.last_report_time is None:
-            self.last_report_time = datetime.now()
-        return True
-        return (datetime.now() - self.last_report_time).total_seconds() > 0.1
-
     def metadata(self):
         return dict(
             status=self.status.value,
@@ -133,6 +138,12 @@ class Context(object):
             vars=dict(self.vars),
             html_preview=self.html_preview,
         )
+
+    def can_report(self):
+        if self.last_report_time is None:
+            self.last_report_time = datetime.now()
+        return True
+        return (datetime.now() - self.last_report_time).total_seconds() > 0.1
 
     def set_html_preview(self, html):
         self.html_preview = html
@@ -164,6 +175,7 @@ class Context(object):
                 step=0,
                 total_steps=None,
                 message="",
+                timestamp=timestamp(),
             )
         )
         return self._progress_indicator_identifier
@@ -195,7 +207,9 @@ class Context(object):
     ):
         index = self.progress_indicator_index(identifier)
 
-        progress = dict(step=step, total_steps=total_steps, message=message)
+        progress = dict(
+            step=step, total_steps=total_steps, message=message, timestamp=timestamp()
+        )
         self.progress_indicators[index].update(progress)
 
         removed = False
@@ -257,6 +271,7 @@ class Context(object):
 
     def log_dict(self, d):
         "Put dictionary with a log entry into the log"
+        d["timestamp"]=timestamp()
         self.log.append(d)
         if "message" in d:
             self.message = d["message"]
@@ -293,9 +308,9 @@ class Context(object):
         self.is_error = True
         self.status = Status.ERROR
         if position is None:
-            print("ERROR:    ", message)
+            print(f"{log_time()} ERROR:    ", message)
         else:
-            print("ERROR:    ", message, f" at {position}")
+            print(f"{log_time()} ERROR:    ", message, f" at {position}")
         return self.log_dict(
             dict(
                 kind="error",
@@ -307,7 +322,7 @@ class Context(object):
 
     def warning(self, message):
         """Log a warning message"""
-        print("WARNING:  ", message)
+        print(f"{log_time()} WARNING:  ", message)
         return self.log_dict(dict(kind="warning", message=message))
 
     def exception(self, message, traceback, position=None, query=None):
@@ -315,9 +330,9 @@ class Context(object):
         self.is_error = True
         self.status = Status.ERROR
         if position is None:
-            print("EXCEPTION:", message)
+            print(f"{log_time()} EXCEPTION:", message)
         else:
-            print("EXCEPTION:", message, f" at {position}")
+            print(f"{log_time()} EXCEPTION:", message, f" at {position}")
         return self.log_dict(
             dict(
                 kind="error",
@@ -330,14 +345,14 @@ class Context(object):
 
     def info(self, message):
         """Log a message (info)"""
-        print("INFO:     ", message)
+        print(f"{log_time()} INFO:     ", message)
         self.log_dict(dict(kind="info", message=message))
         return self
 
     def debug(self, message):
         """Log a message (info)"""
         if self.debug_messages:
-            print("DEBUG:    ", message)
+            print(f"{log_time()} DEBUG:    ", message)
             self.log_dict(dict(kind="debug", message=message))
         return self
 
