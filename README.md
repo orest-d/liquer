@@ -73,9 +73,11 @@ pip install liquer-framework
 - [x] color coding of state in GUI query monitoring
 
 - [x] timestamp in context log messages
+- [ ] resource path in ~X link
+- [ ] default store for webapp extensions
 - [ ] human readable metadata extract and store report
 - [ ] encoded store
-- [ ] file-system paths and url links to physical file in store (when possible) 
+- [x] file-system paths and url links to physical file in store (when possible) 
 - [ ] ignore dot directories in recipes store in order to support jupyter notebooks
 - [ ] configurable frontend
 - [ ] prevent caching data in store

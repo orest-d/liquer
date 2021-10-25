@@ -24,6 +24,7 @@ class TestStore:
         assert store.get_bytes("a/b") == b"test"
         assert store.get_metadata("a/b")["x"] == "xx"
         assert store.get_metadata("a")["fileinfo"]["is_dir"] == True
+        assert store.get_metadata("a/b")["fileinfo"]["is_dir"] == False
         assert sorted(store.keys()) == ["a","a/b"]
         assert store.listdir("a") == ["b"]
         assert store.listdir("") == ["a"]
@@ -56,6 +57,19 @@ class TestFileSystemStore(TestStore):
         import fs
         return FileSystemStore(fs.open_fs('mem://'))
 
+class TestFileStore(TestStore):
+    @pytest.fixture
+    def store(self, tmpdir):
+        return FileStore(tmpdir)
+
+    def test_filesystem_path(self, store):
+        store.store("dir_a/file_b",b"test",dict(x="xx"))
+        assert store.get_metadata("dir_a/file_b")["x"] == "xx"
+        assert store.get_metadata("dir_a")["fileinfo"]["is_dir"] == True
+        assert store.get_metadata("dir_a/file_b")["fileinfo"]["filesystem_path"].startswith(str(store.path))
+        assert store.get_metadata("dir_a/file_b")["fileinfo"]["filesystem_path"].endswith("dir_a/file_b")
+        
+        
 class TestMountPointStore:
     def test_file_store_creation(self):
         store = MountPointStore(MemoryStore())
