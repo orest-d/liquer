@@ -744,7 +744,7 @@ class CommandExecutable(object):
                     args.append(a["default"])
                 else:
                     raise ArgumentParserException(
-                        f"Expected {a['name']} argument for {self.metadata.name}, no default",
+                        f"Expected '{a['name']}' argument for '{self.metadata.name}', no default",
                         position=position,
                         query=query,
                     )

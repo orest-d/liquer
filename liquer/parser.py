@@ -286,16 +286,19 @@ class ActionRequest(object):
 
 class SegmentHeader(object):
     def __init__(
-        self, name: str = "", level: int = 1, parameters: list = None, position=None
+        self, name: str = "", level: int = 1, parameters: list = None, resource: bool=False, position=None
     ):
         self.name = name
         self.level = level
         self.parameters = parameters or []
+        self.resource = resource
         self.position = position or Position()
 
     def encode(self):
         assert self.level >= 1
         encoded = "-" * self.level
+        if self.resource:
+            encoded += "R"
         encoded += self.name
         if len(self.parameters):
             assert len(self.name) > 0
@@ -306,10 +309,11 @@ class SegmentHeader(object):
 
     def __repr__(self):
         return f"""SegmentHeader(
-  name  = {repr(self.name)},
-  level = {self.level},
-  parameters={indent(list_indent(self.parameters))},
-  position={repr(self.position)}
+  name       ={repr(self.name)},
+  level      ={self.level},
+  parameters ={indent(list_indent(self.parameters))},
+  resource   ={self.resource},
+  position   ={repr(self.position)}
 )"""
 
     def __str__(self):
@@ -439,12 +443,14 @@ class ResourceQuerySegment(object):
 
     def encode(self):
         query = self.path()
-        if self.header is None or self.header.name in (None, ""):
-            rqs = "-R"
+        if self.header is None:
+            rqs = ""
         else:
-            rqs = f"-R-{self.header.encode()}"
+            rqs = self.header.encode()
+        if len(rqs):
+            rqs+="/"
         if len(query):
-            return f"{rqs}/{query}"
+            return f"{rqs}{query}"
         else:
             return rqs
 
@@ -765,6 +771,7 @@ def _resource_segment_with_header_parse_action(s, loc, toks):
         name=name,
         level=level,
         parameters=list(toks[1]),
+        resource=True,
         position=position,
     )
     if len(toks) == 3:

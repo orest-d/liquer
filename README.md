@@ -73,10 +73,15 @@ pip install liquer-framework
 - [x] color coding of state in GUI query monitoring
 
 - [x] timestamp in context log messages
-- [ ] resource path in ~X link
+- [x] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
+- [x] resource path in ~X link
 - [ ] default store for webapp extensions
 - [ ] human readable metadata extract and store report
 - [ ] encoded store
+- [ ] get_context function to create context
+- [ ] default data-science app example
+- [ ] more powerful recipes - description and url/file links, nested structure ?
+- [ ] store to_dict and from_dict
 - [x] file-system paths and url links to physical file in store (when possible) 
 - [ ] ignore dot directories in recipes store in order to support jupyter notebooks
 - [ ] configurable frontend
@@ -85,10 +90,11 @@ pip install liquer-framework
 - [ ] split context to mixins
 - [ ] update Jupyter plugin
 
+- [ ] liquer frontent project
 - [ ] improve scheduling - prevent same queries to be scheduled
 - [ ] report template
 - [ ] wasm library in frontend
-- [ ] liquer frontent project
+- [ ] web store GUI
 
 - [ ] dependency injection input type
 - [x] resources
@@ -98,7 +104,6 @@ pip install liquer-framework
 - [x] decode resource command
 - [ ] remote store (based on web api)
 - [ ] remote liquer service as cache
-- [ ] web store GUI
 - [x] resources-based cache
 - [ ] filesystem from store
 - [ ] fuse access to store
@@ -106,7 +111,6 @@ pip install liquer-framework
 
 - [ ] SQL cache working on Hive
 - [ ] debug transform query
-- [ ] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
 
 - [ ] better chart library
 - [ ] better pandas functions (eq, lt, gt, leq, geq, isin, notin, between, groupby, random)

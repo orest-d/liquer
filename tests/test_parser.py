@@ -167,6 +167,11 @@ class TestNewParser:
         ]
         assert r == [None, "-/file.txt", "-/jkl/file.txt", "-/ghi/jkl/file.txt"]
 
+    def test_rheader(self):
+        q = parse("-R/a/b/-/world")
+        assert len(q.segments)==2
+        assert q.segments[0].header.encode()=="-R"
+        assert q.segments[0].encode()=="-R/a/b"
 
 class TestQueryElements:
     def test_simple_action_request(self):

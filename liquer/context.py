@@ -395,7 +395,8 @@ class Context(object):
                 value = self.evaluate(p.link)
                 if value.is_error:
                     self.error(
-                        f"Error while evaluating absolute link parameter {p.link.encode()} at {p.position}"
+                        f"Error while evaluating absolute link parameter {p.link.encode()}",
+                        position=p.position, query=self.raw_query
                     )
                     self.status = Status.ERROR
                     self.store_metadata(force=True)
@@ -420,7 +421,8 @@ class Context(object):
                 value = self.apply(p.link)
                 if value.is_error:
                     self.error(
-                        f"Error while evaluating relative link parameter {p.link.encode()} at {p.position}"
+                        f"Error while evaluating relative link parameter {p.link.encode()} at {p.position}",
+                        position=p.position, query = self.raw_query
                     )
                     self.status = Status.ERROR
                     self.store_metadata(force=True)
@@ -464,7 +466,7 @@ class Context(object):
 
         ns, command, cmd_metadata = cr.resolve_command(state, action.name)
         if command is None:
-            self.error(f"Unknown action: {action.name} at {action.position}")
+            self.error(f"Unknown action: '{action.name}'", position=action.position, query=self.raw_query)
         else:
             parameters = []
             self.status = Status.EVALUATING_DEPENDENCIES
@@ -572,7 +574,8 @@ class Context(object):
     def evaluate_resource(self, resource_query):
         self.info(f"Evaluate resource: {resource_query}")
         if resource_query.header is not None:
-            raise Exception(f"Header not supported in resource query {resource_query}")
+            if resource_query.header.encode()!="-R":
+                raise Exception(f"Header '{resource_query.header}' not supported in resource query {resource_query}")
         key = resource_query.path()
         store = self.store()
         state = self.create_initial_state()

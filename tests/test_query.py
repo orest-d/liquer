@@ -103,6 +103,25 @@ class TestQuery:
         assert evaluate("value-1/add-~X~/value-2~E").get()==3 
         assert evaluate("value-1/add-~X~add-2~E").get()==4 
 
+    def test_resource_link(self, tmpdir):
+        import liquer.store as st 
+        reset_command_registry()
+        st.set_store(st.MemoryStore())
+        store = st.get_store()
+        store.store("a/b", b"hello", {})
+        @command
+        def world(data):
+            return data.decode("utf-8") + " world"
+        @first_command
+        def value(x):
+            return f"<{x}>"
+        assert evaluate("a/b/-/world").get()=="hello world" 
+        assert evaluate("-R/a/b/-/world").get()=="hello world" 
+        assert evaluate("value-~X~-R/a/b/-/world~E").get()=="<hello world>" 
+
+
+
+
     def test_link_error(self):
         reset_command_registry()
 
@@ -128,6 +147,73 @@ class TestQuery:
         def world(data):
             return data.decode("utf-8") + " world"
         assert evaluate("a/b/-/world").get() == "hello world"
+
+    def test_error_message1(self):
+        import traceback
+        import liquer.store as st 
+        reset_command_registry()
+        st.set_store(st.MemoryStore())
+        store = st.get_store()
+        store.store("a/b", b"hello", {})
+        @command
+        def world(data):
+            return data.decode("utf-8") + " world"
+        assert evaluate("a/b/-/world").get() == "hello world"
+        try:
+            evaluate("a/b/-/undefined").get()
+            assert False
+        except Exception as e:
+            assert e.query == "a/b/-/undefined"
+            assert e.position.offset == 6
+
+    def test_error_message2(self):
+        import traceback
+        import liquer.store as st 
+        reset_command_registry()
+        st.set_store(st.MemoryStore())
+        store = st.get_store()
+        store.store("a/b", b"hello", {})
+        @command
+        def world(data):
+            return data.decode("utf-8") + " world"
+        @command
+        def error(data):
+            raise Exception("Error")
+        assert evaluate("a/b/-/world").get() == "hello world"
+        try:
+            evaluate("a/b/-/error").get()
+            assert False
+        except Exception as e:
+            assert e.query == "a/b/-/error"
+            assert e.position.offset == 6
+
+    def test_error_message3(self):
+        import traceback
+        import liquer.store as st 
+        reset_command_registry()
+        st.set_store(st.MemoryStore())
+        store = st.get_store()
+        store.store("a/b", b"hello", {})
+        @command
+        def world(data):
+            return data.decode("utf-8") + " world"
+        @command
+        def expected(data, arg):
+            return f"{data} {arg}"
+        assert evaluate("a/b/-/world/expected-x").get() == "hello world x"
+        try:
+            evaluate("a/b/-/expected").get()
+            assert False
+        except Exception as e:
+            assert e.query == "a/b/-/expected"
+            assert e.position.offset == 6
+        try:
+            evaluate("a/b/-/expected-x-y").get()
+            assert False
+        except Exception as e:
+            assert e.query == "a/b/-/expected-x-y"
+            assert e.position.offset == 6
+
 
     def test_store_evaluate_and_save(self, tmpdir):
         import liquer.store as st 
