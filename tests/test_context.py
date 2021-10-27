@@ -170,3 +170,60 @@ subdir:
         assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
         assert store.get_bytes("x/hello3.txt") == b"Hello, RECIPES_X"
         assert store.get_bytes("x/subdir/hello4.txt") == b"Hello, subdir_x"
+
+    def test_ignore(self):
+        import liquer.store as st
+        reset_command_registry()
+
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        substore = st.MemoryStore()
+        substore.store(".a/recipes.yaml","",{})
+        substore.store("a/b","",{})
+        substore.store("a/.b","",{})
+        substore.store(".a/b","",{})
+        substore.store(".a/.b","",{})
+        store = RecipeSpecStore(substore)
+        assert "a/b" in store.keys()
+        assert "a/.b" not in store.keys()
+        assert ".a/b" not in store.keys()
+        assert ".a/.b" not in store.keys()
+
+    def test_recipes_advanced(self):
+        import liquer.store as st
+        reset_command_registry()
+
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        substore = st.MemoryStore()
+        substore.store("recipes.yaml",
+"""
+RECIPES:
+  - query: hello-RECIPES/hello1.txt
+    title: "Hello 1"
+    description: "This is hello 1."
+subdir:
+  - query: hello-subdir/hello.txt
+    filename: hello2.txt
+    title: "Hello 2"
+    description: "This is hello 2."
+""",{})
+        store = RecipeSpecStore(substore)
+        assert "hello1.txt" in store.keys()
+        assert "subdir/hello2.txt" in store.keys()
+
+        assert store.get_metadata("hello1.txt")["title"] == "Hello 1"
+        assert store.get_metadata("hello1.txt")["description"] == "This is hello 1."
+        assert store.get_bytes("hello1.txt") == b"Hello, RECIPES"
+        assert store.get_metadata("hello1.txt")["title"] == "Hello 1"
+        assert store.get_metadata("hello1.txt")["description"] == "This is hello 1."
+
+        assert store.get_metadata("subdir/hello2.txt")["title"] == "Hello 2"
+        assert store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
+        assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
+        assert store.get_metadata("subdir/hello2.txt")["title"] == "Hello 2"
+        assert store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."

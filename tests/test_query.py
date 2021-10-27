@@ -120,8 +120,6 @@ class TestQuery:
         assert evaluate("value-~X~-R/a/b/-/world~E").get()=="<hello world>" 
 
 
-
-
     def test_link_error(self):
         reset_command_registry()
 
@@ -147,6 +145,24 @@ class TestQuery:
         def world(data):
             return data.decode("utf-8") + " world"
         assert evaluate("a/b/-/world").get() == "hello world"
+
+    def test_meta_store(self):
+        import liquer.store as st 
+        reset_command_registry()
+        st.set_store(st.MemoryStore())
+        store = st.get_store()
+        store.store("a/b", b"hello", {"x":123})
+        @command
+        def world(data):
+            return data.decode("utf-8") + " world"
+        @command
+        def get_x(metadata):
+            return metadata.get("x")
+
+        assert evaluate("-R/a/b/-/world").get() == "hello world"
+        assert evaluate("-R-meta/a/b/-/get_x").get() == 123
+        print(evaluate("-R-meta/a/b").get())
+        assert evaluate("-R-meta/a/b").get()["key"] == "a/b"
 
     def test_error_message1(self):
         import traceback

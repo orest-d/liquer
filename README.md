@@ -75,16 +75,17 @@ pip install liquer-framework
 - [x] timestamp in context log messages
 - [x] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
 - [x] resource path in ~X link
+
 - [ ] default store for webapp extensions
+- [ ] configurable frontend
 - [ ] human readable metadata extract and store report
 - [ ] encoded store
 - [ ] get_context function to create context
 - [ ] default data-science app example
-- [ ] more powerful recipes - description and url/file links, nested structure ?
+- [x] more powerful recipes - description and url/file links, nested structure ?
 - [ ] store to_dict and from_dict
+- [x] ignore dot directories in recipes store in order to support jupyter notebooks
 - [x] file-system paths and url links to physical file in store (when possible) 
-- [ ] ignore dot directories in recipes store in order to support jupyter notebooks
-- [ ] configurable frontend
 - [ ] prevent caching data in store
 - [ ] integrate pointcloud explorer
 - [ ] split context to mixins

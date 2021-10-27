@@ -92,6 +92,43 @@ def help(state, command_name, ns="root"):
     except KeyError:
         return state.with_data(f"<h1>Unknown namespace <em>{ns}</em></h1>").with_filename("help.html")
 
+""" @command(ns="meta")
+def status_md(metadata):
+    txt = ""
+    txt+="# %s\n\n"%(metadata.get("title","???"))
+    txt+="QUERY:   %s\n"%(metadata.get("query","???"))
+    txt+="STATUS:  %s\n"%(metadata.get("status","???"))
+    txt+="MESSAGE: %s\n\n"%(metadata.get("message",""))
+
+    txt+="STARTED: %s\n"%(metadata.get("started","-"))
+    txt+="UPDATED: %s\n"%(metadata.get("updated","-"))
+    txt+="CREATED: %s\n"%(metadata.get("created","-"))
+
+    txt+="## DESCRIPTION:\n%s\n"%(metadata.get("description","")
+    txt+="## LOG\n"
+    for record in metadata.get("log",[]):
+
+            status=self.status.value,
+            title=title,
+            description=self.description,
+            query=self.raw_query,
+            parent_query=self.parent_query,
+            argument_queries=self.argument_queries,
+            log=self.log[:],
+            is_error=self.is_error,
+            direct_subqueries=self.direct_subqueries[:],
+            progress_indicators=self.progress_indicators[:],
+            child_progress_indicators=self.child_progress_indicators[:],
+            child_log=self.child_log,
+            message=self.message,
+            started=self.started,
+            updated=self.now(),
+            created=self.created,
+            caching=self.caching,
+            vars=dict(self.vars),
+            html_preview=self.html_preview,
+"""
+
 if __name__=="__main__":
     from liquer import *
     print(evaluate("ns-meta/flat_commands").get())

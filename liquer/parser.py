@@ -301,7 +301,7 @@ class SegmentHeader(object):
             encoded += "R"
         encoded += self.name
         if len(self.parameters):
-            assert len(self.name) > 0
+            assert len(self.name) > 0 or self.resource
             for parameter in self.parameters:
                 encoded += "-"
                 encoded += parameter.encode()

@@ -114,13 +114,28 @@ class Context(object):
         self._progress_indicator_identifier = (
             1  # counter for creating unique progress identifiers
         )
+        self.description=""
+        self.title=None
 
         self.vars = Vars(vars_clone())
         self.html_preview = ""
 
     def metadata(self):
+        title=self.title
+        if title is None:
+            if self.raw_query is None:
+                title=""
+            else:
+                p=parse(self.raw_query).predecessor()[0]
+                if p is not None:
+                    title = self.raw_query
+                else:
+                    title = str(p)
+
         return dict(
             status=self.status.value,
+            title=title,
+            description=self.description,
             query=self.raw_query,
             parent_query=self.parent_query,
             argument_queries=self.argument_queries,
@@ -147,6 +162,16 @@ class Context(object):
 
     def set_html_preview(self, html):
         self.html_preview = html
+        self.store_metadata()
+        return self
+
+    def set_description(self, description):
+        self.description = description
+        self.store_metadata()
+        return self
+
+    def set_title(self, title):
+        self.title = title
         self.store_metadata()
         return self
 
@@ -574,14 +599,19 @@ class Context(object):
     def evaluate_resource(self, resource_query):
         self.info(f"Evaluate resource: {resource_query}")
         if resource_query.header is not None:
-            if resource_query.header.encode()!="-R":
+            if resource_query.header.encode() not in ("-R", "-R-meta"):
                 raise Exception(f"Header '{resource_query.header}' not supported in resource query {resource_query}")
         key = resource_query.path()
         store = self.store()
         state = self.create_initial_state()
         try:
             metadata = store.get_metadata(key)
-            data = store.get_bytes(key)
+            if resource_query.header is not None and len(resource_query.header.parameters)>0 and resource_query.header.parameters[-1].encode()=="meta":
+                self.info(f"Resource metadata query {resource_query}")
+                data = metadata
+                metadata = dict(description=f"Metadata for {key}", key=key, query=resource_query.encode())
+            else:
+                data = store.get_bytes(key)
             state = state.with_data(data)
             state.metadata["resource_metadata"] = metadata
         except:
@@ -835,7 +865,12 @@ class RecipeStore(Store):
         self._recipes[key] = recipe
         return self
 
+    def ignore(self, key):
+        return False
+
     def make(self, key):
+        if self.ignore(key):
+            raise Exception(f"Key {key} is ignored, can't make it")
         query = self.recipes().get(key)
         if query is None:
             raise KeyNotFoundStoreException(
@@ -853,25 +888,43 @@ class RecipeStore(Store):
     def recipes(self):
         return self._recipes
 
+    def recipe_metadata(self, key):
+        return {}
+
     def is_supported(self, key):
+        if self.ignore(key):
+            return False
         return self.substore.is_supported(key)
 
     def get_bytes(self, key):
+        if self.ignore(key):
+            return None
         if self.substore.contains(key):
             return self.substore.get_bytes(key)
         self.make(key)
         return self.substore.get_bytes(key)
 
     def get_metadata(self, key):
+        if self.ignore(key):
+            return None
         if self.substore.contains(key):
             return self.substore.get_metadata(key)
-        self.make(key)
-        return self.substore.get_metadata(key)
+        if self.is_dir(key):
+            return self.finalize_metadata({}, key=key, is_dir=True)
+        if key in self.recipes():
+            return self.finalize_metadata(self.recipe_metadata(key),key=key, is_dir=False)
+        return None
+#        self.make(key)
+#        return self.substore.get_metadata(key)
 
     def store(self, key, data, metadata):
-        return self.substore.store(key, data, metadata)
+        if self.ignore(key):
+            raise Exception(f"Key {key} is ignored, can't store into it")
+        return self.substore.store(key, data, self.finalize_metadata(metadata,key=key, is_dir=True, data=data))
 
     def store_metadata(self, key, metadata):
+        if self.ignore(key):
+            raise Exception(f"Key {key} is ignored, can't store metadata into it")
         return self.substore.store_metadata(key, metadata)
 
     def remove(self, key):
@@ -881,6 +934,8 @@ class RecipeStore(Store):
         return self.substore.removedir(key)
 
     def contains(self, key):
+        if self.ignore(key):
+            return False
         if self.substore.contains(key):
             return True
         for k in self.recipes():
@@ -889,6 +944,8 @@ class RecipeStore(Store):
         return False
 
     def is_dir(self, key):
+        if self.ignore(key):
+            return False
         if self.substore.is_dir(key):
             return True
         for k in self.recipes():
@@ -899,9 +956,11 @@ class RecipeStore(Store):
         return False
 
     def keys(self):
-        return sorted(set(self.substore.keys()).union(self.recipes().keys()))
+        return [key for key in sorted(set(self.substore.keys()).union(self.recipes().keys())) if not self.ignore(key)]
 
     def listdir(self, key):
+        if self.ignore(key):
+            return []
         d = set(self.substore.listdir(key) or [])
         key_split = key.split("/")
         if len(key_split) == 1 and key_split[0] == "":
@@ -912,12 +971,16 @@ class RecipeStore(Store):
             if k.startswith(key + "/") or key in (None, ""):
                 v = k.split("/")
                 d.add(v[key_depth])
-        return sorted(d)
+        return [key for key in sorted(d) if not self.ignore(key)]
 
     def makedir(self, key):
+        if self.ignore(key):
+            raise Exception(f"Key {key} is ignored, can't makedir")
         return self.substore.makedir(key)
 
     def openbin(self, key, mode="r", buffering=-1):
+        if self.ignore(key):
+            raise Exception(f"Key {key} is ignored, can't openbin")
         return self.substore.openbin(key, mode=mode, buffering=buffering)
 
     def __str__(self):
@@ -930,6 +993,23 @@ class RecipeStore(Store):
 class RecipeSpecStore(RecipeStore):
     RECIPES_FILE = "recipes.yaml"
     LOCAL_RECIPES = "RECIPES"
+    def __init__(self, store, recipes=None, context=None):
+        RecipeStore.__init__(self, store, recipes=recipes, context=context)
+        self.recipes_info={}
+
+    def ignore(self, key):
+        if key is None:
+            return True
+        return any(x.startswith(".") for x in key.split("/"))
+    
+    def recipe_metadata(self, key):
+        return self.recipes_info.get(key,{})
+
+    def make(self, key):
+        super().make(key)
+        metadata = self.substore.get_metadata(key)
+        metadata.update(self.recipe_metadata(key))
+        self.substore.store_metadata(key, metadata)
 
     def recipes(self):
         import yaml
@@ -945,19 +1025,43 @@ class RecipeSpecStore(RecipeStore):
                 parent = self.parent_key(key)
                 for directory, items in spec.items():
                     for r in items:
-                        try:
-                            query = parse(r)
-                            filename = query.filename()
-                            parent = self.parent_key(key)
-                            if len(parent) > 0 and not parent.endswith("/"):
-                                parent += "/"
-                            rkey = (
-                                f"{parent}{filename}"
-                                if directory == self.LOCAL_RECIPES
-                                else f"{parent}{directory}/{filename}"
-                            )
-                            recipes[rkey] = r
-                        except:
-                            pass
+                        if type(r)==str:
+                            try:
+                                query = parse(r)
+                                filename = query.filename()
+                                parent = self.parent_key(key)
+                                if len(parent) > 0 and not parent.endswith("/"):
+                                    parent += "/"
+                                rkey = (
+                                    f"{parent}{filename}"
+                                    if directory == self.LOCAL_RECIPES
+                                    else f"{parent}{directory}/{filename}"
+                                )
+                                recipes[rkey] = r
+                                self.recipes_info[rkey]=dict(query=r, title=filename, description="")
+                            except:
+                                traceback.print_exc()
+                        elif isinstance(r, dict):
+                            try:
+                                query = parse(r["query"])
+                                filename = r.get("filename", query.filename())
+                                title = r.get("title",filename)
+                                description = r.get("description",r["query"])
+                                parent = self.parent_key(key)
+                                if len(parent) > 0 and not parent.endswith("/"):
+                                    parent += "/"
+                                rkey = (
+                                    f"{parent}{filename}"
+                                    if directory == self.LOCAL_RECIPES
+                                    else f"{parent}{directory}/{filename}"
+                                )
+                                recipes[rkey] = r["query"]
+                                self.recipes_info[rkey]=dict(query=r["query"], title=title, description=description)
+                            except:
+                                traceback.print_exc()
+                            
+                        else:
+                            print(f"Unsupported recipe type: {type(r)}")
+
         recipes.update(self._recipes)
         return recipes
