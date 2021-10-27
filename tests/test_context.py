@@ -196,6 +196,7 @@ subdir:
 
     def test_recipes_advanced(self):
         import liquer.store as st
+        import liquer.constants as consts
 
         reset_command_registry()
 
@@ -223,17 +224,21 @@ subdir:
         assert "hello1.txt" in store.keys()
         assert "subdir/hello2.txt" in store.keys()
 
+        assert store.get_metadata("hello1.txt")["status"] == consts.Status.RECIPE.value
         assert store.get_metadata("hello1.txt")["title"] == "Hello 1"
         assert store.get_metadata("hello1.txt")["description"] == "This is hello 1."
         assert store.get_bytes("hello1.txt") == b"Hello, RECIPES"
+        assert store.get_metadata("hello1.txt")["status"] == consts.Status.READY.value
         assert store.get_metadata("hello1.txt")["title"] == "Hello 1"
         assert store.get_metadata("hello1.txt")["description"] == "This is hello 1."
 
+        assert store.get_metadata("subdir/hello2.txt")["status"] == consts.Status.RECIPE.value
         assert store.get_metadata("subdir/hello2.txt")["title"] == "Hello 2"
         assert (
             store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
         )
         assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
+        assert store.get_metadata("subdir/hello2.txt")["status"] == consts.Status.READY.value
         assert store.get_metadata("subdir/hello2.txt")["title"] == "Hello 2"
         assert (
             store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."

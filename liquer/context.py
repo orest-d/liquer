@@ -1029,12 +1029,16 @@ class RecipeSpecStore(RecipeStore):
         return any(x.startswith(".") for x in key.split("/"))
 
     def recipe_metadata(self, key):
-        return self.recipes_info.get(key, {})
+        metadata = self.recipes_info.get(key, {})
+        metadata["status"] = Status.RECIPE.value
+        return metadata
 
     def make(self, key):
         super().make(key)
         metadata = self.substore.get_metadata(key)
+        status = metadata.get("status", Status.RECIPE.value)
         metadata.update(self.recipe_metadata(key))
+        metadata["status"] = status
         self.substore.store_metadata(key, metadata)
 
     def recipes(self):

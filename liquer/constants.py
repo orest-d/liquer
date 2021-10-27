@@ -10,3 +10,4 @@ class Status(Enum):
     READY = "ready"
     ERROR = "error"
     OBSOLETE = "obsolete"
+    RECIPE = "recipe"
