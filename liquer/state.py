@@ -9,6 +9,7 @@ from liquer.parser import QueryException, Position
 
 _vars = None
 
+
 class EvaluationException(QueryException):
     pass
 
@@ -43,22 +44,26 @@ def set_var(name, value):
 class State(object):
     def __init__(self, data=None, metadata=None, context=None):
         self.data = data
-        self.exception=None
-        self.context=context
-        self.metadata = metadata if metadata is not None else dict(
-            query="",
-            sources=[],
-            log=[],
-            is_error=False,
-            vars=vars_clone(),
-            filename=None,
-            extension=None,
-            message="",
-            commands=[],
-            extended_commands=[],
-            type_identifier=None,
-            caching=True,
-            attributes={},
+        self.exception = None
+        self.context = context
+        self.metadata = (
+            metadata
+            if metadata is not None
+            else dict(
+                query="",
+                sources=[],
+                log=[],
+                is_error=False,
+                vars=vars_clone(),
+                filename=None,
+                extension=None,
+                message="",
+                commands=[],
+                extended_commands=[],
+                type_identifier=None,
+                caching=True,
+                attributes={},
+            )
         )
 
     def next_state(self):
@@ -98,17 +103,16 @@ class State(object):
     def type_identifier(self, value):
         self.metadata["type_identifier"] = value
 
-
-#    def with_caching(self, caching=True):
-#        """Enables or disables caching for this state"""
-#        # TODO: Make sure caching is propagated to dependent states
-#        # TODO: Examples and documentation
-#        print(f"QUERY {self.query}\nWITH CACHING {caching}")
-#        if self.context is not None:
-#            self.context.caching = caching
-#            print(f"set context {id(self.context)} caching {self.context.caching}")
-#        self.metadata["caching"] = caching
-#        return self
+    #    def with_caching(self, caching=True):
+    #        """Enables or disables caching for this state"""
+    #        # TODO: Make sure caching is propagated to dependent states
+    #        # TODO: Examples and documentation
+    #        print(f"QUERY {self.query}\nWITH CACHING {caching}")
+    #        if self.context is not None:
+    #            self.context.caching = caching
+    #            print(f"set context {id(self.context)} caching {self.context.caching}")
+    #        self.metadata["caching"] = caching
+    #        return self
 
     def with_data(self, data):
         """Set the data"""
@@ -122,26 +126,28 @@ class State(object):
         return self
 
     def is_volatile(self):
-        return self.metadata.get("attributes",{}).get("volatile", False)
+        return self.metadata.get("attributes", {}).get("volatile", False)
 
     def set_volatile(self, flag):
         self.metadata["attributes"]["volatile"] = flag
         return self
-    
+
     def get(self):
         """Get data from the state"""
         if self.is_error:
             tb = "\n".join(m.get("traceback", "") for m in self.metadata["log"])
             print(tb)
-            position=None
-            query=None
+            position = None
+            query = None
             for entry in self.metadata["log"]:
-               if entry.get("kind")=="error":
-                   position = Position.from_dict(entry.get("position"))
-                   query=entry.get("query")
+                if entry.get("kind") == "error":
+                    position = Position.from_dict(entry.get("position"))
+                    query = entry.get("query")
 
             if self.exception is None:
-                raise EvaluationException(tb+"\n"+self.metadata["message"],position=position, query=query)
+                raise EvaluationException(
+                    tb + "\n" + self.metadata["message"], position=position, query=query
+                )
             else:
                 raise self.exception
 
@@ -150,9 +156,11 @@ class State(object):
     def log_command(self, qv, number):
         """Log a command"""
         if self.context is None:
-            self.metadata["log"].append(dict(kind="command", qv=qv, command_number=number))
+            self.metadata["log"].append(
+                dict(kind="command", qv=qv, command_number=number)
+            )
         else:
-            self.context.log_action(qv,number)
+            self.context.log_action(qv, number)
         return self
 
     def log_error(self, message):

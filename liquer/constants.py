@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Status(Enum):
     NONE = "none"
     EVALUATING_PARENT = "evaluating parent"

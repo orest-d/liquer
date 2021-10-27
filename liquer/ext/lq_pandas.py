@@ -8,13 +8,16 @@ from liquer.parser import encode, decode
 from liquer.query import evaluate
 from liquer.state import State
 
+
 class ResilientBytesIO(BytesIO):
     "Workaround to prevent closing the stream"
+
     def close(self):
         pass  # Refuse to close to avoid pandas bug
 
     def really_close(self):
         super().close()
+
 
 class DataframeStateType(StateType):
     def identifier(self):
@@ -50,24 +53,24 @@ class DataframeStateType(StateType):
         elif extension in ("pkl", "pickle"):
             output = ResilientBytesIO()
             data.to_pickle(output, compression=None)
-            b=output.getvalue()
+            b = output.getvalue()
             output.really_close()
             return b, mimetype
         elif extension == "parquet":
             output = ResilientBytesIO()
             data.to_parquet(output, engine="pyarrow")
-            b=output.getvalue()
+            b = output.getvalue()
             output.really_close()
             return b, mimetype
         elif extension == "feather":
             output = ResilientBytesIO()
             data.to_feather(output)
-            b=output.getvalue()
+            b = output.getvalue()
             output.really_close()
             return b, mimetype
         elif extension == "xlsx":
             output = BytesIO()
-            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+            writer = pd.ExcelWriter(output, engine="xlsxwriter")
             data.to_excel(writer)
             writer.close()
             return output.getvalue(), mimetype
@@ -77,7 +80,8 @@ class DataframeStateType(StateType):
             return output.getvalue(), mimetype
         else:
             raise Exception(
-                f"Serialization: file extension {extension} is not supported by dataframe type.")
+                f"Serialization: file extension {extension} is not supported by dataframe type."
+            )
 
     def from_bytes(self, b: bytes, extension=None):
         if extension is None:
@@ -103,7 +107,8 @@ class DataframeStateType(StateType):
         elif extension == "msgpack":
             return pd.read_msgpack(f)
         raise Exception(
-            f"Deserialization: file extension {extension} is not supported by dataframe type.")
+            f"Deserialization: file extension {extension} is not supported by dataframe type."
+        )
 
     def copy(self, data):
         return data.copy()
@@ -112,15 +117,16 @@ class DataframeStateType(StateType):
 DATAFRAME_STATE_TYPE = DataframeStateType()
 register_state_type(pd.DataFrame, DATAFRAME_STATE_TYPE)
 
+
 @command
 def to_df(data):
     "Convert data to DataFrame; data should be list of dicts or dict of lists."
     return pd.DataFrame(data)
 
+
 @first_command
 def df_from(url, extension=None):
-    """Load data from URL
-    """
+    """Load data from URL"""
     if extension is None:
         extension = url.split(".")[-1]
         if extension not in "csv tsv xls xlsx msgpack".split():
@@ -144,8 +150,7 @@ def df_from(url, extension=None):
 
 @command
 def append_df(df, url, extension=None):
-    """Append dataframe from URL
-    """
+    """Append dataframe from URL"""
     df1 = df_from(url, extension=extension).get()
     return df.append(df1, ignore_index=True)
 
@@ -160,7 +165,7 @@ def eq(state, *column_values):
     assert state.type_identifier == "dataframe"
     for i in range(0, len(column_values), 2):
         c = column_values[i]
-        v = column_values[i+1]
+        v = column_values[i + 1]
         state.log_info(f"Equals: {c} == {v}")
         index = np.array([x == v for x in df[c]], np.bool)
         try:
@@ -173,6 +178,7 @@ def eq(state, *column_values):
         df = df.loc[index, :]
     return state.with_data(df)
 
+
 @command
 def teq(state, *column_values):
     """Tag-Equals filter. Expects, that a first row contains tags and/or metadata
@@ -181,12 +187,12 @@ def teq(state, *column_values):
     Example: teq-column1-1
     """
     df = state.get()
-    tags = df.iloc[:1,:]
-    df = df.iloc[1:,:]
+    tags = df.iloc[:1, :]
+    df = df.iloc[1:, :]
     assert state.type_identifier == "dataframe"
     for i in range(0, len(column_values), 2):
         c = column_values[i]
-        v = column_values[i+1]
+        v = column_values[i + 1]
         state.log_info(f"Equals: {c} == {v}")
         index = np.array([x == v for x in df[c]], np.bool)
         try:
@@ -197,8 +203,9 @@ def teq(state, *column_values):
         except:
             pass
         df = df.loc[index, :]
-    df = tags.append(df,ignore_index=True)
+    df = tags.append(df, ignore_index=True)
     return state.with_data(df)
+
 
 @command
 def qsplit_df(state, *columns):
@@ -218,17 +225,18 @@ def qsplit_df(state, *columns):
     if query_column is None:
         query_column = "query"
 
-    sdf = pd.DataFrame(columns=list(columns)+[query_column])
+    sdf = pd.DataFrame(columns=list(columns) + [query_column])
     data = []
     ql = decode(state.query)
     for row in keys:
         pairs = list(zip(columns, row))
         d = dict(pairs)
-        query = encode(ql+[["eq"]+[str(x) for p in pairs for x in p]])
+        query = encode(ql + [["eq"] + [str(x) for p in pairs for x in p]])
         d[query_column] = query
         sdf = sdf.append(d, ignore_index=True)
 
     return state.with_data(sdf)
+
 
 @command
 def qtsplit_df(state, *columns):
@@ -251,18 +259,19 @@ def qtsplit_df(state, *columns):
     if query_column is None:
         query_column = "query"
 
-    sdf = pd.DataFrame(columns=list(columns)+[query_column])
-    sdf = sdf.append({c:tags[c] for c in columns}, ignore_index=True)
+    sdf = pd.DataFrame(columns=list(columns) + [query_column])
+    sdf = sdf.append({c: tags[c] for c in columns}, ignore_index=True)
     data = []
     ql = decode(state.query)
     for row in keys:
         pairs = list(zip(columns, row))
         d = dict(pairs)
-        query = encode(ql+[["teq"]+[str(x) for p in pairs for x in p]])
+        query = encode(ql + [["teq"] + [str(x) for p in pairs for x in p]])
         d[query_column] = query
         sdf = sdf.append(d, ignore_index=True)
 
     return state.with_data(sdf)
+
 
 @command
 def split_df(state, *columns):
@@ -273,9 +282,10 @@ def split_df(state, *columns):
     This behaves like qsplit_df, with two important differenced:
     - each generated query is evaluated (and thus eventually cached)
     - link is generated and put into link column (state variable link_column)
-    The split_link_type state variable is used to determine the link type; url by default. 
+    The split_link_type state variable is used to determine the link type; url by default.
     """
     from liquer.parser import parse
+
     state = qsplit_df(state, *columns)
     df = state.get().copy()
 
@@ -291,15 +301,19 @@ def split_df(state, *columns):
     if split_link_type is None:
         split_link_type = "url"
 
-#    df.loc[:,link_column] = [evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in df[query_column]]
-    df.loc[:,link_column] = [evaluate(parse(q).with_action("link",split_link_type).encode()).get() for q in df[query_column]]
+    #    df.loc[:,link_column] = [evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in df[query_column]]
+    df.loc[:, link_column] = [
+        evaluate(parse(q).with_action("link", split_link_type).encode()).get()
+        for q in df[query_column]
+    ]
     return state.with_data(df)
+
 
 @command
 def tsplit_df(state, *columns):
-    """Split of dataframe by columns (version of split_df expecting a first row with tags)
-    """
+    """Split of dataframe by columns (version of split_df expecting a first row with tags)"""
     from liquer.parser import parse
+
     state = qtsplit_df(state, *columns)
     df = state.get().copy()
 
@@ -315,38 +329,49 @@ def tsplit_df(state, *columns):
     if split_link_type is None:
         split_link_type = "url"
 
-#    df.loc[:,link_column] = [""]+[evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in list(df[query_column])[1:]]
-    df.loc[:,link_column] = [""]+[evaluate(parse(q).with_action("link",split_link_type).encode()).get() for q in list(df[query_column])[1:]]
+    #    df.loc[:,link_column] = [""]+[evaluate(encode(decode(q)+[["link",split_link_type]])).get() for q in list(df[query_column])[1:]]
+    df.loc[:, link_column] = [""] + [
+        evaluate(parse(q).with_action("link", split_link_type).encode()).get()
+        for q in list(df[query_column])[1:]
+    ]
     return state.with_data(df)
+
 
 @command
 def df_columns(df):
     return list(df.columns)
 
+
 @command
 def columns_info(df):
     if len(df):
-        tags = {str(key):str(value) for key, value in dict(df.iloc[0,:]).items()}
+        tags = {str(key): str(value) for key, value in dict(df.iloc[0, :]).items()}
         has_tags = any(str(tag).strip().startswith("#") for tag in tags.values())
     else:
         tags = None
         has_tags = False
 
     return dict(
-        columns = list(map(str,df.columns)),
-        tags = tags,
-        has_tags = has_tags,
-        types = {str(key):str(value) for key, value in df.dtypes.items()}
+        columns=list(map(str, df.columns)),
+        tags=tags,
+        has_tags=has_tags,
+        types={str(key): str(value) for key, value in df.dtypes.items()},
     )
 
+
 @command
-def head_df(df,count=50):
-    if count<len(df):
-        return df.iloc[:count,:]
+def head_df(df, count=50):
+    if count < len(df):
+        return df.iloc[:count, :]
     else:
         return df
 
+
 @command
 def groupby_mean(df, mean_column, *groupby_columns):
-    return df.groupby(groupby_columns).mean().reset_index().loc[:,list(groupby_columns)+[mean_column]]
-
+    return (
+        df.groupby(groupby_columns)
+        .mean()
+        .reset_index()
+        .loc[:, list(groupby_columns) + [mean_column]]
+    )

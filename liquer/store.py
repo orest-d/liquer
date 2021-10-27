@@ -61,8 +61,8 @@ class Store(StoreMixin):
         return str(key.split("/")[-1])
 
     def default_metadata(self, key, is_dir=False):
-        if key  is None:
-            key=""
+        if key is None:
+            key = ""
 
         return dict(
             key=key,
@@ -70,13 +70,15 @@ class Store(StoreMixin):
         )
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None):
-        if key  is None:
-            key=""
+        if key is None:
+            key = ""
         metadata["key"] = key
-        metadata["fileinfo"] = metadata.get("fileinfo",{})
+        metadata["fileinfo"] = metadata.get("fileinfo", {})
         metadata["fileinfo"]["name"] = self.key_name(key)
         metadata["fileinfo"]["is_dir"] = is_dir
-        metadata["fileinfo"]["filesystem_path"] = metadata["fileinfo"].get("filesystem_path")
+        metadata["fileinfo"]["filesystem_path"] = metadata["fileinfo"].get(
+            "filesystem_path"
+        )
         if data is not None:
             metadata["fileinfo"]["size"] = len(data)
 
@@ -141,10 +143,11 @@ class FileStore(Store):
             self.path = Path(path)
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None):
-        metadata = super().finalize_metadata(metadata, key=key, is_dir=is_dir, data=data)
+        metadata = super().finalize_metadata(
+            metadata, key=key, is_dir=is_dir, data=data
+        )
         metadata["fileinfo"]["filesystem_path"] = str(self.path_for_key(key))
         return metadata
-
 
     def path_for_key(self, key):
         if key in (None, ""):
@@ -187,7 +190,9 @@ class FileStore(Store):
     def store(self, key, data, metadata):
         self.path_for_key(key).parent.mkdir(parents=True, exist_ok=True)
         self.path_for_key(key).write_bytes(data)
-        self.store_metadata(key, self.finalize_metadata(metadata, key=key, is_dir = False, data=data))
+        self.store_metadata(
+            key, self.finalize_metadata(metadata, key=key, is_dir=False, data=data)
+        )
 
     def store_metadata(self, key, metadata):
         self.metadata_path_for_key(key).parent.mkdir(parents=True, exist_ok=True)
@@ -263,14 +268,16 @@ class MemoryStore(Store):
             if not self.is_dir(key):
                 raise KeyNotFoundStoreException(key=key, store=self)
 
-            metadata = self.default_metadata(key, is_dir = True)
+            metadata = self.default_metadata(key, is_dir=True)
 
-        return self.finalize_metadata(metadata, key=key, is_dir = self.is_dir(key))
+        return self.finalize_metadata(metadata, key=key, is_dir=self.is_dir(key))
 
     def store(self, key, data, metadata):
         self.makedir(self.parent_key(key))
         self.data[key] = data
-        self.metadata[key] = self.finalize_metadata(metadata, key=key, is_dir = False, data=data)
+        self.metadata[key] = self.finalize_metadata(
+            metadata, key=key, is_dir=False, data=data
+        )
 
     def store_metadata(self, key, metadata):
         self.metadata[key] = metadata
@@ -735,7 +742,9 @@ class FileSystemStore(Store):
         self.fs.makedirs(self.path_for_key(self.parent_key(key)))
         self.fs.writebytes(self.path_for_key(key), data)
         assert self.fs.exists(self.path_for_key(key))
-        self.store_metadata(key, self.finalize_metadata(metadata, key=key, is_dir = False, data=data))
+        self.store_metadata(
+            key, self.finalize_metadata(metadata, key=key, is_dir=False, data=data)
+        )
 
     def store_metadata(self, key, metadata):
         parent = self.metadata_dir_path_for_key(key)

@@ -19,8 +19,7 @@ def let(state, name, value):
 
 @command
 def flag(state, name, value: bool = True):
-    """Set the state variable as a flag (boolean value)
-    """
+    """Set the state variable as a flag (boolean value)"""
     state.vars[name] = bool(value)
     return state
 
@@ -51,19 +50,25 @@ def link(state, linktype=None, extension=None):
         return state.with_data(q)
     elif linktype == "dataurl":
         b, mime, typeid = encode_state_data(state.get(), extension=extension)
-        encoded = base64.b64encode(b).decode('ascii')
-        return state.with_data(f'data:{mime};base64,{encoded}')
+        encoded = base64.b64encode(b).decode("ascii")
+        return state.with_data(f"data:{mime};base64,{encoded}")
     elif linktype == "htmlimage":
         b, mime, typeid = encode_state_data(state.get(), extension=extension)
-        encoded = base64.b64encode(b).decode('ascii')
-        return state.with_filename("image.html").with_data(f'<img src="data:{mime};base64,{encoded}"/>')
-    elif linktype == 'path':
-        return state.with_data(state.vars.get("api_path", "/q/")+q)
-    elif linktype == 'url':
-        return state.with_data(state.vars.get(
-            "server", "http://localhost")+state.vars.get("api_path", "/q/")+q)
+        encoded = base64.b64encode(b).decode("ascii")
+        return state.with_filename("image.html").with_data(
+            f'<img src="data:{mime};base64,{encoded}"/>'
+        )
+    elif linktype == "path":
+        return state.with_data(state.vars.get("api_path", "/q/") + q)
+    elif linktype == "url":
+        return state.with_data(
+            state.vars.get("server", "http://localhost")
+            + state.vars.get("api_path", "/q/")
+            + q
+        )
 
     raise Exception(f"Unsupported link type: {linktype}")
+
 
 @command
 def html_a(state, linktype=None, value=None, extension=None):
@@ -73,21 +78,19 @@ def html_a(state, linktype=None, value=None, extension=None):
     if value is None:
         value = state.query
 
-    lnk = link(state,linktype=linktype, extension=extension)
+    lnk = link(state, linktype=linktype, extension=extension)
     return state.with_data(f'<a href="{lnk}">{value}</a>')
 
 
 @first_command
 def fetch(url):
-    """Load binary data from URL
-    """
+    """Load binary data from URL"""
     return urlopen(url).read()
 
 
 @first_command
 def fetch_utf8(url):
-    """Load text data encoded as utf-8 from URL
-    """
+    """Load text data encoded as utf-8 from URL"""
     return urlopen(url).read().decode("utf-8")
 
 
@@ -96,22 +99,24 @@ def filename(state, name):
     """Set filename"""
     return state.with_filename(name)
 
+
 @command
 def ns(state, *namespaces):
     """Set command namespaces to be included
 
     By default only the root namespace is enabled. The 'ns' command enables commands present in specified namespaces.
     This works by setting "active_namespaces" state variable.
-    The "root" namespace is appended to the active_namespaces if not already present.    
+    The "root" namespace is appended to the active_namespaces if not already present.
     When command is executed, all the active namespaces are searched one by one until the command is found.
-    Note that order of active_namespaces is significant. 
+    Note that order of active_namespaces is significant.
     """
     namespaces = list(namespaces)
     if "root" not in namespaces:
         namespaces.append("root")
     state.vars["active_namespaces"] = namespaces
-    
+
     return state
+
 
 @first_command(volatile=True)
 def clean_cache():
@@ -119,32 +124,36 @@ def clean_cache():
     get_cache().clean()
     return "Cache cleaned"
 
+
 @first_command(volatile=True)
 def queries_status(include_ready=False, reduce=True):
     import liquer.parser as lp
     import traceback
+
     try:
         cache = get_cache()
-        data=[]
+        data = []
         for key in sorted(cache.keys()):
             metadata = cache.get_metadata(key)
             if metadata is None:
                 continue
-            progress = metadata.get("progress_indicators",[]) + metadata.get("child_progress_indicators",[])
-            d=dict(
+            progress = metadata.get("progress_indicators", []) + metadata.get(
+                "child_progress_indicators", []
+            )
+            d = dict(
                 query=key,
                 short=lp.parse(key).short(),
-                status=metadata.get("status","none"),
-                updated=metadata.get("updated","?"),
-                message=metadata.get("message",""),
-                progress=progress[:3]
+                status=metadata.get("status", "none"),
+                updated=metadata.get("updated", "?"),
+                message=metadata.get("message", ""),
+                progress=progress[:3],
             )
-            if include_ready or d["status"]!=Status.READY.value:
-                data.append((key,d))
+            if include_ready or d["status"] != Status.READY.value:
+                data.append((key, d))
         data = [x[1] for x in sorted(data)]
         if reduce and len(data):
             reduced_data = [data[0]]
-            for d, next_d in zip(data[1:],data[2:]):
+            for d, next_d in zip(data[1:], data[2:]):
                 previous_d = reduced_data[-1]
                 if not (
                     previous_d["status"] == Status.EVALUATING_PARENT.value
@@ -154,16 +163,19 @@ def queries_status(include_ready=False, reduce=True):
                 ):
                     reduced_data.append(d)
             reduced_data.append(data[-1])
-            data = reduced_data            
+            data = reduced_data
         return data
     except:
-        return [dict(
+        return [
+            dict(
                 query="",
                 status="not available",
                 updated="",
                 message=traceback.format_exc(),
-                progress=[]
-            )]
+                progress=[],
+            )
+        ]
+
 
 @command
 def dr(state, context=None):
@@ -172,7 +184,7 @@ def dr(state, context=None):
     Resource part of the query will typically fetch the data from a store and thus return bytes (together with metadata).
     Command dr will convert the bytes (assuming proper metadata are provided) into a data structure.
     The metadata must contain type_identifier in metadata or metadata['resource_metadata'], a filename with extension
-    or extension with known decoding. 
+    or extension with known decoding.
     """
     from liquer.state_types import state_types_registry
     from liquer.parser import parse
@@ -180,18 +192,21 @@ def dr(state, context=None):
     if state.data is None:
         context.error(f"Bytes expected, None received in dr from {state.query}")
         return
-        
-    type_identifier = state.metadata.get('type_identifier', state.metadata.get("resource_metadata",{}).get('type_identifier'))
+
+    type_identifier = state.metadata.get(
+        "type_identifier",
+        state.metadata.get("resource_metadata", {}).get("type_identifier"),
+    )
 
     if type_identifier in (None, "bytes"):
-        extension = state.metadata.get('extension')
+        extension = state.metadata.get("extension")
         if extension is None:
             query = state.metadata.get("query")
             if query is not None:
                 filename = parse(query).filename()
             if filename is not None:
                 v = filename.split(".")
-                if len(v)>1:
+                if len(v) > 1:
                     extension = v[-1]
         context.info(f"Extension: {extension}")
 
@@ -199,21 +214,21 @@ def dr(state, context=None):
             json="generic",
             djson="dictionary",
             js="text",
-            txt='text',
-            html='text',
-            htm='text',
-            md='text',
-            xls='dataframe',
-            xlsx='dataframe',
-            ods='dataframe',
-            tsv='dataframe',
-            csv='dataframe',
-            css='text',
-            svg='text',
+            txt="text",
+            html="text",
+            htm="text",
+            md="text",
+            xls="dataframe",
+            xlsx="dataframe",
+            ods="dataframe",
+            tsv="dataframe",
+            csv="dataframe",
+            css="text",
+            svg="text",
             pkl="pickle",
             pickle="pickle",
             parquet="dataframe",
-            feather="dataframe"
+            feather="dataframe",
         ).get(extension)
 
     if type_identifier is not None:

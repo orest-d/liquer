@@ -114,19 +114,19 @@ class Context(object):
         self._progress_indicator_identifier = (
             1  # counter for creating unique progress identifiers
         )
-        self.description=""
-        self.title=None
+        self.description = ""
+        self.title = None
 
         self.vars = Vars(vars_clone())
         self.html_preview = ""
 
     def metadata(self):
-        title=self.title
+        title = self.title
         if title is None:
             if self.raw_query is None:
-                title=""
+                title = ""
             else:
-                p=parse(self.raw_query).predecessor()[0]
+                p = parse(self.raw_query).predecessor()[0]
                 if p is not None:
                     title = self.raw_query
                 else:
@@ -296,7 +296,7 @@ class Context(object):
 
     def log_dict(self, d):
         "Put dictionary with a log entry into the log"
-        d["timestamp"]=timestamp()
+        d["timestamp"] = timestamp()
         self.log.append(d)
         if "message" in d:
             self.message = d["message"]
@@ -421,7 +421,8 @@ class Context(object):
                 if value.is_error:
                     self.error(
                         f"Error while evaluating absolute link parameter {p.link.encode()}",
-                        position=p.position, query=self.raw_query
+                        position=p.position,
+                        query=self.raw_query,
                     )
                     self.status = Status.ERROR
                     self.store_metadata(force=True)
@@ -447,7 +448,8 @@ class Context(object):
                 if value.is_error:
                     self.error(
                         f"Error while evaluating relative link parameter {p.link.encode()} at {p.position}",
-                        position=p.position, query = self.raw_query
+                        position=p.position,
+                        query=self.raw_query,
                     )
                     self.status = Status.ERROR
                     self.store_metadata(force=True)
@@ -491,7 +493,11 @@ class Context(object):
 
         ns, command, cmd_metadata = cr.resolve_command(state, action.name)
         if command is None:
-            self.error(f"Unknown action: '{action.name}'", position=action.position, query=self.raw_query)
+            self.error(
+                f"Unknown action: '{action.name}'",
+                position=action.position,
+                query=self.raw_query,
+            )
         else:
             parameters = []
             self.status = Status.EVALUATING_DEPENDENCIES
@@ -600,16 +606,26 @@ class Context(object):
         self.info(f"Evaluate resource: {resource_query}")
         if resource_query.header is not None:
             if resource_query.header.encode() not in ("-R", "-R-meta"):
-                raise Exception(f"Header '{resource_query.header}' not supported in resource query {resource_query}")
+                raise Exception(
+                    f"Header '{resource_query.header}' not supported in resource query {resource_query}"
+                )
         key = resource_query.path()
         store = self.store()
         state = self.create_initial_state()
         try:
             metadata = store.get_metadata(key)
-            if resource_query.header is not None and len(resource_query.header.parameters)>0 and resource_query.header.parameters[-1].encode()=="meta":
+            if (
+                resource_query.header is not None
+                and len(resource_query.header.parameters) > 0
+                and resource_query.header.parameters[-1].encode() == "meta"
+            ):
                 self.info(f"Resource metadata query {resource_query}")
                 data = metadata
-                metadata = dict(description=f"Metadata for {key}", key=key, query=resource_query.encode())
+                metadata = dict(
+                    description=f"Metadata for {key}",
+                    key=key,
+                    query=resource_query.encode(),
+                )
             else:
                 data = store.get_bytes(key)
             state = state.with_data(data)
@@ -912,15 +928,20 @@ class RecipeStore(Store):
         if self.is_dir(key):
             return self.finalize_metadata({}, key=key, is_dir=True)
         if key in self.recipes():
-            return self.finalize_metadata(self.recipe_metadata(key),key=key, is_dir=False)
+            return self.finalize_metadata(
+                self.recipe_metadata(key), key=key, is_dir=False
+            )
         return None
-#        self.make(key)
-#        return self.substore.get_metadata(key)
+
+    #        self.make(key)
+    #        return self.substore.get_metadata(key)
 
     def store(self, key, data, metadata):
         if self.ignore(key):
             raise Exception(f"Key {key} is ignored, can't store into it")
-        return self.substore.store(key, data, self.finalize_metadata(metadata,key=key, is_dir=True, data=data))
+        return self.substore.store(
+            key, data, self.finalize_metadata(metadata, key=key, is_dir=True, data=data)
+        )
 
     def store_metadata(self, key, metadata):
         if self.ignore(key):
@@ -956,7 +977,11 @@ class RecipeStore(Store):
         return False
 
     def keys(self):
-        return [key for key in sorted(set(self.substore.keys()).union(self.recipes().keys())) if not self.ignore(key)]
+        return [
+            key
+            for key in sorted(set(self.substore.keys()).union(self.recipes().keys()))
+            if not self.ignore(key)
+        ]
 
     def listdir(self, key):
         if self.ignore(key):
@@ -993,17 +1018,18 @@ class RecipeStore(Store):
 class RecipeSpecStore(RecipeStore):
     RECIPES_FILE = "recipes.yaml"
     LOCAL_RECIPES = "RECIPES"
+
     def __init__(self, store, recipes=None, context=None):
         RecipeStore.__init__(self, store, recipes=recipes, context=context)
-        self.recipes_info={}
+        self.recipes_info = {}
 
     def ignore(self, key):
         if key is None:
             return True
         return any(x.startswith(".") for x in key.split("/"))
-    
+
     def recipe_metadata(self, key):
-        return self.recipes_info.get(key,{})
+        return self.recipes_info.get(key, {})
 
     def make(self, key):
         super().make(key)
@@ -1025,7 +1051,7 @@ class RecipeSpecStore(RecipeStore):
                 parent = self.parent_key(key)
                 for directory, items in spec.items():
                     for r in items:
-                        if type(r)==str:
+                        if type(r) == str:
                             try:
                                 query = parse(r)
                                 filename = query.filename()
@@ -1038,15 +1064,17 @@ class RecipeSpecStore(RecipeStore):
                                     else f"{parent}{directory}/{filename}"
                                 )
                                 recipes[rkey] = r
-                                self.recipes_info[rkey]=dict(query=r, title=filename, description="")
+                                self.recipes_info[rkey] = dict(
+                                    query=r, title=filename, description=""
+                                )
                             except:
                                 traceback.print_exc()
                         elif isinstance(r, dict):
                             try:
                                 query = parse(r["query"])
                                 filename = r.get("filename", query.filename())
-                                title = r.get("title",filename)
-                                description = r.get("description",r["query"])
+                                title = r.get("title", filename)
+                                description = r.get("description", r["query"])
                                 parent = self.parent_key(key)
                                 if len(parent) > 0 and not parent.endswith("/"):
                                     parent += "/"
@@ -1056,10 +1084,14 @@ class RecipeSpecStore(RecipeStore):
                                     else f"{parent}{directory}/{filename}"
                                 )
                                 recipes[rkey] = r["query"]
-                                self.recipes_info[rkey]=dict(query=r["query"], title=title, description=description)
+                                self.recipes_info[rkey] = dict(
+                                    query=r["query"],
+                                    title=title,
+                                    description=description,
+                                )
                             except:
                                 traceback.print_exc()
-                            
+
                         else:
                             print(f"Unsupported recipe type: {type(r)}")
 

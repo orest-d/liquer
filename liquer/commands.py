@@ -8,7 +8,12 @@ import pickle
 import types
 import traceback
 import base64
-from liquer.parser import StringActionParameter, ActionParameter, QueryException, ExpandedActionParameter
+from liquer.parser import (
+    StringActionParameter,
+    ActionParameter,
+    QueryException,
+    ExpandedActionParameter,
+)
 
 
 """This module is responsible for registering commands
@@ -258,7 +263,9 @@ class CommandRegistry(RegisterRemoteMixin, object):
         )
         state.query = encode(state.metadata["commands"])
         state.metadata["attributes"] = {
-            key: value for key, value in state.metadata["attributes"].items() if key[0].isupper()
+            key: value
+            for key, value in state.metadata["attributes"].items()
+            if key[0].isupper()
         }
         if metadata is not None:
             state.metadata["attributes"].update(metadata.attributes)
@@ -503,17 +510,19 @@ class BooleanArgumentParser(ArgumentParser):
 
     def parse_meta(self, metadata, args, context=None):
         query = None if context is None else context.raw_query
+
         def to_bool(x):
             return dict(
-                    y=True,
-                    yes=True,
-                    n=False,
-                    no=False,
-                    t=True,
-                    true=True,
-                    f=False,
-                    false=False,
-                ).get(str(x).lower(), False)
+                y=True,
+                yes=True,
+                n=False,
+                no=False,
+                t=True,
+                true=True,
+                f=False,
+                false=False,
+            ).get(str(x).lower(), False)
+
         if isinstance(args[0], str):
             try:
                 value = to_bool(args[0])
@@ -735,11 +744,11 @@ class CommandExecutable(object):
 
         args = list(args)
         try:
-            position=args[-1].position
+            position = args[-1].position
         except:
-            position=None
+            position = None
         for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
-            if not a.get("multiple", False) and a["name"]!="context":
+            if not a.get("multiple", False) and a["name"] != "context":
                 if "default" in a:
                     args.append(a["default"])
                 else:
@@ -787,7 +796,7 @@ class FirstCommandExecutable(CommandExecutable):
         args = list(args) + [
             a["default"]
             for a in self.metadata.arguments[len(args) :]
-            if not a["multiple"] and a["name"]!="context"
+            if not a["multiple"] and a["name"] != "context"
         ]
         try:
             argv, argmeta, remainder = self.argument_parser.parse_meta(

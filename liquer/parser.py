@@ -139,21 +139,23 @@ class Position:
             return "Position()"
         return f"Position(offset={self.offset}, line={self.line}, column={self.column})"
 
+
 class QueryException(Exception):
     def __init__(self, message, position=None, query=None):
-        self.original_message=message
+        self.original_message = message
         if position is not None:
-            message+=f" at {position}"
+            message += f" at {position}"
             if query is not None:
-                message+=f":\n  query: {query[:position.offset]}\n     {' '*position.offset}--> {query[position.offset:]}"
+                message += f":\n  query: {query[:position.offset]}\n     {' '*position.offset}--> {query[position.offset:]}"
         else:
             if query is not None:
-                message+=f":\n  query: {query}"
+                message += f":\n  query: {query}"
 
         super().__init__(message)
-        self.position=position
-        self.query=query
-        
+        self.position = position
+        self.query = query
+
+
 class ActionParameter(object):
     def __init__(self, position=None):
         self.position = position or Position()
@@ -171,7 +173,7 @@ class LinkActionParameter(ActionParameter):
         self.link = link
 
     def encode(self):
-        return "~X~"+self.link.encode()+"~E"
+        return "~X~" + self.link.encode() + "~E"
 
     def __repr__(self):
         return f"""LinkActionParameter(
@@ -181,6 +183,7 @@ class LinkActionParameter(ActionParameter):
     def __str__(self):
         return self.encode()
 
+
 class ExpandedActionParameter(ActionParameter):
     def __init__(self, value, link, position=None):
         super().__init__(position)
@@ -188,7 +191,7 @@ class ExpandedActionParameter(ActionParameter):
         self.link = link
 
     def encode(self):
-        return "~X~"+self.link.encode()+"~E"
+        return "~X~" + self.link.encode() + "~E"
 
     def __repr__(self):
         return f"""ExpandedActionParameter(
@@ -206,7 +209,7 @@ class StringActionParameter(ActionParameter):
         self.string = string
 
     def encode(self):
-#        encoded = self.string.replace("~","~~").replace("/","~/").replace("://","~P")
+        #        encoded = self.string.replace("~","~~").replace("/","~/").replace("://","~P")
         encoded = encode_token(self.string)
         return encoded
 
@@ -235,12 +238,12 @@ class ResourceName(ActionParameter):
 class ActionRequest(object):
     def __init__(self, name: str, parameters=None, position=None):
         self.name = name
-        self.parameters = [] if parameters is None else parameters 
+        self.parameters = [] if parameters is None else parameters
         self.position = position or Position()
 
     @classmethod
-    def from_arguments(cls, name:str, *parameters):
-        assert type(name)==str
+    def from_arguments(cls, name: str, *parameters):
+        assert type(name) == str
         typedparam = []
         for p in parameters:
             if isinstance(p, ActionParameter):
@@ -248,18 +251,20 @@ class ActionRequest(object):
             else:
                 assert type(p) in (str, int, float, bool)
                 typedparam.append(StringActionParameter(str(p)))
-        
+
         return cls(name, typedparam)
 
     def to_list(self):
-        lst = [self.name] 
+        lst = [self.name]
         for x in self.parameters:
             if isinstance(x, StringActionParameter):
                 lst.append(x.string)
             elif isinstance(x, LinkActionParameter):
                 lst.append(x.encode())
             else:
-                raise Exception(f"Unsupported action parameter type: {type(x)} ({repr(x)})")
+                raise Exception(
+                    f"Unsupported action parameter type: {type(x)} ({repr(x)})"
+                )
         return lst
 
     @classmethod
@@ -286,7 +291,12 @@ class ActionRequest(object):
 
 class SegmentHeader(object):
     def __init__(
-        self, name: str = "", level: int = 1, parameters: list = None, resource: bool=False, position=None
+        self,
+        name: str = "",
+        level: int = 1,
+        parameters: list = None,
+        resource: bool = False,
+        position=None,
     ):
         self.name = name
         self.level = level
@@ -381,20 +391,24 @@ class TransformQuerySegment(object):
             return self
         if isinstance(q, TransformQuerySegment):
             self.query.extend(q.query)
-            self.filename=q.filename
+            self.filename = q.filename
             return self
         if isinstance(q, Query):
             if q.is_transform_query():
                 return self.append(q.segments[0])
             else:
-                raise Exception(f"Appending general query {q} to transform query {self.encode()} not supported")
+                raise Exception(
+                    f"Appending general query {q} to transform query {self.encode()} not supported"
+                )
         if isinstance(q, ActionRequest):
             self.query.append(q)
             return self
         if isinstance(q, str):
             return self.append(parse(q))
 
-        raise Exception(f"Transform query {self.encode()} can't append object {repr(q)}")
+        raise Exception(
+            f"Transform query {self.encode()} can't append object {repr(q)}"
+        )
 
     def __add__(self, q):
         if q is None:
@@ -448,7 +462,7 @@ class ResourceQuerySegment(object):
         else:
             rqs = self.header.encode()
         if len(rqs):
-            rqs+="/"
+            rqs += "/"
         if len(query):
             return f"{rqs}{query}"
         else:
@@ -472,9 +486,16 @@ class Query(object):
     def filename(self):
         if len(self.segments):
             segment = self.segments[-1]
-            if isinstance(segment, TransformQuerySegment) and segment.filename is not None:
+            if (
+                isinstance(segment, TransformQuerySegment)
+                and segment.filename is not None
+            ):
                 return str(segment.filename)
-            if isinstance(segment, ResourceQuerySegment) and segment.query is not None and len(segment.query):
+            if (
+                isinstance(segment, ResourceQuerySegment)
+                and segment.query is not None
+                and len(segment.query)
+            ):
                 return str(segment.query[-1])
         return None
 
@@ -482,7 +503,9 @@ class Query(object):
         return len(self.segments) == 0
 
     def is_transform_query(self):
-        return len(self.segments)==1 and isinstance(self.segments[0], TransformQuerySegment)
+        return len(self.segments) == 1 and isinstance(
+            self.segments[0], TransformQuerySegment
+        )
 
     def transform_query(self):
         if self.is_transform_query():
@@ -491,7 +514,9 @@ class Query(object):
             return None
 
     def is_resource_query(self):
-        return len(self.segments)==1 and isinstance(self.segments[0], ResourceQuerySegment)
+        return len(self.segments) == 1 and isinstance(
+            self.segments[0], ResourceQuerySegment
+        )
 
     def resource_query(self):
         if self.is_resource_query():
@@ -524,12 +549,13 @@ class Query(object):
                 return None, None
         else:
             return None, None
+
     def short(self):
         _, r = self.predecessor()
         if r is None:
-            q=str(self)
-            if len(self)>30:
-                q="..."+q[-30:]
+            q = str(self)
+            if len(self) > 30:
+                q = "..." + q[-30:]
             return q
         else:
             return str(r)
@@ -545,20 +571,22 @@ class Query(object):
         qs = TransformQuerySegment(SegmentHeader(name, level=level))
         self.segments.append(qs)
         return qs
-    
+
     def last_transform_query_segment(self):
         if not self.is_empty():
             if isinstance(self.segments[-1], TransformQuerySegment):
                 return self.segments[-1]
         return self.create_segment()
 
-    def with_action(self, name:str, *parameters):        
-        self.last_transform_query_segment().append(ActionRequest.from_arguments(name, *parameters))
+    def with_action(self, name: str, *parameters):
+        self.last_transform_query_segment().append(
+            ActionRequest.from_arguments(name, *parameters)
+        )
         return self
 
     def __add__(self, tq):
         assert isinstance(tq, TransformQuerySegment)
-        return Query(self.segments+[tq], absolute=self.absolute)
+        return Query(self.segments + [tq], absolute=self.absolute)
 
     def encode(self):
         return ("/" if self.absolute else "") + "/".join(
@@ -608,18 +636,26 @@ slash_entity = (
 )
 
 https_entity = (
-    Literal("~H").setParseAction(lambda s, loc, toks: ["https://"]).setName("https_entity")
+    Literal("~H")
+    .setParseAction(lambda s, loc, toks: ["https://"])
+    .setName("https_entity")
 )
 http_entity = (
-    Literal("~h").setParseAction(lambda s, loc, toks: ["http://"]).setName("http_entity")
+    Literal("~h")
+    .setParseAction(lambda s, loc, toks: ["http://"])
+    .setName("http_entity")
 )
 file_entity = (
-    Literal("~f").setParseAction(lambda s, loc, toks: ["file://"]).setName("file_entity")
+    Literal("~f")
+    .setParseAction(lambda s, loc, toks: ["file://"])
+    .setName("file_entity")
 )
 protocol_entity = (
-    Literal("~P").setParseAction(lambda s, loc, toks: ["://"]).setName("protocol_entity")
+    Literal("~P")
+    .setParseAction(lambda s, loc, toks: ["://"])
+    .setName("protocol_entity")
 )
- 
+
 negative_number_entity = (
     Regex("~[0-9]")
     .setParseAction(lambda s, loc, toks: ["-" + toks[0][1:]])
@@ -630,11 +666,17 @@ space_entity = (
 )
 end_entity = Literal("~E")
 
+
 def _expand_entity_parse_action(s, loc, toks):
     position = Position.from_loc(loc, s)
     return LinkActionParameter(toks[0], position=position)
 
-expand_entity = (Literal("~X~").suppress() + parse_query + end_entity.suppress()).setParseAction(_expand_entity_parse_action).setName("expand_entity")
+
+expand_entity = (
+    (Literal("~X~").suppress() + parse_query + end_entity.suppress())
+    .setParseAction(_expand_entity_parse_action)
+    .setName("expand_entity")
+)
 
 entities = (
     tilde_entity
@@ -656,10 +698,10 @@ def _parameter_parse_action(s, loc, toks):
     return StringActionParameter(par, position=position)
 
 
-parameter = (
-    expand_entity | (ZeroOrMore(parameter_text | entities | percent_encoding)
+parameter = expand_entity | (
+    ZeroOrMore(parameter_text | entities | percent_encoding)
     .setParseAction(_parameter_parse_action)
-    .setName("parameter")) 
+    .setName("parameter")
 )
 
 

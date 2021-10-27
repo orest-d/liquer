@@ -35,7 +35,8 @@ class HxlStateType(StateType):
             return output.encode("utf-8"), mimetype
         else:
             raise Exception(
-                f"Serialization: file extension {extension} is not supported by HXL dataset type.")
+                f"Serialization: file extension {extension} is not supported by HXL dataset type."
+            )
 
     def from_bytes(self, b: bytes, extension=None):
         """De-serialize data from bytes
@@ -50,7 +51,8 @@ class HxlStateType(StateType):
         if extension == "csv":
             return hxl.data(f)
         raise Exception(
-            f"Deserialization: file extension {extension} is not supported by HXL dataset type.")
+            f"Deserialization: file extension {extension} is not supported by HXL dataset type."
+        )
 
     def copy(self, data):
         """Make a deep copy of the data"""
@@ -64,15 +66,13 @@ register_state_type(hxl.io.HXLReader, HXL_DATASET_STATE_TYPE)
 
 @first_command
 def hxl_from(url):
-    """Load data from URL
-    """
+    """Load data from URL"""
     return hxl.data(url)
 
 
 @command
 def hxl2df(data):
-    """Convert hxl dataset to pandas dataframe
-    """
+    """Convert hxl dataset to pandas dataframe"""
     f = BytesIO()
     for line in data.gen_csv(show_headers=True, show_tags=True):
         f.write(line.encode("utf-8"))
@@ -82,8 +82,7 @@ def hxl2df(data):
 
 @command
 def df2hxl(df):
-    """Convert pandas dataframe to hxl dataset
-    """
+    """Convert pandas dataframe to hxl dataset"""
     f = StringIO()
     df.to_csv(f, index=False)
     f = BytesIO(f.getvalue().encode("utf-8"))
@@ -98,8 +97,15 @@ def set_all_tags(df, *tags):
     Hash characters are automatically prepended if not present.
     """
 
-    tags = pd.DataFrame([{c: tag.strip() if tag.strip().startswith(
-        "#") else "#"+tag.strip() for c, tag in zip(df.columns, tags)}], columns=df.columns)
+    tags = pd.DataFrame(
+        [
+            {
+                c: tag.strip() if tag.strip().startswith("#") else "#" + tag.strip()
+                for c, tag in zip(df.columns, tags)
+            }
+        ],
+        columns=df.columns,
+    )
     tags.fillna(value="", inplace=True)
     return tags.append(df, ignore_index=True)
 
@@ -110,10 +116,20 @@ def set_tags(df, *column_tag):
     Creates a first row with tags in a dataframe.
     Hash characters are automatically prepended if not present.
     """
-    if len(column_tag)%2 != 0:
-        raise Exception(f"Columns-tags (len:{len(column_tag)})argument od set_tags do not form pairs {column_tag}")
-    tags = pd.DataFrame([
-        {column_tag[i]: column_tag[i+1].strip() if column_tag[i+1].strip().startswith(
-        "#") else "#"+column_tag[i+1].strip() for i in range(0, len(column_tag), 2)}], columns=df.columns)
+    if len(column_tag) % 2 != 0:
+        raise Exception(
+            f"Columns-tags (len:{len(column_tag)})argument od set_tags do not form pairs {column_tag}"
+        )
+    tags = pd.DataFrame(
+        [
+            {
+                column_tag[i]: column_tag[i + 1].strip()
+                if column_tag[i + 1].strip().startswith("#")
+                else "#" + column_tag[i + 1].strip()
+                for i in range(0, len(column_tag), 2)
+            }
+        ],
+        columns=df.columns,
+    )
     tags.fillna(value="", inplace=True)
     return tags.append(df, ignore_index=True)

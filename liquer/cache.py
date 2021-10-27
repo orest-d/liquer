@@ -166,13 +166,15 @@ class CacheIfHasAttributes(CacheMixin):
 
     def store(self, state):
         self.remove(state.query)
-        if all(state.metadata.get("attributes",{}).get(a, False) for a in self.attributes):
+        if all(
+            state.metadata.get("attributes", {}).get(a, False) for a in self.attributes
+        ):
             return self.cache.store(state)
         else:
             return False
 
     def store_metadata(self, metadata):
-        if all(metadata.get("attributes",{}).get(a, False) for a in self.attributes):
+        if all(metadata.get("attributes", {}).get(a, False) for a in self.attributes):
             return self.cache.store_metadata(metadata)
         else:
             return False
@@ -209,13 +211,15 @@ class CacheIfHasNotAttributes(CacheMixin):
 
     def store(self, state):
         self.remove(state.query)
-        if any(state.metadata.get("attributes",{}).get(a, False) for a in self.attributes):
+        if any(
+            state.metadata.get("attributes", {}).get(a, False) for a in self.attributes
+        ):
             return False
         else:
             return self.cache.store(state)
 
     def store_metadata(self, metadata):
-        if any(metadata.get("attributes",{}).get(a, False) for a in self.attributes):
+        if any(metadata.get("attributes", {}).get(a, False) for a in self.attributes):
             return False
         else:
             return self.cache.store_metadata(metadata)
@@ -254,7 +258,7 @@ class CacheAttributeCondition(CacheMixin):
 
     def store(self, state):
         self.remove(state.query)
-        state_attribute_value = state.metadata.get("attributes",{}).get(self.attribute)
+        state_attribute_value = state.metadata.get("attributes", {}).get(self.attribute)
         if self.equals:
             if state_attribute_value == self.value:
                 return self.cache.store(state)
@@ -264,7 +268,7 @@ class CacheAttributeCondition(CacheMixin):
         return False
 
     def store_metadata(self, metadata):
-        state_attribute_value = metadata.get("attributes",{}).get(self.attribute)
+        state_attribute_value = metadata.get("attributes", {}).get(self.attribute)
         if self.equals:
             if state_attribute_value == self.value:
                 return self.cache.store_metadata(metadata)
@@ -295,38 +299,46 @@ class CacheAttributeCondition(CacheMixin):
 class CacheProxy:
     def __init__(self, cache, verbose=False):
         self.cache = cache
-        self.verbose=verbose
+        self.verbose = verbose
 
     def clean(self):
-        if self.verbose: print("(CacheProxy) clean()")
+        if self.verbose:
+            print("(CacheProxy) clean()")
         self.cache.clean()
 
     def get(self, key):
-        if self.verbose: print(f"(CacheProxy) get({key})")
+        if self.verbose:
+            print(f"(CacheProxy) get({key})")
         return self.cache.get(key)
 
     def get_metadata(self, key):
-        if self.verbose: print(f"(CacheProxy) get_metadata({key})")
+        if self.verbose:
+            print(f"(CacheProxy) get_metadata({key})")
         return self.cache.get_metadata(key)
 
     def store(self, state):
-        if self.verbose: print(f"(CacheProxy) store()")
+        if self.verbose:
+            print(f"(CacheProxy) store()")
         return self.cache.store(state)
 
     def store_metadata(self, metadata):
-        if self.verbose: print(f"(CacheProxy) store_metadata()")
+        if self.verbose:
+            print(f"(CacheProxy) store_metadata()")
         return self.cache.store_metadata(metadata)
 
     def remove(self, key):
-        if self.verbose: print(f"(CacheProxy) remove({key})")
+        if self.verbose:
+            print(f"(CacheProxy) remove({key})")
         return self.cache.remove(key)
 
     def contains(self, key):
-        if self.verbose: print(f"(CacheProxy) contains({key})")
+        if self.verbose:
+            print(f"(CacheProxy) contains({key})")
         return self.cache.contains(key)
 
     def keys(self):
-        if self.verbose: print(f"(CacheProxy) keys()")
+        if self.verbose:
+            print(f"(CacheProxy) keys()")
         return list(self.cache.keys())
 
     def __str__(self):
@@ -334,6 +346,7 @@ class CacheProxy:
 
     def __repr__(self):
         return f"CacheProxy({repr(self.cache)})"
+
 
 class NoCache(CacheMixin):
     """Trivial cache object which does not cache any state"""
@@ -402,7 +415,7 @@ class MemoryCache(CacheMixin):
     def store(self, state):
         if state.is_error:
             return None
-        state.metadata["status"]="ready" 
+        state.metadata["status"] = "ready"
         self.storage[state.query] = state.clone()
         return True
 
@@ -451,6 +464,7 @@ class FileCache(CacheMixin):
 
     def clean(self):
         import glob
+
         print(f"Clean {self}")
         for f in glob.glob(os.path.join(self.path, "*")):
             logging.debug(f"Removing cache file {f}")
@@ -487,7 +501,7 @@ class FileCache(CacheMixin):
             print(f"(FileCache) Metadata missing: {key}")
             return None
         if metadata.get("status") != "ready":
-            print(f"(FileCache) Not ready {key}; ",metadata.get("status"))
+            print(f"(FileCache) Not ready {key}; ", metadata.get("status"))
             return None
         state = State()
         state.metadata = metadata
@@ -506,7 +520,7 @@ class FileCache(CacheMixin):
     def _load_metadata(self, state_path):
         if os.path.exists(state_path):
             try:
-                return json.loads(self.decode_metadata(open(state_path,"rb").read()))
+                return json.loads(self.decode_metadata(open(state_path, "rb").read()))
             except:
                 traceback.print_exc()
                 return None
@@ -520,7 +534,7 @@ class FileCache(CacheMixin):
         metadata = self.get_metadata(key)
         if metadata is None:
             return True
-        if "type_identifier" in  metadata:
+        if "type_identifier" in metadata:
             t = state_types_registry().get(metadata["type_identifier"])
             path = self.to_path(key, prefix="data_", extension=t.default_extension())
             if os.path.exists(path):
@@ -540,7 +554,7 @@ class FileCache(CacheMixin):
             if metadata is None:
                 return False
             else:
-                return metadata.get("query")==key
+                return metadata.get("query") == key
         else:
             return False
         return True
@@ -563,7 +577,7 @@ class FileCache(CacheMixin):
     def store(self, state):
         if state.is_error:
             return None
-        state.metadata["status"]="ready" 
+        state.metadata["status"] = "ready"
 
         if not self.store_metadata(state.metadata):
             return False
@@ -597,8 +611,7 @@ class FileCache(CacheMixin):
 
 
 class StoreCache(CacheMixin):
-    """Simple cache similar to FileCache, but using a store module instead of a local filesystem.
-    """
+    """Simple cache similar to FileCache, but using a store module instead of a local filesystem."""
 
     def __init__(self, store, path, flat=False):
         self.storage = store
@@ -609,8 +622,9 @@ class StoreCache(CacheMixin):
 
     def clean(self):
         import glob
+
         print(f"Clean {self}")
-        path = "" if self.path in (None,"") else self.path + "/"
+        path = "" if self.path in (None, "") else self.path + "/"
         for key in self.storage.keys():
             if not self.storage.is_dir(key) and key.startswith(path):
                 logging.debug(f"Removing cache file {key}")
@@ -662,7 +676,7 @@ class StoreCache(CacheMixin):
             print(f"(StoreCache) Metadata missing: {key}")
             return None
         if metadata.get("status") != "ready":
-            print(f"(StoreCache) Not ready {key}; ",metadata.get("status"))
+            print(f"(StoreCache) Not ready {key}; ", metadata.get("status"))
             return None
         state = State()
         state.metadata = metadata
@@ -698,18 +712,18 @@ class StoreCache(CacheMixin):
         return self.storage.contains(state_path)
 
     def keys(self):
-        path = self.path+"/"
+        path = self.path + "/"
         for key in self.storage.keys():
             if self.path in ("", None) or key.startswith(path):
                 if not self.storage.is_dir(key):
                     metadata = self.storage.get_metadata(key)
-                    if "query" in  metadata:
+                    if "query" in metadata:
                         yield metadata["query"]
 
     def store(self, state):
         if state.is_error:
             return None
-        state.metadata["status"]="ready" 
+        state.metadata["status"] = "ready"
 
         t = state_types_registry().get(state.type_identifier)
         path = self.to_path(state.query)
@@ -717,7 +731,7 @@ class StoreCache(CacheMixin):
             try:
                 b, mime = t.as_bytes(state.data)
                 metadata = dict(**state.metadata)
-                metadata["mimetype"]=mime
+                metadata["mimetype"] = mime
                 self.storage.store(path, b, metadata)
                 return True
             except:
@@ -740,6 +754,7 @@ class StoreCache(CacheMixin):
 
     def __repr__(self):
         return f"FileCache({repr(self.storage)}, {repr(self.path)}, flat={self.flat})"
+
 
 class XORFileCache(FileCache):
     def __init__(self, path, code):
@@ -915,7 +930,7 @@ class SQLCache(CacheMixin):
     def store(self, state):
         if state.is_error:
             return None
-        state.metadata["status"]="ready" 
+        state.metadata["status"] = "ready"
 
         key = state.query
         metadata = json.dumps(state.as_dict())
@@ -955,9 +970,7 @@ class SQLCache(CacheMixin):
             return False
 
     def remove(self, key):
-        self.connection.execute(
-            f"DELETE FROM {self.table} WHERE query=?", [key]
-        )
+        self.connection.execute(f"DELETE FROM {self.table} WHERE query=?", [key])
         self.connection.commit()
         return True
 

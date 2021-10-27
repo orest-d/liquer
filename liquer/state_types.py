@@ -36,23 +36,23 @@ MIMETYPES = dict(
     json="application/json",
     djson="application/json",
     js="text/javascript",
-    txt='text/plain',
-    html='text/html',
-    htm='text/html',
-    md='text/markdown',
-    xls='application/vnd.ms-excel',
-    xlsx='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ods='application/vnd.oasis.opendocument.spreadsheet',
-    tsv='text/tab-separated-values',
-    csv='text/csv',
-    css='text/css',
-    msgpack='application/x-msgpack',
-    hdf5='application/x-hdf',
-    h5='application/x-hdf',
-    png='image/png',
-    svg='image/svg+xml',
-    jpg='image/jpeg',
-    jpeg='image/jpeg',
+    txt="text/plain",
+    html="text/html",
+    htm="text/html",
+    md="text/markdown",
+    xls="application/vnd.ms-excel",
+    xlsx="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ods="application/vnd.oasis.opendocument.spreadsheet",
+    tsv="text/tab-separated-values",
+    csv="text/csv",
+    css="text/css",
+    msgpack="application/x-msgpack",
+    hdf5="application/x-hdf",
+    h5="application/x-hdf",
+    png="image/png",
+    svg="image/svg+xml",
+    jpg="image/jpeg",
+    jpeg="image/jpeg",
     b="application/octet-stream",
     pkl="application/octet-stream",
     pickle="application/octet-stream",
@@ -63,19 +63,22 @@ MIMETYPES = dict(
     midi="audio/midi",
     pdf="application/pdf",
     ps="application/postscript",
-    eps="image/eps"
+    eps="image/eps",
 )
 
+
 def mimetype_from_extension(extension):
-    return MIMETYPES.get(extension,"text/plain")
+    return MIMETYPES.get(extension, "text/plain")
+
 
 def get_type_qualname(cls):
     """Get a string uniquely identifying the supplied class"""
-    if isinstance(cls,str):
+    if isinstance(cls, str):
         return cls
     if cls.__module__ == "__main__":
         return cls.__qualname__
     return f"{cls.__module__}.{cls.__qualname__}"
+
 
 class StateTypesRegistry(object):
     """State type registry takes care of registering and lookup of state types.
@@ -167,21 +170,22 @@ def copy_state_data(data):
 
 class StateType(object):
     """Abstract state type basis"""
+
     def identifier(self):
         """String identifier of the state type"""
         raise NotImplementedError(
-            "State type class must define a state type identifier")
+            "State type class must define a state type identifier"
+        )
 
     def default_extension(self):
         """Default file extension; determines the default data format
         Must be consistent with the default_mimetype.
         """
-        raise NotImplementedError(
-            "State type class must define the default extension")
+        raise NotImplementedError("State type class must define the default extension")
 
     def default_filename(self):
         """Default file name"""
-        return "data."+self.default_extension()
+        return "data." + self.default_extension()
 
     def default_mimetype(self):
         """Default mime type - must be consistent with the default_extension"""
@@ -196,7 +200,8 @@ class StateType(object):
         Data must be of this state type. Extension determines the serialization format. If none, default extension is used.
         """
         raise NotImplementedError(
-            "State type class must define serialization to bytes (as_bytes)")
+            "State type class must define serialization to bytes (as_bytes)"
+        )
 
     def from_bytes(self, b: bytes, extension=None):
         """Deserialize data from bytes.
@@ -204,15 +209,18 @@ class StateType(object):
         Extension determines the serialization format. If none, default extension is used.
         """
         raise NotImplementedError(
-            "State type class must define deserialization from bytes (from_bytes)")
+            "State type class must define deserialization from bytes (from_bytes)"
+        )
 
     def copy(self, data):
         """Create a deep copy of data.
         Data must be of this state type."""
         return self.from_bytes(self.as_bytes(data)[:])
 
+
 class DictStateType(StateType):
     """JSON serializable data."""
+
     def identifier(self):
         return "dictionary"
 
@@ -222,8 +230,8 @@ class DictStateType(StateType):
     def is_type_of(self, data):
         return isinstance(data, dict)
 
-    def encode_element(self,data_element):
-        if isinstance(data_element,(int, float, str)) or data_element is None:
+    def encode_element(self, data_element):
+        if isinstance(data_element, (int, float, str)) or data_element is None:
             return json.dumps(data_element)
         else:
             reg = state_types_registry()
@@ -231,10 +239,14 @@ class DictStateType(StateType):
             extension = t.default_extension()
             b, mime = t.as_bytes(data_element, extension=extension)
             txt = base64.b64encode(b).decode("utf-8")
-            return '[%-10s, %-4s, "%s"]'%(f'"{t.identifier()}"',f'"{extension}"',txt)
+            return '[%-10s, %-4s, "%s"]' % (
+                f'"{t.identifier()}"',
+                f'"{extension}"',
+                txt,
+            )
 
-    def decode_element(self,data_element_encoded):
-        if isinstance(data_element_encoded,list):
+    def decode_element(self, data_element_encoded):
+        if isinstance(data_element_encoded, list):
             type_identifier, extension, b64 = data_element_encoded
             b = base64.b64decode(b64)
             return decode_state_data(b, type_identifier, extension)
@@ -246,14 +258,14 @@ class DictStateType(StateType):
             extension = self.default_extension()
 
         if extension == "djson":
-            d="{\n"
-            sep=""
+            d = "{\n"
+            sep = ""
             for key, value in data.items():
                 assert isinstance(key, str)
-                d+=sep
-                d+="%-20s%s"%(f'"{key}":', self.encode_element(value))
-                sep=",\n"
-            d+="\n}"
+                d += sep
+                d += "%-20s%s" % (f'"{key}":', self.encode_element(value))
+                sep = ",\n"
+            d += "\n}"
             return d.encode("utf-8"), mimetype_from_extension("djson")
         elif extension == "json":
             return json.dumps(data).encode("utf-8"), mimetype_from_extension("json")
@@ -264,9 +276,9 @@ class DictStateType(StateType):
         if extension is None:
             extension = self.default_extension()
         if extension == "djson":
-            d={}
+            d = {}
             for key, value in json.loads(b.decode("utf-8")).items():
-                d[key]=self.decode_element(value)
+                d[key] = self.decode_element(value)
             return d
         elif extension == "json":
             return json.loads(b.decode("utf-8"))
@@ -274,8 +286,10 @@ class DictStateType(StateType):
     def copy(self, data):
         return deepcopy(data)
 
+
 class JsonStateType(StateType):
     """JSON serializable data."""
+
     def identifier(self):
         return "generic"
 
@@ -291,11 +305,14 @@ class JsonStateType(StateType):
 
         if extension == "json":
             return json.dumps(data).encode("utf-8"), self.default_mimetype()
-        elif extension in ["html","htm"]:
+        elif extension in ["html", "htm"]:
             if isinstance(data, str):
                 return data.encode("utf-8"), mimetype_from_extension("html")
             else:
-                return f"<pre>{json.dumps(data)}</pre>".encode("utf-8"), mimetype_from_extension("html")
+                return (
+                    f"<pre>{json.dumps(data)}</pre>".encode("utf-8"),
+                    mimetype_from_extension("html"),
+                )
         raise Exception(f"Unsupported file extension: {extension}")
 
     def from_bytes(self, b: bytes, extension=None):
@@ -308,8 +325,10 @@ class JsonStateType(StateType):
     def copy(self, data):
         return deepcopy(data)
 
+
 class PickleStateType(StateType):
     """Pickle-serializable data."""
+
     def identifier(self):
         return "pickle"
 
@@ -323,15 +342,18 @@ class PickleStateType(StateType):
         if extension is None:
             extension = self.default_extension()
 
-        if extension in ["pkl","pickle"]:
+        if extension in ["pkl", "pickle"]:
             return pickle.dumps(data), mimetype_from_extension("pickle")
         elif extension == "json":
             return json.dumps(data).encode("utf-8"), mimetype_from_extension("json")
-        elif extension in ["html","htm"]:
+        elif extension in ["html", "htm"]:
             if isinstance(data, str):
                 return data.encode("utf-8"), mimetype_from_extension("html")
             else:
-                return f"<pre>{json.dumps(data)}</pre>".encode("utf-8"), mimetype_from_extension("html")
+                return (
+                    f"<pre>{json.dumps(data)}</pre>".encode("utf-8"),
+                    mimetype_from_extension("html"),
+                )
         raise Exception(f"Unsupported file extension: {extension}")
 
     def from_bytes(self, b: bytes, extension=None):
@@ -350,6 +372,7 @@ class PickleStateType(StateType):
 
 class BytesStateType(StateType):
     """Binary data"""
+
     def identifier(self):
         return "bytes"
 
@@ -371,8 +394,10 @@ class BytesStateType(StateType):
     def copy(self, data):
         return deepcopy(data)
 
+
 class TextStateType(StateType):
     """Text data (string)"""
+
     def identifier(self):
         return "text"
 
