@@ -90,6 +90,7 @@ pip install liquer-framework
 - [ ] integrate pointcloud explorer
 - [ ] split context to mixins
 - [ ] update Jupyter plugin
+- [ ] remove commands and extended commands from metadata
 
 - [ ] liquer frontent project
 - [ ] improve scheduling - prevent same queries to be scheduled

@@ -204,6 +204,10 @@ subdir:
         def hello(x):
             return f"Hello, {x}"
 
+        @first_command
+        def error():
+            raise Exception("Error")
+
         substore = st.MemoryStore()
         substore.store(
             "recipes.yaml",
@@ -212,6 +216,9 @@ RECIPES:
   - query: hello-RECIPES/hello1.txt
     title: "Hello 1"
     description: "This is hello 1."
+  - query: error/error.txt
+    title: "Error example"
+    description: "Should fail."
 subdir:
   - query: hello-subdir/hello.txt
     filename: hello2.txt
@@ -231,6 +238,14 @@ subdir:
         assert store.get_metadata("hello1.txt")["status"] == consts.Status.READY.value
         assert store.get_metadata("hello1.txt")["title"] == "Hello 1"
         assert store.get_metadata("hello1.txt")["description"] == "This is hello 1."
+
+        assert store.get_metadata("error.txt")["status"] == consts.Status.RECIPE.value
+        try:
+            assert store.get_bytes("error.txt") == b"Hello, RECIPES"
+        except:
+            pass
+        print(store.get_metadata("error.txt"))
+        assert store.get_metadata("error.txt")["status"] == consts.Status.ERROR.value
 
         assert store.get_metadata("subdir/hello2.txt")["status"] == consts.Status.RECIPE.value
         assert store.get_metadata("subdir/hello2.txt")["title"] == "Hello 2"

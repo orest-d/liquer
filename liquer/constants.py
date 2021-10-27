@@ -6,7 +6,6 @@ class Status(Enum):
     EVALUATING_PARENT = "evaluating parent"
     EVALUATION = "evaluation"
     EVALUATING_DEPENDENCIES = "evaluating dependencies"
-    FINISHED = "finished"
     READY = "ready"
     ERROR = "error"
     OBSOLETE = "obsolete"

@@ -120,6 +120,9 @@ class Context(object):
         self.vars = Vars(vars_clone())
         self.html_preview = ""
 
+    def new_empty(self):
+        return Context()
+
     def metadata(self):
         title = self.title
         if title is None:
@@ -580,12 +583,14 @@ class Context(object):
 
         if is_error:
             self.status = Status.ERROR
+            metadata["status"]=self.status.value
             self.info(f"Action {action.encode()} at {action.position} failed")
             state.metadata.update(metadata)
             state.status = Status.ERROR.value
             state.is_error = True
         else:
-            self.status = Status.FINISHED
+            self.status = Status.READY
+            metadata["status"]=self.status.value
             self.info(f"Action {action.encode()} at {action.position} completed")
             state_vars = dict(self.vars)
             state_vars.update(state.vars)
@@ -719,7 +724,6 @@ class Context(object):
             state = self.evaluate_resource(query.resource_query())
             state.query = query.encode()
             state.metadata["created"] = self.now()
-            state.metadata["status"] = "ready"
             return state
         else:
             p, r = query.predecessor()
@@ -747,7 +751,6 @@ class Context(object):
             self.debug(f"RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'")
             state.query = query.encode()
             state.metadata["created"] = self.now()
-            state.metadata["status"] = "ready"
             return state
         elif r.is_filename():
             state.metadata["filename"] = r.filename
@@ -756,7 +759,6 @@ class Context(object):
         state = self.evaluate_action(state, r)
         state.query = query.encode()
         state.metadata["created"] = self.now()
-        state.metadata["status"] = "ready"
 
         if (
             state.metadata.get("caching", True)
@@ -795,6 +797,21 @@ class Context(object):
 
         print(f"*** Evaluate and save {query} started")
         state = self.evaluate(query)
+        if state.is_error:
+            print(f"*** Evaluate and save {query} failed")
+            if target_resource_directory is not None and target_file is not None:
+                filename = target_file    
+                key = (
+                    filename
+                    if target_resource_directory == ""
+                    else target_resource_directory + "/" + filename
+                )
+                if store is None:
+                    store = self.store()
+
+                print(state.metadata)
+                store.store_metadata(key, state.metadata)
+
         data = state.get()
         reg = self.state_types_registry()
         t = reg.get(type(data))
@@ -821,7 +838,7 @@ class Context(object):
         else:
             path = os.path.join(target_directory, filename)
 
-        if target_resource_directory is None or target_directory is not None:
+        if target_directory is not None:
             print(f"*** Evaluate and save {query} to {path}")
             with open(path, "wb") as f:
                 f.write(b)
@@ -894,7 +911,7 @@ class RecipeStore(Store):
             )
         target_resource_directory = self.parent_key(key)
         target_file = self.key_name(key)
-        self.context.evaluate_and_save(
+        self.context.new_empty().evaluate_and_save(
             query,
             target_resource_directory=target_resource_directory,
             target_file=target_file,
@@ -1034,7 +1051,9 @@ class RecipeSpecStore(RecipeStore):
         return metadata
 
     def make(self, key):
+        print(f"### MAKE {key}")
         super().make(key)
+        print(f"### MAKE {key} get metadata")
         metadata = self.substore.get_metadata(key)
         status = metadata.get("status", Status.RECIPE.value)
         metadata.update(self.recipe_metadata(key))
