@@ -22,10 +22,7 @@ class TestContext:
         action = ActionRequest.from_arguments("test_callable", "1")
         result = context.evaluate_action(State(), action)
         assert result.get() == 124
-        assert (
-            result.metadata["commands"][-1]
-            == ["test_callable", "1"]
-        )
+        assert result.metadata["commands"][-1] == ["test_callable", "1"]
 
     def test_evaluate_command_with_attributes(self):
         reset_command_registry()
@@ -38,10 +35,7 @@ class TestContext:
         action = ActionRequest.from_arguments("test_callable", "1")
         result = context.evaluate_action(State(), action)
         assert result.get() == 124
-        assert (
-            result.metadata["commands"][-1]
-            == ["test_callable", "1"]
-        )
+        assert result.metadata["commands"][-1] == ["test_callable", "1"]
         assert result.metadata["attributes"]["ABC"] == "def"
 
     def test_evaluate_chaining_attributes(self):
@@ -99,8 +93,8 @@ class TestContext:
 
     def test_vars_context(self):
         reset_command_registry()
-        set_var("test_var","INITIAL")
-        
+        set_var("test_var", "INITIAL")
+
         @first_command
         def varcommand(context=None):
             is_initial = context.vars.test_var == "INITIAL"
@@ -109,36 +103,38 @@ class TestContext:
 
         @command
         def check1(state, context=None):
-            print(f"Check1: ",state.vars["test_var"])
+            print(f"Check1: ", state.vars["test_var"])
             return state.vars["test_var"] == "MODIFIED"
 
         @command
         def check2(state, context=None):
-            print(f"Check2: ",context.vars.test_var)
+            print(f"Check2: ", context.vars.test_var)
             return context.vars.test_var == "MODIFIED"
 
         assert Context().evaluate("varcommand").get() == True
         assert Context().evaluate("check1").get() == False
-        assert Context().evaluate("check2").get() == False       
+        assert Context().evaluate("check2").get() == False
         assert Context().evaluate("varcommand/check1").get() == True
         assert Context().evaluate("varcommand/check2").get() == True
-    
+
     def test_vars(self):
         v = Vars()
         assert len(v) == 0
-        v.x=123
-        assert dict(v)=={"x":123}
-        assert v.get_modified()=={"x":123} 
+        v.x = 123
+        assert dict(v) == {"x": 123}
+        assert v.get_modified() == {"x": 123}
         v = Vars(x=1234)
         assert len(v) == 1
-        assert v.get_modified()=={} 
-        v.y=123
-        assert dict(v)=={"x":1234, "y":123}
-        assert v.get_modified()=={"y":123} 
+        assert v.get_modified() == {}
+        v.y = 123
+        assert dict(v) == {"x": 1234, "y": 123}
+        assert v.get_modified() == {"y": 123}
+
 
 class TestRecipes:
     def test_recipes(self):
         import liquer.store as st
+
         reset_command_registry()
 
         @first_command
@@ -146,20 +142,26 @@ class TestRecipes:
             return f"Hello, {x}"
 
         substore = st.MemoryStore()
-        substore.store("recipes.yaml",
-"""
+        substore.store(
+            "recipes.yaml",
+            """
 RECIPES:
   - hello-RECIPES/hello1.txt
 subdir:
   - hello-subdir/hello2.txt
-""",{})
-        substore.store("x/recipes.yaml",
-"""
+""",
+            {},
+        )
+        substore.store(
+            "x/recipes.yaml",
+            """
 RECIPES:
   - hello-RECIPES_X/hello3.txt
 subdir:
   - hello-subdir_x/hello4.txt
-""",{})
+""",
+            {},
+        )
         store = RecipeSpecStore(substore)
         assert "hello1.txt" in store.keys()
         assert "subdir/hello2.txt" in store.keys()
@@ -173,6 +175,7 @@ subdir:
 
     def test_ignore(self):
         import liquer.store as st
+
         reset_command_registry()
 
         @first_command
@@ -180,11 +183,11 @@ subdir:
             return f"Hello, {x}"
 
         substore = st.MemoryStore()
-        substore.store(".a/recipes.yaml","",{})
-        substore.store("a/b","",{})
-        substore.store("a/.b","",{})
-        substore.store(".a/b","",{})
-        substore.store(".a/.b","",{})
+        substore.store(".a/recipes.yaml", "", {})
+        substore.store("a/b", "", {})
+        substore.store("a/.b", "", {})
+        substore.store(".a/b", "", {})
+        substore.store(".a/.b", "", {})
         store = RecipeSpecStore(substore)
         assert "a/b" in store.keys()
         assert "a/.b" not in store.keys()
@@ -193,6 +196,7 @@ subdir:
 
     def test_recipes_advanced(self):
         import liquer.store as st
+
         reset_command_registry()
 
         @first_command
@@ -200,8 +204,9 @@ subdir:
             return f"Hello, {x}"
 
         substore = st.MemoryStore()
-        substore.store("recipes.yaml",
-"""
+        substore.store(
+            "recipes.yaml",
+            """
 RECIPES:
   - query: hello-RECIPES/hello1.txt
     title: "Hello 1"
@@ -211,7 +216,9 @@ subdir:
     filename: hello2.txt
     title: "Hello 2"
     description: "This is hello 2."
-""",{})
+""",
+            {},
+        )
         store = RecipeSpecStore(substore)
         assert "hello1.txt" in store.keys()
         assert "subdir/hello2.txt" in store.keys()
@@ -223,7 +230,11 @@ subdir:
         assert store.get_metadata("hello1.txt")["description"] == "This is hello 1."
 
         assert store.get_metadata("subdir/hello2.txt")["title"] == "Hello 2"
-        assert store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
+        assert (
+            store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
+        )
         assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
         assert store.get_metadata("subdir/hello2.txt")["title"] == "Hello 2"
-        assert store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
+        assert (
+            store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
+        )

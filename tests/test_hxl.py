@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-'''
+"""
 Unit tests for LiQuer HXL support.
 See https://github.com/HXLStandard/libhxl-python
-'''
+"""
 import pandas as pd
 from liquer.query import evaluate
 from liquer.parser import encode_token
@@ -16,8 +16,10 @@ import tempfile
 class TestHXL:
     def test_from(self, httpserver):
         import liquer.ext.lq_hxl  # register HXL commands and state type
-        test_hxl = open(os.path.dirname(
-            inspect.getfile(self.__class__))+"/test_hxl.csv").read()
+
+        test_hxl = open(
+            os.path.dirname(inspect.getfile(self.__class__)) + "/test_hxl.csv"
+        ).read()
 
         httpserver.expect_request("/test_hxl.csv").respond_with_data(test_hxl)
         url = encode_token(httpserver.url_for("/test_hxl.csv"))
@@ -30,8 +32,10 @@ class TestHXL:
 
     def test_from_with_cache(self, httpserver):
         import liquer.ext.lq_hxl  # register HXL commands and state type
-        test_hxl = open(os.path.dirname(
-            inspect.getfile(self.__class__))+"/test_hxl.csv").read()
+
+        test_hxl = open(
+            os.path.dirname(inspect.getfile(self.__class__)) + "/test_hxl.csv"
+        ).read()
 
         httpserver.expect_request("/test_hxl.csv").respond_with_data(test_hxl)
         url = encode_token(httpserver.url_for("/test_hxl.csv"))
@@ -54,8 +58,10 @@ class TestHXL:
 
     def test_hxl2df(self, httpserver):
         import liquer.ext.lq_hxl  # register HXL commands and state type
-        test_hxl = open(os.path.dirname(
-            inspect.getfile(self.__class__))+"/test_hxl.csv").read()
+
+        test_hxl = open(
+            os.path.dirname(inspect.getfile(self.__class__)) + "/test_hxl.csv"
+        ).read()
 
         httpserver.expect_request("/test_hxl.csv").respond_with_data(test_hxl)
         url = encode_token(httpserver.url_for("/test_hxl.csv"))
@@ -65,10 +71,12 @@ class TestHXL:
         assert list(df.b[1:]) == ["2", "4"]
 
     def test_df2hxl(self):
-        import liquer.ext.lq_hxl     # register HXL commands and state type
+        import liquer.ext.lq_hxl  # register HXL commands and state type
         import liquer.ext.lq_pandas  # register pandas commands and state type
-        path = encode_token(os.path.dirname(
-            inspect.getfile(self.__class__))+"/test_hxl.csv")
+
+        path = encode_token(
+            os.path.dirname(inspect.getfile(self.__class__)) + "/test_hxl.csv"
+        )
         data = evaluate(f"df_from-{path}/df2hxl").get()
         assert data.columns[0].header == "a"
         assert data.columns[0].display_tag == "#indicator+num+aaa"
@@ -76,34 +84,40 @@ class TestHXL:
         assert data.columns[1].display_tag == "#indicator+num+bbb"
 
     def test_set_all_tags(self):
-        import liquer.ext.lq_hxl     # register HXL commands and state type
+        import liquer.ext.lq_hxl  # register HXL commands and state type
         import liquer.ext.lq_pandas  # register pandas commands and state type
-        filename = encode_token(os.path.dirname(
-            inspect.getfile(self.__class__))+"/test.csv")
-        data = evaluate(f"df_from-{filename}/set_all_tags-indicator+a-indicator+b/df2hxl").get()
+
+        filename = encode_token(
+            os.path.dirname(inspect.getfile(self.__class__)) + "/test.csv"
+        )
+        data = evaluate(
+            f"df_from-{filename}/set_all_tags-indicator+a-indicator+b/df2hxl"
+        ).get()
         assert data.columns[0].header == "a"
         assert data.columns[0].display_tag == "#indicator+a"
         assert data.columns[1].header == "b"
         assert data.columns[1].display_tag == "#indicator+b"
         df = evaluate(f"df_from-{filename}/set_all_tags-indicator+a-indicator+b").get()
-        assert list(df.a) == ["#indicator+a",1,3]
-        assert list(df.b) == ["#indicator+b",2,4]
+        assert list(df.a) == ["#indicator+a", 1, 3]
+        assert list(df.b) == ["#indicator+b", 2, 4]
         df = evaluate(f"df_from-{filename}/set_all_tags-indicator+a").get()
-        assert list(df.a) == ["#indicator+a",1,3]
-        assert list(df.b) == ["",2,4]
+        assert list(df.a) == ["#indicator+a", 1, 3]
+        assert list(df.b) == ["", 2, 4]
 
     def test_set_tags(self):
-        import liquer.ext.lq_hxl     # register HXL commands and state type
+        import liquer.ext.lq_hxl  # register HXL commands and state type
         import liquer.ext.lq_pandas  # register pandas commands and state type
-        filename = encode_token(os.path.dirname(
-            inspect.getfile(self.__class__))+"/test.csv")
-        data = evaluate(f"df_from-{filename}/set_tags-b-indicator+b-a-indicator+a/df2hxl").get()
+
+        filename = encode_token(
+            os.path.dirname(inspect.getfile(self.__class__)) + "/test.csv"
+        )
+        data = evaluate(
+            f"df_from-{filename}/set_tags-b-indicator+b-a-indicator+a/df2hxl"
+        ).get()
         assert data.columns[0].header == "a"
         assert data.columns[0].display_tag == "#indicator+a"
         assert data.columns[1].header == "b"
         assert data.columns[1].display_tag == "#indicator+b"
         df = evaluate(f"df_from-{filename}/set_tags-b-indicator+b").get()
-        assert list(df.a) == ["",1,3]
-        assert list(df.b) == ["#indicator+b",2,4]
-
-
+        assert list(df.a) == ["", 1, 3]
+        assert list(df.b) == ["#indicator+b", 2, 4]

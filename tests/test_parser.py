@@ -169,9 +169,10 @@ class TestNewParser:
 
     def test_rheader(self):
         q = parse("-R/a/b/-/world")
-        assert len(q.segments)==2
-        assert q.segments[0].header.encode()=="-R"
-        assert q.segments[0].encode()=="-R/a/b"
+        assert len(q.segments) == 2
+        assert q.segments[0].header.encode() == "-R"
+        assert q.segments[0].encode() == "-R/a/b"
+
 
 class TestQueryElements:
     def test_simple_action_request(self):
@@ -197,7 +198,7 @@ class TestQueryElements:
         assert action.encode() == "negative-~_123-~_456.7"
 
     def test_action_request_list_conversion(self):
-        action = ActionRequest.from_list(["name",1])
+        action = ActionRequest.from_list(["name", 1])
         assert action.name == "name"
         assert action.encode() == "name-1"
         assert action.to_list() == ["name", "1"]
@@ -206,4 +207,3 @@ class TestQueryElements:
         action = parse("name-1").action()
         assert action.name == "name"
         assert action.encode() == "name-1"
-

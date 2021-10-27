@@ -1,6 +1,7 @@
 import pytest
 from liquer.store import *
 
+
 class TestStore:
     @pytest.fixture
     def store(self, tmpdir):
@@ -16,7 +17,7 @@ class TestStore:
         assert list(store.keys()) == []
         assert store.contains("a") is False
         assert store.contains("a/b") is False
-        store.store("a/b",b"test",dict(x="xx"))
+        store.store("a/b", b"test", dict(x="xx"))
         assert store.contains("a") is True
         assert store.contains("a/b") is True
         assert store.is_dir("a") is True
@@ -25,7 +26,7 @@ class TestStore:
         assert store.get_metadata("a/b")["x"] == "xx"
         assert store.get_metadata("a")["fileinfo"]["is_dir"] == True
         assert store.get_metadata("a/b")["fileinfo"]["is_dir"] == False
-        assert sorted(store.keys()) == ["a","a/b"]
+        assert sorted(store.keys()) == ["a", "a/b"]
         assert store.listdir("a") == ["b"]
         assert store.listdir("") == ["a"]
         store.remove("a/b")
@@ -41,21 +42,26 @@ class TestStore:
         assert store.parent_key("a") == ""
         assert store.parent_key("a/b") == "a"
 
+
 class TestMemoryStore(TestStore):
     @pytest.fixture
     def store(self, tmpdir):
         return MemoryStore()
 
+
 class TestOverlayStore(TestStore):
     @pytest.fixture
     def store(self, tmpdir):
-        return OverlayStore(MemoryStore(),MemoryStore())
+        return OverlayStore(MemoryStore(), MemoryStore())
+
 
 class TestFileSystemStore(TestStore):
     @pytest.fixture
     def store(self, tmpdir):
         import fs
-        return FileSystemStore(fs.open_fs('mem://'))
+
+        return FileSystemStore(fs.open_fs("mem://"))
+
 
 class TestFileStore(TestStore):
     @pytest.fixture
@@ -63,18 +69,22 @@ class TestFileStore(TestStore):
         return FileStore(tmpdir)
 
     def test_filesystem_path(self, store):
-        store.store("dir_a/file_b",b"test",dict(x="xx"))
+        store.store("dir_a/file_b", b"test", dict(x="xx"))
         assert store.get_metadata("dir_a/file_b")["x"] == "xx"
         assert store.get_metadata("dir_a")["fileinfo"]["is_dir"] == True
-        assert store.get_metadata("dir_a/file_b")["fileinfo"]["filesystem_path"].startswith(str(store.path))
-        assert store.get_metadata("dir_a/file_b")["fileinfo"]["filesystem_path"].endswith("dir_a/file_b")
-        
-        
+        assert store.get_metadata("dir_a/file_b")["fileinfo"][
+            "filesystem_path"
+        ].startswith(str(store.path))
+        assert store.get_metadata("dir_a/file_b")["fileinfo"][
+            "filesystem_path"
+        ].endswith("dir_a/file_b")
+
+
 class TestMountPointStore:
     def test_file_store_creation(self):
         store = MountPointStore(MemoryStore())
         assert list(store.keys()) == []
-        store.mount("a",MemoryStore())
+        store.mount("a", MemoryStore())
         assert list(store.keys()) == ["a"]
         assert store.contains("x") is False
 
@@ -82,11 +92,11 @@ class TestMountPointStore:
         store = MountPointStore(MemoryStore())
         assert list(store.keys()) == []
         assert store.contains("a") is False
-        store.mount("a",MemoryStore())
+        store.mount("a", MemoryStore())
         assert list(store.keys()) == ["a"]
         assert store.contains("a") is True
         assert store.contains("a/b") is False
-        store.store("a/b",b"test",dict(x="xx"))
+        store.store("a/b", b"test", dict(x="xx"))
         assert store.contains("a") is True
         assert store.contains("a/b") is True
         assert store.is_dir("a") is True
@@ -94,7 +104,7 @@ class TestMountPointStore:
         assert store.get_bytes("a/b") == b"test"
         assert store.get_metadata("a/b")["x"] == "xx"
         assert store.get_metadata("a")["fileinfo"]["is_dir"] == True
-        assert sorted(store.keys()) == ["a","a/b"]
+        assert sorted(store.keys()) == ["a", "a/b"]
         assert store.listdir("a") == ["b"]
         assert store.listdir("") == ["a"]
         store.remove("a/b")
