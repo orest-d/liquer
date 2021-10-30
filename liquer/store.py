@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 from io import BytesIO
 from liquer.constants import *
+import liquer.util as util
 
 STORE = None
 WEB_STORE = None
@@ -89,6 +90,9 @@ class Store(StoreMixin):
         if key is None:
             key = ""
         metadata["key"] = key
+        metadata["updated"]=util.now()
+        if data is not None:
+            metadata["created"]=metadata["updated"]
         metadata["fileinfo"] = metadata.get("fileinfo", {})
         metadata["fileinfo"]["name"] = self.key_name(key)
         metadata["fileinfo"]["is_dir"] = is_dir
@@ -481,6 +485,12 @@ class RoutingStore(Store):
     def route_to(self, key):
         raise KeyNotSupportedStoreException(key=key, store=self)
 
+    def finalize_metadata(self, metadata, key, is_dir=False, data=None):
+        metadata = super().finalize_metadata(
+            metadata, key=key, is_dir=is_dir, data=data
+        )
+        return metadata
+
     def is_supported(self, key):
         try:
             store = self.route_to(key)
@@ -494,7 +504,9 @@ class RoutingStore(Store):
         return self.route_to(key).get_bytes(key)
 
     def get_metadata(self, key):
-        return self.route_to(key).get_metadata(key)
+        metadata=self.route_to(key).get_metadata(key)
+        metadata["key"]=key
+        return metadata
 
     def store(self, key, data, metadata):
         return self.route_to(key).store(key, data, metadata)
@@ -553,7 +565,9 @@ class KeyTranslatingStore(Store):
         return self.substore.get_bytes(self.translate_key(key))
 
     def get_metadata(self, key):
-        return self.substore.get_metadata(self.translate_key(key))
+        metadata=self.substore.get_metadata(self.translate_key(key))
+        metadata["key"]= key
+        return metadata
 
     def store(self, key, data, metadata):
         return self.substore.store(self.translate_key(key), data, metadata)

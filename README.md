@@ -78,7 +78,7 @@ pip install liquer-framework
 
 - [x] default store for webapp extensions
 - [x] configurable frontend - kind-of possible with web store
-- [ ] human readable metadata extract and store report
+- [x] human readable metadata extract and store report (can be improved, but the basic functionality is there)
 - [ ] encoded store
 - [ ] get_context function to create context
 - [ ] default data-science app example

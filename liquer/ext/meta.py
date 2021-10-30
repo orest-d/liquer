@@ -1,6 +1,7 @@
 from liquer.commands import command, first_command, command_registry
 from liquer.query import evaluate_template
 import liquer.ext.basic
+from liquer.context import *
 
 
 @first_command(ns="meta")
@@ -50,6 +51,10 @@ def state(state):
     """Returns dictionary with all metadata for the resulting state"""
     return state.as_dict()
 
+@command(ns="meta")
+def metadata(state):
+    """Returns dictionary with all metadata for the resulting state"""
+    return {**state.metadata}
 
 @command(ns="meta")
 def help(state, command_name, ns="root"):
@@ -111,11 +116,13 @@ def help(state, command_name, ns="root"):
             f"<h1>Unknown namespace <em>{ns}</em></h1>"
         ).with_filename("help.html")
 
-
-""" @command(ns="meta")
+@command(ns="meta")
 def status_md(metadata):
     txt = ""
-    txt+="# %s\n\n"%(metadata.get("title","???"))
+    txt+="# %s%s\n\n"%(metadata.get("title","???"), " (ERROR)" if metadata.get("is_error") else "")
+    if metadata.get("key") is not None:
+        txt+="KEY:     %s\n"%(metadata.get("key",""))
+
     txt+="QUERY:   %s\n"%(metadata.get("query","???"))
     txt+="STATUS:  %s\n"%(metadata.get("status","???"))
     txt+="MESSAGE: %s\n\n"%(metadata.get("message",""))
@@ -123,31 +130,64 @@ def status_md(metadata):
     txt+="STARTED: %s\n"%(metadata.get("started","-"))
     txt+="UPDATED: %s\n"%(metadata.get("updated","-"))
     txt+="CREATED: %s\n"%(metadata.get("created","-"))
+    txt+="\n"
 
-    txt+="## DESCRIPTION:\n%s\n"%(metadata.get("description","")
-    txt+="## LOG\n"
-    for record in metadata.get("log",[]):
+    fileinfo = metadata.get("fileinfo")
+    if fileinfo is not None:
+        txt+="## FILEINFO%s\n"%(" (DIRECTORY)" if fileinfo.get("is_dir") else "")
+        txt+="NAME   : %s\n"%(fileinfo.get("name",""))
+        txt+="PATH   : %s\n"%(fileinfo.get("filesystem_path","-"))
+        txt+="SIZE   : %s\n"%(fileinfo.get("size","?"))
+        txt+="\n"
 
-            status=self.status.value,
-            title=title,
-            description=self.description,
-            query=self.raw_query,
-            parent_query=self.parent_query,
-            argument_queries=self.argument_queries,
-            log=self.log[:],
-            is_error=self.is_error,
-            direct_subqueries=self.direct_subqueries[:],
-            progress_indicators=self.progress_indicators[:],
-            child_progress_indicators=self.child_progress_indicators[:],
-            child_log=self.child_log,
-            message=self.message,
-            started=self.started,
-            updated=self.now(),
-            created=self.created,
-            caching=self.caching,
-            vars=dict(self.vars),
-            html_preview=self.html_preview,
-"""
+    txt+="## DESCRIPTION:\n%s\n"%(metadata.get("description",""))
+#    txt+="## LOG\n"
+#    for record in metadata.get("log",[]):
+#        txt+=str(record)
+    return txt
+
+@command(ns="meta")
+def dir_status(metadata, context=None):
+    if context is None:
+        context=Context()
+    key = metadata.get("key")
+    print("context", context)
+    context.set_title(f"Status of directory {key}")
+    context.set_description(f"Status overview of data in the directory {key}")
+    store = context.store()
+    data = []
+    if store.is_dir(key):
+        for name in store.listdir(key):
+            metadata = store.get_metadata(key+"/"+name)
+            fileinfo = metadata.get("fileinfo",{})
+            data.append(dict(
+                name=name,
+                key=metadata.get("key"),
+                query=metadata.get("query"),
+                title=metadata.get("title"),
+                description=metadata.get("description"),
+                status=metadata.get("status"),
+                is_error=metadata.get("is_error"),
+                message=metadata.get("message",""),
+                is_dir=fileinfo.get("is_dir"),
+                size=fileinfo.get("size"),
+                started=metadata.get("started"),
+                created=metadata.get("created"),
+                updated=metadata.get("updated"),
+                ))
+        return dict(status="OK", message="OK", data=data)
+    else:
+        return dict(status="ERROR", message=f"Not a directory:{key}", data=[])
+
+@command(ns="meta")
+def dir_status_df(metadata, context=None):
+    import pandas as pd
+    if context is None:
+        context=Context()
+    data = dir_status(metadata, context=context)
+    return pd.DataFrame(data["data"], columns=[
+        "name", "title", "status", "is_error", "message", "started", "created", "updated",
+        "key", "query", "description", "is_dir", "size"])
 
 if __name__ == "__main__":
     from liquer import *

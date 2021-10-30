@@ -4,6 +4,8 @@ sys.path.append("..")
 
 from liquer import *
 from liquer.store import web_mount, MemoryStore, get_store
+import liquer.ext.meta
+import liquer.ext.lq_pandas
 
 ### Create Flask app and register LiQuer blueprint
 from flask import Flask
@@ -38,6 +40,11 @@ def index():
     <li><a href="/liquer/api/store/data/web/hello/index.html">Store API</a></li>
     <li><a href="/liquer/api/store/metadata/web/hello/index.html">Store API (metadata)</a></li>
     <li><a href="/liquer/q/web/hello/index.html/-/display/index.html">Query with display command</a></li>
+    <li><a href="/liquer/q/-R-meta/web/hello/index.html/-/ns-meta/status_md/status.txt">Status of the file in store</a></li>
+    <li><a href="/liquer/q/web/hello/index.html/-/display/ns-meta/state/status_md/status.txt">Display status</a></li>
+    <li><a href="/liquer/q/-R-meta/web/hello/-/ns-meta/status_md/status.txt">Dir status</a></li>
+    <li><a href="/liquer/q/-R-meta/web/hello/-/ns-meta/dir_status/status.json">Dir status (json)</a></li>
+    <li><a href="/liquer/q/-R-meta/web/hello/-/ns-meta/dir_status_df/status.html">Dir status (html)</a></li>
     </ul>
     """
 
