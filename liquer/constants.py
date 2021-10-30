@@ -46,4 +46,4 @@ MIMETYPES = dict(
 )
 
 def mimetype_from_extension(extension):
-    return MIMETYPES.get(extension.lower(), "text/plain")
+    return MIMETYPES.get(extension, "text/plain")

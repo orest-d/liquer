@@ -638,7 +638,12 @@ class MountPointStore(RoutingStore):
         self.default_store = default_store
         self.routing_table = [] if routing_table is None else routing_table
 
+    def umount(self, umount_key):
+        self.routing_table = [(key, store) for key, store in self.routing_table if key!=umount_key]
+        return self
+
     def mount(self, key, store):
+        self.umount(key)
         self.routing_table.append((key, PrefixStore(store, prefix=key)))
         return self
 

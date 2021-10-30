@@ -76,8 +76,8 @@ pip install liquer-framework
 - [x] test and fix bug with incorrect query used in error reporting of link expansion (implement reporting query)
 - [x] resource path in ~X link
 
-- [ ] default store for webapp extensions
-- [ ] configurable frontend
+- [x] default store for webapp extensions
+- [x] configurable frontend - kind-of possible with web store
 - [ ] human readable metadata extract and store report
 - [ ] encoded store
 - [ ] get_context function to create context
