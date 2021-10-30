@@ -32,6 +32,7 @@ pip install liquer-framework
 - 2021-06-23 - v4.8  - multiple fixes
 - 2021-08-18 - v4.9  - small fixes
 - 2021-08-19 - v4.10 - local recipes in RecipeSpecStore
+- 2021-10-31 - v4.11 - multiple improvements with store and metadata reporting
 
 # TODO
 
