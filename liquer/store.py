@@ -2,14 +2,15 @@ from os import makedirs, name, remove
 from pathlib import Path
 import json
 from io import BytesIO
+from liquer.constants import *
 
 STORE = None
-
+WEB_STORE = None
 
 def get_store():
     global STORE
     if STORE is None:
-        STORE = Store()
+        STORE = MountPointStore()
     return STORE
 
 
@@ -17,6 +18,21 @@ def set_store(store):
     global STORE
     STORE = store
 
+def get_web_store():
+    global WEB_STORE
+    if WEB_STORE is None:
+        WEB_STORE = MountPointStore()
+        get_store().mount("web", WEB_STORE)
+    return WEB_STORE
+
+def mount(key, store):
+    get_store().mount(key, store)
+
+def web_mount(key, store):
+    get_web_store().mount(key, store)
+
+def web_mount_folder(key, path):
+    web_mount(key, FileStore(path))
 
 class StoreException(Exception):
     def __init__(self, message, key=None, store=None):
@@ -82,6 +98,11 @@ class Store(StoreMixin):
         if data is not None:
             metadata["fileinfo"]["size"] = len(data)
 
+        if "mimetype" not in metadata:
+            v = self.key_name(key).split(".")
+            mimetype = mimetype_from_extension(v[-1]) if len(v)>1 else "application/octet-stream"
+            metadata["mimetype"]=mimetype
+                
         return metadata
 
     def mount(self, key, store):

@@ -5,7 +5,9 @@ from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 import numpy as np
 from liquer.commands import command
-from liquer.state_types import StateType, register_state_type, mimetype_from_extension
+from liquer.state_types import StateType, register_state_type
+from liquer.constants import mimetype_from_extension
+
 import pickle
 
 

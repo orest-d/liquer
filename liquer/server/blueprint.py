@@ -218,6 +218,24 @@ def store_get(query):
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
 
+@app.route("/web/<path:query>", methods=["GET"])
+def web_store_get(query):
+    store = get_store()
+    try:
+        query="web/"+query
+        if query.endswith("/"):
+            query+="index.html"
+        if store.is_dir(query):
+            query+="/index.html"
+        metadata = store.get_metadata(query)
+        mimetype = metadata.get("mimetype", "application/octet-stream")
+        r = make_response(store.get_bytes(query))
+        r.headers.set("Content-Type", mimetype)
+        return r
+    except:
+        return jsonify(
+            dict(query=query, message=traceback.format_exc(), status="ERROR")
+        )
 
 @app.route("/api/store/data/<path:query>", methods=["POST"])
 def store_set(query):

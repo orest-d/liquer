@@ -1,9 +1,10 @@
 import json
 from liquer.state_types import (
     type_identifier_of,
-    copy_state_data,
-    mimetype_from_extension,
+    copy_state_data
 )
+from liquer.constants import mimetype_from_extension
+
 from copy import deepcopy
 from liquer.parser import QueryException, Position
 

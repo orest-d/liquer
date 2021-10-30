@@ -2,8 +2,9 @@ from io import StringIO, BytesIO
 from urllib.request import urlopen
 import pandas as pd
 import hxl
-from liquer.state_types import StateType, register_state_type, mimetype_from_extension
+from liquer.state_types import StateType, register_state_type
 from liquer.commands import command, first_command
+from liquer.constants import mimetype_from_extension
 
 
 class HxlStateType(StateType):

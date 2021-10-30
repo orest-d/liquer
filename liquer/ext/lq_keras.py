@@ -11,7 +11,9 @@ from keras.models import (
 )
 from keras.utils import plot_model, print_summary
 
-from liquer.state_types import StateType, register_state_type, mimetype_from_extension
+from liquer.state_types import StateType, register_state_type
+from liquer.constants import mimetype_from_extension
+
 from liquer.commands import command, first_command
 from liquer.parser import encode, decode
 from liquer.query import evaluate
