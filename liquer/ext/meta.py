@@ -2,6 +2,7 @@ from liquer.commands import command, first_command, command_registry
 from liquer.query import evaluate_template
 import liquer.ext.basic
 from liquer.context import *
+import traceback
 
 
 @first_command(ns="meta")
@@ -148,8 +149,7 @@ def status_md(metadata):
 
 @command(ns="meta")
 def dir_status(metadata, context=None):
-    if context is None:
-        context=Context()
+    context = get_context(context)
     key = metadata.get("key")
     print("context", context)
     context.set_title(f"Status of directory {key}")
@@ -182,12 +182,57 @@ def dir_status(metadata, context=None):
 @command(ns="meta")
 def dir_status_df(metadata, context=None):
     import pandas as pd
-    if context is None:
-        context=Context()
+    context = get_context(context)
     data = dir_status(metadata, context=context)
     return pd.DataFrame(data["data"], columns=[
         "name", "title", "status", "is_error", "message", "started", "created", "updated",
         "key", "query", "description", "is_dir", "size"])
+
+@command(ns="meta")
+def clean_recipes(metadata, recursive=False, context=None):
+    """Remove specific key or all the data in the directory of store that has a recipe.
+    This is supposed to be used together with a RecipeStore, that creates has_recipe flag in the metadata.
+    Data can be optionally cleaned recursively in all the subdirectories.
+
+    Examples:
+    -R-meta/my_dir/-/ns-meta/clean_recipes    - deletes all data with recipes in my_dir (but not its subfolders)
+    -R-meta/my_dir/-/ns-meta/clean_recipes-t  - deletes all data with recipes in my_dir and its subfolders
+    -R-meta/-/ns-meta/clean_recipes-t         - clean all the data with recipes everywhere
+    """
+    context = get_context(context)
+
+    if not isinstance(metadata, dict) or "key" not in metadata:
+        raise Exception("Valid metadata with a key expected in clean_recipes")
+
+    key = metadata["key"]
+    store=context.store()
+    removed=[]
+
+    if store.is_dir(key):
+        if key in ("",None):
+            if recursive:
+                keys = store.keys()
+            else:
+                keys = store.listdir(key)
+        else:
+            if recursive:
+                keys = [k for k in store.keys() if k.startswith(f"{key}/")]
+            else:
+                keys = [f"{key}/{name}" for name in store.listdir(key)]
+    for key in keys:
+        if store.is_dir(key):
+            continue
+        try:
+            metadata = store.get_metadata(key)
+            if metadata.get("has_recipe",False):
+                context.info(f"Remove {key}")
+                store.remove(key)
+                removed.append(key)
+        except:
+            context.warning(f"Failed to process {key} ")
+            context.warning(traceback.format_exc())
+    context.info(f"Removed {len(removed)} items")
+    return dict(status="OK", message=f"Removed {len(removed)} items", removed=removed)
 
 if __name__ == "__main__":
     from liquer import *

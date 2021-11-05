@@ -88,7 +88,7 @@ pip install liquer-framework
 - [ ] metadata for external files in store
 - [ ] clean recipes store - remove recipes, but keep external files
 - [x] on change action in store, dir summary
-- [ ] get_context function to create context
+- [x] get_context function to create context
 - [ ] default data-science app example
 - [x] more powerful recipes - description and url/file links, nested structure ?
 - [ ] store to_dict and from_dict

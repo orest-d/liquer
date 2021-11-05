@@ -8,7 +8,7 @@ from liquer.context import *
 from liquer.parser import ActionRequest
 from liquer.state import State, set_var
 from liquer.commands import reset_command_registry, command, first_command
-
+from liquer import evaluate
 
 class TestContext:
     def test_evaluate_action(self):
@@ -203,6 +203,58 @@ subdir:
         assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
         assert "hello2.txt" in store.get_bytes("subdir/"+store.STATUS_FILE).decode("utf-8")
         assert "ready " in store.get_bytes("subdir/"+store.STATUS_FILE).decode("utf-8")
+
+    def test_clean_recipes(self):
+        import importlib
+        from liquer import evaluate
+        import liquer.ext.basic
+        import liquer.ext.meta
+        import liquer.store as st
+        from liquer.commands import reset_command_registry
+
+        reset_command_registry()  # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.basic)
+        importlib.reload(liquer.ext.meta)
+
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        substore = st.MemoryStore()
+        substore.store(
+            "recipes.yaml",
+            """
+RECIPES:
+  - hello-RECIPES/hello1.txt
+subdir:
+  - hello-subdir/hello2.txt
+""",
+            {},
+        )
+        store = RecipeSpecStore(substore)
+        store_backup = st.get_store()
+        st.set_store(store)
+        try:
+            assert store.get_metadata("hello1.txt")["status"] == Status.RECIPE.value
+            assert store.get_metadata("subdir/hello2.txt")["status"] == Status.RECIPE.value
+
+            assert store.get_bytes("hello1.txt") == b"Hello, RECIPES"
+            assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
+
+            assert store.get_metadata("hello1.txt")["status"] == Status.READY.value
+            assert store.get_metadata("subdir/hello2.txt")["status"] == Status.READY.value
+
+            assert evaluate("-R-meta/subdir/-/ns-meta/clean_recipes").get()["removed"] == ["subdir/hello2.txt"]
+
+            assert store.get_metadata("hello1.txt")["status"] == Status.READY.value
+            assert store.get_metadata("subdir/hello2.txt")["status"] == Status.RECIPE.value
+
+
+
+        finally:
+            st.set_store(store_backup)
+
 
     def test_ignore(self):
         import liquer.store as st

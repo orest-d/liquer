@@ -81,6 +81,21 @@ def log_time():
     return date.strftime("%H:%M:%S")
 
 
+CONTEXT_CREATOR = None
+def set_context_creator(context_creator):
+    global CONTEXT_CREATOR
+    CONTEXT_CREATOR = context_creator
+
+def get_context(context=None):
+    global CONTEXT_CREATOR
+    if context is None:
+        if CONTEXT_CREATOR is None:
+            return Context()
+        else:
+            return CONTEXT_CREATOR()
+    else:
+        return context
+
 class Context(object):
     def __init__(self, parent_context=None, debug=False):
         self.parent_context = parent_context  # parent context - when in child context
@@ -1078,6 +1093,8 @@ class RecipeSpecStore(RecipeStore):
     def recipe_metadata(self, key):
         metadata = self.recipes_info.get(key, {})
         metadata["status"] = Status.RECIPE.value
+        if key in self.recipes_info:
+            metadata["has_recipe"] = True
         return metadata
 
     def make(self, key):
