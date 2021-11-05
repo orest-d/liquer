@@ -80,7 +80,14 @@ pip install liquer-framework
 - [x] default store for webapp extensions
 - [x] configurable frontend - kind-of possible with web store
 - [x] human readable metadata extract and store report (can be improved, but the basic functionality is there)
+- [ ] key mapping
+- [ ] command/query to zip store directory
 - [ ] encoded store
+- [ ] database store
+- [ ] cashing store (to be used e.g. with a database store)
+- [ ] metadata for external files in store
+- [ ] clean recipes store - remove recipes, but keep external files
+- [x] on change action in store, dir summary
 - [ ] get_context function to create context
 - [ ] default data-science app example
 - [x] more powerful recipes - description and url/file links, nested structure ?

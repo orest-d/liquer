@@ -173,6 +173,37 @@ subdir:
         assert store.get_bytes("x/hello3.txt") == b"Hello, RECIPES_X"
         assert store.get_bytes("x/subdir/hello4.txt") == b"Hello, subdir_x"
 
+    def test_status(self):
+        import liquer.store as st
+
+        reset_command_registry()
+
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        substore = st.MemoryStore()
+        substore.store(
+            "recipes.yaml",
+            """
+RECIPES:
+  - hello-RECIPES/hello1.txt
+subdir:
+  - hello-subdir/hello2.txt
+""",
+            {},
+        )
+        store = RecipeSpecStore(substore)
+
+        assert "hello1.txt" in store.get_bytes(store.STATUS_FILE).decode("utf-8")
+        assert "recipe " in store.get_bytes(store.STATUS_FILE).decode("utf-8")
+        assert store.get_bytes("hello1.txt") == b"Hello, RECIPES"
+        assert "hello1.txt" in store.get_bytes(store.STATUS_FILE).decode("utf-8")
+        assert "ready " in store.get_bytes(store.STATUS_FILE).decode("utf-8")
+        assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
+        assert "hello2.txt" in store.get_bytes("subdir/"+store.STATUS_FILE).decode("utf-8")
+        assert "ready " in store.get_bytes("subdir/"+store.STATUS_FILE).decode("utf-8")
+
     def test_ignore(self):
         import liquer.store as st
 

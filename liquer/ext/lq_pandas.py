@@ -105,7 +105,7 @@ class DataframeStateType(StateType):
         elif extension in ("pickle", "pkl"):
             return pd.read_pickle(f, compression=None)
         elif extension == "xlsx":
-            return pd.read_excel(f, extension="openpyxl")
+            return pd.read_excel(f, engine="openpyxl")
         elif extension == "msgpack":
             return pd.read_msgpack(f)
         raise Exception(

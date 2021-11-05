@@ -65,6 +65,8 @@ class StoreMixin:
     def with_fallback(self, fallback):
         return OverlayStore(self, fallback)
 
+    def mount(self, key, store):
+        return MountPointStore(self).mount(key, store)
 
 class Store(StoreMixin):
     def parent_key(self, key):
@@ -109,9 +111,6 @@ class Store(StoreMixin):
                 
         return metadata
 
-    def mount(self, key, store):
-        return MountPointStore(self).mount(key, store)
-
     def get_bytes(self, key):
         raise KeyNotFoundStoreException(key=key, store=self)
 
@@ -150,6 +149,15 @@ class Store(StoreMixin):
 
     def is_supported(self, key):
         return False
+
+    def on_data_changed(self, key):
+        pass
+
+    def on_metadata_changed(self, key):
+        pass
+
+    def on_removed(self, key):
+        pass
 
     def __str__(self):
         return f"Empty store"
@@ -218,19 +226,24 @@ class FileStore(Store):
         self.store_metadata(
             key, self.finalize_metadata(metadata, key=key, is_dir=False, data=data)
         )
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
         self.metadata_path_for_key(key).parent.mkdir(parents=True, exist_ok=True)
         with open(self.metadata_path_for_key(key), "w") as f:
             json.dump(metadata, f)
+        self.on_metadata_changed(key)
 
     def remove(self, key):
         self.path_for_key(key).unlink(missing_ok=True)
         self.metadata_path_for_key(key).unlink(missing_ok=True)
+        self.on_removed(key)
 
     def removedir(self, key):
         (self.path_for_key(key) / self.METADATA).rmdir()
         self.path_for_key(key).rmdir()
+        self.on_removed(key)
 
     def contains(self, key):
         return self.path_for_key(key).exists()
@@ -260,6 +273,8 @@ class FileStore(Store):
     def makedir(self, key):
         self.path_for_key(key).mkdir(parents=True, exist_ok=True)
         (self.path_for_key(key) / self.METADATA).mkdir(parents=True, exist_ok=True)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def openbin(self, key, mode="rb", buffering=-1):
         mode = dict(r="rb", w="wb").get(mode, mode)
@@ -303,9 +318,12 @@ class MemoryStore(Store):
         self.metadata[key] = self.finalize_metadata(
             metadata, key=key, is_dir=False, data=data
         )
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
         self.metadata[key] = metadata
+        self.on_metadata_changed(key)
 
     def remove(self, key):
         try:
@@ -320,6 +338,7 @@ class MemoryStore(Store):
             del self.metadata[key]
         except KeyError:
             pass
+        self.on_removed(key)
 
     def removedir(self, key):
         if len(self.listdir(key)) == 0:
@@ -327,6 +346,7 @@ class MemoryStore(Store):
                 self.directories.remove(key)
             except KeyError:
                 pass
+        self.on_removed(key)
 
     def contains(self, key):
         return key in self.directories or key in self.data or key in self.metadata
@@ -345,7 +365,7 @@ class MemoryStore(Store):
 
     def listdir(self, key):
         if key in ("", None):
-            return sorted(set(k.split("/")[0] for k in self.keys()))
+            return sorted(set(k.split("/")[0] for k in self.keys() if k.split("/")[0]!=""))
         if self.is_dir(key):
             return [self.key_name(k) for k in self.keys() if self.parent_key(k) == key]
 
@@ -353,6 +373,9 @@ class MemoryStore(Store):
         while key not in (None, ""):
             self.directories.add(key)
             key = self.parent_key(key)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
+
 
     def openbin(self, key, mode="r", buffering=-1):
         mode = dict(r="rb", w="wb").get(mode, mode)
@@ -368,6 +391,65 @@ class MemoryStore(Store):
 
     def __repr__(self):
         return f"MemoryStore()"
+
+class ProxyStore(Store):
+    """Proxy to another store - can be used as a basis to override certain behaviour
+    """
+
+    def __init__(self, store):
+        self._store = store
+
+    def get_bytes(self, key):
+        return self._store.get_bytes(key)
+
+    def get_metadata(self, key):
+        return self._store.get_metadata(key)
+
+    def store(self, key, data, metadata):
+        self._store.store(key, data, metadata)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
+
+    def store_metadata(self, key, metadata):
+        self._store.store_metadata(key, metadata)
+        self.on_metadata_changed(key)
+
+    def remove(self, key):
+        self._store.remove(key)
+        self.on_removed(key)
+
+    def removedir(self, key):
+        self._store.remove(key)
+        self.on_removed(key)
+
+    def contains(self, key):
+        return self._store.contains(key)
+
+    def is_dir(self, key):
+        return self._store.is_dir(key)
+
+    def keys(self):
+        self._store.keys()
+
+    def listdir(self, key):
+        return self._store.listdir(key)
+
+    def makedir(self, key):
+        self._store.makedir(key)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
+
+    def openbin(self, key, mode="r", buffering=-1):
+        return self._store.openbin(key, mode, buffering)
+
+    def is_supported(self, key):
+        return self._store.is_supported(key)
+
+    def __str__(self):
+        return f"proxy of {self._store}"
+
+    def __repr__(self):
+        return f"ProxyStore({repr(self._store)})"
 
 
 class OverlayStore(Store):
@@ -401,14 +483,17 @@ class OverlayStore(Store):
             self.removed.remove(key)
         except KeyError:
             pass
-        return self.overlay.store(key, data, metadata)
+        self.overlay.store(key, data, metadata)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
         try:
             self.removed.remove(key)
         except KeyError:
             pass
-        return self.overlay.store_metadata(key, metadata)
+        self.overlay.store_metadata(key, metadata)
+        self.on_metadata_changed(key)
 
     def remove(self, key):
         if key not in self.removed:
@@ -416,6 +501,7 @@ class OverlayStore(Store):
                 self.overlay.remove(key)
             if self.fallback.contains(key):
                 self.removed.add(key)
+        self.on_removed(key)
 
     def removedir(self, key):
         if self.contains(key):
@@ -424,6 +510,7 @@ class OverlayStore(Store):
                     self.overlay.remove(key)
                 else:
                     self.removed.add(key)
+        self.on_removed(key)
 
     def contains(self, key):
         if key in self.removed:
@@ -459,7 +546,9 @@ class OverlayStore(Store):
     def makedir(self, key):
         if key in self.removed:
             self.removed.remove(key)
-        return self.overlay.makedir(key)
+        self.overlay.makedir(key)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def openbin(self, key, mode="r", buffering=-1):
         mode = dict(r="rb", w="wb").get(mode, mode)
@@ -509,16 +598,21 @@ class RoutingStore(Store):
         return metadata
 
     def store(self, key, data, metadata):
-        return self.route_to(key).store(key, data, metadata)
+        self.route_to(key).store(key, data, metadata)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
-        return self.route_to(key).store_metadata(key, metadata)
+        self.route_to(key).store_metadata(key, metadata)
+        self.on_metadata_changed(key)
 
     def remove(self, key):
-        return self.route_to(key).remove(key)
+        self.route_to(key).remove(key)
+        self.on_removed(key)
 
     def removedir(self, key):
-        return self.route_to(key).removedir(key)
+        self.route_to(key).removedir(key)
+        self.on_removed(key)
 
     def contains(self, key):
         return self.route_to(key).contains(key)
@@ -533,7 +627,9 @@ class RoutingStore(Store):
         return self.route_to(key).listdir(key)
 
     def makedir(self, key):
-        return self.route_to(key).makedir(key)
+        self.route_to(key).makedir(key)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def openbin(self, key, mode="r", buffering=-1):
         return self.route_to(key).openbin(key, mode=mode, buffering=buffering)
@@ -570,16 +666,21 @@ class KeyTranslatingStore(Store):
         return metadata
 
     def store(self, key, data, metadata):
-        return self.substore.store(self.translate_key(key), data, metadata)
+        self.substore.store(self.translate_key(key), data, metadata)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
-        return self.substore.store_metadata(self.translate_key(key), metadata)
+        self.substore.store_metadata(self.translate_key(key), metadata)
+        self.on_metadata_changed(key)
 
     def remove(self, key):
-        return self.substore.remove(self.translate_key(key))
+        self.substore.remove(self.translate_key(key))
+        self.on_removed(key)
 
     def removedir(self, key):
-        return self.substore.removedir(self.translate_key(key))
+        self.substore.removedir(self.translate_key(key))
+        self.on_removed(key)
 
     def contains(self, key):
         return self.substore.contains(self.translate_key(key))
@@ -595,7 +696,9 @@ class KeyTranslatingStore(Store):
         return self.substore.listdir(self.translate_key(key))
 
     def makedir(self, key):
-        return self.substore.makedir(self.translate_key(key))
+        self.substore.makedir(self.translate_key(key))
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def openbin(self, key, mode="r", buffering=-1):
         return self.substore.openbin(
@@ -692,7 +795,11 @@ class MountPointStore(RoutingStore):
                 yield key
 
     def listdir(self, key):
-        d = set(self.route_to(key).listdir(key))
+        store = self.route_to(key)
+        if store is None:
+            d = set()
+        else:
+            d = set(store.listdir(key) or [])
         key_split = key.split("/")
         if len(key_split) == 1 and key_split[0] == "":
             key_split = []
@@ -701,6 +808,12 @@ class MountPointStore(RoutingStore):
             if prefix.startswith(key + "/") or key in (None, ""):
                 v = prefix.split("/")
                 d.add(v[key_depth])
+        if self.default_store is not None:
+            for prefix in self.default_store.keys():
+                if prefix.startswith(key + "/") or key in (None, ""):
+                    v = prefix.split("/")
+                    d.add(v[key_depth])
+
         return sorted(d)
 
     def removedir(self, key):
@@ -785,12 +898,15 @@ class FileSystemStore(Store):
         self.store_metadata(
             key, self.finalize_metadata(metadata, key=key, is_dir=False, data=data)
         )
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
         parent = self.metadata_dir_path_for_key(key)
         self.fs.makedirs(parent)
         with self.fs.open(self.metadata_path_for_key(key), "w") as f:
             json.dump(metadata, f)
+        self.on_metadata_changed(key)
 
     def remove(self, key):
         if not self.contains(key):
@@ -809,6 +925,7 @@ class FileSystemStore(Store):
             self.fs.remove(self.metadata_path_for_key(key))
         except:
             pass
+        self.on_removed(key)
 
     def removedir(self, key):
         metadir = self.path_for_key(key) + "/" + self.METADATA
@@ -817,6 +934,7 @@ class FileSystemStore(Store):
         except:
             pass
         self.fs.removedir(self.path_for_key(key))
+        self.on_removed(key)
 
     def contains(self, key):
         return self.fs.exists(self.path_for_key(key))
@@ -846,6 +964,8 @@ class FileSystemStore(Store):
     def makedir(self, key):
         self.fs.makedir(self.path_for_key(key), recreate=True)
         self.fs.makedir(self.path_for_key(key) + "/" + self.METADATA, recreate=True)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def openbin(self, key, mode="rb", buffering=-1):
         return self.fs.openbin(self.path_for_key(key), mode=mode, buffering=buffering)

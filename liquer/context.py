@@ -619,6 +619,11 @@ class Context(object):
         state = self.create_initial_state()
         try:
             metadata = store.get_metadata(key)
+            if metadata is None:
+                if store.contains(key):
+                    state.error(f"Key '{key}' was found in store, but the metadata is missing.")
+                else:
+                    state.error(f"Metadata for key '{key}' not found in store")
             if (
                 resource_query.header is not None
                 and len(resource_query.header.parameters) > 0
@@ -633,6 +638,15 @@ class Context(object):
                 )
             else:
                 data = store.get_bytes(key)
+                if data is None:
+                    if store.contains(key):
+                        if store.is_dir(key):
+                            state.error(f"Key '{key}' is a directory, hence there is no data.")
+                        else:
+                            state.error(f"Key '{key}' was found in store, but the data is missing.")
+                    else:
+                        state.error(f"Key '{key}' not found in store")
+                        
             state = state.with_data(data)
             state.metadata["resource_metadata"] = metadata
         except:
@@ -917,6 +931,8 @@ class RecipeStore(Store):
             target_file=target_file,
             store=self.substore,
         )
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def recipes(self):
         return self._recipes
@@ -956,20 +972,25 @@ class RecipeStore(Store):
     def store(self, key, data, metadata):
         if self.ignore(key):
             raise Exception(f"Key {key} is ignored, can't store into it")
-        return self.substore.store(
+        self.substore.store(
             key, data, self.finalize_metadata(metadata, key=key, is_dir=True, data=data)
         )
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
         if self.ignore(key):
             raise Exception(f"Key {key} is ignored, can't store metadata into it")
-        return self.substore.store_metadata(key, metadata)
+        self.substore.store_metadata(key, metadata)
+        self.on_metadata_changed(key)
 
     def remove(self, key):
-        return self.substore.remove(key)
+        self.substore.remove(key)
+        self.on_removed(key)
 
     def removedir(self, key):
-        return self.substore.removedir(key)
+        self.substore.removedir(key)
+        self.on_removed(key)
 
     def contains(self, key):
         if self.ignore(key):
@@ -1018,7 +1039,9 @@ class RecipeStore(Store):
     def makedir(self, key):
         if self.ignore(key):
             raise Exception(f"Key {key} is ignored, can't makedir")
-        return self.substore.makedir(key)
+        self.substore.makedir(key)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
 
     def openbin(self, key, mode="r", buffering=-1):
         if self.ignore(key):
@@ -1035,10 +1058,17 @@ class RecipeStore(Store):
 class RecipeSpecStore(RecipeStore):
     RECIPES_FILE = "recipes.yaml"
     LOCAL_RECIPES = "RECIPES"
+    STATUS_FILE = "recipes_status.txt"
 
     def __init__(self, store, recipes=None, context=None):
         RecipeStore.__init__(self, store, recipes=recipes, context=context)
         self.recipes_info = {}
+        self.update_all_status_files()
+    
+    def update_all_status_files(self):
+        if self.STATUS_FILE is not None:
+            for dir_key in set(self.parent_key(key) for key in self.recipes().keys()):
+                self.create_status(dir_key)
 
     def ignore(self, key):
         if key is None:
@@ -1059,6 +1089,7 @@ class RecipeSpecStore(RecipeStore):
         metadata.update(self.recipe_metadata(key))
         metadata["status"] = status
         self.substore.store_metadata(key, metadata)
+        self.on_metadata_changed(key)
 
     def recipes(self):
         import yaml
@@ -1120,3 +1151,45 @@ class RecipeSpecStore(RecipeStore):
 
         recipes.update(self._recipes)
         return recipes
+
+    def create_status_text(self, dir_key):
+        txt=""
+        if self.substore.is_dir(dir_key):
+            for d in self.listdir(dir_key):
+                key = f"{dir_key}/{d}" if len(dir_key) else d
+                if d == self.STATUS_FILE:
+                    continue
+                if not self.is_dir(key):
+                    metadata = self.get_metadata(key)
+                    if metadata is None:
+                        txt+="%-10s %-30s %s\n"%("MISSING",d,"Missing metadata")
+                    else:
+                        status = metadata.get("status","?")
+                        message = metadata.get("message","").strip()
+                        if "\n" in message:
+                            txt+="%-10s %-30s\n"%(status,d)
+                            txt+="=============================================================\n"
+                            txt+=message
+                            txt+="=============================================================\n\n"
+                        else:
+                            txt+="%-10s %-30s %s\n"%(status,d, message)
+        return txt
+
+    def create_status(self, key):
+        if self.key_name(key) != self.STATUS_FILE:
+            if not self.is_dir(key):
+                key = self.parent_key(key)
+            status_key = f"{key}/{self.STATUS_FILE}" if len(key) else self.STATUS_FILE
+            data = self.create_status_text(key).encode("utf-8")
+            self.substore.store(status_key, data,
+            dict(
+                title=f"Status of {key}",
+                description="This file is generated automatically by the recipe store"))
+
+    def on_metadata_changed(self,key):
+        super().on_metadata_changed(key)
+        if self.STATUS_FILE is not None:
+            if self.key_name(key) == self.RECIPES_FILE:
+                self.update_all_status_files()
+            elif self.key_name(key) != self.STATUS_FILE:
+                self.create_status(key)
