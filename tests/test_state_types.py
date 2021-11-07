@@ -24,6 +24,11 @@ class TestStateTypes:
         for data in [{}, {"abc": 123}]:
             assert type_identifier_of(data) == "dictionary"
 
+    def test_data_characteristics(self):
+        for data in [None, True, False, 123, [], [123, 456], {}, {"abc": 123}]:
+            assert type(data_characteristics(data)["description"]) == str
+            assert data_characteristics(data)["type_identifier"] == type_identifier_of(data)
+
     def test_generic_encode_decode(self):
         for data in [None, True, False, 123, [], [123, 456], {}, {"abc": 123}]:
             encoded, mime, type_identifier = encode_state_data(data)

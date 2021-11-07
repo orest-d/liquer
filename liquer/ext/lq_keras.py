@@ -79,6 +79,12 @@ class KerasModelStateType(StateType):
             f"Deserialization: file extension {extension} is not supported by kerasmodel type."
         )
 
+    def data_characteristics(self, data):
+        s = StringIO()
+        print_summary(data, print_fn=lambda x, s=s: s.write(str(x) + "\n"))
+        summary=s.getvalue()
+        return dict(description=f"Keras model", summary=summary)
+
     def copy(self, data):
         model = clone_model(data)
         model.set_weights(data.get_weights())

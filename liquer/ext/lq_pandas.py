@@ -115,6 +115,13 @@ class DataframeStateType(StateType):
     def copy(self, data):
         return data.copy()
 
+    def data_characteristics(self, data):
+        return dict(description=f"Dataframe with {len(data.columns)} and {len(data)} rows.",
+        columns=[str(c) for c in data.columns],
+        number_of_columns = len(data.columns),
+        number_of_rows = len(data),
+        )
+        
 
 DATAFRAME_STATE_TYPE = DataframeStateType()
 register_state_type(pd.DataFrame, DATAFRAME_STATE_TYPE)

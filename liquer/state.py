@@ -1,7 +1,8 @@
 import json
 from liquer.state_types import (
     type_identifier_of,
-    copy_state_data
+    copy_state_data,
+    data_characteristics
 )
 from liquer.constants import mimetype_from_extension
 
@@ -61,9 +62,10 @@ class State(object):
                 message="",
                 commands=[],
                 extended_commands=[],
-                type_identifier=None,
+                type_identifier=type_identifier_of(data),
                 caching=True,
                 attributes={},
+                data_characteristics=data_characteristics(data)
             )
         )
 
@@ -119,6 +121,7 @@ class State(object):
         """Set the data"""
         self.data = data
         self.metadata["type_identifier"] = type_identifier_of(data)
+        self.metadata["data_characteristics"] = data_characteristics(data)
         return self
 
     def with_source(self, source):

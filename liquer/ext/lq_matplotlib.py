@@ -59,6 +59,9 @@ class MatplotlibFigureStateType(StateType):
     def copy(self, data):
         return data.copy()
 
+    def data_characteristics(self, data):
+        return dict(description=f"Matplotlib figure")
+
 
 MATPLOTLIB_FIGURE_STATE_TYPE = MatplotlibFigureStateType()
 register_state_type(plt.Figure, MATPLOTLIB_FIGURE_STATE_TYPE)

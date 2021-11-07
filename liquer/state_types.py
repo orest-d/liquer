@@ -89,8 +89,24 @@ def state_types_registry():
     return _state_types_registry
 
 
+def data_characteristics(data):
+    """Convenience function to return data characteristics for supplied data.
+    Data characteristics must be a dictionary containing at least a "description"
+    element with a string description of the data and a "type_identifier".
+    Type identifier is duplicate of the type identifier found in metadata, but makes
+    the data characteristics self-contained.
+    """
+    st = state_types_registry().get(get_type_qualname(type(data))) 
+    ch = st.data_characteristics(data)
+    if not isinstance(ch, dict):
+        raise Exception(f"Data characteristics for {st.identifier()} must be a dictionary")
+    ch['description'] = ch.get('description','')
+    ch['type_identifier'] = ch.get("type_ident", st.identifier())
+    return ch
+
+
 def type_identifier_of(data):
-    """Convinience function to return a state type identifier for supplied data"""
+    """Convenience function to return a state type identifier for supplied data"""
     return state_types_registry().get(get_type_qualname(type(data))).identifier()
 
 
@@ -181,6 +197,18 @@ class StateType(object):
         Data must be of this state type."""
         return self.from_bytes(self.as_bytes(data)[:])
 
+    def data_characteristics(self, data):
+        """Create state-type-dependent data characteristics for supplied data.
+        Returned data characteristics must be a dictionary containing at least a "description"
+        element with a string description of the data and a "type_identifier".
+        Type identifier is duplicate of the type identifier found in metadata, but makes
+        the data characteristics self-contained.
+
+        This method should not be called directly, but via the data_characteristics function,
+        which might fix and validate some issues.
+        """
+        return dict(description="")
+
 
 class DictStateType(StateType):
     """JSON serializable data."""
@@ -250,6 +278,8 @@ class DictStateType(StateType):
     def copy(self, data):
         return deepcopy(data)
 
+    def data_characteristics(self, data):
+        return dict(description=f"Dictionary with {len(data)} items.", keys=sorted(str(k) for k in data.keys()))
 
 class JsonStateType(StateType):
     """JSON serializable data."""
@@ -288,6 +318,24 @@ class JsonStateType(StateType):
 
     def copy(self, data):
         return deepcopy(data)
+
+    def data_characteristics(self, data):
+        if isinstance(data, dict):
+            return dict(description=f"Dictionary with {len(data)} items.", keys=sorted(str(k) for k in data.keys()))
+        elif isinstance(data, dict):
+            return dict(description=f"Array with {len(data)} items.")
+        elif isinstance(data, str):
+            return dict(description=f"String {len(data)} characters long.")
+        elif isinstance(data, bool):
+            return dict(description=f"Bool {data}")
+        elif isinstance(data, int):
+            return dict(description=f"Integer {data}")
+        elif isinstance(data, float):
+            return dict(description=f"Float {data}")
+        elif data is not None:
+            return dict(description=f"None")
+        else:
+            return dict(description=f"Data of type {type(data)}")
 
 
 class PickleStateType(StateType):
@@ -333,6 +381,23 @@ class PickleStateType(StateType):
     def copy(self, data):
         return deepcopy(data)
 
+    def data_characteristics(self, data):
+        if isinstance(data, dict):
+            return dict(description=f"Dictionary with {len(data)} items.", keys=sorted(str(k) for k in data.keys()))
+        elif isinstance(data, dict):
+            return dict(description=f"Array with {len(data)} items.")
+        elif isinstance(data, str):
+            return dict(description=f"String {len(data)} characters long.")
+        elif isinstance(data, bool):
+            return dict(description=f"Bool {data}")
+        elif isinstance(data, int):
+            return dict(description=f"Integer {data}")
+        elif isinstance(data, float):
+            return dict(description=f"Float {data}")
+        elif data is not None:
+            return dict(description=f"None")
+        else:
+            return dict(description=f"Data of type {type(data)}")
 
 class BytesStateType(StateType):
     """Binary data"""
@@ -358,6 +423,9 @@ class BytesStateType(StateType):
     def copy(self, data):
         return deepcopy(data)
 
+    def data_characteristics(self, data):
+        return dict(description=f"{len(data)} bytes")
+
 
 class TextStateType(StateType):
     """Text data (string)"""
@@ -382,3 +450,6 @@ class TextStateType(StateType):
 
     def copy(self, data):
         return data[:]
+
+    def data_characteristics(self, data):
+        return dict(description=f"String {len(data)} characters long.")

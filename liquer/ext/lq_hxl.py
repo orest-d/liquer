@@ -59,6 +59,8 @@ class HxlStateType(StateType):
         """Make a deep copy of the data"""
         return data
 
+    def data_characteristics(self, data):
+        return dict(description=f"HXL dataset")
 
 HXL_DATASET_STATE_TYPE = HxlStateType()
 register_state_type(hxl.Dataset, HXL_DATASET_STATE_TYPE)
