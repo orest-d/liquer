@@ -1143,14 +1143,13 @@ class RecipeSpecStore(RecipeStore):
     def recipe_metadata(self, key):
         metadata = self.recipes_info.get(key, {})
         metadata["status"] = Status.RECIPE.value
-        if key in self.recipes_info:
+        if key in self.recipes_info and self.recipes_info[key].get("query") is not None:
             metadata["has_recipe"] = True
         return metadata
 
     def make(self, key):
         print(f"### MAKE {key}")
         super().make(key)
-        print(f"### MAKE {key} get metadata")
         metadata = self.substore.get_metadata(key)
         status = metadata.get("status", Status.RECIPE.value)
         metadata.update(self.recipe_metadata(key))
