@@ -134,9 +134,11 @@ class Context(object):
 
         self.vars = Vars(vars_clone())
         self.html_preview = ""
+        self.store_key=None
+        self.store_to=None
 
     def new_empty(self):
-        return Context()
+        return Context(debug=self.debug_messages)
 
     def metadata(self):
         title = self.title
@@ -207,8 +209,12 @@ class Context(object):
     def store_metadata(self, force=False):
         if self.raw_query is not None and self.enable_store_metadata:
             if force or self.can_report():
+                metadata = self.metadata()
                 self.cache().store_metadata(self.metadata())
                 self.last_report_time = datetime.now()
+                if self.store_key is not None:
+                    store = self.store() if self.store_to is None else self.store_to
+                    store.store_metadata(self.store_key, metadata)
 
     def new_progress_indicator(self):
         self._progress_indicator_identifier += 1
@@ -709,8 +715,38 @@ class Context(object):
         self.debug(f"apply {query} on {self.parent_query} yields {q}")
         return self.evaluate(q, description=description)
 
-    def evaluate(self, query, cache=None, description=None):
-        """Evaluate query, returns a State, cache the output in supplied cache"""
+    def _store_state(self, state):
+        if self.store_key is not None:
+            metadata = state.metadata
+            store = self.store() if self.store_to is None else self.store_to
+            if state.is_error:
+                store.store_metadata(self.store_key, metadata)
+            else:
+                data = state.get()
+                reg = self.state_types_registry()
+                t = reg.get(type(data))
+                if state.metadata.get("extension") is None:
+                    b, mime, typeid = encode_state_data(data)
+                else:
+                    b, mime, typeid = encode_state_data(
+                        data, extension=state.metadata["extension"]
+                    )
+                store.store(self.store_key, b, metadata)
+
+            
+    def evaluate(self, query, cache=None, description=None, store_key=None, store_to=None):
+        """Evaluate query, returns a State.
+        This method can be used in a command to evaluate a subquery,
+        which will be recorded in metadata and can be inspected during the query execution.
+
+        When evaluating such a subquery, it is good to give it a description (via a description argument).
+        If this is not a sub-query, description parameter will set the description in the metadata (see set_description).
+        Note that this might be overridden by the subsequent calls to set_description.
+        Parameter cache can be used to set a cache object. In most cases default cache is the safest choice.
+
+        Evaluation can be (besides cache) stored in the store under the key specified by the store_key (if not None).
+        A store can be specified too via the store_to option. If None (default), the default store (from the store method) is used.
+        """
         self.enable_store_metadata = False  # Prevents overwriting cache with metadata
         self.status = Status.EVALUATION
         self.debug(f"EVALUATE {query}")
@@ -718,7 +754,7 @@ class Context(object):
         if self.query is not None:
             self.enable_store_metadata = True
             print(f"Subquery {query} called from {self.query.encode()}")
-            state = self.child_context().evaluate(query)
+            state = self.child_context().evaluate(query, store_key=store_key, store_to=store_to)
             if not isinstance(query, str):
                 query = query.encode()
             self.log_subquery(query=query, description=description)
@@ -733,7 +769,11 @@ class Context(object):
 
         self.raw_query, query = self.to_query(query)
         self.query = query
-
+        self.store_key = store_key
+        self.store_to = store_to
+        if description is not None:
+            self.set_description(description)
+   
         if cache is None:
             cache = self.cache()
 
@@ -742,6 +782,7 @@ class Context(object):
         state = cache.get(query.encode())
         if state is not None:
             self.debug(f"Cache hit {query}")
+            self._store_state(state)
             return state
         self.enable_store_metadata = (
             True  # Metadata can be only written after trying to read from cache,
@@ -753,6 +794,7 @@ class Context(object):
             state = self.evaluate_resource(query.resource_query())
             state.query = query.encode()
             state.metadata["created"] = self.now()
+            self._store_state(state)
             return state
         else:
             p, r = query.predecessor()
@@ -774,12 +816,14 @@ class Context(object):
                 state.query = query.encode()
                 state.metadata["created"] = self.now()
                 self.debug(f"ERROR in '{state.query}'")
+                self._store_state(state)
                 return state
         self.vars = Vars(state.vars)
         if r is None:
             self.debug(f"RETURN '{query}' AFTER EMPTY ACTION ON '{state.query}'")
             state.query = query.encode()
             state.metadata["created"] = self.now()
+            self._store_state(state)
             return state
         elif r.is_filename():
             state.metadata["filename"] = r.filename
@@ -807,6 +851,7 @@ class Context(object):
                     self.status = Status.OBSOLETE
                     self.store_metadata()
 
+        self._store_state(state)
         return state
 
     def evaluate_and_save(
@@ -940,11 +985,16 @@ class RecipeStore(Store):
             )
         target_resource_directory = self.parent_key(key)
         target_file = self.key_name(key)
-        self.context.new_empty().evaluate_and_save(
+#        self.context.new_empty().evaluate_and_save(
+#            query,
+#            target_resource_directory=target_resource_directory,
+#            target_file=target_file,
+#            store=self.substore,
+#        )
+        self.context.new_empty().evaluate(
             query,
-            target_resource_directory=target_resource_directory,
-            target_file=target_file,
-            store=self.substore,
+            store_key=key,
+            store_to=self.substore,
         )
         self.on_data_changed(key)
         self.on_metadata_changed(key)

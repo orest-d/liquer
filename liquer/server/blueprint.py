@@ -96,9 +96,11 @@ def cache_get_metadata(query):
     return jsonify(metadata)
 
 
-@app.route("/cache/meta/<path:query>", methods=["GET", "POST"])
+@app.route("/cache/meta/<path:query>", methods=["POST"])
 def cache_store_metadata(query):
-    """Get cached metadata"""
+    """Store metadata in cache.
+    Allows to use liquer server as a remote cache.
+    """
     metadata = request.get_json(force=True)
     try:
         result_code = get_cache().store_metadata(metadata)
