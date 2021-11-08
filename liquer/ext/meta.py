@@ -204,6 +204,7 @@ def dir_status(metadata, context=None):
                 status=metadata.get("status"),
                 is_error=metadata.get("is_error"),
                 message=metadata.get("message",""),
+                data_characteristics=metadata.get("data_characteristics",{}).get("description",""),
                 is_dir=fileinfo.get("is_dir"),
                 size=fileinfo.get("size"),
                 started=metadata.get("started"),
@@ -220,7 +221,7 @@ def dir_status_df(metadata, context=None):
     context = get_context(context)
     data = dir_status(metadata, context=context)
     return pd.DataFrame(data["data"], columns=[
-        "name", "title", "status", "is_error", "message", "started", "created", "updated",
+        "name", "title", "status", "is_error", "message", "data_characteristics", "started", "created", "updated",
         "key", "query", "description", "is_dir", "size"])
 
 @command(ns="meta")
