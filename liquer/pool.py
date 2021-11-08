@@ -4,7 +4,7 @@ from os import getpid
 from time import sleep
 from liquer.cache import set_cache, CacheProxy, NoCache
 from liquer import *
-
+from liquer.constants import *
 
 class PoolManager(BaseManager):
     pass
@@ -125,6 +125,12 @@ def evaluate_in_background(query):
     """Like evaluate, but returns immediately and runs in the background."""
     global _worker_config
     print(f"Evaluate {query} in background")
+    metadata = get_context().metadata()
+    metadata["query"]=query
+    metadata["status"]=Status.SUBMITTED.value
+    cache = get_cache(_worker_config)
+    cache.store_metadata(metadata)
+
     if _worker_config is None:
         print("WARNING: Evaluated in main process")
         print(

@@ -3,9 +3,10 @@ from enum import Enum
 
 class Status(Enum):
     NONE = "none"
-    EVALUATING_PARENT = "evaluating parent"
+    SUBMITTED = "submitted"
+    EVALUATING_PARENT = "parent"
     EVALUATION = "evaluation"
-    EVALUATING_DEPENDENCIES = "evaluating dependencies"
+    EVALUATING_DEPENDENCIES = "dependencies"
     READY = "ready"
     ERROR = "error"
     OBSOLETE = "obsolete"

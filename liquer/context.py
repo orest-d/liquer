@@ -771,6 +771,7 @@ class Context(object):
         self.query = query
         self.store_key = store_key
         self.store_to = store_to
+        self.started = self.now()
         if description is not None:
             self.set_description(description)
    
@@ -1229,7 +1230,7 @@ class RecipeSpecStore(RecipeStore):
                 if not self.is_dir(key):
                     metadata = self.get_metadata(key)
                     if metadata is None:
-                        txt+="%-10s %-30s %s\n"%("MISSING",d,"Missing metadata")
+                        txt+="%-14s %-30s %s\n"%("MISSING",d,"Missing metadata")
                     else:
                         status = metadata.get("status",Status.NONE.value)
                         message = metadata.get("message","").strip()
@@ -1239,12 +1240,12 @@ class RecipeSpecStore(RecipeStore):
                             except:
                                 pass
                         if "\n" in message:
-                            txt+="%-10s %-32s|"%(status,d)
+                            txt+="%-14s %-32s|"%(status,d)
                             txt+="\n=============================================================\n"
                             txt+=message
                             txt+="\n=============================================================\n\n"
                         else:
-                            txt+="%-10s %-32s| %s\n"%(status,d, message)
+                            txt+="%-14s %-32s| %s\n"%(status,d, message)
         return txt
 
     def create_status(self, key):

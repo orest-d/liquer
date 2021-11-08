@@ -18,7 +18,7 @@ class TestContext:
         def test_callable(state, a: int, b=123):  # has state as a first argument
             return a + b
 
-        context = Context()
+        context = get_context()
         action = ActionRequest.from_arguments("test_callable", "1")
         result = context.evaluate_action(State(), action)
         assert result.get() == 124
@@ -31,7 +31,7 @@ class TestContext:
         def test_callable(state, a: int, b=123):  # has state as a first argument
             return a + b
 
-        context = Context()
+        context = get_context()
         action = ActionRequest.from_arguments("test_callable", "1")
         result = context.evaluate_action(State(), action)
         assert result.get() == 124
@@ -49,7 +49,7 @@ class TestContext:
         def test_callable2(state):  # has state as a first argument
             return state
 
-        context = Context()
+        context = get_context()
         action1 = ActionRequest.from_arguments("test_callable1", "1")
         action2 = ActionRequest.from_arguments("test_callable2")
 
@@ -70,7 +70,7 @@ class TestContext:
             return 123 + state.get()
 
         assert (
-            Context()
+             get_context()
             .evaluate_action(State().with_data(1), ActionRequest("statecommand"))
             .get()
             == 124
@@ -85,7 +85,7 @@ class TestContext:
             return 123 + x
 
         assert (
-            Context()
+             get_context()
             .evaluate_action(State().with_data(1), ActionRequest("nonstatecommand"))
             .get()
             == 124
@@ -111,11 +111,11 @@ class TestContext:
             print(f"Check2: ", context.vars.test_var)
             return context.vars.test_var == "MODIFIED"
 
-        assert Context().evaluate("varcommand").get() == True
-        assert Context().evaluate("check1").get() == False
-        assert Context().evaluate("check2").get() == False
-        assert Context().evaluate("varcommand/check1").get() == True
-        assert Context().evaluate("varcommand/check2").get() == True
+        assert get_context().evaluate("varcommand").get() == True
+        assert get_context().evaluate("check1").get() == False
+        assert get_context().evaluate("check2").get() == False
+        assert get_context().evaluate("varcommand/check1").get() == True
+        assert get_context().evaluate("varcommand/check2").get() == True
 
     def test_vars(self):
         v = Vars()

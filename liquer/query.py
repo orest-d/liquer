@@ -1,11 +1,11 @@
 import traceback
 import os.path
-from liquer.context import Context, find_queries_in_template
+from liquer.context import get_context, find_queries_in_template
 
 
 def evaluate(query):
     """Evaluate query, returns a State, cache the output in supplied cache"""
-    return Context().evaluate(query)
+    return get_context().evaluate(query)
 
 
 def evaluate_and_save(
@@ -17,7 +17,7 @@ def evaluate_and_save(
     - to target_file (if specified)
     Returns a state.
     """
-    return Context().evaluate_and_save(
+    return get_context().evaluate_and_save(
         query,
         target_directory=target_directory,
         target_file=target_file,
@@ -30,4 +30,4 @@ def evaluate_template(template: str, prefix="$", sufix="$"):
     Queries in the template are delimited by prefix and sufix.
     Queries should evaluate to strings and should not cause errors.
     """
-    return Context().evaluate_template(template, prefix=prefix, sufix=sufix)
+    return get_context().evaluate_template(template, prefix=prefix, sufix=sufix)
