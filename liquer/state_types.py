@@ -325,7 +325,7 @@ class JsonStateType(StateType):
         elif isinstance(data, dict):
             return dict(description=f"Array with {len(data)} items.")
         elif isinstance(data, str):
-            return dict(description=f"String {len(data)} characters long.")
+            return dict(description=f"Text {len(data)} characters long.")
         elif isinstance(data, bool):
             return dict(description=f"Bool {data}")
         elif isinstance(data, int):
@@ -387,7 +387,7 @@ class PickleStateType(StateType):
         elif isinstance(data, dict):
             return dict(description=f"Array with {len(data)} items.")
         elif isinstance(data, str):
-            return dict(description=f"String {len(data)} characters long.")
+            return dict(description=f"Text {len(data)} characters long.")
         elif isinstance(data, bool):
             return dict(description=f"Bool {data}")
         elif isinstance(data, int):
@@ -452,4 +452,4 @@ class TextStateType(StateType):
         return data[:]
 
     def data_characteristics(self, data):
-        return dict(description=f"String {len(data)} characters long.")
+        return dict(description=f"Text {len(data)} characters long.")

@@ -1125,9 +1125,10 @@ class RecipeSpecStore(RecipeStore):
     LOCAL_RECIPES = "RECIPES"
     STATUS_FILE = "recipes_status.txt"
 
-    def __init__(self, store, recipes=None, context=None):
-        RecipeStore.__init__(self, store, recipes=recipes, context=context)
+    def __init__(self, store, context=None):
+        RecipeStore.__init__(self, store, recipes=None, context=context)
         self.recipes_info = {}
+        self.update_recipes()
         self.update_all_status_files()
     
     def update_all_status_files(self):
@@ -1157,7 +1158,7 @@ class RecipeSpecStore(RecipeStore):
         self.substore.store_metadata(key, metadata)
         self.on_metadata_changed(key)
 
-    def recipes(self):
+    def update_recipes(self):
         import yaml
 
         recipes = {}
@@ -1215,7 +1216,7 @@ class RecipeSpecStore(RecipeStore):
                         else:
                             print(f"Unsupported recipe type: {type(r)}")
 
-        recipes.update(self._recipes)
+        self._recipes = recipes
         return recipes
 
     def create_status_text(self, dir_key):
@@ -1230,15 +1231,20 @@ class RecipeSpecStore(RecipeStore):
                     if metadata is None:
                         txt+="%-10s %-30s %s\n"%("MISSING",d,"Missing metadata")
                     else:
-                        status = metadata.get("status","?")
+                        status = metadata.get("status",Status.NONE.value)
                         message = metadata.get("message","").strip()
+                        if status == Status.READY.value:
+                            try:
+                                message = metadata["data_characteristics"]["description"]
+                            except:
+                                pass
                         if "\n" in message:
-                            txt+="%-10s %-30s\n"%(status,d)
-                            txt+="=============================================================\n"
+                            txt+="%-10s %-32s|"%(status,d)
+                            txt+="\n=============================================================\n"
                             txt+=message
-                            txt+="=============================================================\n\n"
+                            txt+="\n=============================================================\n\n"
                         else:
-                            txt+="%-10s %-30s %s\n"%(status,d, message)
+                            txt+="%-10s %-32s| %s\n"%(status,d, message)
         return txt
 
     def create_status(self, key):
@@ -1259,3 +1265,15 @@ class RecipeSpecStore(RecipeStore):
                 self.update_all_status_files()
             elif self.key_name(key) != self.STATUS_FILE:
                 self.create_status(key)
+
+    def on_data_changed(self,key):
+        super().on_data_changed(key)
+        if self.key_name(key) == self.RECIPES_FILE:
+            self.update_recipes()
+            self.update_all_status_files()
+
+    def on_removed(self,key):
+        super().on_removed(key)
+        if self.key_name(key) == self.RECIPES_FILE:
+            self.update_recipes()
+            self.update_all_status_files()

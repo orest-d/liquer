@@ -124,9 +124,15 @@ def status_md(metadata):
     if metadata.get("key") is not None:
         txt+="KEY:     %s\n"%(metadata.get("key",""))
 
-    txt+="QUERY:   %s\n"%(metadata.get("query","???"))
-    txt+="STATUS:  %s\n"%(metadata.get("status","???"))
-    txt+="MESSAGE: %s\n\n"%(metadata.get("message",""))
+        if metadata.get("has_recipe",False):
+            txt+="Resource has a recipe\n"
+
+    txt+="QUERY:           %s\n"%(metadata.get("query","???"))
+    txt+="STATUS:          %s\n"%(metadata.get("status","???"))
+    txt+="TYPE IDENTIFIER: %s\n"%(metadata.get("type_identifier","???"))
+    txt+="MIME:            %s\n"%(metadata.get("mimetype","???"))
+    txt+="PARENT:          %s\n"%(metadata.get("parent_query","???"))
+    txt+="\nMESSAGE:         %s\n\n"%(metadata.get("message",""))
 
     txt+="STARTED: %s\n"%(metadata.get("started","-"))
     txt+="UPDATED: %s\n"%(metadata.get("updated","-"))
@@ -135,13 +141,42 @@ def status_md(metadata):
 
     fileinfo = metadata.get("fileinfo")
     if fileinfo is not None:
-        txt+="## FILEINFO%s\n"%(" (DIRECTORY)" if fileinfo.get("is_dir") else "")
+        txt+="\n## FILEINFO%s\n"%(" (DIRECTORY)" if fileinfo.get("is_dir") else "")
         txt+="NAME   : %s\n"%(fileinfo.get("name",""))
         txt+="PATH   : %s\n"%(fileinfo.get("filesystem_path","-"))
         txt+="SIZE   : %s\n"%(fileinfo.get("size","?"))
         txt+="\n"
 
-    txt+="## DESCRIPTION:\n%s\n"%(metadata.get("description",""))
+    txt+="\n## DESCRIPTION:\n%s\n"%(metadata.get("description",""))
+
+    
+    txt+="\n## DATA CHARACTERISTICS:\n%s\n\n"%(metadata.get("data_characteristics",{}).get("description",""))
+
+    for key,value in sorted(metadata.get("data_characteristics",{}).items()):
+        if key not in ("description","type_identifier"):
+            txt+="%-20s:%s\n"%(key, repr(value))
+
+    txt+="\n## STATE VARIABLES\n"
+    for key, value in sorted(metadata.get("vars",{}).items()):
+        txt+="%-20s:%s\n"%(key, repr(value))
+    
+    txt+="\n## LOGS\n"
+    for name, log in [
+        ("Main log",metadata.get("log")),
+        ("Child log",metadata.get("child_log")),
+        ("Resource log",metadata.get("resource_metadata",{}).get("log")),
+        ("Resource child log",metadata.get("resource_metadata",{}).get("child_log"))
+        ]:
+        if log is not None and len(log):
+            txt+=f"\n### {name}\n"
+            for entry in log:
+                if type(entry)!=dict:
+                    txt+=f"INVALID ENTRY {repr(entry)}\n"
+                else:
+                    txt+="%-10s %-28s %s\n"%(entry.get("kind","?????"), entry.get("timestamp",""), entry.get("origin",""))
+                    txt+="%-10s %s\n"%("",entry.get("message"))
+
+
 #    txt+="## LOG\n"
 #    for record in metadata.get("log",[]):
 #        txt+=str(record)

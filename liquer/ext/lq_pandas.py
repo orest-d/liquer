@@ -116,7 +116,7 @@ class DataframeStateType(StateType):
         return data.copy()
 
     def data_characteristics(self, data):
-        return dict(description=f"Dataframe with {len(data.columns)} and {len(data)} rows.",
+        return dict(description=f"Dataframe with {len(data.columns)} columns and {len(data)} rows.",
         columns=[str(c) for c in data.columns],
         number_of_columns = len(data.columns),
         number_of_rows = len(data),
