@@ -236,8 +236,15 @@ class FileStore(Store):
         self.on_metadata_changed(key)
 
     def remove(self, key):
-        self.path_for_key(key).unlink(missing_ok=True)
-        self.metadata_path_for_key(key).unlink(missing_ok=True)
+        try:
+            self.path_for_key(key).unlink()
+        except FileNotFoundError:
+            pass
+        try:
+            self.metadata_path_for_key(key).unlink()
+        except FileNotFoundError:
+            pass
+        
         self.on_removed(key)
 
     def removedir(self, key):

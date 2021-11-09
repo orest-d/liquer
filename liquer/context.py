@@ -152,6 +152,16 @@ class Context(object):
                 else:
                     title = str(p)
 
+        message = self.message
+        if message in (None,''):
+            log = self.log
+            if len(log):
+                message = log[-1]['message']
+        if message in (None,''):
+            log = self.child_log
+            if len(log):
+                message = log[-1]['message']
+
         return dict(
             status=self.status.value,
             title=title,
@@ -165,7 +175,7 @@ class Context(object):
             progress_indicators=self.progress_indicators[:],
             child_progress_indicators=self.child_progress_indicators[:],
             child_log=self.child_log,
-            message=self.message,
+            message=message,
             started=self.started,
             updated=self.now(),
             created=self.created,
@@ -600,7 +610,7 @@ class Context(object):
         metadata["caching"] = metadata.get("caching", True) and state.metadata.get(
             "caching", True
         )
-        is_error = state.is_error
+        is_error = state.is_error or self.is_error
 
         if is_error:
             self.status = Status.ERROR
@@ -995,7 +1005,7 @@ class RecipeStore(Store):
         self.context.new_empty().evaluate(
             query,
             store_key=key,
-            store_to=self.substore,
+            store_to=self,
         )
         self.on_data_changed(key)
         self.on_metadata_changed(key)
@@ -1027,8 +1037,15 @@ class RecipeStore(Store):
         if self.is_dir(key):
             return self.finalize_metadata({}, key=key, is_dir=True)
         if key in self.recipes():
+            metadata=self.recipe_metadata(key)
+            try:
+                sub_metadata = self.substore.get_metadata(key)
+                if sub_metadata is not None:
+                    metadata.update(sub_metadata)
+            except:
+                pass
             return self.finalize_metadata(
-                self.recipe_metadata(key), key=key, is_dir=False
+                metadata, key=key, is_dir=False
             )
         return None
 
@@ -1246,6 +1263,24 @@ class RecipeSpecStore(RecipeStore):
                             txt+="\n=============================================================\n\n"
                         else:
                             txt+="%-14s %-32s| %s\n"%(status,d, message)
+                        trace=""
+                        for entry in metadata.get("log",[]) + metadata.get("child_log",[]):
+                            tb = entry.get('traceback')
+                            if tb is not None:
+                                if len(tb):
+                                    if 'origin' in entry:
+                                        trace+=f"Origin:  {entry['origin']}"
+                                    if 'message' in entry:
+                                        trace+=f"Message: {entry['message']}"                                    
+                                    trace+="\n"
+                                    trace+=tb
+                                    tb+="\n------------------------\n"
+                        if len(trace):
+                            txt+="\n### TRACEBACK ###############################################\n"
+                            txt+=trace
+                            txt+="\n#############################################################\n\n"
+
+
         return txt
 
     def create_status(self, key):
@@ -1272,9 +1307,13 @@ class RecipeSpecStore(RecipeStore):
         if self.key_name(key) == self.RECIPES_FILE:
             self.update_recipes()
             self.update_all_status_files()
+        else:
+            self.create_status(key)
 
     def on_removed(self,key):
         super().on_removed(key)
         if self.key_name(key) == self.RECIPES_FILE:
             self.update_recipes()
             self.update_all_status_files()
+        else:
+            self.create_status(key)

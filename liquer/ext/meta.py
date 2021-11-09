@@ -175,7 +175,11 @@ def status_md(metadata):
                 else:
                     txt+="%-10s %-28s %s\n"%(entry.get("kind","?????"), entry.get("timestamp",""), entry.get("origin",""))
                     txt+="%-10s %s\n"%("",entry.get("message"))
-
+                    tb = entry.get('traceback')
+                    if tb is not None:
+                        if len(tb):
+                            txt+=tb
+                            txt+="\n"
 
 #    txt+="## LOG\n"
 #    for record in metadata.get("log",[]):

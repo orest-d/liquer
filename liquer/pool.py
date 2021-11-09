@@ -84,7 +84,7 @@ def set_central_cache(cache, manager=None, use_cache_proxy_locally=True):
     This is suitable for all types of cache objects, particularly it is important for a MemoryCache.
 
     In general this is a more secure solution, but it requires all data to support pickle.
-    It has to be noted that the cache lives in a single process and relies IPC to work, thus this solution
+    It has to be noted that the cache lives in a single process and relies on IPC to work, thus this solution
     may possibly be outperformed by set_local_cache_constructor.
 
     PoolManager instance can be provided via manager. If None, PollManager will be created and started.
@@ -122,7 +122,14 @@ def _evaluate_and_save_worker(query, target_directory, target_file, worker_confi
 
 
 def evaluate_in_background(query):
-    """Like evaluate, but returns immediately and runs in the background."""
+    """Like evaluate, but returns immediately and runs in the background.
+    Note that this creates immediately a submitted state in the cache.
+
+    If there is no metadata associated with the query after calling this function,
+    then either there is no cache or the resulting state is volatile.
+    This can be used by GUI to identify situations when waiting for the result to appear
+    in the cache is not a viable strategy, but requesting the object directly is necessary.
+    """
     global _worker_config
     print(f"Evaluate {query} in background")
     metadata = get_context().metadata()
