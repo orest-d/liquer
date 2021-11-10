@@ -5,6 +5,33 @@ from io import BytesIO
 from liquer.constants import *
 import liquer.util as util
 
+"""Store is a flexible filesystem-like key-value store.
+Stores support reading and writing of binary data and the associated metadata.
+Data from the store can typically be accessed through the resource part of the query:
+
+file/in/store.txt/-/some_command/another_command
+
+This query is split to two parts by /-/, the first part is the resource query (file/in/store.txt),
+and the second part is the standard query (some_command/another_command).
+Query is interpreted as
+- first read file/in/store.txt from store
+- pass it as bytes to the query,
+so it is equivalent to
+
+another_command(some_command(store.get_bytes('file/in/store.txt')))
+
+Stores can be combined and composed in various way (see e.g. mount function and method).
+Various store types are supported: memory store (MemoryStore), local filesystem store (FileStore),
+overlays and other. The FileSystemStore allows to mount ftp servers, zip and files via PyFilesystem2.
+
+There is always a default main store, which can be obtained by get_store().
+This is typically passed ty commands via context.store().
+
+By convention, the folder "web" in the get_store() holds web interface and can be accessed via
+/liquer/web url. 
+
+"""
+
 STORE = None
 WEB_STORE = None
 
@@ -26,10 +53,21 @@ def get_web_store():
         get_store().mount("web", WEB_STORE)
     return WEB_STORE
 
-def mount(key, store):
+def mount(key, store=None):
+    if store is None:
+        store=key
+    if type(store) is str:
+        store = FileStore(store)
     get_store().mount(key, store)
 
-def web_mount(key, store):
+def mount_folder(key, path):
+    get_store().mount(key, FileStore(path))
+
+def web_mount(key, store=None):
+    if store is None:
+        store=key
+    if type(store) is str:
+        store = FileStore(store)
     get_web_store().mount(key, store)
 
 def web_mount_folder(key, path):
@@ -78,6 +116,12 @@ class Store(StoreMixin):
         if key in ("", None):
             return ""
         return str(key.split("/")[-1])
+    
+    def join_key(self, key, name):
+        if key in ("", None):
+            return name
+        else:
+            return f"{key}/{name}"
 
     def default_metadata(self, key, is_dir=False):
         if key is None:
@@ -115,48 +159,80 @@ class Store(StoreMixin):
         raise KeyNotFoundStoreException(key=key, store=self)
 
     def get_metadata(self, key):
+        """Store data and metadata."""
         raise KeyNotFoundStoreException(key=key, store=self)
 
     def store(self, key, data, metadata):
+        """Store data and metadata."""
         raise KeyNotSupportedStoreException(key=key, store=self)
 
     def store_metadata(self, key, metadata):
+        """Store metadata only."""
         raise KeyNotSupportedStoreException(key=key, store=self)
 
     def remove(self, key):
+        """Remove data and metadata associated with the key."""
         raise KeyNotFoundStoreException(key=key, store=self)
 
     def removedir(self, key):
+        """Remove directory.
+        The ky must be a directory.
+        It depends on the underlying store whether the directory must be empty.
+        """
         raise KeyNotFoundStoreException(key=key, store=self)
 
     def contains(self, key):
+        """Returns true if store contains the key."""
         return key == ""
 
     def is_dir(self, key):
+        """Returns true if key is a directory."""
         return key == ""
 
     def keys(self):
+        """List or iterator of all keys"""
         return []
 
     def listdir(self, key):
+        """Return names inside a directory specified by key.
+        To get a key, names need to be joined with the key (key/name).
+        If you need keys, use the listdir_keys method.  
+        """
         return []
 
+    def listdir_keys(self, key):
+        """Return keys inside a directory specified by key."""
+        if key in ("",None):
+            return self.listdir()
+        else:
+            return [self.join_key(key,k) for k in self.listdir()]
+
     def makedir(self, key):
+        "Make a directory"
         raise KeyNotSupportedStoreException(key=key, store=self)
 
     def openbin(self, key, mode="r", buffering=-1):
+        """Return a file handle.
+        This is not necessarily always well supported, but it is required to support PyFilesystem2."""
         raise KeyNotSupportedStoreException(key=key, store=self)
 
     def is_supported(self, key):
+        """Returns true is this store supports the supplied key.
+        This allows layering Stores, e.g. by with_overlay, with_fallback
+        and store selectively certain data (keys) in certain stores. 
+        """
         return False
 
     def on_data_changed(self, key):
+        """Event handler called when the data is changed."""
         pass
 
     def on_metadata_changed(self, key):
+        """Event handler called when the metadata is changed."""
         pass
 
     def on_removed(self, key):
+        """Event handler called when the data or directory is removed."""
         pass
 
     def __str__(self):
@@ -179,7 +255,7 @@ class FileStore(Store):
         metadata = super().finalize_metadata(
             metadata, key=key, is_dir=is_dir, data=data
         )
-        metadata["fileinfo"]["filesystem_path"] = str(self.path_for_key(key))
+        metadata["fileinfo"]["filesystem_path"] = str(self.path_for_key(key).resolve())
         return metadata
 
     def path_for_key(self, key):
