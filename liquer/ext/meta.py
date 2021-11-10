@@ -122,8 +122,7 @@ def status_md(metadata):
     txt = ""
     txt+="# %s%s\n\n"%(metadata.get("title","???"), " (ERROR)" if metadata.get("is_error") else "")
     if metadata.get("key") is not None:
-        txt+="KEY:     %s\n"%(metadata.get("key",""))
-
+        txt+="KEY:             %s\n"%(metadata.get("key",""))
         if metadata.get("has_recipe",False):
             txt+="Resource has a recipe\n"
 

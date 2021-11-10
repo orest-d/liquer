@@ -32,7 +32,7 @@ def concat_batches(idf, max_batches=None, context=None):
         context.info(
             f"Receiving dataframe with {len(df)} rows and {len(df.columns)} columns"
         )
-        if len(buffer > 0):
+        if len(buffer) > 0:
             if len(df.columns) != len(buffer.columns):
                 context.warning(
                     f"Number of columns in the batches differs - before:{len(buffer.columns)}, now:{len(df.columns)}"
@@ -43,7 +43,7 @@ def concat_batches(idf, max_batches=None, context=None):
         else:
             context.info(f"Concatenate batch {batch_number}/{max_batches}")
         buffer = buffer.append(df, ignore_index=True)
-        if max_batches and batch_number > max_batches:
+        if max_batches and batch_number >= max_batches:
             context.info(f"Maximum number of batches reached")
             break
     return buffer
@@ -73,7 +73,7 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
         context.info(
             f"Receiving dataframe with {len(df)} rows and {len(df.columns)} columns"
         )
-        if len(buffer > 0):
+        if len(buffer) > 0:
             if len(df.columns) != len(buffer.columns):
                 context.warning(
                     f"Number of columns in the batches differs - before:{len(buffer.columns)}, now:{len(df.columns)}"
@@ -88,7 +88,7 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
             result = buffer.iloc[:batch_size, :]
             buffer = buffer.iloc[batch_size:, :]
             yield result
-            if max_batches and batch_number > max_batches:
+            if max_batches and batch_number >= max_batches:
                 context.info(f"Maximum number of batches reached")
                 return
     while len(buffer) >= batch_size:
@@ -100,7 +100,7 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
         result = buffer.iloc[:batch_size, :]
         buffer = buffer.iloc[batch_size:, :]
         yield result
-        if max_batches and batch_number > max_batches:
+        if max_batches and batch_number >= max_batches:
             context.info(f"Maximum number of batches reached")
             return
     if len(buffer):
@@ -131,6 +131,7 @@ class StoredDataframeIterator(object):
 
         if store is None:
             store = get_store()
+        self.store= store
 
     def to_dict(self, with_batch_number=False):
         d = dict(
@@ -164,16 +165,16 @@ class StoredDataframeIterator(object):
         )
 
     def _key_to_value(self, key):
-        if not self.store.contains("key"):
+        if not self.store.contains(key):
             raise Exception(f"Batch {self.batch_number} failure: '{key}' not in store")
-        if self.store.is_dir("key"):
+        if self.store.is_dir(key):
             raise Exception(
                 f"Batch {self.batch_number} failure: '{key}' is a directory"
             )
         metadata = self.store.get_metadata(key)
         if metadata is None:
             print(f"WARNING: Batch {self.batch_number}, key '{key}' missing metadata")
-        b = self.store.get_data(key)
+        b = self.store.get_bytes(key)
         if b is None:
             raise Exception(f"Batch {self.batch_number} failure: '{key}' has no data")
         assert type(b) == bytes
@@ -202,7 +203,7 @@ class StoredDataframeIterator(object):
     def append(self, df):
         key = self.new_key()
         store = self.store
-        b = self.state_type.as_bytes(df, self.extension)
+        b, mimetype = self.state_type.as_bytes(df, self.extension)
         dc = data_characteristics(df)
         assert dc["type_identifier"] == "dataframe"
         metadata = dict(
@@ -216,6 +217,9 @@ class StoredDataframeIterator(object):
         self.batch_number = 0
         return self
 
+    def __iter__(self):
+        return self.copy().rewind()
+
     def __next__(self):
         if len(self.item_keys) > self.batch_number:
             key = self.item_keys[self.batch_number]
@@ -223,6 +227,11 @@ class StoredDataframeIterator(object):
             return self._key_to_value(key)
         raise StopIteration
 
+    def __str__(self):
+        return f"Dataframe iterator stored in {self.key}"
+
+    def __repr__(self):
+        return f"StoredDataframeIterator('{self.key}')"
 
 class StoredDataframeIteratorStateType(StateType):
     def identifier(self):
@@ -262,10 +271,7 @@ class StoredDataframeIteratorStateType(StateType):
 
     def data_characteristics(self, data):
         return dict(
-            description=f"Dataframe with {len(data.columns)} columns and {len(data)} rows.",
-            columns=[str(c) for c in data.columns],
-            number_of_columns=len(data.columns),
-            number_of_rows=len(data),
+            description=f"Dataframe iterator with {len(data.item_keys)} batches."
         )
 
 
@@ -300,7 +306,7 @@ def store_batches(idf, key, max_batches=None, context=None):
     sdfi_key = store.join_key(key, "dataframe_iterator.json")
 
     sdfi = StoredDataframeIterator(key)
-    for df in self.progress_iter(idf):
+    for df in context.progress_iter(idf):
         batch_number += 1
         if max_batches:
             context.info(f"Storing batch {batch_number}")

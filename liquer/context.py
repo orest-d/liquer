@@ -382,7 +382,7 @@ class Context(object):
     def warning(self, message):
         """Log a warning message"""
         print(f"{log_time()} WARNING:  ", message)
-        return self.log_dict(dict(kind="warning", message=message))
+        return self.log_dict(dict(kind="warning", message=message, traceback=traceback))
 
     def exception(self, message, traceback, position=None, query=None):
         """Log an exception"""

@@ -201,6 +201,9 @@ def dr(state, context=None):
     extension=None
 
     if type_identifier in (None, "bytes"):
+        type_identifier = state.metadata.get("resource_metadata", {}).get("type_identifier")
+
+    if type_identifier in (None, "bytes"):
         extension = state.metadata.get("extension")
         if extension is None:
             query = state.metadata.get("query")

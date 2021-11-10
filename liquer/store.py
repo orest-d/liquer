@@ -203,9 +203,9 @@ class Store(StoreMixin):
     def listdir_keys(self, key):
         """Return keys inside a directory specified by key."""
         if key in ("",None):
-            return self.listdir()
+            return self.listdir(key)
         else:
-            return [self.join_key(key,k) for k in self.listdir()]
+            return [self.join_key(key, k) for k in self.listdir(key)]
 
     def makedir(self, key):
         "Make a directory"
@@ -862,6 +862,7 @@ class MountPointStore(RoutingStore):
                     return store
         if self.default_store is not None:
             return self.default_store
+        raise Exception(f"No route to '{key}'")
 
     def keys(self):
         prefixes = []
