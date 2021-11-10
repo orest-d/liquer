@@ -197,7 +197,9 @@ class FileStore(Store):
     def get_bytes(self, key):
         if not self.path_for_key(key).exists():
             raise KeyNotFoundStoreException(key=key, store=self)
-        return open(self.path_for_key(key), "rb").read()
+        with open(self.path_for_key(key), "rb") as f:
+            b=f.read()
+        return b
 
     def get_metadata(self, key):
         p = self.path_for_key(key)
@@ -208,14 +210,16 @@ class FileStore(Store):
         else:
             if self.path_for_key(key).exists():
                 if self.metadata_path_for_key(key).exists():
-                    metadata.update(
-                        json.loads(open(self.metadata_path_for_key(key)).read())
-                    )
+                    with open(self.metadata_path_for_key(key)) as f:
+                        metadata.update(
+                            json.loads(f.read())
+                        )
             else:
                 if self.metadata_path_for_key(key).exists():
-                    metadata.update(
-                        json.loads(open(self.metadata_path_for_key(key)).read())
-                    )
+                    with open(self.metadata_path_for_key(key)) as f:
+                        metadata.update(
+                            json.loads(f.read())
+                        )
                 else:
                     raise KeyNotFoundStoreException(key=key, store=self)
         return self.finalize_metadata(metadata, key=key, is_dir=False)
