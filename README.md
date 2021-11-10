@@ -36,6 +36,7 @@ pip install liquer-framework
 - 2021-11-07 - v0.4.12 - recipes cleaning, recipes status file, progressive metadata storing in stores
 - 2021-11-08 - v0.4.13 - fixing recipes status performance issue and minor improvements in status commands
 - 2021-11-08 - v0.4.14 - minor fixes and enhancements
+- 2021-11-08 - v0.5.0  - dataframe_batches and rudimentary Sweetviz support
 
 # TODO
 

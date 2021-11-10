@@ -2,8 +2,21 @@ from enum import Enum
 
 
 class Status(Enum):
-    NONE = "none"
-    SUBMITTED = "submitted"
+    """Status of evaluated data.
+    NONE         - status not available; should be rare
+    SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
+    EVALUATING_PARENT - parent is being evaluated
+    EVALUATION   - last action of the query is being evaluated
+    EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
+    READY        - data is ready (after successful evaluation)
+    ERROR        - evaluation terminated with an error
+    OBSOLETE     - data exists, but it is obsolete
+    RECIPE       - data are not in store, but a recipe is available
+    SIDE_EFFECT  - data has been created as a side-effect of a query
+    
+    """
+    NONE = "none" # If status does not exist for some reason
+    SUBMITTED = "submitted" # Immediately after submission
     EVALUATING_PARENT = "parent"
     EVALUATION = "evaluation"
     EVALUATING_DEPENDENCIES = "dependencies"
@@ -11,6 +24,7 @@ class Status(Enum):
     ERROR = "error"
     OBSOLETE = "obsolete"
     RECIPE = "recipe"
+    SIDE_EFFECT = "side-effect"
 
 MIMETYPES = dict(
     json="application/json",

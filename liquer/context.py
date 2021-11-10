@@ -14,7 +14,7 @@ from liquer.parser import (
 )
 from liquer.cache import cached_part, get_cache
 from liquer.commands import command_registry
-from liquer.state_types import encode_state_data, state_types_registry
+from liquer.state_types import encode_state_data, state_types_registry, data_characteristics, type_identifier_of
 import os.path
 from datetime import datetime
 import json
@@ -182,7 +182,27 @@ class Context(object):
             caching=self.caching,
             vars=dict(self.vars),
             html_preview=self.html_preview,
+            side_effect=False
         )
+
+    def store_data(self, key, data):
+        """Convenience method to store data in the store including metadata.
+        Note that the metadata are taken from the context.metadata() and slightly updated.
+        They might not be 100% correct, since the store_data will probably be called as
+        a side-effect of a query, not a result of a query.
+        This is indicated by the side_effect flag in the metadata and status Status.SIDE_EFFECT.value.
+        """
+        metadata = self.metadata()
+        store=self.store()
+        v = store.key_name(key).split(".")
+        extension = v[-1] if len(v)>1 else None
+        b, mimetype, type_identifier = encode_state_data(data, extension=extension)
+        metadata["type_identifier"]=type_identifier
+        metadata["mimetype"]=mimetype
+        metadata["data_characteristics"]=data_characteristics(data)
+        metadata["side_effect"] = True
+        metadata["status"]=Status.SIDE_EFFECT.value
+        store.store(key, b, metadata)
 
     def can_report(self):
         if self.last_report_time is None:

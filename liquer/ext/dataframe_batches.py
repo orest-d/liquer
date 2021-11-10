@@ -29,6 +29,8 @@ def concat_batches(idf, max_batches=None, context=None):
         max_batches = int(max_batches)
     buffer = pd.DataFrame()
     for df in context.progress_iter(idf):
+        if not len(df):
+            continue
         context.info(
             f"Receiving dataframe with {len(df)} rows and {len(df.columns)} columns"
         )
@@ -39,9 +41,9 @@ def concat_batches(idf, max_batches=None, context=None):
                 )
         batch_number += 1
         if max_batches:
-            context.info(f"Concatenate batch {batch_number}")
-        else:
             context.info(f"Concatenate batch {batch_number}/{max_batches}")
+        else:
+            context.info(f"Concatenate batch {batch_number}")
         buffer = buffer.append(df, ignore_index=True)
         if max_batches and batch_number >= max_batches:
             context.info(f"Maximum number of batches reached")
@@ -70,6 +72,8 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
         max_batches = int(max_batches)
     batch_number = 0
     for df in context.progress_iter(idf):
+        if not len(df):
+            continue
         context.info(
             f"Receiving dataframe with {len(df)} rows and {len(df.columns)} columns"
         )
@@ -82,9 +86,9 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
         while len(buffer) >= batch_size:
             batch_number += 1
             if max_batches:
-                context.info(f"Yield batch {batch_number}")
-            else:
                 context.info(f"Yield batch {batch_number}/{max_batches}")
+            else:
+                context.info(f"Yield batch {batch_number}")
             result = buffer.iloc[:batch_size, :]
             buffer = buffer.iloc[batch_size:, :]
             yield result
@@ -94,9 +98,9 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
     while len(buffer) >= batch_size:
         batch_number += 1
         if max_batches:
-            context.info(f"Yield batch {batch_number} (finishing)")
-        else:
             context.info(f"Yield batch {batch_number}/{max_batches} (finishing)")
+        else:
+            context.info(f"Yield batch {batch_number} (finishing)")
         result = buffer.iloc[:batch_size, :]
         buffer = buffer.iloc[batch_size:, :]
         yield result
@@ -106,9 +110,9 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
     if len(buffer):
         batch_number += 1
         if max_batches:
-            context.info(f"Yield batch {batch_number} (last)")
-        else:
             context.info(f"Yield batch {batch_number}/{max_batches} (last)")
+        else:
+            context.info(f"Yield batch {batch_number} (last)")
         yield buffer
 
 
@@ -217,6 +221,9 @@ class StoredDataframeIterator(object):
         self.batch_number = 0
         return self
 
+    def __len__(self):
+        return len(self.item_keys)
+
     def __iter__(self):
         return self.copy().rewind()
 
@@ -279,11 +286,10 @@ STORED_DATAFRAME_ITERATOR_STATE_TYPE = StoredDataframeIteratorStateType()
 register_state_type(StoredDataframeIterator, STORED_DATAFRAME_ITERATOR_STATE_TYPE)
 
 
-@command
-def store_batches(idf, key, max_batches=None, context=None):
+def _store_batches(idf, key, max_batches=None, context=None):
     """Store iterator of dataframes (batches) in a store.
     The key specifies a directory in the store where the items will be stored.
-    Results in a StoredDataframeIterator object.
+    Helper function yielding StoredDataframeIterator object and dataframes.
     """
     context = get_context(context)
     context.info(f"Store iterator")
@@ -307,21 +313,49 @@ def store_batches(idf, key, max_batches=None, context=None):
 
     sdfi = StoredDataframeIterator(key)
     for df in context.progress_iter(idf):
+        if not len(df):
+            continue
         batch_number += 1
         if max_batches:
-            context.info(f"Storing batch {batch_number}")
-        else:
             context.info(f"Storing batch {batch_number}/{max_batches}")
+        else:
+            context.info(f"Storing batch {batch_number}")
         sdfi.append(df)
-        sdfi_bytes, mimetype = STORED_DATAFRAME_ITERATOR_STATE_TYPE.as_bytes(sdfi)
-        dc = data_characteristics(sdfi)
-        sdfi_metadata = context.metadata()
-        sdfi_metadata.update(
-            dict(type_identifier=dc["type_identifier"], data_characteristics=dc)
-        )
-        store.store(sdfi_key, sdfi_bytes, sdfi_metadata)
+        context.store_data(sdfi_key, sdfi)
+        yield sdfi, df
+#        sdfi_bytes, mimetype = STORED_DATAFRAME_ITERATOR_STATE_TYPE.as_bytes(sdfi)
+#        dc = data_characteristics(sdfi)
+#        sdfi_metadata = context.metadata()
+#        sdfi_metadata.update(
+#            dict(type_identifier=dc["type_identifier"], data_characteristics=dc)
+#        )
+#        store.store(sdfi_key, sdfi_bytes, sdfi_metadata)
         if max_batches and batch_number > max_batches:
             context.info(f"Maximum number of batches reached")
             break
-
+@command
+def store_batches(idf, key, max_batches=None, context=None):
+    """Store iterator of dataframes (batches) in a store.
+    The key specifies a directory in the store where the items will be stored.
+    Results in a StoredDataframeIterator object after all batches have been processed.
+    This object can be serialized or stored in the object.
+    After each iteration step, the StoredDataframeIterator is stored as well in key/dataframe_iterator.json as a side-effect.
+    Thus for long-running iterations, the partial data is stored even if the evaluation does not finish.
+    """
+    context = get_context(context)
+    sdfi = StoredDataframeIterator(key)
+    for sdfi, df in _store_batches(idf, key, max_batches=max_batches, context=context):
+        pass
     return sdfi
+
+@command(cache=False, volatile=True)
+def store_batches_pass_through(idf, key, max_batches=None, context=None):
+    """Store iterator of dataframes (batches) in a store.
+    The key specifies a directory in the store where the items will be stored.
+    Unlike store_batches, this immediately yields the dataframes,
+    thus the result is a volatile iterator which can not be stored in cache.
+    The StoredDataframeIterator is, however, stored in key/dataframe_iterator.json as a side-effect after each iteration step.
+    """
+    context = get_context(context)
+    for sdfi, df in _store_batches(idf, key, max_batches=max_batches, context=context):
+        yield df
