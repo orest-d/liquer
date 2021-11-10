@@ -93,10 +93,10 @@ pip install liquer-framework
 - [ ] expiration for files in store
 - [ ] expiration for cache
 - [ ] refactor recipes to a separate module
-- [ ] sweetviz support
+- [x] sweetviz support
 - [ ] polars support
 - [ ] d-tale support
-- [ ] dataframe batches
+- [x] dataframe batches
 - [ ] readonly store modifier
 - [ ] a faster server (FastAPI?)
 - [x] progressive metadata storing when evaluating to store
