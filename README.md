@@ -35,8 +35,9 @@ pip install liquer-framework
 - 2021-10-31 - v0.4.11 - multiple improvements with store and metadata reporting
 - 2021-11-07 - v0.4.12 - recipes cleaning, recipes status file, progressive metadata storing in stores
 - 2021-11-08 - v0.4.13 - fixing recipes status performance issue and minor improvements in status commands
-- 2021-11-08 - v0.4.14 - minor fixes and enhancements
-- 2021-11-08 - v0.5.0  - dataframe_batches and rudimentary Sweetviz support
+- 2021-11-09 - v0.4.14 - minor fixes and enhancements
+- 2021-11-10 - v0.5.0  - dataframe_batches and rudimentary Sweetviz support
+- 2021-11-11 - v0.5.1  - fixing a bug in the dr (decode resource) command
 
 # TODO
 
@@ -111,6 +112,7 @@ pip install liquer-framework
 - [x] ignore dot directories in recipes store in order to support jupyter notebooks
 - [x] file-system paths and url links to physical file in store (when possible) 
 - [x] integrate pointcloud explorer - see [Pointcloud Explorer](https://github.com/orest-d/pointcloud-viewer-rs)
+- [ ] automatic argument type conversion
 - [ ] split context to mixins
 - [ ] update Jupyter plugin
 - [ ] remove commands and extended commands from metadata
