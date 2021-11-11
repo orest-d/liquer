@@ -197,24 +197,33 @@ def dr(state, context=None):
         "type_identifier",
         state.metadata.get("resource_metadata", {}).get("type_identifier"),
     )
-
-    extension=None
+    print ("TYPE ID A", type_identifier)
 
     if type_identifier in (None, "bytes"):
         type_identifier = state.metadata.get("resource_metadata", {}).get("type_identifier")
 
-    if type_identifier in (None, "bytes"):
-        extension = state.metadata.get("extension")
-        if extension is None:
-            query = state.metadata.get("query")
-            if query is not None:
-                filename = parse(query).filename()
-            if filename is not None:
-                v = filename.split(".")
-                if len(v) > 1:
-                    extension = v[-1]
-        context.info(f"Extension: {extension}")
+    print ("TYPE ID B", type_identifier)
 
+    extension = state.metadata.get("extension")
+    if extension is None:
+        query = state.metadata.get("query")
+        if query is not None:
+            filename = parse(query).filename()
+        if filename is not None:
+            v = filename.split(".")
+            if len(v) > 1:
+                extension = v[-1]
+                context.info(f"Extension: {extension} - from query '{query}'")
+        else:
+            key = state.metadata.get("resource_metadata", {}).get("key")
+            if key is not None:
+                filename = context.store().key_name(key)
+            v = filename.split(".")
+            if len(v) > 1:
+                extension = v[-1]
+                context.info(f"Extension: {extension} - from key '{key}'")
+                
+    if type_identifier in (None, "bytes"):
         type_identifier = dict(
             json="generic",
             djson="dictionary",
@@ -235,9 +244,11 @@ def dr(state, context=None):
             parquet="dataframe",
             feather="dataframe",
         ).get(extension)
+        context.info(f"Type identifier: {type_identifier} - from extension '{extension}'")
+        
 
     if type_identifier is not None:
-        context.info(f"Type identifier: {type_identifier}")
+        context.info(f"Type identifier: {type_identifier},  Extension: {extension}")
         t = state_types_registry().get(type_identifier)
         return t.from_bytes(state.data, extension=extension)
 

@@ -287,3 +287,24 @@ class TestPandas:
         assert "b" in df.columns
         assert list(df.a) == [1, 3]
         assert list(df.b) == [2, 4]
+
+    def test_dr1(self):
+        import pandas as pd
+        import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+
+        reset_command_registry()  # prevent double-registration
+        importlib.reload(liquer.ext.basic)
+        importlib.reload(liquer.ext.lq_pandas)
+
+        store = MemoryStore()
+        set_store(store)
+        store.store("data.csv", b"a,b\n1,2\n3,4", dict(type_identifier="dataframe"))
+        df = evaluate("data.csv/-/dr").get()
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 2
+        assert len(df.columns) == 2
+        assert "a" in df.columns
+        assert "b" in df.columns
+        assert list(df.a) == [1, 3]
+        assert list(df.b) == [2, 4]

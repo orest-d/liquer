@@ -20,6 +20,7 @@ from datetime import datetime
 import json
 from liquer.constants import Status
 import liquer.util as util
+from liquer.util import timestamp
 
 from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException
 from yaml import load, dump
@@ -69,11 +70,6 @@ class Vars(dict):
 
     def get_modified(self):
         return {key: self[key] for key in self._modified_vars}
-
-
-def timestamp():
-    date = datetime.now()
-    return date.isoformat()
 
 
 def log_time():
@@ -1269,6 +1265,10 @@ class RecipeSpecStore(RecipeStore):
                     if metadata is None:
                         txt+="%-14s %-30s %s\n"%("MISSING",d,"Missing metadata")
                     else:
+                        try:
+                            time = util.format_datetime(util.to_datetime(metadata["updated"]))
+                        except:
+                            time=""
                         status = metadata.get("status",Status.NONE.value)
                         message = metadata.get("message","").strip()
                         if status == Status.READY.value:
@@ -1277,17 +1277,19 @@ class RecipeSpecStore(RecipeStore):
                             except:
                                 pass
                         if "\n" in message:
-                            txt+="%-14s %-32s|"%(status,d)
+                            txt+="%-20s %-14s %-32s|"%(time, status, d)
                             txt+="\n=============================================================\n"
                             txt+=message
                             txt+="\n=============================================================\n\n"
                         else:
-                            txt+="%-14s %-32s| %s\n"%(status,d, message)
+                            txt+="%-20s %-14s %-32s| %s\n"%(time, status,d, message)
                         trace=""
                         for entry in metadata.get("log",[]) + metadata.get("child_log",[]):
                             tb = entry.get('traceback')
                             if tb is not None:
                                 if len(tb):
+                                    if 'timestamp' in entry:
+                                        trace+=f"Time:    {entry['timestamp']}"
                                     if 'origin' in entry:
                                         trace+=f"Origin:  {entry['origin']}"
                                     if 'message' in entry:
