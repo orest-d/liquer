@@ -15,10 +15,10 @@ def timestamp():
     return date.isoformat()
 
 def to_datetime(x):
-    if isinstance(x, datetime.datetime):
+    if isinstance(x, datetime):
         return x
     if isinstance(x, str):
         try:
-            return datetime.datetime.fromisoformat(x)
+            return datetime.fromisoformat(x)
         except:
-            return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S")
+            return datetime.strptime(x, "%Y-%m-%d %H:%M:%S")

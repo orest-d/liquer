@@ -1266,7 +1266,10 @@ class RecipeSpecStore(RecipeStore):
                         txt+="%-14s %-30s %s\n"%("MISSING",d,"Missing metadata")
                     else:
                         try:
-                            time = util.format_datetime(util.to_datetime(metadata["updated"]))
+                            t=metadata.get("created")
+                            if t in ("",None):
+                                t=metadata["updated"]
+                            time = util.format_datetime(util.to_datetime(t))
                         except:
                             time=""
                         status = metadata.get("status",Status.NONE.value)

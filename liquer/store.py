@@ -132,11 +132,13 @@ class Store(StoreMixin):
             fileinfo=dict(name=self.key_name(key), is_dir=is_dir, filesystem_path=None),
         )
 
-    def finalize_metadata(self, metadata, key, is_dir=False, data=None):
+    def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
         if key is None:
             key = ""
         metadata["key"] = key
-        metadata["updated"]=util.now()
+        update = update or data is not None
+        if update:
+            metadata["updated"]=util.now()
         if data is not None:
             metadata["created"]=metadata["updated"]
         metadata["fileinfo"] = metadata.get("fileinfo", {})
@@ -251,9 +253,9 @@ class FileStore(Store):
         else:
             self.path = Path(path)
 
-    def finalize_metadata(self, metadata, key, is_dir=False, data=None):
+    def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
         metadata = super().finalize_metadata(
-            metadata, key=key, is_dir=is_dir, data=data
+            metadata, key=key, is_dir=is_dir, data=data, update=update
         )
         metadata["fileinfo"]["filesystem_path"] = str(self.path_for_key(key).resolve())
         return metadata
@@ -311,6 +313,7 @@ class FileStore(Store):
 
     def store_metadata(self, key, metadata):
         self.metadata_path_for_key(key).parent.mkdir(parents=True, exist_ok=True)
+        metadata = self.finalize_metadata(metadata, key=key, is_dir=self.is_dir(key), update=True)
         with open(self.metadata_path_for_key(key), "w") as f:
             json.dump(metadata, f)
         self.on_metadata_changed(key)
@@ -409,6 +412,7 @@ class MemoryStore(Store):
         self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
+        metadata = self.finalize_metadata(metadata, key=key, is_dir=self.is_dir(key), update=True)
         self.metadata[key] = metadata
         self.on_metadata_changed(key)
 
@@ -661,9 +665,9 @@ class RoutingStore(Store):
     def route_to(self, key):
         raise KeyNotSupportedStoreException(key=key, store=self)
 
-    def finalize_metadata(self, metadata, key, is_dir=False, data=None):
+    def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
         metadata = super().finalize_metadata(
-            metadata, key=key, is_dir=is_dir, data=data
+            metadata, key=key, is_dir=is_dir, data=data, update=update
         )
         return metadata
 
@@ -991,6 +995,7 @@ class FileSystemStore(Store):
 
     def store_metadata(self, key, metadata):
         parent = self.metadata_dir_path_for_key(key)
+        metadata = self.finalize_metadata(metadata, key=key, is_dir=self.is_dir(key), update=True)
         self.fs.makedirs(parent)
         with self.fs.open(self.metadata_path_for_key(key), "w") as f:
             json.dump(metadata, f)
