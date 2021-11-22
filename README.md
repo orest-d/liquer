@@ -99,7 +99,7 @@ pip install liquer-framework
 - [ ] refactor recipes to a separate module
 - [ ] checksum in store metadata
 - [x] sweetviz support
-- [ ] polars support
+- [x] polars support
 - [ ] d-tale support
 - [x] dataframe batches
 - [ ] readonly store modifier
