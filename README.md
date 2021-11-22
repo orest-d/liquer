@@ -39,6 +39,7 @@ pip install liquer-framework
 - 2021-11-10 - v0.5.0  - dataframe_batches and rudimentary Sweetviz support
 - 2021-11-11 - v0.5.1  - fixing a bug in the dr (decode resource) command
 - 2021-11-11 - v0.5.2  - fixing a bug in created/updated time in store
+- 2021-11-22 - v0.6.0  - basic support for openpyxl and polars
 
 # TODO
 
