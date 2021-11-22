@@ -108,6 +108,8 @@ pip install liquer-framework
 - [ ] new menu - remove menu from state variables
 - [ ] markdown support
 - [ ] search engine(s) integration
+- [ ] fix context.warning and tracebacks
+- [ ] dr extension - explicity type_identifier, extension, better errors and metadata handling
 - [x] fix updated time in finalize metadata - time should only be updated on storing, not on reading
 - [x] fix time display in recipes_status.txt
 - [x] progressive metadata storing when evaluating to store
