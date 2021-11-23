@@ -14,7 +14,12 @@ from liquer.parser import (
 )
 from liquer.cache import cached_part, get_cache
 from liquer.commands import command_registry
-from liquer.state_types import encode_state_data, state_types_registry, data_characteristics, type_identifier_of
+from liquer.state_types import (
+    encode_state_data,
+    state_types_registry,
+    data_characteristics,
+    type_identifier_of,
+)
 import os.path
 from datetime import datetime
 import json
@@ -78,9 +83,12 @@ def log_time():
 
 
 CONTEXT_CREATOR = None
+
+
 def set_context_creator(context_creator):
     global CONTEXT_CREATOR
     CONTEXT_CREATOR = context_creator
+
 
 def get_context(context=None):
     global CONTEXT_CREATOR
@@ -91,6 +99,7 @@ def get_context(context=None):
             return CONTEXT_CREATOR()
     else:
         return context
+
 
 class Context(object):
     def __init__(self, parent_context=None, debug=False):
@@ -130,8 +139,8 @@ class Context(object):
 
         self.vars = Vars(vars_clone())
         self.html_preview = ""
-        self.store_key=None
-        self.store_to=None
+        self.store_key = None
+        self.store_to = None
 
     def new_empty(self):
         return Context(debug=self.debug_messages)
@@ -149,14 +158,14 @@ class Context(object):
                     title = str(p)
 
         message = self.message
-        if message in (None,''):
+        if message in (None, ""):
             log = self.log
             if len(log):
-                message = log[-1]['message']
-        if message in (None,''):
+                message = log[-1]["message"]
+        if message in (None, ""):
             log = self.child_log
             if len(log):
-                message = log[-1]['message']
+                message = log[-1]["message"]
 
         return dict(
             status=self.status.value,
@@ -178,7 +187,7 @@ class Context(object):
             caching=self.caching,
             vars=dict(self.vars),
             html_preview=self.html_preview,
-            side_effect=False
+            side_effect=False,
         )
 
     def store_data(self, key, data):
@@ -189,15 +198,15 @@ class Context(object):
         This is indicated by the side_effect flag in the metadata and status Status.SIDE_EFFECT.value.
         """
         metadata = self.metadata()
-        store=self.store()
+        store = self.store()
         v = store.key_name(key).split(".")
-        extension = v[-1] if len(v)>1 else None
+        extension = v[-1] if len(v) > 1 else None
         b, mimetype, type_identifier = encode_state_data(data, extension=extension)
-        metadata["type_identifier"]=type_identifier
-        metadata["mimetype"]=mimetype
-        metadata["data_characteristics"]=data_characteristics(data)
+        metadata["type_identifier"] = type_identifier
+        metadata["mimetype"] = mimetype
+        metadata["data_characteristics"] = data_characteristics(data)
         metadata["side_effect"] = True
-        metadata["status"]=Status.SIDE_EFFECT.value
+        metadata["status"] = Status.SIDE_EFFECT.value
         store.store(key, b, metadata)
 
     def can_report(self):
@@ -630,14 +639,14 @@ class Context(object):
 
         if is_error:
             self.status = Status.ERROR
-            metadata["status"]=self.status.value
+            metadata["status"] = self.status.value
             self.info(f"Action {action.encode()} at {action.position} failed")
             state.metadata.update(metadata)
             state.status = Status.ERROR.value
             state.is_error = True
         else:
             self.status = Status.READY
-            metadata["status"]=self.status.value
+            metadata["status"] = self.status.value
             self.info(f"Action {action.encode()} at {action.position} completed")
             state_vars = dict(self.vars)
             state_vars.update(state.vars)
@@ -668,7 +677,9 @@ class Context(object):
             metadata = store.get_metadata(key)
             if metadata is None:
                 if store.contains(key):
-                    state.error(f"Key '{key}' was found in store, but the metadata is missing.")
+                    state.error(
+                        f"Key '{key}' was found in store, but the metadata is missing."
+                    )
                 else:
                     state.error(f"Metadata for key '{key}' not found in store")
             if (
@@ -688,12 +699,16 @@ class Context(object):
                 if data is None:
                     if store.contains(key):
                         if store.is_dir(key):
-                            state.error(f"Key '{key}' is a directory, hence there is no data.")
+                            state.error(
+                                f"Key '{key}' is a directory, hence there is no data."
+                            )
                         else:
-                            state.error(f"Key '{key}' was found in store, but the data is missing.")
+                            state.error(
+                                f"Key '{key}' was found in store, but the data is missing."
+                            )
                     else:
                         state.error(f"Key '{key}' not found in store")
-                        
+
             state = state.with_data(data)
             state.metadata["resource_metadata"] = metadata
         except:
@@ -759,8 +774,9 @@ class Context(object):
                     )
                 store.store(self.store_key, b, metadata)
 
-            
-    def evaluate(self, query, cache=None, description=None, store_key=None, store_to=None):
+    def evaluate(
+        self, query, cache=None, description=None, store_key=None, store_to=None
+    ):
         """Evaluate query, returns a State.
         This method can be used in a command to evaluate a subquery,
         which will be recorded in metadata and can be inspected during the query execution.
@@ -781,7 +797,9 @@ class Context(object):
         if self.query is not None:
             self.enable_store_metadata = True
             print(f"Subquery {query} called from {self.query.encode()}")
-            state = self.child_context().evaluate(query, store_key=store_key, store_to=store_to)
+            state = self.child_context().evaluate(
+                query, store_key=store_key, store_to=store_to
+            )
             if not isinstance(query, str):
                 query = query.encode()
             self.log_subquery(query=query, description=description)
@@ -801,7 +819,7 @@ class Context(object):
         self.started = self.now()
         if description is not None:
             self.set_description(description)
-   
+
         if cache is None:
             cache = self.cache()
 
@@ -902,7 +920,7 @@ class Context(object):
         if state.is_error:
             print(f"*** Evaluate and save {query} failed")
             if target_resource_directory is not None and target_file is not None:
-                filename = target_file    
+                filename = target_file
                 key = (
                     filename
                     if target_resource_directory == ""
@@ -1013,12 +1031,12 @@ class RecipeStore(Store):
             )
         target_resource_directory = self.parent_key(key)
         target_file = self.key_name(key)
-#        self.context.new_empty().evaluate_and_save(
-#            query,
-#            target_resource_directory=target_resource_directory,
-#            target_file=target_file,
-#            store=self.substore,
-#        )
+        #        self.context.new_empty().evaluate_and_save(
+        #            query,
+        #            target_resource_directory=target_resource_directory,
+        #            target_file=target_file,
+        #            store=self.substore,
+        #        )
         self.context.new_empty().evaluate(
             query,
             store_key=key,
@@ -1054,16 +1072,14 @@ class RecipeStore(Store):
         if self.is_dir(key):
             return self.finalize_metadata({}, key=key, is_dir=True)
         if key in self.recipes():
-            metadata=self.recipe_metadata(key)
+            metadata = self.recipe_metadata(key)
             try:
                 sub_metadata = self.substore.get_metadata(key)
                 if sub_metadata is not None:
                     metadata.update(sub_metadata)
             except:
                 pass
-            return self.finalize_metadata(
-                metadata, key=key, is_dir=False
-            )
+            return self.finalize_metadata(metadata, key=key, is_dir=False)
         return None
 
     #        self.make(key)
@@ -1165,7 +1181,7 @@ class RecipeSpecStore(RecipeStore):
         self.recipes_info = {}
         self.update_recipes()
         self.update_all_status_files()
-    
+
     def update_all_status_files(self):
         if self.STATUS_FILE is not None:
             for dir_key in set(self.parent_key(key) for key in self.recipes().keys()):
@@ -1181,6 +1197,8 @@ class RecipeSpecStore(RecipeStore):
         metadata["status"] = Status.RECIPE.value
         if key in self.recipes_info and self.recipes_info[key].get("query") is not None:
             metadata["has_recipe"] = True
+            metadata["recipes_key"] = self.recipes_info[key].get("recipes_key")
+            metadata["recipes_directory"] = self.recipes_info[key].get("recipes_directory")
         return metadata
 
     def make(self, key):
@@ -1203,6 +1221,7 @@ class RecipeSpecStore(RecipeStore):
                 key
             ):
                 spec = yaml.load(self.substore.get_bytes(key), Loader=Loader)
+            recipes_key = key
             if spec is not None:
                 parent = self.parent_key(key)
                 for directory, items in spec.items():
@@ -1221,7 +1240,11 @@ class RecipeSpecStore(RecipeStore):
                                 )
                                 recipes[rkey] = r
                                 self.recipes_info[rkey] = dict(
-                                    query=r, title=filename, description=""
+                                    query=r,
+                                    title=filename,
+                                    description="",
+                                    recipes_key=recipes_key,
+                                    recipes_directory=directory,
                                 )
                             except:
                                 traceback.print_exc()
@@ -1244,6 +1267,8 @@ class RecipeSpecStore(RecipeStore):
                                     query=r["query"],
                                     title=title,
                                     description=description,
+                                    recipes_key=recipes_key,
+                                    recipes_directory=directory,
                                 )
                             except:
                                 traceback.print_exc()
@@ -1255,7 +1280,7 @@ class RecipeSpecStore(RecipeStore):
         return recipes
 
     def create_status_text(self, dir_key):
-        txt=""
+        txt = ""
         if self.substore.is_dir(dir_key):
             for d in self.listdir(dir_key):
                 key = f"{dir_key}/{d}" if len(dir_key) else d
@@ -1264,48 +1289,56 @@ class RecipeSpecStore(RecipeStore):
                 if not self.is_dir(key):
                     metadata = self.get_metadata(key)
                     if metadata is None:
-                        txt+="%-14s %-30s %s\n"%("MISSING",d,"Missing metadata")
+                        txt += "%-14s %-30s %s\n" % ("MISSING", d, "Missing metadata")
                     else:
                         try:
-                            t=metadata.get("created")
-                            if t in ("",None):
-                                t=metadata["updated"]
+                            t = metadata.get("created")
+                            if t in ("", None):
+                                t = metadata["updated"]
                             time = util.format_datetime(util.to_datetime(t))
                         except:
-                            time=""
-                        status = metadata.get("status",Status.NONE.value)
-                        message = metadata.get("message","").strip()
+                            time = ""
+                        status = metadata.get("status", Status.NONE.value)
+                        message = metadata.get("message", "").strip()
                         if status == Status.READY.value:
                             try:
-                                message = metadata["data_characteristics"]["description"]
+                                message = metadata["data_characteristics"][
+                                    "description"
+                                ]
                             except:
                                 pass
                         if "\n" in message:
-                            txt+="%-20s %-14s %-32s|"%(time, status, d)
-                            txt+="\n=============================================================\n"
-                            txt+=message
-                            txt+="\n=============================================================\n\n"
+                            txt += "%-20s %-14s %-32s|" % (time, status, d)
+                            txt += "\n=============================================================\n"
+                            txt += message
+                            txt += "\n=============================================================\n\n"
                         else:
-                            txt+="%-20s %-14s %-32s| %s\n"%(time, status,d, message)
-                        trace=""
-                        for entry in metadata.get("log",[]) + metadata.get("child_log",[]):
-                            tb = entry.get('traceback')
+                            txt += "%-20s %-14s %-32s| %s\n" % (
+                                time,
+                                status,
+                                d,
+                                message,
+                            )
+                        trace = ""
+                        for entry in metadata.get("log", []) + metadata.get(
+                            "child_log", []
+                        ):
+                            tb = entry.get("traceback")
                             if tb is not None:
                                 if len(tb):
-                                    if 'timestamp' in entry:
-                                        trace+=f"Time:    {entry['timestamp']}"
-                                    if 'origin' in entry:
-                                        trace+=f"Origin:  {entry['origin']}"
-                                    if 'message' in entry:
-                                        trace+=f"Message: {entry['message']}"                                    
-                                    trace+="\n"
-                                    trace+=tb
-                                    tb+="\n------------------------\n"
+                                    if "timestamp" in entry:
+                                        trace += f"Time:    {entry['timestamp']}"
+                                    if "origin" in entry:
+                                        trace += f"Origin:  {entry['origin']}"
+                                    if "message" in entry:
+                                        trace += f"Message: {entry['message']}"
+                                    trace += "\n"
+                                    trace += tb
+                                    tb += "\n------------------------\n"
                         if len(trace):
-                            txt+="\n### TRACEBACK ###############################################\n"
-                            txt+=trace
-                            txt+="\n#############################################################\n\n"
-
+                            txt += "\n### TRACEBACK ###############################################\n"
+                            txt += trace
+                            txt += "\n#############################################################\n\n"
 
         return txt
 
@@ -1315,12 +1348,16 @@ class RecipeSpecStore(RecipeStore):
                 key = self.parent_key(key)
             status_key = f"{key}/{self.STATUS_FILE}" if len(key) else self.STATUS_FILE
             data = self.create_status_text(key).encode("utf-8")
-            self.substore.store(status_key, data,
-            dict(
-                title=f"Status of {key}",
-                description="This file is generated automatically by the recipe store"))
+            self.substore.store(
+                status_key,
+                data,
+                dict(
+                    title=f"Status of {key}",
+                    description="This file is generated automatically by the recipe store",
+                ),
+            )
 
-    def on_metadata_changed(self,key):
+    def on_metadata_changed(self, key):
         super().on_metadata_changed(key)
         if self.STATUS_FILE is not None:
             if self.key_name(key) == self.RECIPES_FILE:
@@ -1328,7 +1365,7 @@ class RecipeSpecStore(RecipeStore):
             elif self.key_name(key) != self.STATUS_FILE:
                 self.create_status(key)
 
-    def on_data_changed(self,key):
+    def on_data_changed(self, key):
         super().on_data_changed(key)
         if self.key_name(key) == self.RECIPES_FILE:
             self.update_recipes()
@@ -1336,7 +1373,7 @@ class RecipeSpecStore(RecipeStore):
         else:
             self.create_status(key)
 
-    def on_removed(self,key):
+    def on_removed(self, key):
         super().on_removed(key)
         if self.key_name(key) == self.RECIPES_FILE:
             self.update_recipes()

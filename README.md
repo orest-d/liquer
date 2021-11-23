@@ -40,6 +40,7 @@ pip install liquer-framework
 - 2021-11-11 - v0.5.1  - fixing a bug in the dr (decode resource) command
 - 2021-11-11 - v0.5.2  - fixing a bug in created/updated time in store
 - 2021-11-22 - v0.6.0  - basic support for openpyxl and polars
+- 2021-11-23 - v0.6.1  - bug fixes and minor enhancements
 
 # TODO
 
@@ -98,22 +99,23 @@ pip install liquer-framework
 - [ ] expiration for files in store
 - [ ] expiration for cache
 - [ ] refactor recipes to a separate module
-- [ ] checksum in store metadata
+- [x] checksum in store metadata
 - [x] sweetviz support
 - [x] polars support
 - [ ] spark support - spark dataframes
 - [ ] python-pptx integration
 - [ ] d-tale support
 - [x] dataframe batches
+- [ ] query origin (file, line number if possible)
 - [ ] readonly store modifier
 - [ ] a faster server (FastAPI?)
 - [ ] configure the start page, Response support?
 - [ ] new menu - remove menu from state variables
 - [ ] markdown support
 - [ ] search engine(s) integration
-- [ ] fix context.warning and tracebacks
-- [ ] dr extension - explicity type_identifier, extension, better errors and metadata handling
-- [ ] link to relevant recipes.yaml in metadata
+- [x] fix context.warning and tracebacks
+- [x] dr extension - explicity type_identifier, extension, better errors and metadata handling
+- [x] link to relevant recipes.yaml in metadata
 - [x] fix updated time in finalize metadata - time should only be updated on storing, not on reading
 - [x] fix time display in recipes_status.txt
 - [x] progressive metadata storing when evaluating to store

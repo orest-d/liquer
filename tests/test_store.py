@@ -79,6 +79,10 @@ class TestFileStore(TestStore):
             "filesystem_path"
         ].endswith("dir_a/file_b")
 
+    def test_md5(self, store):
+        import hashlib
+        store.store("dir_a/file_b", b"test", dict(x="xx"))
+        assert store.get_metadata("dir_a/file_b")["fileinfo"]["md5"]==hashlib.md5(b"test").hexdigest()
 
 class TestMountPointStore:
     def test_file_store_creation(self):

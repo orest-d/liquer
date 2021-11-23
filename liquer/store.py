@@ -4,6 +4,7 @@ import json
 from io import BytesIO
 from liquer.constants import *
 import liquer.util as util
+import hashlib
 
 """Store is a flexible filesystem-like key-value store.
 Stores support reading and writing of binary data and the associated metadata.
@@ -107,6 +108,7 @@ class StoreMixin:
         return MountPointStore(self).mount(key, store)
 
 class Store(StoreMixin):
+    MD5_CHECKSUM=True
     def parent_key(self, key):
         if key == "":
             return None
@@ -133,6 +135,9 @@ class Store(StoreMixin):
         )
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
+        if data is not None:
+            if type(data)!=bytes:
+                print(f"WARNING: Non-binary data for '{key}': type is {type(data)}")
         if key is None:
             key = ""
         metadata["key"] = key
@@ -147,8 +152,11 @@ class Store(StoreMixin):
         metadata["fileinfo"]["filesystem_path"] = metadata["fileinfo"].get(
             "filesystem_path"
         )
+            
         if data is not None:
             metadata["fileinfo"]["size"] = len(data)
+            if self.MD5_CHECKSUM and type(data)==bytes:
+                metadata["fileinfo"]["md5"] = hashlib.md5(data).hexdigest()
 
         if "mimetype" not in metadata:
             v = self.key_name(key).split(".")
