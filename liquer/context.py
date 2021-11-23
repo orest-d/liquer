@@ -395,7 +395,7 @@ class Context(object):
             )
         )
 
-    def warning(self, message):
+    def warning(self, message, traceback=None):
         """Log a warning message"""
         print(f"{log_time()} WARNING:  ", message)
         return self.log_dict(dict(kind="warning", message=message, traceback=traceback))
@@ -777,6 +777,7 @@ class Context(object):
         self.status = Status.EVALUATION
         self.debug(f"EVALUATE {query}")
         self.vars = Vars(vars_clone())
+
         if self.query is not None:
             self.enable_store_metadata = True
             print(f"Subquery {query} called from {self.query.encode()}")

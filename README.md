@@ -101,6 +101,8 @@ pip install liquer-framework
 - [ ] checksum in store metadata
 - [x] sweetviz support
 - [x] polars support
+- [ ] spark support - spark dataframes
+- [ ] python-pptx integration
 - [ ] d-tale support
 - [x] dataframe batches
 - [ ] readonly store modifier
@@ -111,6 +113,7 @@ pip install liquer-framework
 - [ ] search engine(s) integration
 - [ ] fix context.warning and tracebacks
 - [ ] dr extension - explicity type_identifier, extension, better errors and metadata handling
+- [ ] link to relevant recipes.yaml in metadata
 - [x] fix updated time in finalize metadata - time should only be updated on storing, not on reading
 - [x] fix time display in recipes_status.txt
 - [x] progressive metadata storing when evaluating to store

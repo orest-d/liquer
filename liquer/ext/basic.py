@@ -178,7 +178,7 @@ def queries_status(include_ready=False, reduce=True):
 
 
 @command
-def dr(state, context=None):
+def dr(state, type_identifier=None, extension=None, context=None):
     """Decode resource
     Decodes the bytes into a data structure. This is meant to be used in connection to a resource query.
     Resource part of the query will typically fetch the data from a store and thus return bytes (together with metadata).
@@ -193,18 +193,18 @@ def dr(state, context=None):
         context.error(f"Bytes expected, None received in dr from {state.query}")
         return
 
-    type_identifier = state.metadata.get(
-        "type_identifier",
-        state.metadata.get("resource_metadata", {}).get("type_identifier"),
-    )
-    print ("TYPE ID A", type_identifier)
+    if type_identifier is None:
+        type_identifier = state.metadata.get(
+            "type_identifier",
+            state.metadata.get("resource_metadata", {}).get("type_identifier"),
+        )
 
     if type_identifier in (None, "bytes"):
         type_identifier = state.metadata.get("resource_metadata", {}).get("type_identifier")
 
-    print ("TYPE ID B", type_identifier)
 
-    extension = state.metadata.get("extension")
+    if extension is None:
+        extension = state.metadata.get("extension")
     if extension is None:
         query = state.metadata.get("query")
         if query is not None:

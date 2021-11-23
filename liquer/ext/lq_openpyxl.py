@@ -6,7 +6,8 @@ from liquer.constants import mimetype_from_extension
 from liquer.commands import command, first_command
 from openpyxl import Workbook, load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
+from pathlib import Path
 from liquer.context import get_context
 from itertools import islice
 
@@ -27,11 +28,11 @@ class OpenpyxlWorkbookStateType(StateType):
         mimetype = mimetype_from_extension(extension)
 
         if extension in ("xlsx","xltx"):
-            with NamedTemporaryFile() as tmp:
-                data.save(tmp.name)
-                tmp.seek(0)
-                stream = tmp.read()
-                return stream, mimetype
+            with TemporaryDirectory() as tmpdir:
+                path = Path(tmpdir) / f"data.{extension}"
+                data.save(str(path))
+                b=path.read_bytes()
+                return b, mimetype
         else:
             raise Exception(
                 f"Serialization: file extension {extension} is not supported by openpyxl_workbook type."
