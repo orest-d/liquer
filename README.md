@@ -99,6 +99,7 @@ pip install liquer-framework
 - [ ] expiration for files in store
 - [ ] expiration for cache
 - [ ] refactor recipes to a separate module
+- [ ] deal with corrupted metadata in store
 - [x] checksum in store metadata
 - [x] sweetviz support
 - [x] polars support

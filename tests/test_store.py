@@ -92,6 +92,20 @@ class TestMountPointStore:
         assert list(store.keys()) == ["a"]
         assert store.contains("x") is False
 
+    def test_listdir_noroute(self):
+        store = MountPointStore()
+        assert list(store.keys()) == []
+        store.mount("a", MemoryStore())
+        assert list(store.keys()) == ["a"]
+        assert list(store.listdir("")) == ["a"]
+
+    def test_dir_metadata_noroute(self):
+        store = MountPointStore()
+        assert list(store.keys()) == []
+        store.mount("a", MemoryStore())
+        assert list(store.keys()) == ["a"]
+        assert store.get_metadata("")["fileinfo"]["is_dir"]
+
     def test_file_store_basic(self):
         store = MountPointStore(MemoryStore())
         assert list(store.keys()) == []

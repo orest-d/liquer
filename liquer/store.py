@@ -96,6 +96,10 @@ class KeyNotSupportedStoreException(StoreException):
     def __init__(self, message="Key not supported in store", key=None, store=None):
         super().__init__(message=message, key=key, store=store)
 
+class KeyRouteNotFoundStoreException(StoreException):
+    def __init__(self, message="Key route not found", key=None, store=None):
+        super().__init__(message=message, key=key, store=store)
+
 
 class StoreMixin:
     def with_overlay(self, overlay):
@@ -671,7 +675,7 @@ class OverlayStore(Store):
 
 class RoutingStore(Store):
     def route_to(self, key):
-        raise KeyNotSupportedStoreException(key=key, store=self)
+        raise KeyRouteNotFoundStoreException(key=key, store=self)
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
         metadata = super().finalize_metadata(
@@ -874,7 +878,28 @@ class MountPointStore(RoutingStore):
                     return store
         if self.default_store is not None:
             return self.default_store
-        raise Exception(f"No route to '{key}'")
+        raise KeyRouteNotFoundStoreException(key=key, store=self)
+
+    def get_metadata(self, key):
+        try:
+            metadata=self.route_to(key).get_metadata(key)
+            metadata["key"]=key
+            return metadata
+        except KeyRouteNotFoundStoreException:
+            if self.is_dir(key):
+                return self.finalize_metadata({}, key, is_dir=True)
+        raise KeyNotFoundStoreException(key=key, store=self)
+
+    def is_dir(self, key):
+        if key=="":
+            return True
+        try:
+            return self.route_to(key).is_dir(key)
+        except KeyRouteNotFoundStoreException:
+            for route in self.routing_table.keys():
+                if route==key or route.startswith(key+"/"):
+                    return self.finalize_metadata({}, key, is_dir=True)
+        return False
 
     def keys(self):
         prefixes = []
@@ -895,7 +920,11 @@ class MountPointStore(RoutingStore):
                 yield key
 
     def listdir(self, key):
-        store = self.route_to(key)
+        try:
+            store = self.route_to(key)
+        except KeyRouteNotFoundStoreException:
+            store = None
+
         if store is None:
             d = set()
         else:
