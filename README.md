@@ -41,6 +41,7 @@ pip install liquer-framework
 - 2021-11-11 - v0.5.2  - fixing a bug in created/updated time in store
 - 2021-11-22 - v0.6.0  - basic support for openpyxl and polars
 - 2021-11-23 - v0.6.1  - bug fixes and minor enhancements
+- 2021-11-28 - v0.6.2  - fixing bugs necessary to operate liquer-gui
 
 # TODO
 
@@ -139,7 +140,7 @@ pip install liquer-framework
 - [ ] improve scheduling - prevent same queries to be scheduled
 - [ ] report template
 - [ ] wasm library in frontend
-- [ ] web store GUI
+- [x] web store GUI (in progress: https://github.com/orest-d/liquer-gui)
 
 - [ ] dependency injection input type
 - [x] resources

@@ -884,6 +884,7 @@ class MountPointStore(RoutingStore):
         try:
             metadata=self.route_to(key).get_metadata(key)
             metadata["key"]=key
+            
             return metadata
         except KeyRouteNotFoundStoreException:
             if self.is_dir(key):
@@ -896,7 +897,7 @@ class MountPointStore(RoutingStore):
         try:
             return self.route_to(key).is_dir(key)
         except KeyRouteNotFoundStoreException:
-            for route in self.routing_table.keys():
+            for route, _ in reversed(self.routing_table):
                 if route==key or route.startswith(key+"/"):
                     return self.finalize_metadata({}, key, is_dir=True)
         return False

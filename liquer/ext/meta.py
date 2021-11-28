@@ -188,7 +188,10 @@ def status_md(metadata):
 @command(ns="meta")
 def dir_status(metadata, context=None):
     context = get_context(context)
-    key = metadata.get("key")
+    if metadata is None:
+        key=""
+    else:
+        key = metadata.get("key")
     print("context", context)
     context.set_title(f"Status of directory {key}")
     context.set_description(f"Status overview of data in the directory {key}")
@@ -196,7 +199,7 @@ def dir_status(metadata, context=None):
     data = []
     if store.is_dir(key):
         for name in store.listdir(key):
-            metadata = store.get_metadata(key+"/"+name)
+            metadata = store.get_metadata(store.join_key(key,name))
             fileinfo = metadata.get("fileinfo",{})
             data.append(dict(
                 name=name,
