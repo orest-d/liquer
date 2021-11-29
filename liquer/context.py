@@ -151,11 +151,15 @@ class Context(object):
             if self.raw_query is None:
                 title = ""
             else:
-                p = parse(self.raw_query).predecessor()[0]
-                if p is not None:
-                    title = self.raw_query
+                p = parse(self.raw_query)
+                if p.filename() is None:
+                    r = p.predecessor()[1]
+                    if r is None:
+                        title = self.raw_query
+                    else:
+                        title = str(r)
                 else:
-                    title = str(p)
+                    title = p.filename()
 
         message = self.message
         if message in (None, ""):
@@ -1066,11 +1070,12 @@ class RecipeStore(Store):
 
     def get_metadata(self, key):
         if self.ignore(key):
-            return None
+            raise KeyNotFoundStoreException(key=key, store=self)
+
         if self.substore.contains(key):
             return self.substore.get_metadata(key)
         if self.is_dir(key):
-            return self.finalize_metadata({}, key=key, is_dir=True)
+            return self.finalize_metadata(self.default_metadata(key=key, is_dir=True), key=key, is_dir=True)
         if key in self.recipes():
             metadata = self.recipe_metadata(key)
             try:
@@ -1080,10 +1085,7 @@ class RecipeStore(Store):
             except:
                 pass
             return self.finalize_metadata(metadata, key=key, is_dir=False)
-        return None
-
-    #        self.make(key)
-    #        return self.substore.get_metadata(key)
+        raise KeyNotFoundStoreException(key=key, store=self)
 
     def store(self, key, data, metadata):
         if self.ignore(key):
@@ -1197,8 +1199,13 @@ class RecipeSpecStore(RecipeStore):
         metadata["status"] = Status.RECIPE.value
         if key in self.recipes_info and self.recipes_info[key].get("query") is not None:
             metadata["has_recipe"] = True
-            metadata["recipes_key"] = self.recipes_info[key].get("recipes_key")
-            metadata["recipes_directory"] = self.recipes_info[key].get("recipes_directory")
+            metadata["recipes_key"] = self.recipes_info[key].get("recipes_key")            
+            metadata["title"] = self.recipes_info[key].get("title")
+            metadata["description"] = self.recipes_info[key].get("description")
+            if self.recipes_info[key].get("recipes_directory") == self.LOCAL_RECIPES:
+                metadata["recipes_directory"] = ""
+            else:
+                metadata["recipes_directory"] = self.recipes_info[key].get("recipes_directory")
         return metadata
 
     def make(self, key):
@@ -1206,8 +1213,10 @@ class RecipeSpecStore(RecipeStore):
         super().make(key)
         metadata = self.substore.get_metadata(key)
         status = metadata.get("status", Status.RECIPE.value)
+        fileinfo = metadata["fileinfo"]
         metadata.update(self.recipe_metadata(key))
         metadata["status"] = status
+        metadata["fileinfo"]=fileinfo
         self.substore.store_metadata(key, metadata)
         self.on_metadata_changed(key)
 

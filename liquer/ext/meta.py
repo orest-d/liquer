@@ -185,7 +185,7 @@ def status_md(metadata):
 #        txt+=str(record)
     return txt
 
-@command(ns="meta")
+@command(ns="meta", volatile=True)
 def dir_status(metadata, context=None):
     context = get_context(context)
     if metadata is None:
@@ -216,6 +216,7 @@ def dir_status(metadata, context=None):
                 started=metadata.get("started"),
                 created=metadata.get("created"),
                 updated=metadata.get("updated"),
+                has_recipe=metadata.get("has_recipe",False),
                 ))
         return dict(status="OK", message="OK", data=data)
     else:

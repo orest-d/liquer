@@ -78,7 +78,7 @@ class StoreException(Exception):
     def __init__(self, message, key=None, store=None):
         self.original_message = message
         if key is not None:
-            message += f":\n  key: {key}"
+            message += f":\n  key: '{key}'"
         if store is not None:
             message += f"  store: {store}"
 
@@ -139,6 +139,8 @@ class Store(StoreMixin):
         )
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
+        if "parquet" in key:
+            print(f"finalize_metadata {key}")
         if data is not None:
             if type(data)!=bytes:
                 print(f"WARNING: Non-binary data for '{key}': type is {type(data)}")
@@ -158,10 +160,14 @@ class Store(StoreMixin):
         )
             
         if data is not None:
+            if "parquet" in key:
+                print (f"DATA NOT NONE {key}")
             metadata["fileinfo"]["size"] = len(data)
             if self.MD5_CHECKSUM and type(data)==bytes:
                 metadata["fileinfo"]["md5"] = hashlib.md5(data).hexdigest()
-
+            if "parquet" in key:
+                print(metadata["fileinfo"])
+            
         if "mimetype" not in metadata:
             v = self.key_name(key).split(".")
             mimetype = mimetype_from_extension(v[-1]) if len(v)>1 else "application/octet-stream"
@@ -348,9 +354,13 @@ class FileStore(Store):
         self.on_removed(key)
 
     def contains(self, key):
+        if key in ("",None):
+            return True
         return self.path_for_key(key).exists()
 
     def is_dir(self, key):
+        if key in ("",None):
+            return True
         return self.path_for_key(key).is_dir()
 
     def keys(self, parent=None):
@@ -452,6 +462,9 @@ class MemoryStore(Store):
         self.on_removed(key)
 
     def contains(self, key):
+        if key in ("",None):
+            return True
+
         return key in self.directories or key in self.data or key in self.metadata
 
     def is_dir(self, key):
@@ -580,6 +593,7 @@ class OverlayStore(Store):
                 return self.overlay.get_metadata(key)
             else:
                 return self.fallback.get_metadata(key)
+        raise KeyNotFoundStoreException(key=key, store=self)
 
     def store(self, key, data, metadata):
         try:
@@ -764,8 +778,11 @@ class KeyTranslatingStore(Store):
         return self.substore.get_bytes(self.translate_key(key))
 
     def get_metadata(self, key):
-        metadata=self.substore.get_metadata(self.translate_key(key))
+        tkey = self.translate_key(key)
+        metadata=self.substore.get_metadata(tkey)
         metadata["key"]= key
+        if "recipes_key" in metadata:
+            metadata["recipes_key"] = self.translate_key(metadata["recipes_key"], inverse=True)
         return metadata
 
     def store(self, key, data, metadata):
@@ -1068,9 +1085,14 @@ class FileSystemStore(Store):
         self.on_removed(key)
 
     def contains(self, key):
+        if key in ("",None):
+            return True
+
         return self.fs.exists(self.path_for_key(key))
 
     def is_dir(self, key):
+        if key in ("",None):
+            return True
         return self.fs.isdir(self.path_for_key(key))
 
     def keys(self, parent=None):

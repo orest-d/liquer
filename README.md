@@ -42,6 +42,7 @@ pip install liquer-framework
 - 2021-11-22 - v0.6.0  - basic support for openpyxl and polars
 - 2021-11-23 - v0.6.1  - bug fixes and minor enhancements
 - 2021-11-28 - v0.6.2  - fixing bugs necessary to operate liquer-gui
+- 2021-11-29 - v0.6.3  - several important bugfixes
 
 # TODO
 
