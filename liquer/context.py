@@ -23,7 +23,7 @@ from liquer.state_types import (
 import os.path
 from datetime import datetime
 import json
-from liquer.constants import Status
+from liquer.constants import Status, mimetype_from_extension
 import liquer.util as util
 from liquer.util import timestamp
 
@@ -136,6 +136,7 @@ class Context(object):
         )
         self.description = ""
         self.title = None
+        self.mimetype=None
 
         self.vars = Vars(vars_clone())
         self.html_preview = ""
@@ -147,6 +148,7 @@ class Context(object):
 
     def metadata(self):
         title = self.title
+        description = self.description
         if title is None:
             if self.raw_query is None:
                 title = ""
@@ -159,7 +161,22 @@ class Context(object):
                     else:
                         title = str(r)
                 else:
-                    title = p.filename()
+                    if self.parent_context is None:
+                        title = p.filename()
+                    else:
+                        if self.raw_query == self.parent_context.raw_query+"/"+p.filename():
+                            title = self.parent_context.metadata().get("title")
+                            description = self.parent_context.metadata().get("description")
+                        if title in ("",None):
+                            title = p.filename()
+        
+        mimetype=self.mimetype
+        if mimetype is None:
+            if self.query is not None:
+                if self.query.extension() is None:
+                    mimetype = "application/octet-stream"
+                else:
+                    mimetype = mimetype_from_extension(self.query.extension())
 
         message = self.message
         if message in (None, ""):
@@ -174,7 +191,8 @@ class Context(object):
         return dict(
             status=self.status.value,
             title=title,
-            description=self.description,
+            description=description,
+            mimetype=mimetype,
             query=self.raw_query,
             parent_query=self.parent_query,
             argument_queries=self.argument_queries,

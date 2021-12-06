@@ -262,5 +262,7 @@ def dr(state, type_identifier=None, extension=None, context=None):
         t = state_types_registry().get(type_identifier)
         data = t.from_bytes(state.data, extension=extension)
         return state.with_data(data)
-
+    else:
+        context.error(f"Decode resource (dr) command failed")
+        raise Exception(f"Failed to resolve type for query {state.metadata.get('query')}")
     return state

@@ -739,15 +739,18 @@ class CommandExecutable(object):
     def inner_id(self):
         return id(self.f)
 
-    def __call__(self, state, *args, context=None):
+    def parse_argv(self, args, context=None):
         query = None if context is None else context.raw_query
-
         args = list(args)
         try:
             position = args[-1].position
         except:
             position = None
         for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
+            try:
+                position = args[i].position
+            except:
+                position = None
             if not a.get("multiple", False) and a["name"] != "context":
                 if "default" in a:
                     args.append(a["default"])
@@ -778,6 +781,10 @@ class CommandExecutable(object):
                 position=position,
                 query=query,
             )
+        return argv, argmeta
+
+    def __call__(self, state, *args, context=None):
+        argv, argmeta = self.parse_argv(args, context=context)
         state_arg = state if self.metadata.state_argument["pass_state"] else state.get()
         result = self.f(state_arg, *argv)
         if isinstance(result, State):
@@ -792,33 +799,7 @@ class FirstCommandExecutable(CommandExecutable):
     """Wrapper around a registered first command"""
 
     def __call__(self, state, *args, context=None):
-        query = None if context is None else context.raw_query
-        args = list(args) + [
-            a["default"]
-            for a in self.metadata.arguments[len(args) :]
-            if not a["multiple"] and a["name"] != "context"
-        ]
-        try:
-            argv, argmeta, remainder = self.argument_parser.parse_meta(
-                self.metadata.arguments, args, context=context
-            )
-        except ArgumentParserException as e:
-            raise ArgumentParserException(
-                f"{e.original_message} while executing '{self.metadata.name}'",
-                position=e.position,
-                query=query,
-            ) from e
-        if len(remainder) != 0:
-            position = (
-                remainder[0].position
-                if isinstance(remainder[0], ActionParameter)
-                else None
-            )
-            raise ArgumentParserException(
-                f"Too many arguments for '{self.metadata.name}': {repr(remainder)}",
-                position=position,
-                query=query,
-            )
+        argv, argmeta = self.parse_argv(args, context=context)
         result = self.f(*argv)
         if isinstance(result, State):
             result.arguments = argmeta

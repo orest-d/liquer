@@ -215,7 +215,8 @@ class State(object):
 
     def mimetype(self):
         """Return mime type of the data"""
-        return mimetype_from_extension(self.extension)
+        
+        return self.metadata.get("mimetype", mimetype_from_extension(self.extension))
 
     def from_dict(self, metadata):
         """Fill state by valueas from a dictionary"""

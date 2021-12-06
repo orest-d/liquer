@@ -139,8 +139,6 @@ class Store(StoreMixin):
         )
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
-        if "parquet" in key:
-            print(f"finalize_metadata {key}")
         if data is not None:
             if type(data)!=bytes:
                 print(f"WARNING: Non-binary data for '{key}': type is {type(data)}")
@@ -160,13 +158,9 @@ class Store(StoreMixin):
         )
             
         if data is not None:
-            if "parquet" in key:
-                print (f"DATA NOT NONE {key}")
             metadata["fileinfo"]["size"] = len(data)
             if self.MD5_CHECKSUM and type(data)==bytes:
                 metadata["fileinfo"]["md5"] = hashlib.md5(data).hexdigest()
-            if "parquet" in key:
-                print(metadata["fileinfo"])
             
         if "mimetype" not in metadata:
             v = self.key_name(key).split(".")

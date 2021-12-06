@@ -499,6 +499,13 @@ class Query(object):
                 return str(segment.query[-1])
         return None
 
+    def extension(self):
+        filename = self.filename()
+        if filename is not None:
+            v = filename.split(".")
+            if len(v)>1:
+                return v[-1]
+        return None
     def is_empty(self):
         return len(self.segments) == 0
 
