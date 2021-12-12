@@ -5,7 +5,7 @@ from liquer.state_types import encode_state_data, state_types_registry
 from liquer.commands import command_registry
 from liquer.state import get_vars
 from liquer.cache import get_cache
-from liquer.store import get_store
+from liquer.store import get_store, KeyNotFoundStoreException
 import io
 import traceback
 
@@ -216,9 +216,11 @@ def store_get(query):
         r.headers.set("Content-Type", mimetype)
         return r
     except:
-        return jsonify(
+        response = jsonify(
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
+        response.status="404"
+        return response
 
 @app.route("/web/<path:query>", methods=["GET"])
 def web_store_get(query):
@@ -244,13 +246,18 @@ def store_set(query):
     store = get_store()
     try:
         metadata = store.get_metadata(query)
+    except KeyNotFoundStoreException:
+        metadata={}
+    try:        
         data = request.get_data()
         store.store(query, data, metadata)
         return jsonify(dict(query=query, message="Data stored", status="OK"))
     except:
-        return jsonify(
+        response = jsonify(
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
+        response.status="404"
+        return response
 
 
 @app.route("/api/store/metadata/<path:query>", methods=["GET"])
@@ -268,9 +275,11 @@ def store_set_metadata(query):
         store.store_metadata(query, metadata)
         return jsonify(dict(query=query, message="Metadata stored", status="OK"))
     except:
-        return jsonify(
+        response = jsonify(
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
+        response.status="404"
+        return response
 
 
 @app.route("/api/store/remove/<path:query>")

@@ -97,7 +97,7 @@ class DataframeStateType(StateType):
         elif extension == "tsv":
             return pd.read_csv(f, sep="\t")
         elif extension == "json":
-            return pd.read_json(f)
+            return pd.read_json(f, orient='table')
         elif extension == "parquet":
             return pd.read_parquet(f)
         elif extension == "feather":
