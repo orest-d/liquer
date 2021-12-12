@@ -3,7 +3,7 @@ from enum import Enum
 
 class Status(Enum):
     """Status of evaluated data.
-    NONE         - status not available; should be rare
+    NONE         - status not available (default value)
     SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
     EVALUATING_PARENT - parent is being evaluated
     EVALUATION   - last action of the query is being evaluated

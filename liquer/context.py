@@ -26,6 +26,8 @@ import json
 from liquer.constants import Status, mimetype_from_extension
 import liquer.util as util
 from liquer.util import timestamp
+from copy import deepcopy
+from liquer.metadata import Metadata
 
 from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException
 from yaml import load, dump
@@ -136,7 +138,7 @@ class Context(object):
         )
         self.description = ""
         self.title = None
-        self.mimetype=None
+        self.mimetype = None
 
         self.vars = Vars(vars_clone())
         self.html_preview = ""
@@ -154,23 +156,20 @@ class Context(object):
                 title = ""
             else:
                 p = parse(self.raw_query)
-                if p.filename() is None:
-                    r = p.predecessor()[1]
-                    if r is None:
-                        title = self.raw_query
-                    else:
-                        title = str(r)
-                else:
-                    if self.parent_context is None:
-                        title = p.filename()
-                    else:
-                        if self.raw_query == self.parent_context.raw_query+"/"+p.filename():
-                            title = self.parent_context.metadata().get("title")
-                            description = self.parent_context.metadata().get("description")
-                        if title in ("",None):
-                            title = p.filename()
-        
-        mimetype=self.mimetype
+                if (
+                    p.filename() is not None
+                    and self.parent_context is not None
+                    and self.parent_context.raw_query is not None
+                    and self.raw_query
+                    == self.parent_context.raw_query + "/" + p.filename()
+                ):
+                    title = self.parent_context.metadata().get("title")
+                    if description is None:
+                        description = self.parent_context.metadata().get("description")
+                if title in ("", None):
+                    title = p.filename() or ""
+
+        mimetype = self.mimetype
         if mimetype is None:
             if self.query is not None:
                 if self.query.extension() is None:
@@ -223,13 +222,23 @@ class Context(object):
         store = self.store()
         v = store.key_name(key).split(".")
         extension = v[-1] if len(v) > 1 else None
-        b, mimetype, type_identifier = encode_state_data(data, extension=extension)
         metadata["type_identifier"] = type_identifier
         metadata["mimetype"] = mimetype
         metadata["data_characteristics"] = data_characteristics(data)
         metadata["side_effect"] = True
         metadata["status"] = Status.SIDE_EFFECT.value
-        store.store(key, b, metadata)
+        try:
+            b, mimetype, type_identifier = encode_state_data(data, extension=extension)
+            store.store(key, b, metadata)
+        except:
+            traceback.print_exc()
+            m = Metadata(metadata)
+            m.status = Status.ERROR
+            m.exception(
+                f"Failed to encode data for key '{key}'",
+                traceback=traceback.format_exc(),
+            )
+            store.store_metadata(key, m.as_dict())
 
     def can_report(self):
         if self.last_report_time is None:
@@ -788,13 +797,23 @@ class Context(object):
                 data = state.get()
                 reg = self.state_types_registry()
                 t = reg.get(type(data))
-                if state.metadata.get("extension") is None:
-                    b, mime, typeid = encode_state_data(data)
-                else:
-                    b, mime, typeid = encode_state_data(
-                        data, extension=state.metadata["extension"]
+                try:
+                    if state.metadata.get("extension") is None:
+                        b, mime, typeid = encode_state_data(data)
+                    else:
+                        b, mime, typeid = encode_state_data(
+                            data, extension=state.metadata["extension"]
+                        )
+                    store.store(self.store_key, b, metadata)
+                except:
+                    traceback.print_exc()
+                    m = Metadata(metadata)
+                    m.status = Status.ERROR
+                    m.exception(
+                        f"Failed to encode data for key '{self.store_key}'",
+                        traceback=traceback.format_exc(),
                     )
-                store.store(self.store_key, b, metadata)
+                    store.store_metadata(self.store_key, m.as_dict())
 
     def evaluate(
         self, query, cache=None, description=None, store_key=None, store_to=None
@@ -1093,7 +1112,9 @@ class RecipeStore(Store):
         if self.substore.contains(key):
             return self.substore.get_metadata(key)
         if self.is_dir(key):
-            return self.finalize_metadata(self.default_metadata(key=key, is_dir=True), key=key, is_dir=True)
+            return self.finalize_metadata(
+                self.default_metadata(key=key, is_dir=True), key=key, is_dir=True
+            )
         if key in self.recipes():
             metadata = self.recipe_metadata(key)
             try:
@@ -1213,17 +1234,16 @@ class RecipeSpecStore(RecipeStore):
         return any(x.startswith(".") for x in key.split("/"))
 
     def recipe_metadata(self, key):
-        metadata = self.recipes_info.get(key, {})
+        metadata = deepcopy(self.recipes_info.get(key, {}))
         metadata["status"] = Status.RECIPE.value
-        if key in self.recipes_info and self.recipes_info[key].get("query") is not None:
+        if metadata.get("query") is not None:
             metadata["has_recipe"] = True
-            metadata["recipes_key"] = self.recipes_info[key].get("recipes_key")            
-            metadata["title"] = self.recipes_info[key].get("title")
-            metadata["description"] = self.recipes_info[key].get("description")
             if self.recipes_info[key].get("recipes_directory") == self.LOCAL_RECIPES:
                 metadata["recipes_directory"] = ""
             else:
-                metadata["recipes_directory"] = self.recipes_info[key].get("recipes_directory")
+                metadata["recipes_directory"] = self.recipes_info[key].get(
+                    "recipes_directory"
+                )
         return metadata
 
     def make(self, key):
@@ -1234,7 +1254,7 @@ class RecipeSpecStore(RecipeStore):
         fileinfo = metadata["fileinfo"]
         metadata.update(self.recipe_metadata(key))
         metadata["status"] = status
-        metadata["fileinfo"]=fileinfo
+        metadata["fileinfo"] = fileinfo
         self.substore.store_metadata(key, metadata)
         self.on_metadata_changed(key)
 
