@@ -44,4 +44,5 @@ pip install liquer-framework
 - 2021-11-28 - v0.6.2  - fixing bugs necessary to operate liquer-gui
 - 2021-11-29 - v0.6.3  - several important bugfixes
 - 2021-12-06 - v0.6.4  - minor fixes
+- 2021-12-12 - v0.6.5  - fixes and refactoring
 
