@@ -79,7 +79,7 @@
 - [ ] python-pptx integration
 - [ ] d-tale support
 - [ ] markdown support
-- [ ] datafusion support - context and sql
+- [x] datafusion support - context and sql
 - [ ] keras history support
 - [ ] numpy support
 - [x] parquet support

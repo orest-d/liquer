@@ -60,3 +60,4 @@ pip install liquer-framework
 ### New features
 - API documentation improved on multiple places
 - EXTERNAL status
+- Basic support for DataFusion
