@@ -52,8 +52,8 @@ class Dependencies:
         key = f"ns-{ns}/{command_metadata.name}"
         version = command_metadata.version
         if detect_collisions:
-            if key in dependencies["commands"]:
-                if dependencies["commands"][key]!=version:
+            if key in self.dependencies["commands"]:
+                if self.dependencies["commands"][key]!=version:
                     raise CommandVersionCollisionException(command=command_metadata.name, ns=ns, query=self.query)
-        dependencies["commands"]["key"]=version
+        self.dependencies["commands"][key]=version
         return self
