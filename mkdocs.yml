@@ -5,3 +5,11 @@ nav:
   - Query syntax: 'query.md'
   - General guide : 'guide.md'
 - Examples : 'examples.md'
+
+plugins:
+- search
+- mkdocstrings
+
+markdown_extensions:
+  - admonition
+  - codehilite

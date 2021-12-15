@@ -290,6 +290,11 @@ class ActionRequest(object):
 
 
 class SegmentHeader(object):
+    """Header of a query segment - both resource and transformation query.
+    Header may contain name (string), level (integer) and parameters (list of strings).
+    The header parameters may influence how the query is interpreted.
+    The interpretation of the header parameters depends on the context object.
+    """
     def __init__(
         self,
         name: str = "",
@@ -303,6 +308,13 @@ class SegmentHeader(object):
         self.parameters = parameters or []
         self.resource = resource
         self.position = position or Position()
+
+    def is_trivial(self):
+        """Terurns true if the header does not contain any data,
+        I.e. trivial header has no name, level is 1 and no parameters.
+        Trivial header can be both for resource and query, it does not depend on the resource flas. 
+        """
+        return self.name in ("", None) and self.level==1 and len(self.parameters)==0
 
     def encode(self):
         assert self.level >= 1
@@ -331,6 +343,7 @@ class SegmentHeader(object):
 
 
 class TransformQuerySegment(object):
+    """Query segment representing a transformation, i.e. a sequence of actions applied to a state."""
     def __init__(self, header=None, query=None, filename=None):
         "header can be SegmentHeader, query is a list of ActionRequest objects"
         self.header = header
@@ -439,6 +452,7 @@ class TransformQuerySegment(object):
 
 
 class ResourceQuerySegment(object):
+    """Query segment representing a resource, i.e. path to a file in a store."""
     def __init__(self, header=None, query=None):
         "header can be SegmentHeader, query is a list of ActionRequest objects"
         self.header = header
@@ -453,6 +467,8 @@ class ResourceQuerySegment(object):
                 return self.query[0].position
 
     def path(self):
+        """Path to the resource as a string.
+        This is typically interpreted as a resource key in a Store object."""
         return "/".join(x.encode() for x in self.query)
 
     def encode(self):
@@ -479,6 +495,8 @@ class ResourceQuerySegment(object):
 
 
 class Query(object):
+    """Query is a sequence of query segment.
+    Typically this will be a resource and and/or a transformation applied to a resource."""
     def __init__(self, segments: list = None, absolute=False):
         self.segments = segments or []
         self.absolute = absolute

@@ -9,4 +9,9 @@ Pygments
 cryptography
 pyarrow
 fs
+h5py
+plotly
+mkdocs
+mkdocstrings
+pytkdocs
 -r requirements.txt

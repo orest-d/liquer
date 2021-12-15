@@ -18,10 +18,12 @@ class TestKeras:
             a = Input(shape=(32,))
             b = Dense(32)(a)
             model = Model(inputs=a, outputs=b)
+            print ("MODEL TYPE1",type(model))
             model.compile(loss="mean_squared_error", optimizer="sgd")
+            print ("MODEL TYPE2",type(model))
             return model
 
-        evaluate_and_save("model/model.h5")
+        evaluate_and_save("model/model.h5",target_directory=".")
         model = liquer.ext.lq_keras.KERASMODEL_STATE_TYPE.from_bytes(
             open("model.h5", "rb").read()
         )
@@ -39,7 +41,7 @@ class TestKeras:
             model.compile(loss="mean_squared_error", optimizer="sgd")
             return model
 
-        evaluate_and_save("model/keras_plot_model/model.png")
+        evaluate_and_save("model/keras_plot_model/model.png", target_directory=".")
         remove("model.png")
 
     def test_summary(self):

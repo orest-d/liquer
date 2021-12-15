@@ -1,9 +1,17 @@
 from liquer.constants import Status
 from liquer.util import timestamp
 from copy import deepcopy
+from liquer.parser import *
+from liquer.store import get_store, KeyNotFoundStoreException, set_store
+from liquer.cache import get_cache
 
 class Metadata:
-    """Metadata wrapper"""
+    """Metadata wrapper
+    Highlevel getters/setters and validation on top of a metadata dictionary object.
+    Metadata dictionary is a simple JSON-able python dictionary.
+    The Metadata class takes care that all required fields are filled in in the right format.
+    High-level logging functionality into the metadata is provided as well. 
+    """
 
     def __init__(self, metadata={}):
         self.set_metadata(metadata)
@@ -105,3 +113,19 @@ class Metadata:
         """Log a message (debug)"""
         self.log_dict(dict(kind="debug", message=message))
         return self
+
+def get_stored_metadata(query):
+    """Get metadata for a query - if it is stored in cache or a store.    
+    """
+    if not isinstance(query,Query):
+        query = parse(query)
+    if query.is_resource_query():
+        rq = query.resource_query()
+        header = rq.header
+        key = rq.path()
+        try:
+            return get_store().get_metadata(key)
+        except KeyNotFoundStoreException:
+            return None
+    else:
+        return get_cache().get_metadata(str(query))

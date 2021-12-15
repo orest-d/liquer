@@ -78,7 +78,7 @@ def detached_serve(query):
     return jsonify(dict(status="OK", message="Submitted", query=query))
 
 
-@app.route("/cache/get/<path:query>")
+@app.route("/api/cache/get/<path:query>")
 def cache_get(query):
     """Get cached metadata"""
     state = get_cache().get(query)
@@ -87,7 +87,7 @@ def cache_get(query):
     return response(state)
 
 
-@app.route("/cache/meta/<path:query>")
+@app.route("/api/cache/meta/<path:query>")
 def cache_get_metadata(query):
     """Get cached metadata"""
     metadata = get_cache().get_metadata(query)
@@ -96,7 +96,7 @@ def cache_get_metadata(query):
     return jsonify(metadata)
 
 
-@app.route("/cache/meta/<path:query>", methods=["POST"])
+@app.route("/api/cache/meta/<path:query>", methods=["POST"])
 def cache_store_metadata(query):
     """Store metadata in cache.
     Allows to use liquer server as a remote cache.
@@ -119,28 +119,28 @@ def cache_store_metadata(query):
     return jsonify(result)
 
 
-@app.route("/cache/remove/<path:query>")
+@app.route("/api/cache/remove/<path:query>")
 def cache_remove(query):
     """interface to cache remove"""
     r = get_cache().remove(query)
     return jsonify(dict(query=query, removed=r))
 
 
-@app.route("/cache/contains/<path:query>")
+@app.route("/api/cache/contains/<path:query>")
 def cache_contains(query):
     """interface to cache contains"""
     contains = get_cache().contains(query)
     return jsonify(dict(query=query, cached=contains))
 
 
-@app.route("/cache/keys.json")
+@app.route("/api/cache/keys.json")
 def cache_keys():
     """interface to cache keys"""
     keys = dict(keys=list(get_cache().keys()))
     return jsonify(keys)
 
 
-@app.route("/cache/clean")
+@app.route("/api/cache/clean")
 def cache_clean():
     """interface to cache clean"""
     get_cache().clean()
@@ -208,6 +208,9 @@ def register_command1():
 
 @app.route("/api/store/data/<path:query>", methods=["GET"])
 def store_get(query):
+    """Get data from store. Equivalent to Store.get_bytes.
+    Content type (MIME) is obtained from the metadata.
+    """
     store = get_store()
     try:
         metadata = store.get_metadata(query)
@@ -224,6 +227,10 @@ def store_get(query):
 
 @app.route("/web/<path:query>", methods=["GET"])
 def web_store_get(query):
+    """Shortcut to the 'web' directory in the store.
+    Similar to /store/data/web, except the index.html is automatically added if query is a directory.
+    The 'web' directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui. 
+    """
     store = get_store()
     try:
         query="web/"+query
@@ -243,6 +250,11 @@ def web_store_get(query):
 
 @app.route("/api/store/data/<path:query>", methods=["POST"])
 def store_set(query):
+    """Set data from store. Equivalent to Store.store.
+    Unlike store method, which stores both data and metadata in one call,
+    the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+    either before or after the api/store/data POST.
+    """
     store = get_store()
     try:
         metadata = store.get_metadata(query)
@@ -280,6 +292,12 @@ def store_set_metadata(query):
         )
         response.status="404"
         return response
+
+@app.route("/api/stored_metadata/<path:query>", methods=["GET"])
+def get_stored_metadata(query):
+    store = get_store()
+    metadata = store.get_metadata(query)
+    return jsonify(metadata)
 
 
 @app.route("/api/store/remove/<path:query>")

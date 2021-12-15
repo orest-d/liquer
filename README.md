@@ -46,3 +46,14 @@ pip install liquer-framework
 - 2021-12-06 - v0.6.4  - minor fixes
 - 2021-12-12 - v0.6.5  - fixes and refactoring
 
+## Changes in v0.7
+
+### Breaking changes
+- liquer/cache api changed to liquer/api/cache to be consistent with the rest of the api (like store)
+- recipes refactored to its own module, therefore the e.g. RecipeSpecStore needs to be imported from liquer.recipes, not liquer.context 
+- metadata handling refactored to a separate metadata module, the refactoring is ongoing
+- lq_keras fixed, now depends on a more recent keras
+- liquer.ext.midi removed, code moved to an example
+
+### New features
+- API documentation improved on multiple places

@@ -3,7 +3,6 @@ from liquer.state_types import StateType, register_state_type
 from liquer.constants import mimetype_from_extension
 
 from liquer.commands import command, first_command
-from tempfile import NamedTemporaryFile
 from liquer.context import get_context
 import pandas as pd
 import polars as pl

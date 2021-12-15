@@ -20,11 +20,11 @@ def greet(greeting, who="world"):
 if __name__=="__main__":
     set_central_cache(MemoryCache()) # without configuring cache, the evaluation will run in the main process
 
-#    evaluate_and_save("hello/greet/hello_greet.txt")
-#    evaluate_and_save("hello/greet-everybody/hello_greet_everybody.txt")
+#    evaluate_and_save("hello/greet/hello_greet.txt", target_directory=".")
+#    evaluate_and_save("hello/greet-everybody/hello_greet_everybody.txt", target_directory=".")
 
-    evaluate_and_save_in_background("hello/greet/hello_greet.txt")
-    evaluate_and_save_in_background("hello/greet-everybody/hello_greet_everybody.txt")
+    evaluate_and_save_in_background("hello/greet/hello_greet.txt", target_directory=".")
+    evaluate_and_save_in_background("hello/greet-everybody/hello_greet_everybody.txt", target_directory=".")
 
     get_pool().close()
     get_pool().join()

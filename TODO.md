@@ -88,6 +88,7 @@
 - [ ] search engine(s) integration
 - [x] refactor metadata handling to a separate class from context and state
 - [ ] finalize refactoring of Context to Metadata
+- [ ] python logging integration with metadata and context
 
 - [ ] commands from methods
 - [ ] automatic state type from classes
