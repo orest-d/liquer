@@ -326,7 +326,7 @@ window.vue = new Vue({
             if (status == "none") {
                 return "gray";
             }
-            if (status == "obsolete") {
+            if (status == "expired") {
                 return "gray";
             }
             if (status == "finished") {

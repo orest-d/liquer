@@ -47,6 +47,7 @@
 - [ ] fuse access to store
 - [ ] cleanup errors (on start?)
 - [ ] status on directories
+- [x] external status
 - [ ] date, size and detection of modifications
 
 ## Dependency management

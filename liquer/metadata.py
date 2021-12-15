@@ -1,7 +1,9 @@
 from liquer.constants import Status
 from liquer.util import timestamp
+from liquer.dependencies import Dependencies
 from copy import deepcopy
 import json
+
 
 class Metadata:
     """Metadata wrapper
@@ -27,6 +29,7 @@ class Metadata:
             metadata["status"] = Status.NONE.value
         if "is_error" not in metadata:
             metadata["is_error"] = False
+        metadata["dependencies"] = Dependencies(metadata.get("dependencies",dict(query=metadata["query"]))).as_dict()
         self.metadata = metadata
         return self
 
@@ -37,6 +40,15 @@ class Metadata:
     @query.setter
     def query(self, value):
         self.metadata["query"] = value
+        self.metadata["dependencies"]["query"] = value
+
+    @property
+    def key(self):
+        return self.metadata.get("key")
+
+    @key.setter
+    def key(self, value):
+        self.metadata["key"] = value
 
     @property
     def status(self):
@@ -70,6 +82,12 @@ class Metadata:
         State data is NOT part of the returned dictionary.
         """
         return deepcopy(self.metadata)
+
+    def add_command_dependency(self, ns, command_metadata, detect_collisions=True):
+        dependencies = Dependencies(self.metadata["dependencies"])
+        dependencies.add_command_dependency(ns, command_metadata, detect_collisions)
+        self.metadata["dependencies"]=dependencies.as_dict()
+        return self
 
     def log_dict(self, d):
         "Put dictionary with a log entry into the log"

@@ -10,8 +10,9 @@ class Status(Enum):
     EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
     READY        - data is ready (after successful evaluation)
     ERROR        - evaluation terminated with an error
-    OBSOLETE     - data exists, but it is obsolete
+    EXPIRED      - data exists, but it is obsolete or expired
     RECIPE       - data are not in store, but a recipe is available
+    EXTERNAL     - data is from external source or modified by a user
     SIDE_EFFECT  - data has been created as a side-effect of a query
     
     """
@@ -22,8 +23,9 @@ class Status(Enum):
     EVALUATING_DEPENDENCIES = "dependencies"
     READY = "ready"
     ERROR = "error"
-    OBSOLETE = "obsolete"
+    EXPIRED = "expired"
     RECIPE = "recipe"
+    EXTERNAL = "external"
     SIDE_EFFECT = "side-effect"
 
 MIMETYPES = dict(

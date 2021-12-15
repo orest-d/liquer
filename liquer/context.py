@@ -929,7 +929,7 @@ class Context(object):
             else:
                 print("REMOVE CACHE", state.query)
                 if not cache.remove(state.query):
-                    self.status = Status.OBSOLETE
+                    self.status = Status.EXPIRED
                     self.store_metadata()
 
         self._store_state(state)

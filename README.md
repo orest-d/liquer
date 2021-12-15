@@ -55,6 +55,8 @@ pip install liquer-framework
 - lq_keras fixed, now depends on a more recent keras
 - liquer.ext.midi removed, code moved to an example
 - liquer.server.jupyter removed, to be reimplemented in a separate project (archived in liquer-prototyping)
+- OBSOLETE status changed to EXPIRED
 
 ### New features
 - API documentation improved on multiple places
+- EXTERNAL status

@@ -312,6 +312,10 @@ class FileStore(Store):
                             print(f"Removing {key} due to corrupted metadata (a)")
                             self.remove(key)
                             raise KeyNotFoundStoreException(key=key, store=self)
+                else:
+                    m = Metadata()
+                    m.status = Status.EXTERNAL
+                    return self.finalize_metadata(m.as_dict(), key=key)
 
             else:
                 if self.metadata_path_for_key(key).exists():
