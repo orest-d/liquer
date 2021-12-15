@@ -1,9 +1,7 @@
 from liquer.constants import Status
 from liquer.util import timestamp
 from copy import deepcopy
-from liquer.parser import *
-from liquer.store import get_store, KeyNotFoundStoreException, set_store
-from liquer.cache import get_cache
+import json
 
 class Metadata:
     """Metadata wrapper
@@ -15,6 +13,10 @@ class Metadata:
 
     def __init__(self, metadata={}):
         self.set_metadata(metadata)
+
+    @classmethod
+    def from_string(cls, string):
+        return cls(json.loads(string))
 
     def set_metadata(self, metadata):
         if "log" not in metadata:
@@ -113,19 +115,3 @@ class Metadata:
         """Log a message (debug)"""
         self.log_dict(dict(kind="debug", message=message))
         return self
-
-def get_stored_metadata(query):
-    """Get metadata for a query - if it is stored in cache or a store.    
-    """
-    if not isinstance(query,Query):
-        query = parse(query)
-    if query.is_resource_query():
-        rq = query.resource_query()
-        header = rq.header
-        key = rq.path()
-        try:
-            return get_store().get_metadata(key)
-        except KeyNotFoundStoreException:
-            return None
-    else:
-        return get_cache().get_metadata(str(query))

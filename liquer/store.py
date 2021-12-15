@@ -5,6 +5,8 @@ from io import BytesIO
 from liquer.constants import *
 import liquer.util as util
 import hashlib
+from liquer.metadata import Metadata
+import traceback
 
 """Store is a flexible filesystem-like key-value store.
 Stores support reading and writing of binary data and the associated metadata.
@@ -167,7 +169,7 @@ class Store(StoreMixin):
             mimetype = mimetype_from_extension(v[-1]) if len(v)>1 else "application/octet-stream"
             metadata["mimetype"]=mimetype
                 
-        return metadata
+        return Metadata(metadata).as_dict()
 
     def get_bytes(self, key):
         raise KeyNotFoundStoreException(key=key, store=self)
@@ -270,7 +272,7 @@ class FileStore(Store):
             metadata, key=key, is_dir=is_dir, data=data, update=update
         )
         metadata["fileinfo"]["filesystem_path"] = str(self.path_for_key(key).resolve())
-        return metadata
+        return Metadata(metadata).as_dict()
 
     def path_for_key(self, key):
         if key in (None, ""):
@@ -301,15 +303,29 @@ class FileStore(Store):
             if self.path_for_key(key).exists():
                 if self.metadata_path_for_key(key).exists():
                     with open(self.metadata_path_for_key(key)) as f:
-                        metadata.update(
-                            json.loads(f.read())
-                        )
+                        try:
+                            metadata.update(
+                                json.loads(f.read())
+                            )
+                        except:
+                            traceback.print_exc()
+                            print(f"Removing {key} due to corrupted metadata (a)")
+                            self.remove(key)
+                            raise KeyNotFoundStoreException(key=key, store=self)
+
             else:
                 if self.metadata_path_for_key(key).exists():
                     with open(self.metadata_path_for_key(key)) as f:
-                        metadata.update(
-                            json.loads(f.read())
-                        )
+                        try:
+                            metadata.update(
+                                json.loads(f.read())
+                            )
+                        except:
+                            traceback.print_exc()
+                            print(f"Removing {key} due to corrupted metadata (b)")
+                            self.remove(key)
+                            raise KeyNotFoundStoreException(key=key, store=self)
+
                 else:
                     raise KeyNotFoundStoreException(key=key, store=self)
         return self.finalize_metadata(metadata, key=key, is_dir=False)
@@ -1020,14 +1036,27 @@ class FileSystemStore(Store):
         else:
             if self.fs.exists(self.path_for_key(key)):
                 if self.fs.exists(self.metadata_path_for_key(key)):
-                    metadata.update(
-                        json.loads(self.fs.readtext(self.metadata_path_for_key(key)))
-                    )
+                    try:
+                        metadata.update(
+                            json.loads(self.fs.readtext(self.metadata_path_for_key(key)))
+                        )
+                    except:
+                        traceback.print_exc()
+                        print(f"Removing {key} due to corrupted metadata (c)")
+                        self.remove(key)
+                        raise KeyNotFoundStoreException(key=key, store=self)
+
             else:
                 if self.fs.exists(self.metadata_path_for_key(key)):
-                    metadata.update(
-                        json.loads(self.fs.readtext(self.metadata_path_for_key(key)))
-                    )
+                    try:
+                        metadata.update(
+                            json.loads(self.fs.readtext(self.metadata_path_for_key(key)))
+                        )
+                    except:
+                        traceback.print_exc()
+                        print(f"Removing {key} due to corrupted metadata (d)")
+                        self.remove(key)
+                        raise KeyNotFoundStoreException(key=key, store=self)
                 else:
                     raise KeyNotFoundStoreException(key=key, store=self)
             return self.finalize_metadata(metadata, key, is_dir=False)

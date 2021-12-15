@@ -22,13 +22,14 @@
 ## Server, Backend
 
 - [ ] a faster server (FastAPI?)
+- [ ] update tornado backend
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
-- [ ] unified metadata api for cache and store
+- [x] unified metadata api for cache and store
 
 ## Store and Cache enhancements
 
-- [ ] deal with corrupted metadata in store
+- [x] deal with corrupted metadata in store
 - [ ] key tracing
 - [ ] command/query to zip store directory
 - [ ] encoded store

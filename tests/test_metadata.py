@@ -4,7 +4,8 @@
 Unit tests for LiQuer metadata.
 """
 import pytest
-from liquer.metadata import Metadata, get_stored_metadata
+from liquer.metadata import Metadata
+from liquer.tools import get_stored_metadata
 
 
 class TestMetadata:

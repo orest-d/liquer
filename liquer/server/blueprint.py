@@ -295,10 +295,10 @@ def store_set_metadata(query):
 
 @app.route("/api/stored_metadata/<path:query>", methods=["GET"])
 def get_stored_metadata(query):
-    store = get_store()
-    metadata = store.get_metadata(query)
+    """Get metadata stored in a store or cache"""
+    import liquer.tools
+    metadata = liquer.tools.get_stored_metadata(query)
     return jsonify(metadata)
-
 
 @app.route("/api/store/remove/<path:query>")
 def store_remove(query):
