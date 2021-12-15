@@ -5,6 +5,7 @@ nav:
   - Query syntax: 'query.md'
   - General guide : 'guide.md'
 - Examples : 'examples.md'
+- API: 'api.md'
 
 plugins:
 - search

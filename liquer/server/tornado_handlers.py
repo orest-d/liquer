@@ -7,7 +7,7 @@ class LiquerIndexHandler(h.LiquerIndexHandler, tornado.web.RequestHandler):
     pass
 
 
-class LiquerJsHandler(h.LiquerIndexJsHandler, tornado.web.RequestHandler):
+class LiquerJsHandler(h.LiquerJsHandler, tornado.web.RequestHandler):
     pass
 
 

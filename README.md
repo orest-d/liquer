@@ -54,6 +54,7 @@ pip install liquer-framework
 - metadata handling refactored to a separate metadata module, the refactoring is ongoing
 - lq_keras fixed, now depends on a more recent keras
 - liquer.ext.midi removed, code moved to an example
+- liquer.server.jupyter removed, to be reimplemented in a separate project (archived in liquer-prototyping)
 
 ### New features
 - API documentation improved on multiple places
