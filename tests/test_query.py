@@ -314,7 +314,7 @@ class TestQuery:
 
     def test_recipe_store(self):
         import liquer.store as st
-        import liquer.context as c
+        import liquer.recipes as r
 
         reset_command_registry()
 
@@ -322,14 +322,14 @@ class TestQuery:
         def hello():
             return "Hello"
 
-        store = c.RecipeStore(st.MemoryStore())
+        store = r.RecipeStore(st.MemoryStore())
         store.mount_recipe("my/hello.txt", "hello")
         assert store.contains("my/hello.txt")
         assert store.get_bytes("my/hello.txt") == b"Hello"
 
     def test_recipe_spec_store(self):
         import liquer.store as st
-        import liquer.context as c
+        import liquer.recipes as r
 
         reset_command_registry()
 
@@ -337,7 +337,7 @@ class TestQuery:
         def hello():
             return "Hello"
 
-        store = c.RecipeSpecStore(st.MemoryStore())
+        store = r.RecipeSpecStore(st.MemoryStore())
         store.store(
             "results/recipes.yaml",
             b"""

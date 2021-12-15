@@ -5,6 +5,7 @@ Unit tests for LiQuer execution context.
 """
 import pytest
 from liquer.context import *
+from liquer.recipes import *
 from liquer.parser import ActionRequest
 from liquer.state import State, set_var
 from liquer.commands import reset_command_registry, command, first_command
