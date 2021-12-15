@@ -64,6 +64,9 @@
 - [ ] refactor recipes to make them modular
 - [ ] database access in recipes
 - [ ] parametric recipes - recipe templates
+- [ ] CWD
+- [ ] multiple files created in recipe
+- [ ] recipe version
 - [x] more powerful recipes - description and url/file links, nested structure ?
 - [x] ignore dot directories in recipes store in order to support jupyter notebooks
 - [ ] volatile recipes

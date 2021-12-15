@@ -8,12 +8,28 @@ import pandas as pd
 from liquer.query import evaluate
 from liquer.parser import encode_token
 from liquer.cache import set_cache, FileCache
+import importlib
 import os.path
 import inspect
 import tempfile
 
 
 class TestHXL:
+    @classmethod
+    def setup_class(cls):
+        from liquer.commands import reset_command_registry
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+
+        reset_command_registry()  # prevent double-registration
+        # Hack to enforce registering of the commands
+        importlib.reload(liquer.ext.lq_pandas)
+
+    @classmethod
+    def teardown_class(cls):
+        from liquer.commands import reset_command_registry
+
+        reset_command_registry()
+
     def test_from(self, httpserver):
         import liquer.ext.lq_hxl  # register HXL commands and state type
 

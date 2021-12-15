@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-Unit tests for LiQuer pandas support.
+Unit tests for LiQuer polars support.
 """
 import pandas as pd
 import polars as pl
@@ -51,4 +51,4 @@ class TestPolars:
         filename = encode_token(
             os.path.dirname(inspect.getfile(self.__class__)) + "/test.csv"
         )
-        evaluate_and_save(f"df_from-{filename}/polars_df/test.parquet")
+        evaluate_and_save(f"df_from-{filename}/polars_df/test.parquet", target_directory=".")
