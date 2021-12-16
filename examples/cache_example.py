@@ -30,7 +30,7 @@ if __name__ == "__main__":
         SQLCache.from_sqlite("cache_b.db").if_attribute_equal("my_cache","b") +
         MemoryCache() # Everything else 
     )
-    evaluate_and_save("square/square.csv", target_directory=".")
-    evaluate_and_save("cube/cube.csv", target_directory=".")
-    evaluate_and_save("square/square.csv", target_directory=".") # from cache a
-    evaluate_and_save("cube/cube.csv", target_directory=".") # from cache b
+    evaluate_and_save("square/square.csv")
+    evaluate_and_save("cube/cube.csv")
+    evaluate_and_save("square/square.csv") # from cache a
+    evaluate_and_save("cube/cube.csv") # from cache b

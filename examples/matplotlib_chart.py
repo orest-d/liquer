@@ -45,7 +45,7 @@ def sin_cos_chart():
     return fig
 
 if __name__ == '__main__':
-    evaluate_and_save("data/mpl-xy-xcol-ycol/matplotlib_chart.png", target_directory=".")
-#    evaluate_and_save("sin_cos_chart/sin_cos_chart.png", target_directory=".")
-#    evaluate_and_save("sin_cos_chart/sin_cos_chart.pdf", target_directory=".")
+    evaluate_and_save("data/mpl-xy-xcol-ycol/matplotlib_chart.png")
+#    evaluate_and_save("sin_cos_chart/sin_cos_chart.png")
+#    evaluate_and_save("sin_cos_chart/sin_cos_chart.pdf")
     app.run()

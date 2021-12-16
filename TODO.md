@@ -76,7 +76,7 @@
 - [x] sweetviz support
 - [x] polars support
 - [ ] spark support - spark dataframes
-- [ ] python-pptx integration
+- [x] python-pptx integration
 - [ ] d-tale support
 - [ ] markdown support
 - [x] datafusion support - context and sql
@@ -86,6 +86,7 @@
 - [x] integrate pointcloud explorer - see [Pointcloud Explorer](https://github.com/orest-d/pointcloud-viewer-rs)
 - [ ] SQL cache working on Hive
 - [ ] pandas series and groupby objects
+- [ ] geopandas
 
 ## Core functionality and Metadata
 

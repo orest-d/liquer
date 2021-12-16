@@ -23,8 +23,8 @@ if __name__=="__main__":
 #    evaluate_and_save("hello/greet/hello_greet.txt", target_directory=".")
 #    evaluate_and_save("hello/greet-everybody/hello_greet_everybody.txt", target_directory=".")
 
-    evaluate_and_save_in_background("hello/greet/hello_greet.txt", target_directory=".")
-    evaluate_and_save_in_background("hello/greet-everybody/hello_greet_everybody.txt", target_directory=".")
+    evaluate_and_save_in_background("hello/greet/hello_greet.txt")
+    evaluate_and_save_in_background("hello/greet-everybody/hello_greet_everybody.txt")
 
     get_pool().close()
     get_pool().join()

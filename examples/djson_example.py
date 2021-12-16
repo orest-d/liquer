@@ -15,7 +15,7 @@ def test():
     """
     return dict(hello="world", df=pd.DataFrame(dict(a=[1,2], b=[3,4])))
 
-evaluate_and_save("test/test.djson", target_directory=".")
+evaluate_and_save("test/test.djson")
 
 d = decode_state_data(open("test.djson","rb").read(),"dictionary","djson")
 print(d)

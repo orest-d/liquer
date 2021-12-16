@@ -955,6 +955,9 @@ class Context(MetadataContextMixin, object):
         Returns a state.
         """
 
+        if target_directory==None and target_file==None and target_resource_directory==None and store==None:
+            target_directory = "."
+
         print(f"*** Evaluate and save {query} started")
         state = self.evaluate(query)
         if state.is_error:

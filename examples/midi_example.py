@@ -48,4 +48,4 @@ def pentatonic():
     return df
     
 
-evaluate_and_save("ns-midi/pentatonic/df_as_midi/pentatonic.mid", target_directory=".")
+evaluate_and_save("ns-midi/pentatonic/df_as_midi/pentatonic.mid")
