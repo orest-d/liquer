@@ -26,6 +26,7 @@
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
 - [x] unified metadata api for cache and store
+- [ ] change /api/debug-json to /api/metadata
 
 ## Store and Cache enhancements
 
@@ -86,7 +87,7 @@
 - [x] integrate pointcloud explorer - see [Pointcloud Explorer](https://github.com/orest-d/pointcloud-viewer-rs)
 - [ ] SQL cache working on Hive
 - [ ] pandas series and groupby objects
-- [ ] geopandas
+- [ ] geopandas and folium
 
 ## Core functionality and Metadata
 
