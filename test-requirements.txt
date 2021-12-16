@@ -15,4 +15,5 @@ tornado
 mkdocs
 mkdocstrings
 pytkdocs
+python-pptx
 -r requirements.txt

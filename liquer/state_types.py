@@ -125,7 +125,7 @@ def encode_state_data(data, extension=None):
     Returns a tuple with binary representation of the data, mime type and state type identifier.
     """
     reg = state_types_registry()
-    t = reg.get(get_type_qualname(type(data))) 
+    t = reg.get(get_type_qualname(type(data)))
     b, mime = t.as_bytes(data, extension=extension)
     return b, mime, t.identifier()
 
