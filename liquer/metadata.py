@@ -13,7 +13,9 @@ class Metadata:
     High-level logging functionality into the metadata is provided as well. 
     """
 
-    def __init__(self, metadata={}):
+    def __init__(self, metadata=None):
+        if metadata is None:
+            metadata={}
         self.set_metadata(metadata)
 
     @classmethod

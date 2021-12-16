@@ -268,6 +268,7 @@ class TestQuery:
             evaluate("a/b/-/expected").get()
             assert False
         except Exception as e:
+            traceback.print_exc()
             assert e.query == "a/b/-/expected"
             assert e.position.offset == 6
         try:
@@ -315,8 +316,10 @@ class TestQuery:
     def test_recipe_store(self):
         import liquer.store as st
         import liquer.recipes as r
+        from liquer.cache import MemoryCache, set_cache, get_cache
 
         reset_command_registry()
+        set_cache(None)
 
         @first_command
         def hello():
@@ -330,8 +333,10 @@ class TestQuery:
     def test_recipe_spec_store(self):
         import liquer.store as st
         import liquer.recipes as r
+        from liquer.cache import MemoryCache, set_cache, get_cache
 
         reset_command_registry()
+        set_cache(None)
 
         @first_command
         def hello():

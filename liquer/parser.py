@@ -614,9 +614,13 @@ class Query(object):
         return Query(self.segments + [tq], absolute=self.absolute)
 
     def encode(self):
-        return ("/" if self.absolute else "") + "/".join(
+        q=("/" if self.absolute else "") + "/".join(
             x.encode() for x in self.segments
         )
+        if self.is_resource_query():
+            if not q.startswith("-"):
+                q="-R/"+q
+        return q
 
     def __repr__(self):
         return f"""Query(

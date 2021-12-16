@@ -106,16 +106,6 @@ class MetadataContextMixin:
                 title = ""
             else:
                 p = parse(self.raw_query)
-                if (
-                    p.filename() is not None
-                    and self.parent_context is not None
-                    and self.parent_context.raw_query is not None
-                    and self.raw_query
-                    == self.parent_context.raw_query + "/" + p.filename()
-                ):
-                    title = self.parent_context.metadata().get("title")
-                    if description is None:
-                        description = self.parent_context.metadata().get("description")
                 if title in ("", None):
                     title = p.filename() or ""
 
@@ -172,7 +162,7 @@ class MetadataContextMixin:
                 d = dict(origin=self.raw_query, **d)
             self.parent_context.log_child_dict(d)
         return self
-        
+
     def log_action(self, qv, number=0):
         """Log a command"""
         if isinstance(qv, ActionRequest):
@@ -232,11 +222,19 @@ class MetadataContextMixin:
             self.log_dict(dict(kind="debug", message=message))
         return self
 
+    @property
+    def raw_query(self):
+        return self._metadata.query
+
+    @raw_query.setter
+    def raw_query(self, value):
+        self._metadata.query = value
+
 class Context(MetadataContextMixin, object):
-    def __init__(self, parent_context=None, debug=False):
+    def __init__(self, parent_context=None, debug=True):
         self.parent_context = parent_context  # parent context - when in child context
 
-        self.raw_query = None  # String with the evaluated query
+#        self.raw_query = None  # String with the evaluated query
         self.query = None  # Query object of the evaluated query
         self.status = Status.NONE  # Status: ready, error...
         self.is_error = False  # True is evaluation failed
@@ -587,6 +585,7 @@ class Context(MetadataContextMixin, object):
                 query=self.raw_query,
             )
         else:
+#            self._metadata.add_command_dependency(ns, cmd_metadata, detect_collisions=False) # TODO: Fix the collisions issue
             parameters = []
             self.status = Status.EVALUATING_DEPENDENCIES
             self.store_metadata(force=True)
@@ -830,7 +829,8 @@ class Context(MetadataContextMixin, object):
         """
         self.enable_store_metadata = False  # Prevents overwriting cache with metadata
         self.status = Status.EVALUATION
-        self.debug(f"EVALUATE {query}")
+        self.debug(f"EVALUATE {query} ")
+
         self.vars = Vars(vars_clone())
 
         if self.query is not None:
@@ -851,7 +851,8 @@ class Context(MetadataContextMixin, object):
             self.enable_store_metadata = False
             return state
 
-        self.raw_query, query = self.to_query(query)
+        raw_query, query = self.to_query(query)
+        self.raw_query=raw_query
         self.query = query
         self.store_key = store_key
         self.store_to = store_to
