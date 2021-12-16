@@ -585,7 +585,7 @@ class Context(MetadataContextMixin, object):
                 query=self.raw_query,
             )
         else:
-#            self._metadata.add_command_dependency(ns, cmd_metadata, detect_collisions=False) # TODO: Fix the collisions issue
+            self._metadata.add_command_dependency(ns, cmd_metadata)
             parameters = []
             self.status = Status.EVALUATING_DEPENDENCIES
             self.store_metadata(force=True)
