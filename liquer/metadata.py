@@ -21,17 +21,25 @@ class Metadata:
         return cls(json.loads(string))
 
     def set_metadata(self, metadata):
+        """Fills the missing fields and sets the metadata from a dictionary"""
         if "log" not in metadata:
             metadata["log"] = []
+        if "child_log" not in metadata:
+            metadata["child_log"] = []
         if "query" not in metadata:
             metadata["query"] = None
         if "status" not in metadata:
             metadata["status"] = Status.NONE.value
+        if "message" not in metadata:
+            metadata["message"] = ""
         if "is_error" not in metadata:
             metadata["is_error"] = False
         metadata["dependencies"] = Dependencies(metadata.get("dependencies",dict(query=metadata["query"]))).as_dict()
         self.metadata = metadata
         return self
+
+    def get(self, key, default=None):
+        return self.metadata.get(key, default)
 
     @property
     def query(self):
@@ -61,6 +69,14 @@ class Metadata:
         self.metadata["status"] = value
         if value == Status.ERROR.value:
             self.metadata["is_error"] = True
+
+    @property
+    def message(self):
+        return self.metadata["message"]
+
+    @message.setter
+    def message(self, value):
+        self.metadata["message"] = value
 
     @property
     def is_error(self):
@@ -93,6 +109,8 @@ class Metadata:
         "Put dictionary with a log entry into the log"
         d["timestamp"] = timestamp()
         self.log.append(d)
+        if "message" in d:
+            self.message = d["message"]
         return self
 
     def error(self, message, position=None, query=None):

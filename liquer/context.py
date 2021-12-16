@@ -96,53 +96,9 @@ def get_context(context=None):
     else:
         return context
 
-
-class Context(object):
-    def __init__(self, parent_context=None, debug=False):
-        self.parent_context = parent_context  # parent context - when in child context
-
-        self.raw_query = None  # String with the evaluated query
-        self.query = None  # Query object of the evaluated query
-        self.status = Status.NONE  # Status: ready, error...
-        self.is_error = False  # True is evaluation failed
-
-        self.started = ""  # Evaluation start time
-        self.created = ""  # Created time (evaluation finished)
-
-        self.direct_subqueries = (
-            []
-        )  # list of subqueries specified as dictionaries with description and query
-        self.parent_query = None  # parent query or None
-        self.argument_queries = (
-            []
-        )  # list of argument subqueries specified as dictionaries with description and query
-
-        self.progress_indicators = []  # progress indicators as a list of dictionaries
-        self.log = []  # log of messages as a list of dictionaries
-        self.child_progress_indicators = []  # progress indicator of a child
-        self.child_log = []  # log of messages from child queries
-        self.message = ""  # Last message from the log
-        self.debug_messages = debug  # Turn the debug messages on/off
-        self.caching = True  # caching of the results enabled
-        self.enable_store_metadata = True  # flag to controll storing of metadata
-
-        self.last_report_time = None  # internal time stamp of the last report
-        self._progress_indicator_identifier = (
-            1  # counter for creating unique progress identifiers
-        )
-        self.description = ""
-        self.title = None
-        self.mimetype = None
-
-        self.vars = Vars(vars_clone())
-        self.html_preview = ""
-        self.store_key = None
-        self.store_to = None
-
-    def new_empty(self):
-        return Context(debug=self.debug_messages)
-
+class MetadataContextMixin:
     def metadata(self):
+        metadata = self._metadata.as_dict()
         title = self.title
         description = self.description
         if title is None:
@@ -171,17 +127,17 @@ class Context(object):
                 else:
                     mimetype = mimetype_from_extension(self.query.extension())
 
-        message = self.message
+        message = self._metadata.message
         if message in (None, ""):
-            log = self.log
+            log = self._metadata.get("log",[])
             if len(log):
                 message = log[-1]["message"]
         if message in (None, ""):
-            log = self.child_log
+            log = self._metadata.get("child_log",[])
             if len(log):
                 message = log[-1]["message"]
 
-        return dict(
+        metadata.update(dict(
             status=self.status.value,
             title=title,
             description=description,
@@ -189,7 +145,7 @@ class Context(object):
             query=self.raw_query,
             parent_query=self.parent_query,
             argument_queries=self.argument_queries,
-            log=self.log[:],
+#            log=self.log[:],
             is_error=self.is_error,
             direct_subqueries=self.direct_subqueries[:],
             progress_indicators=self.progress_indicators[:],
@@ -203,7 +159,126 @@ class Context(object):
             vars=dict(self.vars),
             html_preview=self.html_preview,
             side_effect=False,
+        ))
+        return metadata
+
+    def log_dict(self, d):
+        "Put dictionary with a log entry into the log"
+        d["timestamp"] = timestamp()
+        self._metadata.log_dict(d)
+        self.store_metadata(force=(d.get("kind") == "error"))
+        if self.parent_context is not None:
+            if d.get("origin") is None:
+                d = dict(origin=self.raw_query, **d)
+            self.parent_context.log_child_dict(d)
+        return self
+        
+    def log_action(self, qv, number=0):
+        """Log a command"""
+        if isinstance(qv, ActionRequest):
+            qv = qv.to_list()
+        return self.log_dict(dict(kind="command", qv=qv, command_number=number))
+
+    def error(self, message, position=None, query=None):
+        """Log an error message"""
+        self.is_error = True
+        self.status = Status.ERROR
+        if position is None:
+            print(f"{log_time()} ERROR:    ", message)
+        else:
+            print(f"{log_time()} ERROR:    ", message, f" at {position}")
+        return self.log_dict(
+            dict(
+                kind="error",
+                message=message,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
         )
+
+    def warning(self, message, traceback=None):
+        """Log a warning message"""
+        print(f"{log_time()} WARNING:  ", message)
+        return self.log_dict(dict(kind="warning", message=message, traceback=traceback))
+
+    def exception(self, message, traceback, position=None, query=None):
+        """Log an exception"""
+        self.is_error = True
+        self.status = Status.ERROR
+        if position is None:
+            print(f"{log_time()} EXCEPTION:", message)
+        else:
+            print(f"{log_time()} EXCEPTION:", message, f" at {position}")
+        return self.log_dict(
+            dict(
+                kind="error",
+                message=message,
+                traceback=traceback,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def info(self, message):
+        """Log a message (info)"""
+        print(f"{log_time()} INFO:     ", message)
+        self.log_dict(dict(kind="info", message=message))
+        return self
+
+    def debug(self, message):
+        """Log a message (info)"""
+        if self.debug_messages:
+            print(f"{log_time()} DEBUG:    ", message)
+            self.log_dict(dict(kind="debug", message=message))
+        return self
+
+class Context(MetadataContextMixin, object):
+    def __init__(self, parent_context=None, debug=False):
+        self.parent_context = parent_context  # parent context - when in child context
+
+        self.raw_query = None  # String with the evaluated query
+        self.query = None  # Query object of the evaluated query
+        self.status = Status.NONE  # Status: ready, error...
+        self.is_error = False  # True is evaluation failed
+
+        self.started = ""  # Evaluation start time
+        self.created = ""  # Created time (evaluation finished)
+
+        self.direct_subqueries = (
+            []
+        )  # list of subqueries specified as dictionaries with description and query
+        self.parent_query = None  # parent query or None
+        self.argument_queries = (
+            []
+        )  # list of argument subqueries specified as dictionaries with description and query
+
+        self.progress_indicators = []  # progress indicators as a list of dictionaries
+        #self.log = []  # log of messages as a list of dictionaries
+        self.child_progress_indicators = []  # progress indicator of a child
+        self.child_log = []  # log of messages from child queries
+        self.message = ""  # Last message from the log
+        self.debug_messages = debug  # Turn the debug messages on/off
+        self.caching = True  # caching of the results enabled
+        self.enable_store_metadata = True  # flag to controll storing of metadata
+
+        self.last_report_time = None  # internal time stamp of the last report
+        self._progress_indicator_identifier = (
+            1  # counter for creating unique progress identifiers
+        )
+        self.description = ""
+        self.title = None
+        self.mimetype = None
+
+        self.vars = Vars(vars_clone())
+        self.html_preview = ""
+        self.store_key = None
+        self.store_to = None
+
+        self._metadata = Metadata()
+
+    def new_empty(self):
+        return Context(debug=self.debug_messages)
+
 
     def store_data(self, key, data):
         """Convenience method to store data in the store including metadata.
@@ -378,19 +453,6 @@ class Context(object):
             self.parent_context.log_child_progress(d)
         return self
 
-    def log_dict(self, d):
-        "Put dictionary with a log entry into the log"
-        d["timestamp"] = timestamp()
-        self.log.append(d)
-        if "message" in d:
-            self.message = d["message"]
-        self.store_metadata(force=(d.get("kind") == "error"))
-        if self.parent_context is not None:
-            if d.get("origin") is None:
-                d = dict(origin=self.raw_query, **d)
-            self.parent_context.log_child_dict(d)
-        return self
-
     def log_child_dict(self, d):
         "Put dictionary with a child log entry into the child log"
         d = dict(**d)
@@ -406,64 +468,6 @@ class Context(object):
             self.parent_context.log_child_dict(d)
         return self
 
-    def log_action(self, qv, number=0):
-        """Log a command"""
-        if isinstance(qv, ActionRequest):
-            qv = qv.to_list()
-        return self.log_dict(dict(kind="command", qv=qv, command_number=number))
-
-    def error(self, message, position=None, query=None):
-        """Log an error message"""
-        self.is_error = True
-        self.status = Status.ERROR
-        if position is None:
-            print(f"{log_time()} ERROR:    ", message)
-        else:
-            print(f"{log_time()} ERROR:    ", message, f" at {position}")
-        return self.log_dict(
-            dict(
-                kind="error",
-                message=message,
-                position=None if position is None else position.to_dict(),
-                query=query,
-            )
-        )
-
-    def warning(self, message, traceback=None):
-        """Log a warning message"""
-        print(f"{log_time()} WARNING:  ", message)
-        return self.log_dict(dict(kind="warning", message=message, traceback=traceback))
-
-    def exception(self, message, traceback, position=None, query=None):
-        """Log an exception"""
-        self.is_error = True
-        self.status = Status.ERROR
-        if position is None:
-            print(f"{log_time()} EXCEPTION:", message)
-        else:
-            print(f"{log_time()} EXCEPTION:", message, f" at {position}")
-        return self.log_dict(
-            dict(
-                kind="error",
-                message=message,
-                traceback=traceback,
-                position=None if position is None else position.to_dict(),
-                query=query,
-            )
-        )
-
-    def info(self, message):
-        """Log a message (info)"""
-        print(f"{log_time()} INFO:     ", message)
-        self.log_dict(dict(kind="info", message=message))
-        return self
-
-    def debug(self, message):
-        """Log a message (info)"""
-        if self.debug_messages:
-            print(f"{log_time()} DEBUG:    ", message)
-            self.log_dict(dict(kind="debug", message=message))
-        return self
 
     def child_context(self):
         return self.__class__(parent_context=self)
