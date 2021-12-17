@@ -114,9 +114,6 @@ def data_characteristics(data):
 
 def type_identifier_of(data):
     """Convenience function to return a state type identifier for supplied data"""
-    print("TYPE_IDENTIFIER",data)
-    print("  QUALNAME     ",get_type_qualname(type(data)))
-    print("  IDENTIFIER   ",state_types_registry().get(get_type_qualname(type(data))).identifier())
     return state_types_registry().get(get_type_qualname(type(data))).identifier()
 
 def state_type_from_type_identifier(type_identifier):
