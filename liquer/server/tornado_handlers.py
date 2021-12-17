@@ -116,6 +116,35 @@ class StoreMakedirHandler(h.StoreMakedirHandler, tornado.web.RequestHandler):
 #class DebugQueryHandler(h.DebugQueryHandler, tornado.web.RequestHandler):
 #    pass
 
+def url_mapping():
+    return [
+        (r"/liquer/api/commands.json", CommandsHandler),
+        (r"/liquer/submit/(.*)", SubmitHandler),
+        (r"/liquer/q/(.*)", QueryHandler),
+        (r"/liquer/api/cache/get/(.*)", CacheGetDataHandler),
+        (r"/liquer/api/cache/meta/(.*)", CacheMetadataHandler),
+        (r"/liquer/api/cache/remove/(.*)", CacheRemoveHandler),
+        (r"/liquer/api/cache/contains/(.*)", CacheContainsHandler),
+        (r"/liquer/api/cache/keys.json", CacheKeysHandler),
+        (r"/liquer/api/cache/clean", CacheCleanHandler),
+        (r"/liquer/api/commands.json", CommandsHandler),
+        (r"/liquer/api/debug-json/(.*)", GetMetadataHandler),
+        (r"/liquer/api/metadata/(.*)", GetMetadataHandler),
+        (r"/liquer/api/stored_metadata/(.*)", GetStoredMetadataHandler),
+        (r"/liquer/api/build", BuildHandler),
+        (r"/liquer/api/register_command", RegisterCommandHandler),
+        (r"/liquer/api/store/data/(.*)", StoreDataHandler),
+        (r"/liquer/api/store/metadata/(.*)", StoreMetadataHandler),
+        (r"/liquer/web/(.*)", WebStoreHandler),
+        (r"/liquer/api/store/remove/(.*)", StoreRemoveHandler),
+        (r"/liquer/api/store/removedir/(.*)", StoreRemovedirHandler),
+        (r"/liquer/api/store/contains/(.*)", StoreContainsHandler),
+        (r"/liquer/api/store/is_dir/(.*)", StoreIsDirHandler),
+        (r"/liquer/api/store/keys", StoreKeysHandler),
+        (r"/liquer/api/store/listdir/(.*)", StoreListdirHandler),
+        (r"/liquer/api/store/makedir/(.*)", StoreMakedirHandler),
+    ]
+
 if __name__ == "__main__":
     import liquer.ext.basic
     import liquer.ext.meta
@@ -135,32 +164,7 @@ if __name__ == "__main__":
     set_var("server", f"http://localhost:{port}")
 
     application = tornado.web.Application(
-        [
-            (r"/liquer/api/commands.json", CommandsHandler),
-            (r"/liquer/submit/(.*)", SubmitHandler),
-            (r"/liquer/q/(.*)", QueryHandler),
-            (r"/liquer/api/cache/get/(.*)", CacheGetDataHandler),
-            (r"/liquer/api/cache/meta/(.*)", CacheMetadataHandler),
-            (r"/liquer/api/cache/remove/(.*)", CacheRemoveHandler),
-            (r"/liquer/api/cache/contains/(.*)", CacheContainsHandler),
-            (r"/liquer/api/cache/keys.json", CacheKeysHandler),
-            (r"/liquer/api/cache/clean", CacheCleanHandler),
-            (r"/liquer/api/commands.json", CommandsHandler),
-            (r"/liquer/api/debug-json/(.*)", GetMetadataHandler),
-            (r"/liquer/api/metadata/(.*)", GetMetadataHandler),
-            (r"/liquer/api/stored_metadata/(.*)", GetStoredMetadataHandler),
-            (r"/liquer/api/build", BuildHandler),
-            (r"/liquer/api/register_command", RegisterCommandHandler),
-            (r"/liquer/api/store/data/(.*)", StoreDataHandler),
-            (r"/liquer/api/store/metadata/(.*)", StoreMetadataHandler),
-            (r"/liquer/web/(.*)", WebStoreHandler),
-            (r"/liquer/api/store/remove/(.*)", StoreRemoveHandler),
-            (r"/liquer/api/store/removedir/(.*)", StoreRemovedirHandler),
-            (r"/liquer/api/store/contains/(.*)", StoreContainsHandler),
-            (r"/liquer/api/store/is_dir/(.*)", StoreIsDirHandler),
-            (r"/liquer/api/store/keys", StoreKeysHandler),
-            (r"/liquer/api/store/listdir/(.*)", StoreListdirHandler),
-            (r"/liquer/api/store/makedir/(.*)", StoreMakedirHandler),
+        url_mapping() + [
             (
                 r"/static/(.*)",
                 tornado.web.StaticFileHandler,

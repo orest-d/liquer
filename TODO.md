@@ -22,7 +22,7 @@
 ## Server, Backend
 
 - [ ] a faster server (FastAPI?)
-- [ ] update tornado backend
+- [x] update tornado backend
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
 - [x] unified metadata api for cache and store
@@ -88,6 +88,7 @@
 - [ ] SQL cache working on Hive
 - [ ] pandas series and groupby objects
 - [ ] geopandas and folium
+- [ ] jinja and/or other templating engines
 
 ## Core functionality and Metadata
 

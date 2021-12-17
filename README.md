@@ -1,14 +1,30 @@
 # LiQuer (Link Query) 
 
-LiQuer is a minimalistic python framework on top of flask, which simplifies creation of web services and web interfaces,
-particularly in connection to data science: working with data frames, charts and reports.
-The core of LiQuer is a simplistic query language, that can represent a chain of transformations (*commands*)
-applied to an arbitrary data object (e.g. a dataframes, text, json, images). LiQuer query is safe to use inside URLs
-and is interpreted and executed by a LiQuer server that is available as a flask blueprint.
-LiQuer is very modular and designed to be extremely easy to extend (typically just by simple decorators and use of conventions).
-Results of LiQuer queries can be cached for added performance.
+LiQuer is a minimalistic python framework. LiQuer gives superpowers to python function:
+they can become part of a pipeline and become accessible over the web api, results can be cached, stored in a virtual file system, served via web api and eventually displayed in specialized web applications.
+LiQuer is something like an operating system for python functions.
+
+LiQuer's main focus is data-science, but due to its simplicity and universality it can be applied in many other domains.
+LiQuer simplifies creation of web services and web interfaces, working with data frames, charts and reports.
+
+The core of LiQuer is a query language, that represent a chain of transformations (*commands*)
+applied to an arbitrary data object (e.g. a dataframes, text, json, images or even music). LiQuer query is safe to use inside URLs and is interpreted and executed by a LiQuer server that is available as a flask blueprint.
+LiQuer is very modular and designed to be extremely easy to extend. It can be used with or without web interface,
+it can use either build-in web interface or host third party web applications.
+
+LiQuer currently it supports Flask and Tornado, drivers for other web framework can be easily implemented and thus LiQuer can integrate into many new or existing python web applications.
 
 Please visit [LiQuer website](https://orest-d.github.io/liquer/) for more info.
+
+# Features
+
+* Pipeline management via a flexible query language.
+* Advanced metadata handling: all the data is equipped with metadata containing status info, data description, log messages and other relevant information about a successfull or failed calculation.
+* Virtual file system allows to mount different data sources into a single file-system like tree.
+* Virtual file system may contain physical data, but as well recipes how to create the data. (A bit like makefiles.)
+* Optional flexible cache that may automatically store steps in a pipeline execution.
+* Web API allows to control all elements of the system: pipeline execution, cache, store and metadata.
+* Web interface makes it easier to access the functionality, quickly produce and inspect the data in the virtual filesystem and eventually visualize the data, create dashboards and reports.
 
 # Install
 
@@ -61,3 +77,4 @@ pip install liquer-framework
 - API documentation improved on multiple places
 - EXTERNAL status
 - Basic support for DataFusion and pptx-python
+- Tornado driver updated
