@@ -29,7 +29,7 @@ from liquer.util import timestamp
 from copy import deepcopy
 from liquer.metadata import Metadata
 
-from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException
+from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException, key_extension
 
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
@@ -231,7 +231,7 @@ class MetadataContextMixin:
         self._metadata.query = value
 
 class Context(MetadataContextMixin, object):
-    def __init__(self, parent_context=None, debug=True):
+    def __init__(self, parent_context=None, debug=False):
         self.parent_context = parent_context  # parent context - when in child context
 
 #        self.raw_query = None  # String with the evaluated query
@@ -287,15 +287,14 @@ class Context(MetadataContextMixin, object):
         """
         metadata = self.metadata()
         store = self.store()
-        v = store.key_name(key).split(".")
-        extension = v[-1] if len(v) > 1 else None
-        metadata["type_identifier"] = type_identifier
-        metadata["mimetype"] = mimetype
+        extension = key_extension(key)
         metadata["data_characteristics"] = data_characteristics(data)
         metadata["side_effect"] = True
         metadata["status"] = Status.SIDE_EFFECT.value
         try:
             b, mimetype, type_identifier = encode_state_data(data, extension=extension)
+            metadata["type_identifier"] = type_identifier
+            metadata["mimetype"] = mimetype
             store.store(key, b, metadata)
         except:
             traceback.print_exc()
@@ -633,6 +632,7 @@ class Context(MetadataContextMixin, object):
             arguments = [to_arg(a) for a in arguments]
 
         metadata = self.metadata()
+        metadata["type_identifier"]=state.type_identifier
         metadata["commands"] = metadata.get("commands", []) + [action.to_list()]
         try:
             cmd_metadata_d = cmd_metadata._asdict()

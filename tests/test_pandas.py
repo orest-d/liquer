@@ -77,6 +77,20 @@ class TestPandas:
             assert list(df.b) == [2, 4, 2, 4]
         set_cache(None)
 
+    def test_df_from(self):
+        import liquer.ext.lq_pandas  # register pandas commands and state type
+
+        filename = encode_token(
+            os.path.dirname(inspect.getfile(self.__class__)) + "/test.csv"
+        )
+        state = evaluate(f"df_from-{filename}")
+        df = state.get()
+        assert "a" in df.columns
+        assert "b" in df.columns
+        assert list(df.a) == [1,3]
+        assert list(df.b) == [2,4]
+        assert state.type_identifier == "dataframe"
+
     def test_eq(self):
         import liquer.ext.lq_pandas  # register pandas commands and state type
 

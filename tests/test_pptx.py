@@ -68,6 +68,7 @@ class TestPPTX:
 
 
         evaluate_and_save(f"make_presentation/add_slide/test.pptx",target_resource_directory="testdir")
+        assert store.get_metadata("testdir/test.pptx")["type_identifier"] == "pptx_presentation"
         prs = evaluate("testdir/test.pptx/-/dr/add_slide-Slide2").get()
         assert len(prs.slides)==3
  

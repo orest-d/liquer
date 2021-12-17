@@ -113,6 +113,26 @@ class StoreMixin:
     def mount(self, key, store):
         return MountPointStore(self).mount(key, store)
 
+
+def key_name(key):
+    if key in ("", None):
+        return ""
+    return str(key.split("/")[-1])
+
+def key_extension(key):
+    if key in ("", None):
+        return None
+    v = key_name(key).split(".")
+    if len(v)>=2:
+        return v[-1]
+    return None
+
+def join_key(key, name):
+    if key in ("", None):
+        return name
+    else:
+        return f"{key}/{name}"
+
 class Store(StoreMixin):
     MD5_CHECKSUM=True
     def parent_key(self, key):
@@ -121,15 +141,10 @@ class Store(StoreMixin):
         return "/".join(key.split("/")[:-1])
 
     def key_name(self, key):
-        if key in ("", None):
-            return ""
-        return str(key.split("/")[-1])
+        return key_name(key)
     
     def join_key(self, key, name):
-        if key in ("", None):
-            return name
-        else:
-            return f"{key}/{name}"
+        return join_key(key, name)
 
     def default_metadata(self, key, is_dir=False):
         if key is None:
@@ -137,7 +152,7 @@ class Store(StoreMixin):
 
         return dict(
             key=key,
-            fileinfo=dict(name=self.key_name(key), is_dir=is_dir, filesystem_path=None),
+            fileinfo=dict(name=key_name(key), is_dir=is_dir, filesystem_path=None),
         )
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
@@ -153,7 +168,7 @@ class Store(StoreMixin):
         if data is not None:
             metadata["created"]=metadata["updated"]
         metadata["fileinfo"] = metadata.get("fileinfo", {})
-        metadata["fileinfo"]["name"] = self.key_name(key)
+        metadata["fileinfo"]["name"] = key_name(key)
         metadata["fileinfo"]["is_dir"] = is_dir
         metadata["fileinfo"]["filesystem_path"] = metadata["fileinfo"].get(
             "filesystem_path"
@@ -163,12 +178,15 @@ class Store(StoreMixin):
             metadata["fileinfo"]["size"] = len(data)
             if self.MD5_CHECKSUM and type(data)==bytes:
                 metadata["fileinfo"]["md5"] = hashlib.md5(data).hexdigest()
-            
-        if "mimetype" not in metadata:
-            v = self.key_name(key).split(".")
-            mimetype = mimetype_from_extension(v[-1]) if len(v)>1 else "application/octet-stream"
+
+        if metadata.get("mimetype") is None:
+            mimetype = mimetype_from_extension(key_extension(key))
             metadata["mimetype"]=mimetype
-                
+
+        if metadata.get("type_identifier") is None:
+            type_identifier = type_identifier_from_extension(key_extension(key))
+            metadata["type_identifier"]=type_identifier
+
         return Metadata(metadata).as_dict()
 
     def get_bytes(self, key):
@@ -497,7 +515,7 @@ class MemoryStore(Store):
         if key in ("", None):
             return sorted(set(k.split("/")[0] for k in self.keys() if k.split("/")[0]!=""))
         if self.is_dir(key):
-            return [self.key_name(k) for k in self.keys() if self.parent_key(k) == key]
+            return [key_name(k) for k in self.keys() if self.parent_key(k) == key]
 
     def makedir(self, key):
         while key not in (None, ""):
@@ -1136,9 +1154,9 @@ class FileSystemStore(Store):
     def listdir(self, key):
         if self.is_dir(key):
             return [
-                self.key_name(d)
+                key_name(d)
                 for d in self.fs.listdir(self.path_for_key(key))
-                if self.key_name(d) != self.METADATA
+                if key_name(d) != self.METADATA
             ]
 
     def makedir(self, key):

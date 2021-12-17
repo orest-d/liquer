@@ -32,6 +32,8 @@ class Metadata:
             metadata["query"] = None
         if "status" not in metadata:
             metadata["status"] = Status.NONE.value
+        if "type_identifier" not in metadata:
+            metadata["type_identifier"] = None
         if "message" not in metadata:
             metadata["message"] = ""
         if "is_error" not in metadata:
@@ -71,6 +73,14 @@ class Metadata:
         self.metadata["status"] = value
         if value == Status.ERROR.value:
             self.metadata["is_error"] = True
+
+    @property
+    def type_identifier(self):
+        return self.metadata["type_identifier"]
+
+    @type_identifier.setter
+    def type_identifier(self, value):
+        self.metadata["type_identifier"] = value
 
     @property
     def message(self):

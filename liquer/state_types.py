@@ -77,6 +77,13 @@ class StateTypesRegistry(object):
         type_qualname = get_type_qualname(type_qualname)
         return self.state_types_dictionary.get(type_qualname, self.default_state_type)
 
+    def from_type_identifier(self, type_identifier):
+        """Get state type object for a qualified type name
+        If the qualified type name is not recognized, default_state_type is returned.
+        """
+        for x in self.state_types_dictionary.values():
+            if x.identifier() == type_identifier:
+                return x
 
 _state_types_registry = None
 
@@ -107,8 +114,15 @@ def data_characteristics(data):
 
 def type_identifier_of(data):
     """Convenience function to return a state type identifier for supplied data"""
+    print("TYPE_IDENTIFIER",data)
+    print("  QUALNAME     ",get_type_qualname(type(data)))
+    print("  IDENTIFIER   ",state_types_registry().get(get_type_qualname(type(data))).identifier())
     return state_types_registry().get(get_type_qualname(type(data))).identifier()
 
+def state_type_from_type_identifier(type_identifier):
+    """Convenience function to return a state type for supplied type identifier"""
+
+    return state_types_registry().from_type_identifier(type_identifier)
 
 def register_state_type(type_qualname, state_type):
     """Function to register new state type for a qualified type name
@@ -443,7 +457,7 @@ class TextStateType(StateType):
         return isinstance(data, str)
 
     def as_bytes(self, data, extension=None):
-        return data.encode("utf-8"), mimetype_from_extension(extension)
+        return data.encode("utf-8"), "text/plain"
 
     def from_bytes(self, b: bytes, extension=None):
         return b.decode("utf-8")

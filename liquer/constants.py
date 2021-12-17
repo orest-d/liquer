@@ -21,10 +21,10 @@ class Status(Enum):
     EVALUATING_PARENT = "parent"
     EVALUATION = "evaluation"
     EVALUATING_DEPENDENCIES = "dependencies"
-    READY = "ready"
     ERROR = "error"
-    EXPIRED = "expired"
     RECIPE = "recipe"
+    READY = "ready"
+    EXPIRED = "expired"
     EXTERNAL = "external"
     SIDE_EFFECT = "side-effect"
 
@@ -38,6 +38,7 @@ MIMETYPES = dict(
     md="text/markdown",
     xls="application/vnd.ms-excel",
     xlsx="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    pptx="application/vnd.openxmlformats-officedocument.presentationml.presentation",
     ods="application/vnd.oasis.opendocument.spreadsheet",
     tsv="text/tab-separated-values",
     csv="text/csv",
@@ -62,5 +63,28 @@ MIMETYPES = dict(
     eps="image/eps",
 )
 
+TYPE_IDENTIFIER_BY_EXTENSION = dict(
+    json="generic",
+    js="text",
+    txt="text",
+    html="text",
+    htm="text",
+    md="text",
+    xlsx="openpyxl_workbook",
+    pptx="pptx_presentation",
+    tsv="text",
+    csv="dataframe",
+    css="text",
+    svg="text",
+    b="bytes",
+    pkl="pickle",
+    pickle="pickle",
+    parquet="dataframe",
+    feather="dataframe",
+)
+
 def mimetype_from_extension(extension):
-    return MIMETYPES.get(extension, "text/plain")
+    return MIMETYPES.get(extension, "application/octet-stream")
+
+def type_identifier_from_extension(extension):
+    return TYPE_IDENTIFIER_BY_EXTENSION.get(extension)
