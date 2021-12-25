@@ -37,7 +37,7 @@
 - [ ] database store
 - [ ] cashing store (to be used e.g. with a database store)
 - [ ] metadata for external files in store
-- [ ] readonly store modifier
+- [x] readonly store modifier
 - [ ] store to_dict and from_dict
 - [ ] store with autobackup
 - [x] file-system paths and url links to physical file in store (when possible) 

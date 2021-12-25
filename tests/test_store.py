@@ -42,6 +42,30 @@ class TestStore:
         assert store.parent_key("a") == ""
         assert store.parent_key("a/b") == "a"
 
+    def test_read_only(self, store):
+        assert list(store.keys()) == []
+        store.store("a/b", b"test", dict(x="xx"))
+        ro = store.read_only()
+        assert ro.contains("a") is True
+        assert ro.contains("a/b") is True
+
+        assert ro.is_dir("a") is True
+        assert ro.is_dir("a/b") is False
+        assert ro.get_bytes("a/b") == b"test"
+        assert ro.get_metadata("a/b")["x"] == "xx"
+        assert ro.get_metadata("a")["fileinfo"]["is_dir"] == True
+        assert ro.get_metadata("a/b")["fileinfo"]["is_dir"] == False
+        assert sorted(ro.keys()) == ["a", "a/b"]
+        assert ro.listdir("a") == ["b"]
+        assert ro.listdir("") == ["a"]
+        with pytest.raises(ReadOnlyStoreException):
+            ro.remove("a/b")
+        with pytest.raises(ReadOnlyStoreException):
+            ro.removedir("a")
+        with pytest.raises(ReadOnlyStoreException):
+            ro.store("a/c", b"test", dict(x="xx"))
+        with pytest.raises(ReadOnlyStoreException):
+            ro.store_metadata("a/d", dict(x="xx"))
 
 class TestMemoryStore(TestStore):
     @pytest.fixture

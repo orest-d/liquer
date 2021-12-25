@@ -102,16 +102,34 @@ class KeyRouteNotFoundStoreException(StoreException):
     def __init__(self, message="Key route not found", key=None, store=None):
         super().__init__(message=message, key=key, store=store)
 
+class ReadOnlyStoreException(StoreException):
+    def __init__(self, message="Key is read only", key=None, store=None):
+        super().__init__(message=message, key=key, store=store)
 
 class StoreMixin:
     def with_overlay(self, overlay):
+        """Create an overlay over the store.
+        Overlay store will be consulted first, when the key is not supported or not found in the overlay,
+        the request will be passed to the current store (self).
+        Note: a.with_overlay(b) is the same as b.with_fallback(a). Both methods create an OverlayStore instance.
+        """
         return OverlayStore(overlay, self)
 
     def with_fallback(self, fallback):
+        """Create a fallback for the store.
+        When the key is not supported or not found in the current store (self),
+        request will be passed to fallback.
+        Note: a.with_overlay(b) is the same as b.with_fallback(a). Both methods create an OverlayStore instance.
+        """
         return OverlayStore(self, fallback)
 
     def mount(self, key, store):
+        """Mount a store in a mount-point"""
         return MountPointStore(self).mount(key, store)
+
+    def read_only(self):
+        """Create a read-only proxy for the store."""
+        return ReadOnlyStore(self)
 
 
 def key_name(key):
@@ -577,7 +595,7 @@ class ProxyStore(Store):
         return self._store.is_dir(key)
 
     def keys(self):
-        self._store.keys()
+        return self._store.keys()
 
     def listdir(self, key):
         return self._store.listdir(key)
@@ -599,6 +617,31 @@ class ProxyStore(Store):
     def __repr__(self):
         return f"ProxyStore({repr(self._store)})"
 
+
+class ReadOnlyStore(ProxyStore):
+    """Read only proxy to a store
+    """
+
+    def store(self, key, data, metadata):
+        raise ReadOnlyStoreException(key=key, store=self)
+
+    def store_metadata(self, key, metadata):
+        raise ReadOnlyStoreException(key=key, store=self)
+
+    def remove(self, key):
+        raise ReadOnlyStoreException(key=key, store=self)
+
+    def removedir(self, key):
+        raise ReadOnlyStoreException(key=key, store=self)
+
+    def makedir(self, key):
+        raise ReadOnlyStoreException(key=key, store=self)
+
+    def __str__(self):
+        return f"read only proxy of {self._store}"
+
+    def __repr__(self):
+        return f"ReadOnlyStore({repr(self._store)})"
 
 class OverlayStore(Store):
     """Overlay store combines two stores: overlay and fallback.
