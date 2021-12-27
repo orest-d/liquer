@@ -583,14 +583,8 @@ class NewRecipeSpecStore(Store):
             )
         metadata = recipe.metadata(key)
         metadata["status"] = Status.RECIPE.value
-        if metadata.get("query") is not None:
-            metadata["has_recipe"] = True
-            if self.recipes_info[key].get("recipes_directory") == self.LOCAL_RECIPES:
-                metadata["recipes_directory"] = ""
-            else:
-                metadata["recipes_directory"] = self.recipes_info[key].get(
-                    "recipes_directory"
-                )
+        metadata["has_recipe"] = True
+
         return metadata
 
     def is_supported(self, key):

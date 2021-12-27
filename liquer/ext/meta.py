@@ -250,7 +250,6 @@ def clean_recipes(metadata, recursive=False, context=None):
     key = metadata["key"]
     store=context.store()
     removed=[]
-
     if store.is_dir(key):
         if key in ("",None):
             if recursive:
