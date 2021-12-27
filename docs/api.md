@@ -1,0 +1,4 @@
+# API documentation
+
+::: liquer
+    :docstring:
