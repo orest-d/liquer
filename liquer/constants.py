@@ -66,6 +66,7 @@ MIMETYPES = dict(
 
 TYPE_IDENTIFIER_BY_EXTENSION = dict(
     json="generic",
+    djson="dictionary",
     js="text",
     txt="text",
     html="text",

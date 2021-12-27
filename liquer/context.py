@@ -972,7 +972,6 @@ class Context(MetadataContextMixin, object):
                 if store is None:
                     store = self.store()
 
-                print(state.metadata)
                 store.store_metadata(key, state.metadata)
 
         data = state.get()

@@ -12,7 +12,7 @@
 ### LiQuer-GUI project
 
 - [ ] dir info not properly refreshed
-- [ ] anchor
+- [x] anchor
 - [ ] display text, html and images properly
 - [ ] optionally load whole dataframe
 - [ ] store manager: reload dir
@@ -89,6 +89,12 @@
 - [ ] pandas series and groupby objects
 - [ ] geopandas and folium
 - [ ] jinja and/or other templating engines
+- [ ] onnx
+- [ ] TF Lite
+- [ ] pdf
+- [ ] epub
+- [ ] 3d formats stl, obj
+- [ ] gcode
 
 ## Core functionality and Metadata
 

@@ -66,7 +66,18 @@ class TestStore:
             ro.store("a/c", b"test", dict(x="xx"))
         with pytest.raises(ReadOnlyStoreException):
             ro.store_metadata("a/d", dict(x="xx"))
-
+    def test_to_root_key(self, store):
+        memory_store = MemoryStore()
+        s = store.mount("x", memory_store)
+        assert memory_store.to_root_key("y") == "x/y"
+    def test_root_store(self, store):
+        memory_store = MemoryStore()
+        s = store.mount("x", memory_store)
+        assert memory_store.to_root_key("y") == "x/y"
+        memory_store.root_store().store(memory_store.to_root_key("y"), b"test1",{})
+        assert s.get_bytes("x/y") == b"test1"
+        assert memory_store.get_bytes("y") == b"test1"
+        
 class TestMemoryStore(TestStore):
     @pytest.fixture
     def store(self, tmpdir):

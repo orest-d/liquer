@@ -78,3 +78,4 @@ pip install liquer-framework
 - EXTERNAL status
 - Basic support for DataFusion and pptx-python
 - Tornado driver updated
+- Read-only store proxy

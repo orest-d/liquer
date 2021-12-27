@@ -80,7 +80,8 @@ class StoreException(Exception):
     def __init__(self, message, key=None, store=None):
         self.original_message = message
         if key is not None:
-            message += f":\n  key: '{key}'"
+            k = key if store is None else store.to_root_key(key)
+            message += f":\n  key: '{k}'"
         if store is not None:
             message += f"  store: {store}"
 
@@ -149,19 +150,29 @@ def join_key(key, name):
     if key in ("", None):
         return name
     else:
-        return f"{key}/{name}"
+        if key.endswith("/"):
+            return f"{key}{name}"
+        else:
+            return f"{key}/{name}"
+
+def parent_key(key):
+    if key == "":
+        return None
+    return "/".join(key.split("/")[:-1])
 
 class Store(StoreMixin):
+    parent_store=None
     MD5_CHECKSUM=True
     def parent_key(self, key):
-        if key == "":
-            return None
-        return "/".join(key.split("/")[:-1])
+        "For backwards compatibility only; use parent_key function"
+        return parent_key(key)
 
     def key_name(self, key):
+        "For backwards compatibility only; use key_name function"
         return key_name(key)
     
     def join_key(self, key, name):
+        "For backwards compatibility only; use join_key function"
         return join_key(key, name)
 
     def default_metadata(self, key, is_dir=False):
@@ -286,6 +297,25 @@ class Store(StoreMixin):
     def on_removed(self, key):
         """Event handler called when the data or directory is removed."""
         pass
+
+    def to_root_key(self, key):
+        """Convert local store key to a key in a root store.
+        This is can be used e.g. to convert a key valid in a mounted (child) store to
+        a key of a root store. 
+        The to_root_key(key) in the root_store() should point to the same object as key in self.
+        """
+        if self.parent_store is None:
+            return key
+        return self.parent_store.to_root_key(key)
+
+    def root_store(self):
+        """Get the root store.
+        Root store is the highest level store in the store system.
+        The to_root_key(key) in the root_store() should point to the same object as key in self.
+        """
+        if self.parent_store is None:
+            return self
+        return self.parent_store.root_store()
 
     def __str__(self):
         return f"Empty store"
@@ -836,9 +866,20 @@ class RoutingStore(Store):
 class KeyTranslatingStore(Store):
     def __init__(self, store):
         self.substore = store
+        self.substore.parent_store=self
 
     def translate_key(self, key, inverse=False):
         return key
+
+    def to_root_key(self, key):
+        """Convert local store key to a key in a root store.
+        This is can be used e.g. to convert a key valid in a mounted (child) store to
+        a key of a root store. 
+        """
+        key = self.translate_key(key, inverse=True)
+        if self.parent_store is None:
+            return key
+        return self.parent_store.to_root_key(key)
 
     def is_supported(self, key):
         try:
@@ -911,6 +952,7 @@ class PrefixStore(KeyTranslatingStore):
     def __init__(self, store, prefix):
         self.substore = store
         self.prefix = prefix
+        self.substore.parent_store=self
 
     def translate_key(self, key, inverse=False):
         prefix = self.prefix + "/"

@@ -216,8 +216,6 @@ class GetStoredMetadataHandler:
     def get(self, query):
         import liquer.tools
         metadata = liquer.tools.get_stored_metadata(query)
-        state = evaluate(query)
-        state_json = state.as_dict()
         self.write(json.dumps(metadata))
 
 
@@ -387,7 +385,7 @@ class WebStoreHandler:
 
 #/api/store/remove/<path:query>
 class StoreRemoveHandler:
-    """Debug query - returns metadata from a state after a query is evaluated"""
+    """Handler to remove data from store"""
     def prepare(self):
         header = "Content-Type"
         body = "application/json"

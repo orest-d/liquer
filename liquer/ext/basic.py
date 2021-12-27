@@ -5,7 +5,7 @@ from liquer.commands import command, first_command
 from liquer.parser import encode, decode
 from liquer.state_types import encode_state_data
 from liquer.cache import get_cache
-from liquer.constants import Status
+from liquer.constants import Status, type_identifier_from_extension
 
 
 @command
@@ -224,28 +224,8 @@ def dr(state, type_identifier=None, extension=None, context=None):
                 extension = v[-1]
                 context.info(f"Extension: {extension} - from key '{key}'")
 
-    type_identifier_by_extension = dict(
-        json="generic",
-        djson="dictionary",
-        js="text",
-        txt="text",
-        html="text",
-        htm="text",
-        md="text",
-        xls="dataframe",
-        xlsx="dataframe",
-        ods="dataframe",
-        tsv="dataframe",
-        csv="dataframe",
-        css="text",
-        svg="text",
-        pkl="pickle",
-        pickle="pickle",
-        parquet="dataframe",
-        feather="dataframe",
-    )
     if type_identifier in (None, "bytes"):
-        type_identifier = type_identifier_by_extension.get(extension)
+        type_identifier = type_identifier_from_extension(extension)
         context.info(
             f"Type identifier: {type_identifier} - from extension '{extension}'")
 
