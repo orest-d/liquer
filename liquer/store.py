@@ -138,6 +138,14 @@ def key_name(key):
         return ""
     return str(key.split("/")[-1])
 
+def key_name_without_extension(key):
+    if key in ("", None):
+        return None
+    v = key_name(key).split(".")
+    if len(v)>=2:
+        return v[0]
+    return None
+
 def key_extension(key):
     if key in ("", None):
         return None

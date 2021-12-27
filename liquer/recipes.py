@@ -27,7 +27,7 @@ class RecipeRegistry(object):
         self.recipe_dictionary = {}
     def register(self, recipe):
         if recipe.recipe_type() in self.recipe_dictionary:
-            raise Exception(f"Recipe type '{recipe.recipe_type()}' already registered")
+            print(f"WARNING: Recipe type '{recipe.recipe_type()}' already registered")
         self.recipe_dictionary[recipe.recipe_type()] = recipe
     def from_dict(self, d):
         if type(d) != dict:
@@ -63,7 +63,7 @@ class Recipe:
                 t=d["type"]
                 raise Exception(f"Recipe {self.recipe_type()} received definition with type='{t}'")
         self.data=d
-
+    
     @classmethod
     def recipe_type(self):
         return "empty"
@@ -71,6 +71,9 @@ class Recipe:
     @classmethod
     def from_dict(cls,d):
         return cls(d)
+    
+    def recipe_name(self):
+        return self.data.get("recipe_name","")
 
     def provides(self):
         return self.data.get("provides",[])
@@ -92,12 +95,12 @@ def resolve_recipe_definition(r, directory, metadata):
         try:
             query = parse(r)
             filename = query.filename()
-            rkey =  join_key(directory, filename)
             return dict(
                 type="query",
                 query=r,
                 CWD = directory,
-                provides=[rkey]
+                filename=filename,
+                provides=[filename]
             )
         except:
             metadata.warning(f"Can't resolve recipe '{r}'", traceback=traceback.format_exc())
@@ -116,14 +119,17 @@ def resolve_recipe_definition(r, directory, metadata):
                     title=title,
                     description=description,
                     CWD = directory,
-                    provides=[rkey]
+                    filename=filename,
+                    provides=[filename]
                 )
             except:
                 metadata.warning(f"Can't resolve query recipe", traceback=traceback.format_exc())
                 traceback.print_exc()
     else:
         print(f"Unsupported recipe type: {type(r)}")
-
+    if "filename" in r and "provides" not in r:
+        r["provides"] = [r["filename"]]
+    return r
 
 class QueryRecipe(Recipe):
     @classmethod
@@ -135,12 +141,14 @@ class QueryRecipe(Recipe):
         return cls(d)
         
     def metadata(self, key):
-        metadata = {}
+        metadata = Metadata(dict())
         if "title" in self.data:
-            metadata["title"] = self.data["title"]
+            metadata.metadata["title"] = self.data["title"]
         if "description" in self.data:
-            metadata["description"] = self.data["description"]
-        return metadata
+            metadata.metadata["description"] = self.data["description"]
+        metadata.query = self.data["query"]
+        metadata.key=key
+        return metadata.as_dict()
       
     def make(self, key, store=None, context=None):
         context = get_context(context)
@@ -731,11 +739,13 @@ class NewRecipeSpecStore(Store):
             if spec is not None:
                 parent = parent_key(key)
                 for directory, items in spec.items():
-                    for r in items:
+                    for i, r in enumerate(items):
                         cwd = parent if directory == self.LOCAL_RECIPES else join_key(parent, directory)
                         d = resolve_recipe_definition(r, cwd, metadata)
+                        d["recipe_name"] = self.to_root_key(recipes_key)+f":{directory}[{i}]"+d.get("filename","")
                         recipe = recipe_registry().from_dict(d)
-                        for key in recipe.provides():
+                        for name in recipe.provides():
+                            key = join_key(cwd, name)
                             recipes[key]=recipe
         self._recipes = recipes
         return recipes
