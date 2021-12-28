@@ -276,6 +276,68 @@ def clean_recipes(metadata, recursive=False, context=None):
     context.info(f"Removed {len(removed)} items")
     return dict(status="OK", message=f"Removed {len(removed)} items", removed=removed)
 
+@first_command(ns="meta")
+def root_key():
+    return dict(key="")
+
+@command(ns="meta")
+def clean(metadata, errors=True, expired=False, evaluation=False, recipes=False, recursive=False, context=None):
+    """Remove specific key or all the data in the directory of store.
+    This command can delete from the store items in the following states:
+    - errors (default behaviour)
+    - expired items
+    - recipes (valid items with a recipe)
+    """
+    context = get_context(context)
+
+    if not isinstance(metadata, dict) or "key" not in metadata:
+        raise Exception("Valid metadata with a key expected in clean")
+
+    key = metadata["key"]
+    store=context.store()
+    removed=[]
+    if store.is_dir(key):
+        if key in ("",None):
+            if recursive:
+                keys = store.keys()
+            else:
+                keys = store.listdir(key)
+        else:
+            if recursive:
+                keys = [k for k in store.keys() if k.startswith(f"{key}/")]
+            else:
+                keys = list(store.listdir_keys(key))
+    for key in keys:
+        print(f"KEY {key}")
+        if store.is_dir(key):
+            continue
+        try:
+            metadata = store.get_metadata(key)
+            status = metadata.get("status")
+            if errors and status == Status.ERROR.value:
+                store.remove(key)
+                removed.append((key,status))
+                continue
+            if expired and status == Status.EXPIRED.value:
+                store.remove(key)
+                removed.append((key,status))
+                continue
+            if evaluation and status in (Status.EVALUATION.value, Status.EVALUATING_DEPENDENCIES.value, Status.EVALUATING_PARENT.value, Status.SUBMITTED.value):
+                store.remove(key)
+                removed.append((key,status))
+                continue
+
+            if recipes:
+                if metadata.get("has_recipe",False):
+                    context.info(f"Remove {key}")
+                    store.remove(key)
+                    removed.append((key,"recipe"))
+        except:
+            context.warning(f"Failed to process {key} ")
+            context.warning(traceback.format_exc())
+    context.info(f"Removed {len(removed)} items")
+    return dict(status="OK", message=f"Removed {len(removed)} items", removed=removed)
+
 if __name__ == "__main__":
     from liquer import *
 

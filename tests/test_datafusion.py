@@ -81,7 +81,6 @@ class TestDatafusion:
 
         @first_command
         def hello():
-            print("### hello")
             return pd.DataFrame(dict(a=[1,2],b=[3,4]))
         @command
         def c(df):

@@ -172,6 +172,10 @@ class TestNewParser:
         assert len(q.segments) == 2
         assert q.segments[0].header.encode() == "-R"
         assert q.segments[0].encode() == "-R/a/b"
+#    def test_root(self):
+#        q = parse("-R/-/")
+#        assert len(q.segments) == 2
+#        assert q.segments[0].header.encode() == "-R"
 
 
 class TestQueryElements:

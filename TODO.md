@@ -60,9 +60,9 @@
 
 ## Recipes
 
-- [ ] refactor recipes to a separate module
+- [x] refactor recipes to a separate module
 - [x] checksum in store metadata
-- [ ] refactor recipes to make them modular
+- [x] refactor recipes to make them modular
 - [ ] database access in recipes
 - [ ] parametric recipes - recipe templates
 - [ ] CWD
@@ -71,6 +71,7 @@
 - [x] more powerful recipes - description and url/file links, nested structure ?
 - [x] ignore dot directories in recipes store in order to support jupyter notebooks
 - [ ] volatile recipes
+- [x] datafusion parquet_sql recipe
 
 ## Integration of external components
 
@@ -98,6 +99,7 @@
 
 ## Core functionality and Metadata
 
+- [ ] fix parser test_root
 - [ ] query origin (file, line number if possible)
 - [ ] search engine(s) integration
 - [x] refactor metadata handling to a separate class from context and state
