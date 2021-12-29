@@ -1,9 +1,8 @@
-import pandas as pd
 from io import BytesIO
-from urllib.request import urlopen
 from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 import numpy as np
+import pickle
 from liquer.commands import command
 from liquer.state_types import StateType, register_state_type
 from liquer.constants import mimetype_from_extension
@@ -47,7 +46,7 @@ class MatplotlibFigureStateType(StateType):
         f.seek(0)
 
         if extension in ("pickle", "pkl"):
-            return pd.read_pickle(f)
+            return pickle.loads(b)
         raise Exception(
             f"Deserialization: file extension {extension} is not supported by Matplotlib Figure type."
         )

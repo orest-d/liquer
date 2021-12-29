@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-Unit tests for LiQuer pandas support.
+Unit tests for LiQuer OpenPyxl support.
 """
 import pandas as pd
 from liquer.query import evaluate, evaluate_and_save
