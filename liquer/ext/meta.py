@@ -276,6 +276,47 @@ def clean_recipes(metadata, recursive=False, context=None):
     context.info(f"Removed {len(removed)} items")
     return dict(status="OK", message=f"Removed {len(removed)} items", removed=removed)
 
+@command(ns="meta", volatile=True)
+def make_recipes(metadata, recursive=False, context=None):
+    """Make all the data in the directory of a store that has a recipe.
+    This is supposed to be used together with a RecipeStore, that creates has_recipe flag in the metadata.
+    Data can be optionally cleaned recursively in all the subdirectories.
+    """
+    context = get_context(context)
+
+    if not isinstance(metadata, dict) or "key" not in metadata:
+        raise Exception("Valid metadata with a key expected in clean_recipes")
+
+    key = metadata["key"]
+    store=context.store()
+    processed=[]
+    if store.is_dir(key):
+        if key in ("",None):
+            if recursive:
+                keys = store.keys()
+            else:
+                keys = store.listdir(key)
+        else:
+            if recursive:
+                keys = [k for k in store.keys() if k.startswith(f"{key}/")]
+            else:
+                keys = [f"{key}/{name}" for name in store.listdir(key)]
+    for key in keys:
+        if store.is_dir(key):
+            continue
+        try:
+            metadata = store.get_metadata(key)
+            if metadata.get("has_recipe",False) and metadata.get("status") in (Status.RECIPE.value, Status.ERROR.value, Status.EXPIRED.value):
+                context.info(f"Make {key}")
+                store.remove(key)
+                store.get_bytes(key)
+                processed.append(key)
+        except:
+            context.warning(f"Failed to process {key} ")
+            context.warning(traceback.format_exc())
+    context.info(f"Successfully processed {len(processed)} items")
+    return dict(status="OK", message=f"Successfully processed {len(processed)} items", processed=processed)
+
 @first_command(ns="meta")
 def root_key():
     return dict(key="")

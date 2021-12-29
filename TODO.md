@@ -11,13 +11,14 @@
 
 ### LiQuer-GUI project
 
-- [ ] dir info not properly refreshed
+- [x] dir info not properly refreshed
 - [x] anchor
-- [ ] display text, html and images properly
+- [x] display text, html and images properly
 - [ ] optionally load whole dataframe
-- [ ] store manager: reload dir
-- [ ] store manager: clean dir
-- [ ] store manager: submit dir
+- [ ] text editing
+- [x] store manager: reload dir
+- [x] store manager: clean dir
+- [x] store manager: submit dir
 
 ## Server, Backend
 
@@ -50,13 +51,13 @@
 - [ ] status on directories
 - [x] external status
 - [ ] date, size and detection of modifications
+- [ ] system store(s): commands, cache, running operations, configuration 
 
 ## Dependency management
 
 - [ ] expiration for files in store
 - [ ] expiration for cache
-- [ ] command version/hash code
-- [ ] support for user edits
+- [x] command version/hash code
 
 ## Recipes
 
@@ -112,7 +113,7 @@
 - [ ] automatic state type from classes
 - [ ] query meta modifier similar to -R-meta
 - [ ] automatic argument type conversion
-- [ ] split context to mixins
+- [x] split context to mixins
 - [ ] improve scheduling - prevent same queries to be scheduled
 - [ ] remove commands and extended commands from metadata
 - [ ] dependency injection input type
