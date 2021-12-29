@@ -76,7 +76,7 @@ pip install liquer-framework
 ### New features
 - API documentation improved on multiple places
 - EXTERNAL status
-- Basic support for DataFusion and pptx-python
+- Basic support for DataFusion, pptx-python, Pillow images
 - Tornado driver updated
 - Extensible recipes; parquet_sql recipe type
 - Read-only store proxy

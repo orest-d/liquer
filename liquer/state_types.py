@@ -228,7 +228,7 @@ class DictStateType(StateType):
         return "dictionary"
 
     def default_extension(self):
-        return "djson"
+        return "json"
 
     def is_type_of(self, data):
         return isinstance(data, dict)

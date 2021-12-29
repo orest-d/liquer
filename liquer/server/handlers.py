@@ -72,7 +72,7 @@ class SubmitHandler:
 # /q/<path:query>
 class QueryHandler:
     def get(self, query):
-        """Main service for evaluating queries"""
+        """Main service for evaluating queries"""        
         b, mimetype, filename = response(evaluate(query))
 
         header = "Content-Type"

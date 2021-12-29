@@ -16,4 +16,5 @@ mkdocs
 mkdocstrings
 pytkdocs
 python-pptx
+Pillow
 -r requirements.txt
