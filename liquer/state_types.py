@@ -454,7 +454,12 @@ class TextStateType(StateType):
         return isinstance(data, str)
 
     def as_bytes(self, data, extension=None):
-        return data.encode("utf-8"), "text/plain"
+        if extension is None:
+            extension = self.default_extension()
+            mime = self.default_mimetype()
+        else:
+            mime = mimetype_from_extension(extension, "text/plain")
+        return data.encode("utf-8"), mime
 
     def from_bytes(self, b: bytes, extension=None):
         return b.decode("utf-8")

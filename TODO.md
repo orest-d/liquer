@@ -81,6 +81,8 @@
 - [x] python-pptx integration
 - [ ] d-tale support
 - [ ] markdown support
+- [ ] PIL
+- [ ] bokeh
 - [x] datafusion support - context and sql
 - [ ] keras history support
 - [ ] numpy support

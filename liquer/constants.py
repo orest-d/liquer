@@ -86,8 +86,8 @@ TYPE_IDENTIFIER_BY_EXTENSION = dict(
     feather="dataframe",
 )
 
-def mimetype_from_extension(extension):
-    return MIMETYPES.get(extension, "application/octet-stream")
+def mimetype_from_extension(extension, default = "application/octet-stream"):
+    return MIMETYPES.get(extension, default)
 
 def type_identifier_from_extension(extension):
     return TYPE_IDENTIFIER_BY_EXTENSION.get(extension)

@@ -106,6 +106,14 @@ class State(object):
     def type_identifier(self, value):
         self.metadata["type_identifier"] = value
 
+    @property
+    def extension(self):
+        return self.metadata.get("extension")
+
+    @extension.setter
+    def extension(self, value):
+        self.metadata["extension"] = value
+
     #    def with_caching(self, caching=True):
     #        """Enables or disables caching for this state"""
     #        # TODO: Make sure caching is propagated to dependent states
@@ -238,6 +246,10 @@ class State(object):
     def with_filename(self, filename):
         """set filename"""
         self.metadata["filename"] = filename
+        print("State with filename",filename)
         if "." in filename:
-            self.metadata["extension"] = filename.split(".")[-1].lower()
+            self.extension = filename.split(".")[-1].lower()
+            self.metadata["mimetype"] =  mimetype_from_extension(self.extension)
+        print("  extension",self.extension)
+        print("  mimetype ",self.metadata["mimetype"])
         return self

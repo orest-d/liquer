@@ -634,6 +634,9 @@ class Context(MetadataContextMixin, object):
         metadata = self.metadata()
         metadata["type_identifier"]=state.type_identifier
         metadata["commands"] = metadata.get("commands", []) + [action.to_list()]
+        if metadata.get("mimetype","application/octet-stream") == "application/octet-stream":
+            metadata["mimetype"] = state.mimetype()
+            
         try:
             cmd_metadata_d = cmd_metadata._asdict()
         except:

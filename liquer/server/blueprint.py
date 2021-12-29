@@ -40,12 +40,8 @@ def info():
 
 def response(state):
     """Create flask response from a State"""
+    b, mimetype, type_identifier = encode_state_data(state.get(), extension=state.extension)
     filename = state.metadata.get("filename")
-    extension = None
-    if filename is not None:
-        if "." in filename:
-            extension = filename.split(".")[-1]
-    b, mimetype, type_identifier = encode_state_data(state.get(), extension=extension)
     if filename is None:
         filename = state_types_registry().get(type_identifier).default_filename()
     r = make_response(b)

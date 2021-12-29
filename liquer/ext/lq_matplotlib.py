@@ -26,15 +26,11 @@ class MatplotlibFigureStateType(StateType):
             extension = self.default_extension()
         assert self.is_type_of(data)
         mimetype = mimetype_from_extension(extension)
-        if extension in ("html", "htm"):
-            output = StringIO()
-            data.to_html(output, index=False)
-            return output.getvalue().encode("utf-8"), mimetype
-        elif extension in ("pkl", "pickle"):
+        if extension in ("pkl", "pickle"):
             output = BytesIO()
             pickle.dump(data, output)
             return output.getvalue(), mimetype
-        elif extension in ("png", "svg", "pdf", "ps", "eps"):
+        elif extension in ("png", "svg", "pdf", "ps", "eps", "svgz"):
             output = BytesIO()
             data.savefig(output, dpi=300, format=extension)
             return output.getvalue(), mimetype
@@ -57,7 +53,7 @@ class MatplotlibFigureStateType(StateType):
         )
 
     def copy(self, data):
-        return data.copy()
+        return data
 
     def data_characteristics(self, data):
         return dict(description=f"Matplotlib figure")
@@ -74,7 +70,7 @@ def mpl(state, *series):
     axis = fig.add_subplot(1, 1, 1)
     series = list(reversed(list(series)))
     df = state.get()
-    extension = "png"
+    extension = None
 
     while len(series):
         t = series.pop()
@@ -111,6 +107,9 @@ def mpl(state, *series):
         else:
             state.log_warning(f"Unrecognized MPL parameter {t}")
     # fig.legend()
-    output = BytesIO()
-    fig.savefig(output, dpi=300, format=extension)
-    return state.with_data(output.getvalue()).with_filename(f"image.{extension}")
+    if extension is None:
+        return fig
+    else:
+        output = BytesIO()
+        fig.savefig(output, dpi=300, format=extension)
+        return state.with_data(output.getvalue()).with_filename(f"image.{extension}")

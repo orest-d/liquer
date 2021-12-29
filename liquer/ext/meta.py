@@ -231,7 +231,7 @@ def dir_status_df(metadata, context=None):
         "name", "title", "status", "is_error", "message", "data_characteristics", "started", "created", "updated",
         "key", "query", "description", "is_dir", "size"])
 
-@command(ns="meta")
+@command(ns="meta", volatile=True)
 def clean_recipes(metadata, recursive=False, context=None):
     """Remove specific key or all the data in the directory of store that has a recipe.
     This is supposed to be used together with a RecipeStore, that creates has_recipe flag in the metadata.
@@ -280,7 +280,7 @@ def clean_recipes(metadata, recursive=False, context=None):
 def root_key():
     return dict(key="")
 
-@command(ns="meta")
+@command(ns="meta", volatile=True)
 def clean(metadata, errors=True, expired=False, evaluation=False, recipes=False, recursive=False, context=None):
     """Remove specific key or all the data in the directory of store.
     This command can delete from the store items in the following states:
