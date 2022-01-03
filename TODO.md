@@ -73,6 +73,7 @@
 - [x] ignore dot directories in recipes store in order to support jupyter notebooks
 - [ ] volatile recipes
 - [x] datafusion parquet_sql recipe
+- [ ] matplotlib charting recipe type
 
 ## Integration of external components
 

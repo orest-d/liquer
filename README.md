@@ -61,6 +61,7 @@ pip install liquer-framework
 - 2021-11-29 - v0.6.3  - several important bugfixes
 - 2021-12-06 - v0.6.4  - minor fixes
 - 2021-12-12 - v0.6.5  - fixes and refactoring
+- 2022-01-03 - v0.7.0  - many enhancements - e.g. modular recipes, support for datafusion, pptx, pillow
 
 ## Changes in v0.7
 
@@ -80,3 +81,4 @@ pip install liquer-framework
 - Tornado driver updated
 - Extensible recipes; parquet_sql recipe type
 - Read-only store proxy
+- v0.7 is accompanied with new GUI [liquer-gui v0.1.0](https://github.com/orest-d/liquer-gui)
