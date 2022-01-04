@@ -855,8 +855,7 @@ resource_segment_with_header = (
     (
         resource_identifier
         + Group(ZeroOrMore(Word("-").suppress() + parameter))
-        + Literal("/").suppress()
-        + Optional(Group(resource_path))
+        + Optional(Literal("/").suppress()+Group(resource_path))
     )
     .setParseAction(_resource_segment_with_header_parse_action)
     .setName("resource_segment_with_header")

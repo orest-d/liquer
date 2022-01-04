@@ -169,6 +169,9 @@ class RecipeStore(Store):
         self._recipes = {} if recipes is None else recipes
         self.context = context
 
+    def sync(self):
+        self.substore.sync()
+
     def get_context(self):
         if self.context is None:
             return get_context()
@@ -337,6 +340,11 @@ class OldRecipeSpecStore(RecipeStore):
         self.recipes_info = {}
         self.update_recipes()
         self.update_all_status_files()
+
+    def sync(self):
+        self.update_recipes()
+        self.update_all_status_files()
+        self.substore.sync()
 
     def update_all_status_files(self):
         if self.STATUS_FILE is not None:
@@ -553,6 +561,11 @@ class NewRecipeSpecStore(Store):
         self._recipes = {}
         self.update_recipes()
         self.update_all_status_files()
+
+    def sync(self):
+        self.update_recipes()
+        self.update_all_status_files()
+        self.substore.sync()
 
     def recipes(self):
         return self._recipes

@@ -62,6 +62,7 @@ pip install liquer-framework
 - 2021-12-06 - v0.6.4  - minor fixes
 - 2021-12-12 - v0.6.5  - fixes and refactoring
 - 2022-01-03 - v0.7.0  - many enhancements - e.g. modular recipes, support for datafusion, pptx, pillow
+- 2022-01-04 - v0.7.1  - root path bugfix, sync store
 
 ## Changes in v0.7
 

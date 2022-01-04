@@ -172,10 +172,33 @@ class TestNewParser:
         assert len(q.segments) == 2
         assert q.segments[0].header.encode() == "-R"
         assert q.segments[0].encode() == "-R/a/b"
-#    def test_root(self):
-#        q = parse("-R/-/")
-#        assert len(q.segments) == 2
-#        assert q.segments[0].header.encode() == "-R"
+    def test_root1(self):
+        q = parse("-R/a")
+        assert len(q.segments) == 1
+        assert q.segments[0].encode() == "-R/a"
+        q = parse("-R")
+        assert len(q.segments) == 1
+        assert q.segments[0].header.encode() == "-R"
+
+    def test_root2(self):
+        q = parse("-R/-/dr")
+        assert len(q.segments) == 2
+        assert q.segments[0].header.encode() == "-R"
+
+    def test_root3(self):
+        q = parse("-R-meta/-/dr")
+        assert len(q.segments) == 2
+        assert q.segments[0].header.encode() == "-R-meta"
+
+    def test_capital_bug(self):
+        q = parse("x/Y/-/dr")
+        assert len(q.segments) == 2
+        assert isinstance(q.segments[0], ResourceQuerySegment)
+        assert isinstance(q.segments[1], TransformQuerySegment)
+        q = parse("data/BBNO_leads/recipes.yaml/-/dr")
+        assert isinstance(q.segments[0], ResourceQuerySegment)
+        assert isinstance(q.segments[1], TransformQuerySegment)
+
 
 
 class TestQueryElements:

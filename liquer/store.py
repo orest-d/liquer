@@ -325,6 +325,9 @@ class Store(StoreMixin):
             return self
         return self.parent_store.root_store()
 
+    def sync(self):
+        pass
+
     def __str__(self):
         return f"Empty store"
 
@@ -603,6 +606,9 @@ class ProxyStore(Store):
     def __init__(self, store):
         self._store = store
 
+    def sync(self):
+        self._store.sync()
+
     def get_bytes(self, key):
         return self._store.get_bytes(key)
 
@@ -692,6 +698,10 @@ class OverlayStore(Store):
         self.overlay = overlay
         self.fallback = fallback
         self.removed = set()
+
+    def sync(self):
+        self.overlay.sync()
+        self.fallback.sync()
 
     def get_bytes(self, key):
         if key not in self.removed:
@@ -876,6 +886,9 @@ class KeyTranslatingStore(Store):
         self.substore = store
         self.substore.parent_store=self
 
+    def sync(self):
+        self.substore.sync()
+
     def translate_key(self, key, inverse=False):
         return key
 
@@ -999,6 +1012,12 @@ class MountPointStore(RoutingStore):
     def __init__(self, default_store=None, routing_table=None):
         self.default_store = default_store
         self.routing_table = [] if routing_table is None else routing_table
+    def sync(self):
+        for key, store in self.routing_table:
+            print("SYNC ",key)
+            store.sync()
+        if self.default_store is not None:
+            self.default_store.sync()
 
     def umount(self, umount_key):
         self.routing_table = [(key, store) for key, store in self.routing_table if key!=umount_key]

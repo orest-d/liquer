@@ -359,3 +359,44 @@ class TestQuery:
         assert store.is_dir("results/subdir")
         assert not store.is_dir("results/subdir/hello.txt")
         assert store.get_bytes("results/subdir/hello.txt") == b"Hello"
+
+    def test_sync(self):
+        import liquer.store as st
+        import liquer.recipes as r
+        from liquer.cache import MemoryCache, set_cache, get_cache
+
+        reset_command_registry()
+        set_cache(None)
+
+        @first_command
+        def hello():
+            return "Hello"
+
+        memory=st.MemoryStore()
+        store = r.RecipeSpecStore(memory)
+        store.store(
+            "results/recipes.yaml",
+            b"""
+        subdir:
+            - hello/hello.txt
+        """,
+            {},
+        )
+        assert store.contains("results/subdir/hello.txt")
+        assert not store.contains("results/subdir/hello2.txt")
+        assert store.is_dir("results")
+        assert store.is_dir("results/subdir")
+        assert store.get_bytes("results/subdir/hello.txt") == b"Hello"
+
+        memory.store(
+            "results/recipes.yaml",
+            b"""
+        subdir:
+            - hello/hello2.txt
+        """,
+            {},
+        )
+        assert not store.contains("results/subdir/hello2.txt")
+        store.sync()
+        assert store.contains("results/subdir/hello2.txt")
+        assert store.get_bytes("results/subdir/hello2.txt") == b"Hello"

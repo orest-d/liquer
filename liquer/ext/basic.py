@@ -6,7 +6,7 @@ from liquer.parser import encode, decode
 from liquer.state_types import encode_state_data
 from liquer.cache import get_cache
 from liquer.constants import Status, type_identifier_from_extension
-
+from liquer.context import get_context
 
 @command
 def let(state, name, value):
@@ -246,3 +246,10 @@ def dr(state, type_identifier=None, extension=None, context=None):
         context.error(f"Decode resource (dr) command failed")
         raise Exception(f"Failed to resolve type for query {state.metadata.get('query')}")
     return state
+
+@first_command
+def sync_store(context=None):
+    context = get_context(context)
+    context.info(f"Sync store")
+    context.store().sync()
+    return dict(status="OK", message="Store synchronized")

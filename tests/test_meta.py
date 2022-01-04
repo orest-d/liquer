@@ -6,7 +6,7 @@ Unit tests for LiQuer meta extension.
 import pytest
 from liquer.query import evaluate
 from liquer.state import set_var
-
+from liquer.store import set_store, MemoryStore, get_store
 
 class TestMeta:
     @classmethod
@@ -20,15 +20,18 @@ class TestMeta:
         # Hack to enforce registering of the commands
         importlib.reload(liquer.ext.basic)
         importlib.reload(liquer.ext.meta)
+        set_store(MemoryStore())
 
     @classmethod
     def teardown_class(cls):
         from liquer.commands import reset_command_registry
 
         reset_command_registry()
+        set_store(None)
 
     def test_state(self):
         from liquer.commands import command_registry
 
+        
         state = evaluate("ns-meta/commands/state").get()
         assert state["query"] == "ns-meta/commands"

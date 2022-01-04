@@ -36,6 +36,7 @@ class TestStore:
         assert store.contains("a") is False
         assert list(store.keys()) == []
         assert store.listdir("") == []
+        store.sync()
 
     def test_parent_key(self, store):
         assert store.parent_key("") == None

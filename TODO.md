@@ -1,5 +1,9 @@
 # TODO
 
+## Bugs
+- [ ] parser failure when capital case in resource path (?) - probably faulty logic in context.py:896, resource query should be handled separately
+- [x] root "-R/-/"
+
 ## User interface
 
 - [ ] icons (in metadata and web)
@@ -11,17 +15,20 @@
 
 ### LiQuer-GUI project
 
+- [ ] directory name should be visible
 - [x] dir info not properly refreshed
 - [x] anchor
 - [x] display text, html and images properly
 - [ ] optionally load whole dataframe
-- [ ] text editing
+- [x] text editing (experimental)
+- [ ] text editing syntax highlight
 - [x] store manager: reload dir
 - [x] store manager: clean dir
 - [x] store manager: submit dir
 
 ## Server, Backend
 
+- [ ] server driver - function to start server from a particular driver
 - [ ] a faster server (FastAPI?)
 - [x] update tornado backend
 - [ ] configure the start page, Response support?
@@ -103,7 +110,6 @@
 
 ## Core functionality and Metadata
 
-- [ ] fix parser test_root
 - [ ] query origin (file, line number if possible)
 - [ ] search engine(s) integration
 - [x] refactor metadata handling to a separate class from context and state
