@@ -72,8 +72,14 @@ class SubmitHandler:
 # /q/<path:query>
 class QueryHandler:
     def get(self, query):
-        """Main service for evaluating queries"""        
-        b, mimetype, filename = response(evaluate(query))
+        """Main service for evaluating queries"""
+        try:
+            b, mimetype, filename = response(evaluate(query))
+        except:
+            traceback.print_exc()
+            self.set_status(500)
+            self.finish(f"500 - Failed to create a respone to {query}")
+
 
         header = "Content-Type"
         body = mimetype

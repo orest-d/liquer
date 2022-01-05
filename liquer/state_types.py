@@ -343,7 +343,7 @@ class JsonStateType(StateType):
             return dict(description=f"Integer {data}")
         elif isinstance(data, float):
             return dict(description=f"Float {data}")
-        elif data is not None:
+        elif data is None:
             return dict(description=f"None")
         else:
             return dict(description=f"Data of type {type(data)}")
@@ -405,7 +405,7 @@ class PickleStateType(StateType):
             return dict(description=f"Integer {data}")
         elif isinstance(data, float):
             return dict(description=f"Float {data}")
-        elif data is not None:
+        elif data is None:
             return dict(description=f"None")
         else:
             return dict(description=f"Data of type {type(data)}")

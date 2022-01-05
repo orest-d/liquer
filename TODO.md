@@ -1,64 +1,80 @@
 # TODO
 
 ## Bugs
-- [ ] parser failure when capital case in resource path (?) - probably faulty logic in context.py:896, resource query should be handled separately
+- [x] stored metadata created by a recipe do not contain logs and message from the query
+- [x] error in server response() is not shown
+- [x] screen should be empty in GUI when unsupported type is shown
+- [x] parser failure when capital case in resource path (?) - probably faulty logic in context.py:896, resource query should be handled separately - seems to be working
 - [x] root "-R/-/"
+
+## Refactoring and celanup
+- [ ] remove commands and extended commands from metadata
+- [ ] change /api/debug-json to /api/metadata
+- [ ] finalize refactoring of Context to Metadata
+- [ ] consolidate meta and basic module
 
 ## User interface
 
 - [ ] icons (in metadata and web)
 - [ ] data viewers and editors support
 - [ ] new menu - remove menu from state variables
-- [x] liquer frontent project - exists: liquer-gui 
 - [ ] wasm library in frontend
+- [x] liquer frontent project - exists: liquer-gui 
 - [x] web store GUI (in progress: https://github.com/orest-d/liquer-gui)
 
 ### LiQuer-GUI project
 
-- [ ] directory name should be visible
+- [ ] progress in recipe execution
+- [x] error in store should have a delete button
+- [x] message should be cleared after fetching
+- [ ] text editing syntax highlight
+- [ ] right top menu
+- [x] directory name should be visible
+- [ ] optionally load whole dataframe
+- [ ] progressive status in directory (auto-update of directory status)
+- [x] reload recipes
 - [x] dir info not properly refreshed
 - [x] anchor
 - [x] display text, html and images properly
-- [ ] optionally load whole dataframe
 - [x] text editing (experimental)
-- [ ] text editing syntax highlight
 - [x] store manager: reload dir
 - [x] store manager: clean dir
 - [x] store manager: submit dir
 
 ## Server, Backend
 
+- [ ] server info with supported features
+- [ ] make a server suitable for publishing (read only access to store)
 - [ ] server driver - function to start server from a particular driver
-- [ ] a faster server (FastAPI?)
-- [x] update tornado backend
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
+- [ ] a faster server (FastAPI?)
+- [x] update tornado backend
 - [x] unified metadata api for cache and store
-- [ ] change /api/debug-json to /api/metadata
 
 ## Store and Cache enhancements
 
-- [x] deal with corrupted metadata in store
-- [ ] key tracing
-- [ ] command/query to zip store directory
-- [ ] encoded store
-- [ ] database store
-- [ ] cashing store (to be used e.g. with a database store)
 - [ ] metadata for external files in store
-- [x] readonly store modifier
-- [ ] store to_dict and from_dict
-- [ ] store with autobackup
-- [x] file-system paths and url links to physical file in store (when possible) 
-- [ ] remote store (based on web api)
-- [ ] remote liquer service as cache
-- [x] resources-based cache
-- [ ] filesystem from store
-- [ ] fuse access to store
-- [ ] cleanup errors (on start?)
-- [ ] status on directories
-- [x] external status
 - [ ] date, size and detection of modifications
 - [ ] system store(s): commands, cache, running operations, configuration 
+- [ ] SQL cache working on Hive
+- [ ] SQL store working on Hive
+- [ ] remote store (based on web api)
+- [ ] remote liquer service as cache
+- [ ] encoded store
+- [ ] database store
+- [ ] filesystem from store
+- [ ] fuse access to store
+- [ ] key tracing
+- [ ] command/query to zip store directory
+- [ ] cashing store (to be used e.g. with a database store)
+- [ ] store with autobackup
+- [x] deal with corrupted metadata in store
+- [x] readonly store modifier
+- [x] file-system paths and url links to physical file in store (when possible) 
+- [x] resources-based cache
+- [x] cleanup errors (ns-meta/clean)
+- [x] external status
 
 ## Dependency management
 
@@ -68,75 +84,71 @@
 
 ## Recipes
 
+- [ ] use line numbers in recipes.yaml (see https://stackoverflow.com/questions/13319067/parsing-yaml-return-with-line-number)
+- [ ] recipe version
+- [ ] volatile recipes
+- [ ] CWD
+- [ ] links in the description
+- [ ] parametric recipes - recipe templates
+- [ ] matplotlib charting recipe type
+- [ ] database access in recipes
 - [x] refactor recipes to a separate module
 - [x] checksum in store metadata
 - [x] refactor recipes to make them modular
-- [ ] database access in recipes
-- [ ] parametric recipes - recipe templates
-- [ ] CWD
-- [ ] multiple files created in recipe
-- [ ] recipe version
 - [x] more powerful recipes - description and url/file links, nested structure ?
 - [x] ignore dot directories in recipes store in order to support jupyter notebooks
-- [ ] volatile recipes
 - [x] datafusion parquet_sql recipe
-- [ ] matplotlib charting recipe type
 
 ## Integration of external components
 
-- [x] sweetviz support
-- [x] polars support
 - [ ] spark support - spark dataframes
-- [x] python-pptx integration
-- [ ] d-tale support
-- [ ] markdown support
-- [x] PIL
-- [ ] bokeh
-- [x] datafusion support - context and sql
-- [ ] keras history support
-- [ ] numpy support
-- [x] parquet support
-- [x] integrate pointcloud explorer - see [Pointcloud Explorer](https://github.com/orest-d/pointcloud-viewer-rs)
-- [ ] SQL cache working on Hive
-- [ ] pandas series and groupby objects
-- [ ] geopandas and folium
 - [ ] jinja and/or other templating engines
+- [ ] d-tale support
 - [ ] onnx
+- [ ] geopandas and folium
+- [ ] markdown support
+- [ ] bokeh
+- [ ] numpy support
+- [ ] pandas series and groupby objects
 - [ ] TF Lite
 - [ ] pdf
 - [ ] epub
 - [ ] 3d formats stl, obj
 - [ ] gcode
+- [x] sweetviz support
+- [x] polars support
+- [x] python-pptx integration
+- [x] PIL
+- [x] datafusion support - context and sql
+- [x] parquet support
+- [x] integrate pointcloud explorer - see [Pointcloud Explorer](https://github.com/orest-d/pointcloud-viewer-rs)
 
 ## Core functionality and Metadata
 
 - [ ] query origin (file, line number if possible)
-- [ ] search engine(s) integration
-- [x] refactor metadata handling to a separate class from context and state
-- [ ] finalize refactoring of Context to Metadata
-- [ ] python logging integration with metadata and context
-
-- [ ] commands from methods
-- [ ] automatic state type from classes
-- [ ] query meta modifier similar to -R-meta
-- [ ] automatic argument type conversion
-- [x] split context to mixins
-- [ ] improve scheduling - prevent same queries to be scheduled
-- [ ] remove commands and extended commands from metadata
 - [ ] dependency injection input type
 - [ ] debug transform query
 - [ ] attribute to prevent cloning
 - [ ] git support
+- [ ] search engine(s) integration
+- [ ] improve scheduling - prevent same queries to be scheduled
+- [ ] python logging integration with metadata and context
+- [ ] commands from methods
+- [ ] automatic state type from classes
+- [ ] query meta modifier similar to -R-meta
+- [ ] automatic argument type conversion
+- [x] refactor metadata handling to a separate class from context and state
+- [x] split context to mixins
 
 ## Highlevel features, useful commands, Examples and Documentation
 
 - [ ] start liquer-ml
-- [x] dataframe batches
-- [ ] report template
+- [ ] conventions and ML library 
 - [ ] default data-science app example
 - [ ] better chart library
 - [ ] better pandas functions (eq, lt, gt, leq, geq, isin, notin, between, groupby, random)
-- [ ] conventions and ML library 
+- [ ] report template
+- [x] dataframe batches
 
 ## Misc and Experimental
 

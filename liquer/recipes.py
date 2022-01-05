@@ -583,11 +583,11 @@ class NewRecipeSpecStore(Store):
         recipe.make(key, store=self.substore)
 
         metadata = self.substore.get_metadata(key)
-        status = metadata.get("status", Status.RECIPE.value)
-        fileinfo = metadata["fileinfo"]
-        metadata.update(self.recipe_metadata(key))
-        metadata["status"] = status
-        metadata["fileinfo"] = fileinfo
+        recipe_metadata = self.recipe_metadata(key)
+        for k in ["status","fileinfo","message","is_error","log","child_log","dependencies"]:
+            if k in recipe_metadata:
+                del recipe_metadata[k]
+        metadata.update(recipe_metadata)
         self.substore.store_metadata(key, metadata)
         self.on_data_changed(key)
         self.on_metadata_changed(key)

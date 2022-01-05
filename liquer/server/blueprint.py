@@ -62,7 +62,11 @@ def response(state):
 @app.route("/q/<path:query>")
 def serve(query):
     """Main service for evaluating queries"""
-    return response(evaluate(query))
+    try:
+        return response(evaluate(query))
+    except:
+        traceback.print_exc()
+        abort(500)
 
 
 @app.route("/submit/<path:query>")
