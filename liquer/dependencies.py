@@ -24,6 +24,11 @@ class CommandVersionCollisionException(VersionCollisionException):
             message = f"Version collision for command '{command}' in namespace '{ns}' for query '{query}'"
         super().__init__(message=message, query=query)
 
+class RecipeVersionCollisionException(VersionCollisionException):
+    def __init__(self, message=None, query=None, recipe_name=None):
+        if message is None:
+            message = f"Version collision for recipe '{recipe_name}' for query '{query}'"
+        super().__init__(message=message, query=query)
 
 class Dependencies:
     def __init__(self, dependencies=None):
@@ -36,6 +41,10 @@ class Dependencies:
             dependencies["query"] = ""
         if "commands" not in dependencies:
             dependencies["commands"] = {}
+        if "recipe" not in dependencies:
+            dependencies["recipe"] = {}
+        dependencies["recipe"]["version"]=dependencies["recipe"].get("version")
+
         self.dependencies = dependencies
         return self
 
@@ -62,4 +71,19 @@ class Dependencies:
                     print(f"New version:      {version}")
                     raise CommandVersionCollisionException(command=command_metadata.name, ns=ns, query=self.query)
         self.dependencies["commands"][key]=version
+        return self
+        
+    def add_recipe_dependency(self, recipe, detect_collisions=True):
+        recipe_name = recipe.recipe_name()
+        version = recipe.version()
+        if detect_collisions:
+            old_version = self.dependencies["recipe"].get("version")
+            if old_version is not None:
+                if old_version!=version:
+                    print(f"Version collision for recipe '{recipe_name}' for query '{self.query}'")
+                    print(f"Existing version: {old_version}")
+                    print(f"New version:      {version}")
+                    raise RecipeVersionCollisionException(recipe_name=recipe_name, query=self.query)
+        self.dependencies["recipe"]["name"]=recipe_name
+        self.dependencies["recipe"]["version"]=version
         return self

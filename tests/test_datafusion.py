@@ -108,3 +108,4 @@ RECIPES:
 
         assert store.get_bytes("c.txt") == b"4,6"
         assert store.get_metadata("hello.parquet")["status"] == Status.READY.value
+        assert store.get_metadata("hello.parquet")["dependencies"]["recipe"]["version"] == "md5:ab3b6cdad4f069e8b0cc4213bf2e743f"

@@ -97,7 +97,7 @@
 - [ ] validate filename
 - [ ] create report of parsing recipes.yaml
 - [ ] use line numbers in recipes.yaml (see https://stackoverflow.com/questions/13319067/parsing-yaml-return-with-line-number)
-- [ ] recipe version
+- [x] recipe version
 - [ ] volatile recipes
 - [ ] CWD
 - [ ] links in the description

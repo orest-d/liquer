@@ -117,6 +117,12 @@ class Metadata:
         self.metadata["dependencies"]=dependencies.as_dict()
         return self
 
+    def add_recipe_dependency(self, recipe, detect_collisions=True):
+        dependencies = Dependencies(self.metadata["dependencies"])
+        dependencies.add_recipe_dependency(recipe, detect_collisions)
+        self.metadata["dependencies"]=dependencies.as_dict()
+        return self
+
     def log_dict(self, d):
         "Put dictionary with a log entry into the log"
         d["timestamp"] = timestamp()

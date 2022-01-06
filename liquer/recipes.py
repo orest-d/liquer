@@ -3,6 +3,8 @@ from liquer.context import get_context
 from liquer.parser import parse
 from liquer.constants import Status
 from liquer.metadata import Metadata
+import json
+import hashlib
 
 from copy import deepcopy
 import traceback
@@ -71,6 +73,12 @@ class Recipe:
     @classmethod
     def from_dict(cls,d):
         return cls(d)
+    
+    def version(self):
+        h = hashlib.md5()
+        txt = json.dumps(self.data, sort_keys=True, indent=2)
+        h.update(txt.encode("utf-8"))
+        return "md5:"+h.hexdigest()
     
     def recipe_name(self):
         return self.data.get("recipe_name","")
@@ -595,15 +603,14 @@ class NewRecipeSpecStore(Store):
                 del recipe_metadata[k]
         
         metadata.update(recipe_metadata)
+        m= Metadata(metadata)
         if is_error:
-            m = Metadata(metadata)
             m.error(f"Error evaluating recipe", traceback=trace)
-            metadata = m.as_dict()
         else:
-            metadata["status"]=metadata.get("status", Status.READY.value)
-            if metadata["status"] == Status.NONE.value:
-                metadata["status"] = Status.READY.value
-
+            if m.status == Status.NONE.value:
+                m.status = Status.READY.value
+        m.add_recipe_dependency(recipe)
+        metadata = m.as_dict()
         self.substore.store_metadata(key, metadata)
         self.on_data_changed(key)
         self.on_metadata_changed(key)
