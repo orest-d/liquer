@@ -142,7 +142,7 @@ class TestMountPointStore:
         assert list(store.keys()) == ["a"]
         assert store.get_metadata("")["fileinfo"]["is_dir"]
 
-    def test_file_store_basic(self):
+    def test_store_basic(self):
         store = MountPointStore(MemoryStore())
         assert list(store.keys()) == []
         assert store.contains("a") is False
@@ -169,3 +169,33 @@ class TestMountPointStore:
         assert store.contains("a") is True
         assert list(store.keys()) == ["a"]
         assert store.listdir("") == ["a"]
+
+    def test_store_root(self):
+        d=MemoryStore()
+        d.store("d",b"dd",{})
+        store = MountPointStore(d)
+        a = MemoryStore()
+        store.mount("a", a)
+        a.store("x",b"xx",{})
+        b = MemoryStore()
+        store.mount("b", b)
+        b.store("y",b"yy",{})
+
+        assert "a/x" in list(store.keys())
+        assert "b/y" in list(store.keys())
+        assert "d" in list(store.keys())
+        a_root = a.root_store()
+        assert "a/x" in list(a_root.keys())
+        assert "b/y" in list(a_root.keys())
+        assert "d" in list(a_root.keys())
+        assert store == a_root
+        b_root = b.root_store()
+        assert "a/x" in list(b_root.keys())
+        assert "b/y" in list(b_root.keys())
+        assert "d" in list(b_root.keys())
+        assert store == b_root
+        d_root = d.root_store()
+        assert "a/x" in list(d_root.keys())
+        assert "b/y" in list(d_root.keys())
+        assert "d" in list(d_root.keys())
+        assert store == d_root

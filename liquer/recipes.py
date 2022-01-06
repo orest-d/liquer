@@ -580,14 +580,30 @@ class NewRecipeSpecStore(Store):
             raise KeyNotFoundStoreException(
                 f"Key {key} not found, recipe unknown", key=key, store=self
             )
-        recipe.make(key, store=self.substore)
+        try:
+            recipe.make(key, store=self.substore)
+            is_error=False
+        except:
+            is_error=True
+            trace = traceback.format_exc()
 
         metadata = self.substore.get_metadata(key)
         recipe_metadata = self.recipe_metadata(key)
+
         for k in ["status","fileinfo","message","is_error","log","child_log","dependencies"]:
             if k in recipe_metadata:
                 del recipe_metadata[k]
+        
         metadata.update(recipe_metadata)
+        if is_error:
+            m = Metadata(metadata)
+            m.error(f"Error evaluating recipe", traceback=trace)
+            metadata = m.as_dict()
+        else:
+            metadata["status"]=metadata.get("status", Status.READY.value)
+            if metadata["status"] == Status.NONE.value:
+                metadata["status"] = Status.READY.value
+
         self.substore.store_metadata(key, metadata)
         self.on_data_changed(key)
         self.on_metadata_changed(key)

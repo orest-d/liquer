@@ -1,6 +1,11 @@
 # TODO
 
 ## Bugs
+- [ ] ambiguity interpreting ~X - absolute path starting with -R does not make sense
+- [x] liquer-gui content - resource should be loaded from store, not via query
+- [x] Error in recipe make is not stored
+- [x] missing status with parquet_sql recipe
+- [x] rooting/prefix store not getting to correct root_store implementation - MountPointStore.mount
 - [x] stored metadata created by a recipe do not contain logs and message from the query
 - [x] error in server response() is not shown
 - [x] screen should be empty in GUI when unsupported type is shown
@@ -24,14 +29,14 @@
 
 ### LiQuer-GUI project
 
-- [ ] progress in recipe execution
-- [x] error in store should have a delete button
-- [x] message should be cleared after fetching
 - [ ] text editing syntax highlight
 - [ ] right top menu
-- [x] directory name should be visible
 - [ ] optionally load whole dataframe
+- [ ] progress in recipe execution
 - [ ] progressive status in directory (auto-update of directory status)
+- [x] error in store should have a delete button
+- [x] message should be cleared after fetching
+- [x] directory name should be visible
 - [x] reload recipes
 - [x] dir info not properly refreshed
 - [x] anchor
@@ -54,6 +59,11 @@
 
 ## Store and Cache enhancements
 
+- [ ] ability to dig into a zip file -Rzip/.../--R/.../-/query
+- [ ] ability to dig into a json or yaml file -Rjson/.../--R/.../-/query
+- [ ] remove directory recursively
+- [ ] validate key
+- [ ] ignore files with an ivalid name in the store - e.g. starting with ~ 
 - [ ] metadata for external files in store
 - [ ] date, size and detection of modifications
 - [ ] system store(s): commands, cache, running operations, configuration 
@@ -84,6 +94,8 @@
 
 ## Recipes
 
+- [ ] validate filename
+- [ ] create report of parsing recipes.yaml
 - [ ] use line numbers in recipes.yaml (see https://stackoverflow.com/questions/13319067/parsing-yaml-return-with-line-number)
 - [ ] recipe version
 - [ ] volatile recipes
@@ -101,6 +113,7 @@
 
 ## Integration of external components
 
+- [ ] zip file as a state type
 - [ ] spark support - spark dataframes
 - [ ] jinja and/or other templating engines
 - [ ] d-tale support

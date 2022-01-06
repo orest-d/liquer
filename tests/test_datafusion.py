@@ -9,6 +9,7 @@ from liquer.query import evaluate, evaluate_and_save
 from liquer.parser import encode_token
 from liquer.recipes import RecipeSpecStore
 from liquer.store import set_store
+from liquer.constants import Status
 import os.path
 import inspect
 import importlib
@@ -106,3 +107,4 @@ RECIPES:
         assert "c.txt" in store.keys()
 
         assert store.get_bytes("c.txt") == b"4,6"
+        assert store.get_metadata("hello.parquet")["status"] == Status.READY.value

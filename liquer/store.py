@@ -1011,6 +1011,8 @@ class PrefixStore(KeyTranslatingStore):
 class MountPointStore(RoutingStore):
     def __init__(self, default_store=None, routing_table=None):
         self.default_store = default_store
+        if default_store is not None:
+            self.default_store.parent_store=self
         self.routing_table = [] if routing_table is None else routing_table
     def sync(self):
         for key, store in self.routing_table:
@@ -1020,12 +1022,17 @@ class MountPointStore(RoutingStore):
             self.default_store.sync()
 
     def umount(self, umount_key):
+        for key, store in self.routing_table:
+            if key==umount_key:
+                store.parent_store=None
         self.routing_table = [(key, store) for key, store in self.routing_table if key!=umount_key]
         return self
 
     def mount(self, key, store):
         self.umount(key)
-        self.routing_table.append((key, PrefixStore(store, prefix=key)))
+        prefix_store=PrefixStore(store, prefix=key)
+        prefix_store.parent_store=self
+        self.routing_table.append((key, prefix_store))
         return self
 
     def route_to(self, key):

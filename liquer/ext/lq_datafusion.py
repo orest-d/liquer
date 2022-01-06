@@ -146,6 +146,7 @@ class ParquetSQLRecipe(Recipe):
 
         path = Path(tmpdir)
         for query in register:
+            context.info(f"Register {query}")
             try:
                 q = parse(query)
             except:
@@ -154,6 +155,7 @@ class ParquetSQLRecipe(Recipe):
             if q.is_resource_query():
                 key = q.resource_query().path()
                 if store.is_dir(key):
+                    context.info(f"Registering directory {key}")
                     for k in store.listdir_keys(key):
                         if not store.is_dir(k) and key_extension(k) == "parquet":
                             (path / key_name(k)).write_bytes(store.get_bytes(k))
@@ -163,7 +165,7 @@ class ParquetSQLRecipe(Recipe):
                                 k), str(path / key_name(k)))
                 else:
                     (path / key_name(key)).write_bytes(store.get_bytes(key))
-                    context.info(f"Registering {key}")
+                    context.info(f"Registering resource {key}")
                     ctx.register_parquet(key_name_without_extension(
                         key), str(path / key_name(key)))
             else:
