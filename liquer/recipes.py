@@ -594,6 +594,7 @@ class NewRecipeSpecStore(Store):
         except:
             is_error=True
             trace = traceback.format_exc()
+            traceback.print_exc()
 
         metadata = self.substore.get_metadata(key)
         recipe_metadata = self.recipe_metadata(key)
@@ -605,7 +606,7 @@ class NewRecipeSpecStore(Store):
         metadata.update(recipe_metadata)
         m= Metadata(metadata)
         if is_error:
-            m.error(f"Error evaluating recipe", traceback=trace)
+            m.exception(f"Error evaluating recipe", traceback=trace)
         else:
             if m.status == Status.NONE.value:
                 m.status = Status.READY.value

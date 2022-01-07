@@ -65,6 +65,7 @@ pip install liquer-framework
 - 2022-01-04 - v0.7.1  - root path bugfix, sync store
 - 2022-01-05 - v0.7.2  - several small fixes, e.g. fixing missing log in recipe-created metadata
 - 2022-01-06 - v0.7.3  - two bugfixes, recipe version
+- 2022-01-07 - v0.7.4  - more bugfixes
 
 ## Changes in v0.7
 

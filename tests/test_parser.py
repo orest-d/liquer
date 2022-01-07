@@ -199,7 +199,11 @@ class TestNewParser:
         assert isinstance(q.segments[0], ResourceQuerySegment)
         assert isinstance(q.segments[1], TransformQuerySegment)
 
-
+    def test_absolute_resource_bug(self):
+        q = parse("/-R/a")
+        assert q.absolute
+        assert q.is_resource_query()
+        assert q.encode() == "/-R/a"
 
 class TestQueryElements:
     def test_simple_action_request(self):
