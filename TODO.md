@@ -1,6 +1,9 @@
 # TODO
 
 ## Bugs
+- [x] failed resource query should pass on the error (test_recipe_error_in_query_metadata in test_query)
+- [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
+- [x] recipe title is changing during execution - fixed but untested
 - [ ] ambiguity interpreting ~X - absolute path starting with -R does not make sense
 - [x] liquer-gui content - resource should be loaded from store, not via query
 - [x] Error in recipe make is not stored
@@ -15,7 +18,6 @@
 ## Refactoring and celanup
 - [ ] remove commands and extended commands from metadata
 - [ ] change /api/debug-json to /api/metadata
-- [ ] finalize refactoring of Context to Metadata
 - [ ] consolidate meta and basic module
 
 ## User interface
@@ -29,11 +31,13 @@
 
 ### LiQuer-GUI project
 
+- [ ] #-i-qm bug in child log references
 - [ ] text editing syntax highlight
 - [ ] right top menu
 - [ ] optionally load whole dataframe
 - [ ] progress in recipe execution
 - [ ] progressive status in directory (auto-update of directory status)
+- [ ] websockets status update
 - [x] error in store should have a delete button
 - [x] message should be cleared after fetching
 - [x] directory name should be visible
@@ -54,6 +58,7 @@
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
 - [ ] a faster server (FastAPI?)
+- [ ] websockets status update
 - [x] update tornado backend
 - [x] unified metadata api for cache and store
 
@@ -94,6 +99,7 @@
 
 ## Recipes
 
+- [ ] dictionary of recipes in recipes.yaml
 - [ ] validate filename
 - [ ] create report of parsing recipes.yaml
 - [ ] use line numbers in recipes.yaml (see https://stackoverflow.com/questions/13319067/parsing-yaml-return-with-line-number)
@@ -138,23 +144,34 @@
 
 ## Core functionality and Metadata
 
+### Iterative evaluation
+- [ ] improve scheduling - prevent same queries to be scheduled
+- [ ] debug transform query
+- [ ] enable websockets
+- [ ] finalize refactoring of Context to Metadata
+- [ ] query meta modifier similar to -R-meta
+- [ ] python logging integration with metadata and context
+- [ ] iterative resource evaluation
+- [ ] trampoline to handle subqueries and parent queries
+- [ ] cyclic dependencies detection
+- [ ] clarify state/context metadata flow
+
+### Other
 - [ ] query origin (file, line number if possible)
 - [ ] dependency injection input type
-- [ ] debug transform query
 - [ ] attribute to prevent cloning
 - [ ] git support
 - [ ] search engine(s) integration
-- [ ] improve scheduling - prevent same queries to be scheduled
-- [ ] python logging integration with metadata and context
 - [ ] commands from methods
 - [ ] automatic state type from classes
-- [ ] query meta modifier similar to -R-meta
 - [ ] automatic argument type conversion
 - [x] refactor metadata handling to a separate class from context and state
 - [x] split context to mixins
 
 ## Highlevel features, useful commands, Examples and Documentation
 
+- [ ] filter capability in resources
+- [ ] ability to have resources as actions in a pipeline
 - [ ] start liquer-ml
 - [ ] conventions and ML library 
 - [ ] default data-science app example

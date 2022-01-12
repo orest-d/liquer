@@ -66,6 +66,7 @@ pip install liquer-framework
 - 2022-01-05 - v0.7.2  - several small fixes, e.g. fixing missing log in recipe-created metadata
 - 2022-01-06 - v0.7.3  - two bugfixes, recipe version
 - 2022-01-07 - v0.7.4  - more bugfixes
+- 2022-01-12 - v0.7.5  - more bugfixes, pandas_concat recipe
 
 ## Changes in v0.7
 

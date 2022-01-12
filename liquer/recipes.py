@@ -677,6 +677,11 @@ class NewRecipeSpecStore(Store):
     def store_metadata(self, key, metadata):
         if self.ignore(key):
             raise Exception(f"Key {key} is ignored, can't store metadata into it")
+        if key in self.recipes():
+            rm = self.recipe_metadata(key)
+            metadata["title"] = rm.get("title",metadata.get("title"))
+            metadata["description"] = rm.get("description",metadata.get("description"))
+
         self.substore.store_metadata(key, metadata)
         self.on_metadata_changed(key)
 

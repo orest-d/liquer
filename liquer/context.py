@@ -713,6 +713,7 @@ class Context(MetadataContextMixin, object):
                     )
                 else:
                     state.error(f"Metadata for key '{key}' not found in store")
+                    
             if (
                 resource_query.header is not None
                 and len(resource_query.header.parameters) > 0
@@ -743,6 +744,11 @@ class Context(MetadataContextMixin, object):
             state = state.with_data(data)
             state.metadata["resource_metadata"] = metadata
         except:
+            if "log" not in state.metadata:
+                state.metadata["log"] = []
+            for x in metadata.get("log", []):
+                self.log_dict(deepcopy(x))
+                state.metadata["log"].append(deepcopy(x))
             self.exception(
                 message=f"Error evaluating resource {resource_query}",
                 traceback=traceback.format_exc(),

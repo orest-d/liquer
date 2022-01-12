@@ -11,7 +11,7 @@ from liquer.commands import (
     reset_command_registry,
     ArgumentParserException,
 )
-
+from liquer.store import KeyNotFoundStoreException, set_store
 
 class TestQuery:
     def test_evaluate(self):
@@ -360,6 +360,45 @@ class TestQuery:
         assert not store.is_dir("results/subdir/hello.txt")
         assert store.get_bytes("results/subdir/hello.txt") == b"Hello"
 
+    def test_recipe_error_in_query_metadata(self):
+        import liquer.store as st
+        import liquer.recipes as r
+        from liquer.cache import MemoryCache, set_cache, get_cache
+
+        reset_command_registry()
+        set_cache(None)
+
+        @first_command
+        def hello():
+            raise Exception("Hello error")
+        @command
+        def world(x):
+            return str(x)+"world"
+
+
+        store = r.RecipeSpecStore(st.MemoryStore())
+        set_store(store)
+        store.store(
+            "results/recipes.yaml",
+            b"""
+        subdir:
+            - hello/hello.txt
+        """,
+            {},
+        )
+        assert "results/subdir/hello.txt" in store.recipes()
+        try:
+            assert store.get_bytes("results/subdir/hello.txt")
+        except KeyNotFoundStoreException:
+            pass
+        assert store.get_metadata("results/subdir/hello.txt")["is_error"]
+        assert store.get_metadata("results/subdir/hello.txt")["log"][-1]["message"]=="Hello error"
+        child_messages = [x["message"] for x in evaluate("results/subdir/hello.txt/-/world/hello.txt").metadata["child_log"]]
+        print(child_messages)
+        assert "Hello error" in child_messages
+        set_store(None)
+        reset_command_registry()
+
     def test_sync(self):
         import liquer.store as st
         import liquer.recipes as r
@@ -400,3 +439,4 @@ class TestQuery:
         store.sync()
         assert store.contains("results/subdir/hello2.txt")
         assert store.get_bytes("results/subdir/hello2.txt") == b"Hello"
+        reset_command_registry()

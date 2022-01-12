@@ -4,6 +4,7 @@
 Unit tests for LiQuer pandas support.
 """
 import pandas as pd
+from liquer import *
 from liquer.query import evaluate, evaluate_and_save
 from liquer.parser import encode_token
 from liquer.cache import set_cache, FileCache
@@ -12,7 +13,9 @@ import inspect
 import tempfile
 from liquer.state import set_var
 from liquer.store import set_store, MemoryStore
+from liquer.constants import *
 import importlib
+from liquer.recipes import RecipeSpecStore
 
 
 class TestPandas:
@@ -343,3 +346,44 @@ class TestPandas:
         assert "b" in df.columns
         assert list(df.a) == [1, 3]
         assert list(df.b) == [2, 4]
+        reset_command_registry()
+
+    def test_concat_recipe(self):
+        import pandas as pd
+        import liquer.ext.basic
+        from liquer.commands import reset_command_registry
+
+        reset_command_registry()  # prevent double-registration
+        importlib.reload(liquer.ext.basic)
+        importlib.reload(liquer.ext.lq_pandas)
+        import liquer.store as st
+
+        @first_command
+        def hello(offset=0):
+            return pd.DataFrame(dict(a=[1+offset,2+offset],b=[3+offset,4+offset]))
+
+        substore = st.MemoryStore()
+        substore.store(
+            "recipes.yaml",
+            """
+RECIPES:
+  - filename: hello.parquet
+    type: pandas_concat
+    concat:
+    - hello
+    - query: hello-10
+      column: test
+      value: extra
+""",
+            {},
+        )
+        store = RecipeSpecStore(substore)
+        set_store(store)
+        assert "hello.parquet" in store.keys()
+        df = evaluate("hello.parquet/-/dr").get()
+        assert sorted(df.columns) == ["a", "b", "test"]
+        assert list(df.a) == [1,2,11,12]
+        assert list(df.b) == [3,4,13,14]
+        assert list(df.test) == [None, None, "extra", "extra"]
+        set_store(None)
+        reset_command_registry()

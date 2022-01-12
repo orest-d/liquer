@@ -246,10 +246,7 @@ class State(object):
     def with_filename(self, filename):
         """set filename"""
         self.metadata["filename"] = filename
-        print("State with filename",filename)
         if "." in filename:
             self.extension = filename.split(".")[-1].lower()
             self.metadata["mimetype"] =  mimetype_from_extension(self.extension)
-        print("  extension",self.extension)
-        print("  mimetype ",self.metadata["mimetype"])
         return self
