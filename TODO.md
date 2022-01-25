@@ -56,6 +56,7 @@
 ## Server, Backend
 
 - [ ] REST command arguments to make web apps easier (get, post, json-encoded arguments)
+- [x] REST command arguments preparation - evaluate with extra parameters
 - [ ] server info with supported features
 - [ ] make a server suitable for publishing (read only access to store)
 - [ ] server driver - function to start server from a particular driver
