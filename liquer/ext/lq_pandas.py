@@ -395,14 +395,6 @@ class PandasConcatRecipe(Recipe):
     def from_dict(cls, d):
         return cls(d)
 
-    def metadata(self, key):
-        metadata = {}
-        if "title" in self.data:
-            metadata["title"] = self.data["title"]
-        if "description" in self.data:
-            metadata["description"] = self.data["description"]
-        return metadata
-
     def provides(self):
         if "filename" not in self.data:
             raise Exception(
@@ -413,40 +405,49 @@ class PandasConcatRecipe(Recipe):
         import liquer.store as ls
         import liquer.state_types as st
         context = get_context(context)
-        if "filename" not in self.data:
-            raise Exception(
-                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.")
-        if "concat" not in self.data:
-            raise Exception(
-                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a 'concat' section with queries to concatenate.")
-        if store is None:
-            store = context.store()
-        
-        to_join = []
-        for i,x in enumerate(self.data["concat"]):
-            if type(x) == str:
-                context.info(f"Evaluate query {i+1}: {x}")
-                df = context.evaluate(x).get()
-                if not isinstance(df, pd.DataFrame):
-                    raise Exception(f"Query {i+1} ({x}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}")
-                to_join.append(df)
-            elif type(x) == dict:
-                q = x['query']
-                column = x["column"]
-                value = x["value"]
-                context.info(f"Evaluate query {i+1}: {q}")
-                df = context.evaluate(q).get()
-                if not isinstance(df, pd.DataFrame):
-                    raise Exception(f"Query {i+1} ({q}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}")
-                df[column] = value
-                to_join.append(df)
-            else:
-                raise Exception(f"Unrecognized element {i+1} to concat: {x}")
-        df = pd.concat(to_join, sort=False)
+        try:
+            if "filename" not in self.data:
+                raise Exception(
+                    f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.")
+            if "concat" not in self.data:
+                raise Exception(
+                    f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a 'concat' section with queries to concatenate.")
+            if store is None:
+                store = context.store()
+            
+            to_join = []
+            for i,x in enumerate(self.data["concat"]):
+                if type(x) == str:
+                    context.info(f"Evaluate query {i+1}: {x}")
+                    df = context.evaluate(x).get()
+                    if not isinstance(df, pd.DataFrame):
+                        raise Exception(f"Query {i+1} ({x}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}")
+                    to_join.append(df)
+                elif type(x) == dict:
+                    q = x['query']
+                    column = x["column"]
+                    value = x["value"]
+                    context.info(f"Evaluate query {i+1}: {q}")
+                    df = context.evaluate(q).get()
+                    if not isinstance(df, pd.DataFrame):
+                        raise Exception(f"Query {i+1} ({q}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}")
+                    df[column] = value
+                    to_join.append(df)
+                else:
+                    raise Exception(f"Unrecognized element {i+1} to concat: {x}")
+            df = pd.concat(to_join, sort=False)
 
-        extension = ls.key_extension(key)
-        b, mimetype, type_identifier = st.encode_state_data(df, extension=extension)
+            extension = ls.key_extension(key)
+            b, mimetype, type_identifier = st.encode_state_data(df, extension=extension)
+            metadata = self.metadata(key)
+            metadata.update({type_identifier: type_identifier, mimetype: mimetype})
+            metadata["data_characteristics"]=st.data_characteristics(df)
+            store.store(key, b, metadata=metadata)
+        except:
+            metadata = self.metadata(key)
+            m= Metadata(metadata)
+            m.exception("Pandas concat recipe failed",traceback=traceback.format_exc())
+            store.store_metadata(key,m.as_dict())
 
-        store.store(key, b, metadata={type_identifier: type_identifier, mimetype: mimetype})
 
 register_recipe(PandasConcatRecipe)

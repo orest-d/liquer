@@ -385,5 +385,13 @@ RECIPES:
         assert list(df.a) == [1,2,11,12]
         assert list(df.b) == [3,4,13,14]
         assert list(df.test) == [None, None, "extra", "extra"]
+
+        assert store.get_metadata("hello.parquet")["status"] == Status.READY.value
+        assert store.get_metadata("hello.parquet")["recipes_key"] == "recipes.yaml"
+        assert store.get_metadata("hello.parquet")["has_recipe"] == True
+        assert store.get_metadata("hello.parquet")["recipes_directory"] == ""
+        assert store.get_metadata("hello.parquet")["recipe_name"] == "recipes.yaml/-Ryaml/RECIPES/0#hello.parquet"
+        assert store.get_metadata("hello.parquet")["data_characteristics"]["description"] == "Dataframe with 3 columns and 4 rows."
+
         set_store(None)
         reset_command_registry()

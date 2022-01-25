@@ -126,14 +126,6 @@ class ParquetSQLRecipe(Recipe):
     def from_dict(cls, d):
         return cls(d)
 
-    def metadata(self, key):
-        metadata = {}
-        if "title" in self.data:
-            metadata["title"] = self.data["title"]
-        if "description" in self.data:
-            metadata["description"] = self.data["description"]
-        return metadata
-
     def provides(self):
         if "filename" not in self.data:
             raise Exception(

@@ -28,10 +28,15 @@ class RecipeRegistry(object):
     def __init__(self):
         self.recipe_dictionary = {}
     def register(self, recipe):
+        """Register a Recipe class in the registry"""
         if recipe.recipe_type() in self.recipe_dictionary:
             print(f"WARNING: Recipe type '{recipe.recipe_type()}' already registered")
         self.recipe_dictionary[recipe.recipe_type()] = recipe
     def from_dict(self, d):
+        """Construct a Recipe instance from a recipe description
+        Recipe description is typically a dictionary. The 'type' item of the dictionary is matched with recipe_type()
+        class-method result for known recipes to find a suitable recipe constructor. 
+        """
         if type(d) != dict:
             raise Exception("Dictionary expected as recipe definition for registered recipes")
         if "type" not in d:
@@ -90,7 +95,16 @@ class Recipe:
         return name in self.provides()
 
     def metadata(self, key):
-        raise RecipeException("Recipe undefined (metadata)",key=key)
+        metadata = Metadata(dict())
+        if "title" in self.data:
+            metadata.metadata["title"] = self.data["title"]
+        if "description" in self.data:
+            metadata.metadata["description"] = self.data["description"]
+        metadata.key=key
+        metadata.metadata["recipes_key"]=self.data.get("recipes_key")
+        metadata.metadata["recipes_directory"]=self.data.get("recipes_directory")
+        metadata.metadata["recipe_name"]=self.data.get("recipe_name")
+        return metadata.as_dict()
       
     def make(self, key, context=None):
         raise RecipeException("Recipe undefined (make)",key=key)
@@ -149,13 +163,8 @@ class QueryRecipe(Recipe):
         return cls(d)
         
     def metadata(self, key):
-        metadata = Metadata(dict())
-        if "title" in self.data:
-            metadata.metadata["title"] = self.data["title"]
-        if "description" in self.data:
-            metadata.metadata["description"] = self.data["description"]
+        metadata = Metadata(super().metadata(key))
         metadata.query = self.data["query"]
-        metadata.key=key
         return metadata.as_dict()
       
     def make(self, key, store=None, context=None):
@@ -784,7 +793,9 @@ class NewRecipeSpecStore(Store):
                     for i, r in enumerate(items):
                         cwd = parent if directory == self.LOCAL_RECIPES else join_key(parent, directory)
                         d = resolve_recipe_definition(r, cwd, metadata)
-                        d["recipe_name"] = self.to_root_key(recipes_key)+f":{directory}[{i}]"+d.get("filename","")
+                        d["recipe_name"] = self.to_root_key(recipes_key)+f"/-Ryaml/{directory}/{i}#"+d.get("filename","")
+                        d["recipes_key"] = self.to_root_key(recipes_key)
+                        d["recipes_directory"] = "" if directory == self.LOCAL_RECIPES else directory
                         recipe = recipe_registry().from_dict(d)
                         for name in recipe.provides():
                             key = join_key(cwd, name)

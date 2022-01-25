@@ -1,9 +1,9 @@
 # TODO
 
 ## Bugs
-- [ ] datafusion sql recipe does not log the error if SQL is faulty
+- [x] datafusion sql recipe does not log the error if SQL is faulty
 - [ ] state vars not preserved - check, test
-- [ ] pandas_concat missing data characteristics, recipes_key and recipes_directory
+- [x] pandas_concat missing data characteristics, recipes_key and recipes_directory
 - [x] failed resource query should pass on the error (test_recipe_error_in_query_metadata in test_query)
 - [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
 - [x] recipe title is changing during execution - fixed but untested
@@ -71,7 +71,7 @@
 - [ ] local file using context manager - enter, exit
 - [ ] async store and cache access to support async server frameworks
 - [ ] ability to dig into a zip file -Rzip/.../--R/.../-/query
-- [ ] ability to dig into a json or yaml file -Rjson/.../--R/.../-/query
+- [ ] ability to dig into a json or yaml file -Rjson/.../--R/.../-/query - important for recipe links
 - [ ] remove directory recursively
 - [ ] validate key
 - [ ] ignore files with an ivalid name in the store - e.g. starting with ~ 
@@ -163,6 +163,7 @@
 - [ ] clarify state/context metadata flow
 
 ### Other
+- [ ] Anchor support in query parser
 - [ ] references in metadata
 - [ ] query origin (file, line number if possible)
 - [ ] dependency injection input type
