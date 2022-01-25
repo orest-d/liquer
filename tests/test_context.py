@@ -22,8 +22,38 @@ class TestContext:
         context = get_context()
         action = ActionRequest.from_arguments("test_callable", "1")
         result = context.evaluate_action(State(), action)
+        assert not result.is_volatile()
         assert result.get() == 124
         assert result.metadata["commands"][-1] == ["test_callable", "1"]
+
+    def test_evaluate_action_with_arguments(self):
+        reset_command_registry()
+
+        @command
+        def test_callable(state, a: int, b=123):  # has state as a first argument
+            return a + b
+
+        context = get_context()
+        action = ActionRequest.from_arguments("test_callable", "1")
+        result = context.evaluate_action(State(), action, extra_parameters=[234])
+        assert result.is_volatile()
+        assert result.get() == 235
+        assert result.metadata["commands"][-1] == ["test_callable", "1"]
+
+    def test_evaluate_query_with_arguments(self):
+        reset_command_registry()
+
+        @command
+        def test_callable(state, a: int, b=123):  # has state as a first argument
+            return a + b
+
+        result = get_context().evaluate("test_callable-1")
+        assert not result.is_volatile()
+        assert result.get() == 124
+
+        result = get_context().evaluate("test_callable-1", extra_parameters=[234])
+        assert result.is_volatile()
+        assert result.get() == 235
 
     def test_evaluate_command_with_attributes(self):
         reset_command_registry()
@@ -103,6 +133,12 @@ class TestContext:
             return is_initial
 
         @command
+        def varcommand_state(state,context=None):
+            is_initial = state.vars.get("test_var") == "INITIAL"
+            state.vars["test_var"] = "MODIFIED"
+            return is_initial
+
+        @command
         def check1(state, context=None):
             print(f"Check1: ", state.vars["test_var"])
             return state.vars["test_var"] == "MODIFIED"
@@ -113,10 +149,13 @@ class TestContext:
             return context.vars.test_var == "MODIFIED"
 
         assert get_context().evaluate("varcommand").get() == True
+        assert get_context().evaluate("varcommand_state").get() == True
         assert get_context().evaluate("check1").get() == False
         assert get_context().evaluate("check2").get() == False
         assert get_context().evaluate("varcommand/check1").get() == True
         assert get_context().evaluate("varcommand/check2").get() == True
+        assert get_context().evaluate("varcommand_state/check1").get() == True
+        assert get_context().evaluate("varcommand_state/check2").get() == True
 
     def test_vars(self):
         v = Vars()

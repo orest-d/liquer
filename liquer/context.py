@@ -555,7 +555,7 @@ class Context(MetadataContextMixin, object):
                 query=self.raw_query,
             )
 
-    def evaluate_action(self, state: State, action, cache=None):
+    def evaluate_action(self, state: State, action, extra_parameters=None, cache=None):
         self.debug(f"EVALUATE ACTION '{action}' on '{state.query}'")
         self.status = Status.EVALUATION
         self.store_metadata(force=True)
@@ -590,6 +590,11 @@ class Context(MetadataContextMixin, object):
             self.store_metadata(force=True)
             for p in action.parameters:
                 parameters.append(self.evaluate_parameter(p, action))
+            if extra_parameters is not None and len(extra_parameters) > 0:
+                self.warning(f"Using {len(extra_parameters)} extra parameters")
+                parameters.extend(extra_parameters)
+                is_volatile=True
+
             self.status = Status.EVALUATION
             self.store_metadata(force=True)
 
@@ -822,7 +827,7 @@ class Context(MetadataContextMixin, object):
                     store.store_metadata(self.store_key, m.as_dict())
 
     def evaluate(
-        self, query, cache=None, description=None, store_key=None, store_to=None
+        self, query, cache=None, description=None, store_key=None, store_to=None, extra_parameters=None
     ):
         """Evaluate query, returns a State.
         This method can be used in a command to evaluate a subquery,
@@ -835,6 +840,9 @@ class Context(MetadataContextMixin, object):
 
         Evaluation can be (besides cache) stored in the store under the key specified by the store_key (if not None).
         A store can be specified too via the store_to option. If None (default), the default store (from the store method) is used.
+
+        If extra_parameters are specified, these parameters are appended to the parameters of the last action.
+        This effectively renders the evaluation volatile. Note that the action needs correct amount of parameters.
         """
         self.enable_store_metadata = False  # Prevents overwriting cache with metadata
         self.status = Status.EVALUATION
@@ -924,7 +932,7 @@ class Context(MetadataContextMixin, object):
             state.metadata["filename"] = r.filename
             state.metadata["extension"] = ".".join(r.filename.split(".")[1:])
 
-        state = self.evaluate_action(state, r)
+        state = self.evaluate_action(state, r, extra_parameters=extra_parameters)
         state.query = query.encode()
         state.metadata["created"] = self.now()
 

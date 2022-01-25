@@ -1,13 +1,13 @@
 # TODO
 
 ## Bugs
+- [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
+- [ ] ambiguity interpreting ~X - absolute path starting with -R does not make sense
 - [x] datafusion sql recipe does not log the error if SQL is faulty
-- [ ] state vars not preserved - check, test
+- [x] state vars not preserved - check, test
 - [x] pandas_concat missing data characteristics, recipes_key and recipes_directory
 - [x] failed resource query should pass on the error (test_recipe_error_in_query_metadata in test_query)
-- [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
 - [x] recipe title is changing during execution - fixed but untested
-- [ ] ambiguity interpreting ~X - absolute path starting with -R does not make sense
 - [x] liquer-gui content - resource should be loaded from store, not via query
 - [x] Error in recipe make is not stored
 - [x] missing status with parquet_sql recipe
