@@ -1,6 +1,9 @@
 # TODO
 
 ## Bugs
+- [ ] datafusion sql recipe does not log the error if SQL is faulty
+- [ ] state vars not preserved - check, test
+- [ ] pandas_concat missing data characteristics, recipes_key and recipes_directory
 - [x] failed resource query should pass on the error (test_recipe_error_in_query_metadata in test_query)
 - [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
 - [x] recipe title is changing during execution - fixed but untested
@@ -52,18 +55,21 @@
 
 ## Server, Backend
 
+- [ ] REST command arguments to make web apps easier (get, post, json-encoded arguments)
 - [ ] server info with supported features
 - [ ] make a server suitable for publishing (read only access to store)
 - [ ] server driver - function to start server from a particular driver
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
-- [ ] a faster server (FastAPI?)
+- [ ] a faster server (FastAPI?, Sonic?)
 - [ ] websockets status update
 - [x] update tornado backend
 - [x] unified metadata api for cache and store
 
 ## Store and Cache enhancements
 
+- [ ] local file using context manager - enter, exit
+- [ ] async store and cache access to support async server frameworks
 - [ ] ability to dig into a zip file -Rzip/.../--R/.../-/query
 - [ ] ability to dig into a json or yaml file -Rjson/.../--R/.../-/query
 - [ ] remove directory recursively
@@ -157,6 +163,7 @@
 - [ ] clarify state/context metadata flow
 
 ### Other
+- [ ] references in metadata
 - [ ] query origin (file, line number if possible)
 - [ ] dependency injection input type
 - [ ] attribute to prevent cloning

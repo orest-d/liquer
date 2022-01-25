@@ -8,6 +8,8 @@ from liquer.parser import parse
 from liquer.store import key_extension, key_name, key_name_without_extension
 from tempfile import TemporaryDirectory
 from pathlib import Path
+from liquer.metadata import Metadata
+import traceback
 
 import pandas as pd
 import datafusion as daf
@@ -193,13 +195,18 @@ class ParquetSQLRecipe(Recipe):
         if store is None:
             store = context.store()
         with TemporaryDirectory() as tmpdir:
-            ctx = self.make_execution_context(tmpdir, store, context)
-            df = ctx.sql(self.data["sql"])
-            table = pyarrow.Table.from_batches(df.collect())
-            path = Path(tmpdir) / self.data["filename"]
-            pyarrow.parquet.write_table(table, str(path))
-            b = path.read_bytes()
             metadata = self.metadata(key)
-            store.store(key, b, metadata)
+            try:
+                ctx = self.make_execution_context(tmpdir, store, context)
+                df = ctx.sql(self.data["sql"])
+                table = pyarrow.Table.from_batches(df.collect())
+                path = Path(tmpdir) / self.data["filename"]
+                pyarrow.parquet.write_table(table, str(path))
+                b = path.read_bytes()
+                store.store(key, b, metadata)
+            except:
+                m = Metadata(metadata)
+                m.exception("Parquet SQL recipe failed",traceback=traceback.format_exc())
+                store.store_metadata(key,m.as_dict())
 
 register_recipe(ParquetSQLRecipe)

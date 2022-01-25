@@ -109,3 +109,38 @@ RECIPES:
         assert store.get_bytes("c.txt") == b"4,6"
         assert store.get_metadata("hello.parquet")["status"] == Status.READY.value
         assert store.get_metadata("hello.parquet")["dependencies"]["recipe"]["version"] == "md5:ab3b6cdad4f069e8b0cc4213bf2e743f"
+
+    def test_sql_error(self):
+        import liquer.store as st
+
+        @first_command
+        def hello():
+            return pd.DataFrame(dict(a=[1,2],b=[3,4]))
+        @command
+        def c(df):
+            return ",".join(str(x) for x in df.c)
+
+        substore = st.MemoryStore()
+        substore.store(
+            "recipes.yaml",
+            """
+RECIPES:
+  - filename: hello.parquet
+    type: parquet_sql
+    register:
+    - hello/hello.parquet
+    sql: SELECT xxx,b,a+b AS c FROM hello
+  - hello.parquet/-/dr-dataframe-parquet/c/c.txt
+""",
+            {},
+        )
+        store = RecipeSpecStore(substore)
+        set_store(store)
+        assert "hello.parquet" in store.keys()
+        assert "c.txt" in store.keys()
+
+        try:
+            store.get_bytes("c.txt")
+        except:
+            pass
+        assert store.get_metadata("hello.parquet")["status"] == Status.ERROR.value
