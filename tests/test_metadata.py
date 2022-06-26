@@ -45,6 +45,7 @@ class TestMetadata:
         store = st.MemoryStore()
         m = StoreSyncMetadata(store, "a/b")
         assert store.get_metadata("a/b")["key"] == "a/b"
+        assert "Hello" not in [x["message"] for x in store.get_metadata("a/b")["log"]]
         m.info("Hello")
         assert "Hello" in [x["message"] for x in store.get_metadata("a/b")["log"]]
 
