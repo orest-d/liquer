@@ -711,6 +711,12 @@ class Context(MetadataContextMixin, object):
         state = self.create_initial_state()
         try:
             metadata = store.get_metadata(key)
+        except:
+            state.log_exception(f"Failed getting metadata for key '{key}'", traceback=traceback.format_exc())
+            self.warning(f"Failed getting metadata for key '{key}'", traceback=traceback.format_exc())
+            return state
+
+        try:
             if metadata is None:
                 if store.contains(key):
                     state.error(

@@ -1,6 +1,8 @@
 # TODO
 
 ## Bugs
+- [x] recipes.py line 128 - improve error reporting 
+- [?] context.py line 754 metadata referenced before assignment
 - [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
 - [ ] ambiguity interpreting ~X - absolute path starting with -R does not make sense
 - [x] datafusion sql recipe does not log the error if SQL is faulty
@@ -62,13 +64,14 @@
 - [ ] server driver - function to start server from a particular driver
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
-- [ ] a faster server (FastAPI?, Sonic?)
+- [ ] a faster server (FastAPI?, Sanic?)
 - [ ] websockets status update
 - [x] update tornado backend
 - [x] unified metadata api for cache and store
 
 ## Store and Cache enhancements
 
+- [ ] external file storage - like file storage, but without storable metadata 
 - [ ] local file using context manager - enter, exit
 - [ ] async store and cache access to support async server frameworks
 - [ ] ability to dig into a zip file -Rzip/.../--R/.../-/query

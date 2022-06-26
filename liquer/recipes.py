@@ -2,7 +2,7 @@ from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreExcep
 from liquer.context import get_context
 from liquer.parser import parse
 from liquer.constants import Status
-from liquer.metadata import Metadata
+from liquer.metadata import Metadata, StoreSyncMetadata
 import json
 import hashlib
 
@@ -13,6 +13,7 @@ try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
     from yaml import Loader, Dumper
+
 
 class RecipeException(Exception):
     def __init__(self, message, key=None):
@@ -126,7 +127,10 @@ def resolve_recipe_definition(r, directory, metadata):
             )
         except:
             metadata.warning(f"Can't resolve recipe '{r}'", traceback=traceback.format_exc())
+            print (f"Can't resolve recipe '{r}'")
             traceback.print_exc()
+            return None
+
     elif isinstance(r, dict):
         if r.get("type") in (None, "query") and "query" in r:
             try:
@@ -779,6 +783,7 @@ class NewRecipeSpecStore(Store):
         import yaml
 
         recipes = {}
+
         for key in self.substore.keys():
             spec = None
             if self.key_name(key) == self.RECIPES_FILE and not self.substore.is_dir(
@@ -786,17 +791,24 @@ class NewRecipeSpecStore(Store):
             ):
                 spec = yaml.load(self.substore.get_bytes(key), Loader=Loader)
             recipes_key = key
-            metadata = Metadata(self.substore.get_metadata(key))
+            metadata = StoreSyncMetadata(self.substore, key)
+            metadata.clear_log()
+            metadata.info(f"Update recipes for key '{key}'")
             if spec is not None:
                 parent = parent_key(key)
                 for directory, items in spec.items():
                     for i, r in enumerate(items):
                         cwd = parent if directory == self.LOCAL_RECIPES else join_key(parent, directory)
                         d = resolve_recipe_definition(r, cwd, metadata)
+                        if d is None:
+                            metadata.warning(f"Failed parsing the definition of recipe {i+1} in {directory}")
                         d["recipe_name"] = self.to_root_key(recipes_key)+f"/-Ryaml/{directory}/{i}#"+d.get("filename","")
                         d["recipes_key"] = self.to_root_key(recipes_key)
                         d["recipes_directory"] = "" if directory == self.LOCAL_RECIPES else directory
-                        recipe = recipe_registry().from_dict(d)
+                        try:
+                            recipe = recipe_registry().from_dict(d)
+                        except:
+                            metadata.warning(f"Failed parsing recipe {i+1} in {directory}", traceback=traceback.format_exc())
                         for name in recipe.provides():
                             key = join_key(cwd, name)
                             recipes[key]=recipe

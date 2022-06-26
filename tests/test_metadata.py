@@ -29,4 +29,16 @@ class TestMetadata:
         set_store(None)
         set_cache(NoCache())
 
+    def test_updated(self):
+        class MyMetadata(Metadata):
+            UPDATED=0
+            def updated(self):
+                self.UPDATED+=1
+        m = MyMetadata()
+
+        assert m.UPDATED == 0
+        m.info("Hello")
+        assert m.UPDATED == 2
+
+
 

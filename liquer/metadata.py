@@ -53,6 +53,7 @@ class Metadata:
     def query(self, value):
         self.metadata["query"] = value
         self.metadata["dependencies"]["query"] = value
+        self.updated()
 
     @property
     def key(self):
@@ -61,6 +62,7 @@ class Metadata:
     @key.setter
     def key(self, value):
         self.metadata["key"] = value
+        self.updated()
 
     @property
     def status(self):
@@ -73,6 +75,7 @@ class Metadata:
         self.metadata["status"] = value
         if value == Status.ERROR.value:
             self.metadata["is_error"] = True
+        self.updated()
 
     @property
     def type_identifier(self):
@@ -81,6 +84,7 @@ class Metadata:
     @type_identifier.setter
     def type_identifier(self, value):
         self.metadata["type_identifier"] = value
+        self.updated()
 
     @property
     def message(self):
@@ -89,6 +93,7 @@ class Metadata:
     @message.setter
     def message(self, value):
         self.metadata["message"] = value
+        self.updated()
 
     @property
     def is_error(self):
@@ -100,6 +105,7 @@ class Metadata:
         self.metadata["is_error"] = value
         if value:
             self.metadata["status"] = Status.ERROR.value
+        self.updated()
 
     @property
     def log(self):
@@ -123,12 +129,20 @@ class Metadata:
         self.metadata["dependencies"]=dependencies.as_dict()
         return self
 
+    def clear_log(self):
+        "Remove all the messages from the log."
+        self.metadata["log"]=[]
+        self.info("Log cleared")
+        self.updated()
+        return self
+
     def log_dict(self, d):
         "Put dictionary with a log entry into the log"
         d["timestamp"] = timestamp()
         self.log.append(d)
         if "message" in d:
             self.message = d["message"]
+        self.updated()
         return self
 
     def error(self, message, position=None, query=None):
@@ -169,3 +183,40 @@ class Metadata:
         """Log a message (debug)"""
         self.log_dict(dict(kind="debug", message=message))
         return self
+
+    def updated(self):
+        pass
+
+class StoreSyncMetadata(Metadata):
+    """Metadata synchronizing with a store
+    """
+
+    def __init__(self, store, key, create_if_not_found=True):
+        """Store and metadata to be synchronized with. Metadata will be initialized from a store.
+        If create_if_not_found is True (default), then in case of a failure to read (i.e. metadata does not exists, is None or it ends with an error),
+        the new metadata is created under the key.
+        """
+        self.store=store
+        self.sync_key=key
+        makenew = False
+        try:
+            metadata = self.store.get_metadata(key)
+            makenew = True if metadata is None and create_if_not_found else False
+        except:
+            if create_if_not_found:
+                makenew=True
+            else:
+                raise
+        if makenew:
+            self.store.store_metadata(key, Metadata().as_dict())
+            metadata = self.store.get_metadata(key)
+            
+        super().__init__(metadata)
+    
+    def reload(self):
+        "Reload metadata from store"
+        metadata = self.store.get_metadata(self.sync_key)
+        self.set_metadata(metadata)
+
+    def updated(self):
+        self.store.store_metadata(self.sync_key, self.as_dict())
