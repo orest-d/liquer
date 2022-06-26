@@ -4,7 +4,7 @@
 Unit tests for LiQuer metadata.
 """
 import pytest
-from liquer.metadata import Metadata
+from liquer.metadata import Metadata, StoreSyncMetadata
 from liquer.tools import get_stored_metadata
 
 
@@ -39,6 +39,14 @@ class TestMetadata:
         assert m.UPDATED == 0
         m.info("Hello")
         assert m.UPDATED == 2
+
+    def test_storing(self):
+        import liquer.store as st
+        store = st.MemoryStore()
+        m = StoreSyncMetadata(store, "a/b")
+        assert store.get_metadata("a/b")["key"] == "a/b"
+        m.info("Hello")
+        assert "Hello" in [x["message"] for x in store.get_metadata("a/b")["log"]]
 
 
 
