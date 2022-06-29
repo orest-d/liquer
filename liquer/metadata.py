@@ -220,3 +220,4 @@ class StoreSyncMetadata(Metadata):
 
     def updated(self):
         self.store.store_metadata(self.sync_key, self.as_dict())
+

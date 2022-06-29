@@ -661,6 +661,23 @@ class ProxyStore(Store):
     def __repr__(self):
         return f"ProxyStore({repr(self._store)})"
 
+class IndexerStore(ProxyStore):
+    """Indexer proxy to another store - this will call indexer on storing.
+    """
+    def store(self, key, data, metadata):
+        from liquer.indexer import index
+        self._store.store(key, data, metadata)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
+        query = None if metadata is None else metadata.get('query')
+        index(key=key, query=query, data=data, metadata=metadata)
+
+    def store_metadata(self, key, metadata):
+        from liquer.indexer import index
+        self._store.store_metadata(key, metadata)
+        self.on_metadata_changed(key)
+        query = None if metadata is None else metadata.get('query')
+        index(key=key, query=query, data=None, metadata=metadata)
 
 class ReadOnlyStore(ProxyStore):
     """Read only proxy to a store

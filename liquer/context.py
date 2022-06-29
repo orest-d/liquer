@@ -28,6 +28,7 @@ import liquer.util as util
 from liquer.util import timestamp
 from copy import deepcopy
 from liquer.metadata import Metadata
+from liquer.indexer import index
 
 from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException, key_extension
 
