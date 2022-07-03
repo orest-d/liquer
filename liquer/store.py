@@ -1312,3 +1312,4 @@ class FileSystemStore(Store):
 
     def __repr__(self):
         return f"FileSystemStore({repr(self.fs)}, {repr(self.path)})"
+
