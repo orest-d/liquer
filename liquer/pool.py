@@ -87,7 +87,7 @@ def set_central_cache(cache, manager=None, use_cache_proxy_locally=True):
     It has to be noted that the cache lives in a single process and relies on IPC to work, thus this solution
     may possibly be outperformed by set_local_cache_constructor.
 
-    PoolManager instance can be provided via manager. If None, PollManager will be created and started.
+    PoolManager instance can be provided via manager. If None, PoolManager will be created and started.
     The manager instance is returned.
 
     The use_cache_proxy_locally controls if cache is proxied when used locally (which should be the safe choice).

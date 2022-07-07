@@ -1,6 +1,8 @@
 # TODO
 
 ## Bugs
+- [ ] metadata viewer lacks length
+- [ ] import Metadata in lq_pandas
 - [x] recipes.py line 128 - improve error reporting 
 - [?] context.py line 754 metadata referenced before assignment
 - [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
@@ -28,11 +30,21 @@
 ## User interface
 
 - [ ] icons (in metadata and web)
-- [ ] data viewers and editors support
 - [ ] new menu - remove menu from state variables
 - [ ] wasm library in frontend
 - [x] liquer frontent project - exists: liquer-gui 
 - [x] web store GUI (in progress: https://github.com/orest-d/liquer-gui)
+
+## Indexer
+
+- [ ] data viewers and editors support, plugable tools
+- [ ] plugable tools - New Edit View Metadata
+- [ ] field statistics
+- [ ] metadata dimensions and quantities
+- [ ] dataframe catalogue
+- [ ] search engine support
+- [ ] customizable dataframe search engine
+
 
 ### LiQuer-GUI project
 
@@ -84,7 +96,7 @@
 - [ ] system store(s): commands, cache, running operations, configuration 
 - [ ] SQL cache working on Hive
 - [ ] SQL store working on Hive
-- [ ] remote store (based on web api)
+- [x] remote store (based on web api)
 - [ ] remote liquer service as cache
 - [ ] encoded store
 - [ ] database store
@@ -129,6 +141,10 @@
 
 ## Integration of external components
 
+- [ ] graphviz
+- [ ] Jupyter ipynb viewer
+- [ ] XGBoost
+- [ ] LightGBM
 - [ ] zip file as a state type
 - [ ] spark support - spark dataframes
 - [ ] jinja and/or other templating engines
@@ -167,6 +183,7 @@
 - [ ] clarify state/context metadata flow
 
 ### Other
+- [ ] template engine with query expansion
 - [ ] Anchor support in query parser
 - [ ] references in metadata
 - [ ] query origin (file, line number if possible)
@@ -191,6 +208,12 @@
 - [ ] better pandas functions (eq, lt, gt, leq, geq, isin, notin, between, groupby, random)
 - [ ] report template
 - [x] dataframe batches
+
+## LiQuer ML and Application
+
+- [ ] field database - data type, statistics, label, presentation
+- [ ] field conventions
+- [ ] feature definition
 
 ## Misc and Experimental
 

@@ -381,3 +381,20 @@ subdir:
         assert (
             store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
         )
+
+    def test_indexer(self):
+        import liquer.indexer as ix
+
+        reset_command_registry()
+        ix.reset_index_registry()
+
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        assert get_context().evaluate("hello-world").get() == "Hello, world"
+        assert get_context().evaluate("hello-world").metadata.get("tools") is None
+
+        ix.init_indexer_registry()
+
+        assert get_context().evaluate("hello-world").metadata.get("tools") is not None

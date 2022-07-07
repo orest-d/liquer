@@ -76,6 +76,8 @@ MIMETYPES = dict(
     wmf="image/wmf",
     aiff="audio/aiff",
     avi="video/avi",
+    py='text/x-python',
+    ipynb="application/x-ipynb+json",
 )
 
 TYPE_IDENTIFIER_BY_EXTENSION = dict(
@@ -113,6 +115,8 @@ TYPE_IDENTIFIER_BY_EXTENSION = dict(
     pcd="image",
     psd="image",
     wmf="image",
+    py="text",
+    ipynb="generic",
 )
 
 def mimetype_from_extension(extension, default = "application/octet-stream"):

@@ -69,6 +69,9 @@ pip install liquer-framework
 - 2022-01-12 - v0.7.5  - more bugfixes, pandas_concat recipe
 - 2022-01-25 - v0.7.6  - bugfixes in recipe metadata, development of extra parameters to evaluate
 
+## Changes in v0.8
+- Remote store allows to mount a remote LiQuer server as a store
+ 
 ## Changes in v0.7
 
 ### Breaking changes

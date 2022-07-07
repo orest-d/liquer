@@ -28,7 +28,7 @@ import liquer.util as util
 from liquer.util import timestamp
 from copy import deepcopy
 from liquer.metadata import Metadata
-from liquer.indexer import index
+from liquer.indexer import index, NullIndexer
 
 from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException, key_extension
 
@@ -306,6 +306,19 @@ class Context(MetadataContextMixin, object):
                 traceback=traceback.format_exc(),
             )
             store.store_metadata(key, m.as_dict())
+
+    def indexer(self):
+        """Return indexer object - by default it is the global indexer function"""
+        return index
+
+    def index_state(self, state):
+        """Call indexer on the state object."""
+        indexer = self.indexer()
+        if not state.is_error:
+            metadata = indexer(query = state.query, data = state.data, metadata = state.metadata)
+            if metadata is not None:
+                state.metadata = metadata
+        return state
 
     def can_report(self):
         if self.last_report_time is None:
@@ -873,6 +886,7 @@ class Context(MetadataContextMixin, object):
             #            self.enable_store_metadata = True
             self.store_metadata(force=True)
             self.enable_store_metadata = False
+            state = self.index_state(state)
             return state
 
         raw_query, query = self.to_query(query)
@@ -893,6 +907,7 @@ class Context(MetadataContextMixin, object):
         if state is not None:
             self.debug(f"Cache hit {query}")
             self._store_state(state)
+            state = self.index_state(state)
             return state
         self.enable_store_metadata = (
             True  # Metadata can be only written after trying to read from cache,
@@ -905,6 +920,7 @@ class Context(MetadataContextMixin, object):
             state.query = query.encode()
             state.metadata["created"] = self.now()
             self._store_state(state)
+            state = self.index_state(state)
             return state
         else:
             p, r = query.predecessor()
@@ -927,6 +943,7 @@ class Context(MetadataContextMixin, object):
                 state.metadata["created"] = self.now()
                 self.debug(f"ERROR in '{state.query}'")
                 self._store_state(state)
+                state = self.index_state(state)
                 return state
         self.vars = Vars(state.vars)
         if r is None:
@@ -934,6 +951,7 @@ class Context(MetadataContextMixin, object):
             state.query = query.encode()
             state.metadata["created"] = self.now()
             self._store_state(state)
+            state = self.index_state(state)
             return state
         elif r.is_filename():
             state.metadata["filename"] = r.filename
@@ -962,6 +980,7 @@ class Context(MetadataContextMixin, object):
                     self.store_metadata()
 
         self._store_state(state)
+        state = self.index_state(state)
         return state
 
     def evaluate_and_save(
