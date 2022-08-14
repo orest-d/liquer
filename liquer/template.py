@@ -81,7 +81,9 @@ class SimpleTemplateEngine(object):
         if variable_name in self.rendered_variables:
             return self.rendered_variables[variable]
         if variable_name not in self.variables:
-            raise TemplateException(f"Variable '{variable_name}' not found", source=self.variables_link)
+            raise TemplateException(
+                f"Variable '{variable_name}' not found", source=self.variables_link
+            )
 
         v = self.variables[variable_name]
         if self.expand_variables:
@@ -98,6 +100,8 @@ class SimpleTemplateEngine(object):
         return value
 
     def render(self, element, variable_name=None, stack=None):
+        """Render element as text.
+        Internally, variable name and stack are used to track variable expansion."""
         stack = self.check_stack(variable_name, stack)
         if type(element) == str:
             element = self.parse(element, source=self.variable_source(variable_name))
@@ -342,6 +346,17 @@ def parse_simple(text):
     return simple_template.parseString(text, True)[0]
 
 
+def expand_simple(
+    text, variables=None, expand_variables=True, variables_link=None, context=None
+):
+    return SimpleTemplateEngine(
+        variables=variables,
+        expand_variables=expand_variables,
+        variables_link=variables_link,
+        context=context,
+    ).render(text)
+
+
 if __name__ == "__main__":
     print(parse_simple("$$WORLD$"))
     print(parse_simple("Hello, $$WORLD$ !"))
@@ -384,5 +399,9 @@ if __name__ == "__main__":
     print()
     print("*************************")
     print()
-    
-    print(SimpleTemplateEngine(dict(WORLD="$[world](link/to/world)$")).render("Hello, $$WORLD$!"))
+
+    print(
+        SimpleTemplateEngine(dict(WORLD="$[world](link/to/world)$")).render(
+            "Hello, $$WORLD$!"
+        )
+    )
