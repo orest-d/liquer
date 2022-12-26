@@ -85,29 +85,29 @@ class DatafusionContextStateType(StateType):
         return "pickle"
 
     def is_type_of(self, data):
-        return isinstance(data, daf.ExecutionContext)
+        return isinstance(data, daf.SessionContext)
 
     def as_bytes(self, data, extension=None):
         raise Exception(
-            f"Serialization is not supported by DataFusion ExecutionContext type."
+            f"Serialization is not supported by DataFusion SessionContext type."
         )
 
     def from_bytes(self, b: bytes, extension=None):
         raise Exception(
-            f"Deserialization is not supported by DataFusion ExecutionContext type."
+            f"Deserialization is not supported by DataFusion SessionContext type."
         )
 
     def copy(self, data):
         raise Exception(
-            f"Copy is not supported by DataFusion ExecutionContext type."
+            f"Copy is not supported by DataFusion SessionContext type."
         )
 
     def data_characteristics(self, data):
-        return dict(description=f"DataFusion execution context")
+        return dict(description=f"DataFusion session context")
 
 
 DATAFUSION_CONTEXT_STATE_TYPE = DatafusionContextStateType()
-register_state_type(daf.ExecutionContext, DATAFUSION_CONTEXT_STATE_TYPE)
+register_state_type(daf.SessionContext, DATAFUSION_CONTEXT_STATE_TYPE)
 
 
 @command
@@ -132,9 +132,9 @@ class ParquetSQLRecipe(Recipe):
                 f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.")
         return self.data.get("provides", [self.data["filename"]])
 
-    def make_execution_context(self, tmpdir, store, context):
+    def make_context(self, tmpdir, store, context):
         import datafusion as daf
-        ctx = daf.ExecutionContext()
+        ctx = daf.SessionContext()
         register = self.data.get("register", [])
         store = store.root_store()
 
@@ -189,7 +189,7 @@ class ParquetSQLRecipe(Recipe):
         with TemporaryDirectory() as tmpdir:
             metadata = self.metadata(key)
             try:
-                ctx = self.make_execution_context(tmpdir, store, context)
+                ctx = self.make_context(tmpdir, store, context)
                 df = ctx.sql(self.data["sql"])
                 table = pyarrow.Table.from_batches(df.collect())
                 path = Path(tmpdir) / self.data["filename"]

@@ -22,6 +22,8 @@ class Indexer(object):
         """This should return an identifier uniquely identifying the indexer among all the indexers"""
         return self.__class__.__name__
 
+    def metadata_item_equalts(self, key, value):
+        return MetadataItemEquals(self, key, value)
 
 class IndexerProxy(Indexer):
     """Proxy to another indexer"""
@@ -56,7 +58,7 @@ class MetadataItemEquals(FilterIndexer):
         self.value = value
 
     def condition(self, key=None, query=None, data=None, metadata=None):
-        return metadata.get(key) == value
+        return metadata.get(self.key) == self.value
 
     def identifier(self):
         return f"[{self.key}=={self.value}]({self.indexer.identifier()})"
@@ -120,6 +122,7 @@ def init_indexer_registry():
     This is a convenience function to set up some basic indexer functionality.
     """
     r = indexer_registry()
+    r.register(AssureTools())
 
 
 def register_indexer(indexer):
@@ -139,6 +142,17 @@ class ToolEmbedding(Enum):
     TAB = "tab"  # Open in a new tab
     WINDOW = "window"  # Open in a new window
 
+class AssureTools(Indexer):
+    """Assure existence of the tools section in the metadata"""
+    def identifier(self):
+        return "assure_tools"
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        if metadata is None:
+            metadata = dict(tools={})
+        tools = metadata.get("tools", [])
+        metadata["tools"] = tools
+
+        return metadata
 
 class AddTool(Indexer):
     HIGH_PRIORITY = 10

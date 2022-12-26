@@ -60,16 +60,16 @@ class TestDatafusion:
             path = Path(tmpdir)/"test.parquet"
             evaluate_and_save(f"df_from-{filename}/test.parquet", target_directory=tmpdir)
             @first_command(volatile=True, cache=False)
-            def execution_context():
-                ctx = daf.ExecutionContext()
+            def datafusion_context():
+                ctx = daf.SessionContext()
                 ctx.register_parquet("a",str(path))
                 return ctx
             @command
             def process(ctx):
                 return ctx.sql("SELECT a, b, a+b AS c FROM a")
-            evaluate_and_save(f"execution_context/process/result.parquet", target_directory=tmpdir)        
+            evaluate_and_save(f"datafusion_context/process/result.parquet", target_directory=tmpdir)        
 
-            df = evaluate(f"execution_context/process/datafusion_to_pandas").get()
+            df = evaluate(f"datafusion_context/process/datafusion_to_pandas").get()
             assert "a" in df.columns
             assert "b" in df.columns
             assert "c" in df.columns
