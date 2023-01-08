@@ -83,6 +83,7 @@
 
 ## Store and Cache enhancements
 
+- [ ] S3 store
 - [ ] external file storage - like file storage, but without storable metadata 
 - [ ] local file using context manager - enter, exit
 - [ ] async store and cache access to support async server frameworks

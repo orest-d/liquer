@@ -1,4 +1,4 @@
-from liquer.store import Store
+from liquer.store import Store, parent_key
 from liquer.metadata import Metadata
 import json
 import boto3
@@ -8,7 +8,8 @@ class S3Store(Store):
 
     def __init__(self, bucket_name, prefix="", s3_resource=None):
         if s3_resource is None:
-            s3_resource = boto3.resource('s3') 
+            s3_resource = boto3.resource('s3')
+        self.bucket_name = bucket_name
         self.prefix=prefix
         self.s3_resource=s3_resource
         if len(self.prefix) and self.prefix[-1]!=self.DELIMITER:
@@ -83,38 +84,53 @@ class S3Store(Store):
         self.on_removed(key)
 
     def removedir(self, key):
-        (self.path_for_key(key) / self.METADATA).rmdir()
-        self.path_for_key(key).rmdir()
         self.on_removed(key)
+
+    def object_keys(self, keyprefix=""):
+        response = self.s3_resource.meta.client.list_objects(Bucket=self.bucket_name, Prefix=self.data_prefix+keyprefix)
+        if "Contents" in response:
+            return [x["Key"] for x in response['Contents']]
+        else:
+            return []
 
     def contains(self, key):
         if key in ("",None):
             return True
-        return self.path_for_key(key).exists()
+        keys = self.object_keys(key)
+        ekey = self.data_prefix+key
+        if ekey in keys:
+            return True
+        ekey = ekey + "/"
+        return any(x.startswith(ekey) for x in keys)
 
     def is_dir(self, key):
         if key in ("",None):
             return True
-        return self.path_for_key(key).is_dir()
+        keys = self.object_keys(key)
+        ekey = self.data_prefix+key+"/"
+        return any(x.startswith(ekey) for x in keys)
 
-    def keys(self, parent=None):
-        d = self.listdir(parent)
-        if d is None:
-            return []
-        else:
-            for k in d:
-                key = k if parent is None else parent + "/" + k
+    def keys(self, keyprefix=""):
+        directories = set()
+        for x in self.object_keys(keyprefix):
+            if x.startswith(self.data_prefix):
+                key = x[len(self.data_prefix):]
                 yield key
-                for kk in self.keys(key):
-                    yield kk
+                pkey=key
+                while True:
+                    pkey = parent_key(pkey)
+                    if pkey in ("", None):
+                        break
+                    if pkey not in directories:
+                        yield pkey
+                        directories.add(pkey)
 
     def listdir(self, key):
-        if self.is_dir(key):
-            return [
-                d.name
-                for d in self.path_for_key(key).iterdir()
-                if d.name != self.METADATA
-            ]
+        if key in ("", None):
+            return [k for k in self.keys() if parent_key(k) in ("", None)]
+        else:
+            return [k[len(key)+1:] for k in self.keys(key+"/") if parent_key(k)==key]
+
 
     def makedir(self, key):
         self.on_data_changed(key)
