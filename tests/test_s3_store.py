@@ -8,7 +8,10 @@ class TestStore:
     def store(self):
         store = S3Store(bucket_name="liquertest")
         for s3key in store.object_keys():
-            print(f"Delete S3 object {s3key}")
+            print(f"Delete S3 object {s3key} (data)")
+            store.s3_resource.Object(bucket_name=store.bucket_name, key=s3key).delete()
+        for s3key in store.metadata_object_keys():
+            print(f"Delete S3 object {s3key} (metadata)")
             store.s3_resource.Object(bucket_name=store.bucket_name, key=s3key).delete()
         return store
 
@@ -70,15 +73,16 @@ class TestStore:
             ro.store("a/c", b"test", dict(x="xx"))
         with pytest.raises(ReadOnlyStoreException):
             ro.store_metadata("a/d", dict(x="xx"))
+
     def test_to_root_key(self, store):
         memory_store = MemoryStore()
         s = store.mount("x", memory_store)
         assert memory_store.to_root_key("y") == "x/y"
+
     def test_root_store(self, store):
         memory_store = MemoryStore()
         s = store.mount("x", memory_store)
         assert memory_store.to_root_key("y") == "x/y"
-        memory_store.root_store().store(memory_store.to_root_key("y"), b"test1",{})
+        memory_store.root_store().store(memory_store.to_root_key("y"), b"test1", {})
         assert s.get_bytes("x/y") == b"test1"
         assert memory_store.get_bytes("y") == b"test1"
-        
