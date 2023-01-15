@@ -64,17 +64,14 @@ class SubmitHandler:
             )
         )
 
-    def post(self, param):
-        self.write(
-            json.dumps(command_registry().register_remote_serialized(self.request.body))
-        )
-
 # /q/<path:query>
 class QueryHandler:
     def get(self, query):
         """Main service for evaluating queries"""
+        keys = self.request.arguments.keys()
+        kwargs = {key:self.get_argument(key) for key in keys}        
         try:
-            b, mimetype, filename = response(evaluate(query))
+            b, mimetype, filename = response(evaluate(query, extra_parameters=kwargs))
         except:
             traceback.print_exc()
             self.set_status(500)

@@ -3,9 +3,9 @@ import os.path
 from liquer.context import get_context, find_queries_in_template
 
 
-def evaluate(query):
+def evaluate(query, extra_parameters=None):
     """Evaluate query, returns a State, cache the output in supplied cache"""
-    return get_context().evaluate(query)
+    return get_context().evaluate(query, extra_parameters=extra_parameters)
 
 
 def evaluate_and_save(

@@ -40,6 +40,20 @@ class TestContext:
         assert result.get() == 235
         assert result.metadata["commands"][-1] == ["test_callable", "1"]
 
+    def test_evaluate_action_with_arguments_dictionary(self):
+        reset_command_registry()
+
+        @command
+        def test_callable(state, a: int, b=123):  # has state as a first argument
+            return a + b
+
+        context = get_context()
+        action = ActionRequest.from_arguments("test_callable", "1")
+        result = context.evaluate_action(State(), action, extra_parameters={"b":234})
+        assert result.is_volatile()
+        assert result.get() == 235
+        assert result.metadata["commands"][-1] == ["test_callable", "1"]
+
     def test_evaluate_query_with_arguments(self):
         reset_command_registry()
 
@@ -52,6 +66,21 @@ class TestContext:
         assert result.get() == 124
 
         result = get_context().evaluate("test_callable-1", extra_parameters=[234])
+        assert result.is_volatile()
+        assert result.get() == 235
+
+    def test_evaluate_query_with_arguments_dict(self):
+        reset_command_registry()
+
+        @command
+        def test_callable(state, a: int, b=123):  # has state as a first argument
+            return a + b
+
+        result = get_context().evaluate("test_callable-1")
+        assert not result.is_volatile()
+        assert result.get() == 124
+
+        result = get_context().evaluate("test_callable-1", extra_parameters={"b":234})
         assert result.is_volatile()
         assert result.get() == 235
 

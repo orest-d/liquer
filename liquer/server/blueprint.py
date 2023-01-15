@@ -63,7 +63,15 @@ def response(state):
 def serve(query):
     """Main service for evaluating queries"""
     try:
-        return response(evaluate(query))
+        kwargs = request.get_json(force=True)
+    except:
+        kwargs={}
+    assert type(kwargs)==dict
+    for k, v in request.args.items():
+        kwargs[k]=v
+
+    try:
+        return response(evaluate(query, extra_parameters=kwargs))
     except:
         traceback.print_exc()
         abort(500)

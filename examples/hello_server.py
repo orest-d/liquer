@@ -26,8 +26,9 @@ def index():
     <li><a href="/liquer/q/hello">just hello</a></li>
     <li><a href="/liquer/q/hello/greet">simple greet</a></li>
     <li><a href="/liquer/q/hello/greet-everybody">greet everybody</a></li>
+    <li><a href="/liquer/q/hello/greet?who=everybody">greet everybody by URL parameters</a></li>
     </ul>
     """
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

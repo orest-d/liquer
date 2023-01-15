@@ -575,6 +575,7 @@ class Context(MetadataContextMixin, object):
         self.store_metadata(force=True)
         cache = cache or self.cache()
         cr = self.command_registry()
+        extra_parameters_dict={}
 
         state.context = self
 
@@ -605,16 +606,23 @@ class Context(MetadataContextMixin, object):
             for p in action.parameters:
                 parameters.append(self.evaluate_parameter(p, action))
             if extra_parameters is not None and len(extra_parameters) > 0:
-                self.warning(f"Using {len(extra_parameters)} extra parameters")
-                parameters.extend(extra_parameters)
-                is_volatile=True
+                if type(extra_parameters)==list:
+                    self.warning(f"Using {len(extra_parameters)} extra parameters")
+                    parameters.extend(extra_parameters)
+                    is_volatile=True
+                elif type(extra_parameters)==dict:
+                    self.warning(f"Using {len(extra_parameters)} extra parameters dictionary")
+                    extra_parameters_dict=extra_parameters
+                    is_volatile=True
+                else:
+                    self.error(f"Unsupported type for extra parameters: {type(extra_parameters)}")
 
             self.status = Status.EVALUATION
             self.store_metadata(force=True)
 
             try:
 
-                state = command(old_state, *parameters, context=self)
+                state = command(old_state, *parameters, context=self, **extra_parameters_dict)
                 assert type(state.metadata) is dict
             except EvaluationException as ee:
                 print("EE:", ee)

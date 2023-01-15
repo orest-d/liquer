@@ -765,27 +765,40 @@ class CommandExecutable(object):
     def inner_id(self):
         return id(self.f)
 
-    def parse_argv(self, args, context=None):
+    def parse_argv(self, args, kwargs=None, context=None):
+        if kwargs is None:
+            kwargs = {}
         query = None if context is None else context.raw_query
         args = list(args)
         try:
             position = args[-1].position
         except:
             position = None
+        used_kwargs=[]
         for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
             try:
                 position = args[i].position
             except:
                 position = None
-            if not a.get("multiple", False) and a["name"] != "context":
-                if "default" in a:
-                    args.append(a["default"])
-                else:
-                    raise ArgumentParserException(
-                        f"Expected '{a['name']}' argument for '{self.metadata.name}', no default",
-                        position=position,
-                        query=query,
-                    )
+            if a["name"] in kwargs:
+                used_kwargs.append(a["name"])
+                args.append(kwargs[a["name"]])
+                if context is not None:
+                    context.debug(f"Using keyword argument {repr(a['name'])}")
+            else:
+                if not a.get("multiple", False) and a["name"] != "context":
+                    if "default" in a:
+                        args.append(a["default"])
+                    else:
+                        raise ArgumentParserException(
+                            f"Expected '{a['name']}' argument for '{self.metadata.name}', no default",
+                            position=position,
+                            query=query,
+                        )
+        if context is not None:
+            unused = [x for x in kwargs.keys() if x not in used_kwargs]
+            if len(unused):
+                context.warning(f"Unused keyword arguments: {unused}")
         try:
             argv, argmeta, remainder = self.argument_parser.parse_meta(
                 self.metadata.arguments, args, context=context
@@ -809,8 +822,8 @@ class CommandExecutable(object):
             )
         return argv, argmeta
 
-    def __call__(self, state, *args, context=None):
-        argv, argmeta = self.parse_argv(args, context=context)
+    def __call__(self, state, *args, context=None, **kwargs):
+        argv, argmeta = self.parse_argv(args, kwargs=kwargs, context=context)
         state_arg = state if self.metadata.state_argument["pass_state"] else state.get()
         result = self.f(state_arg, *argv)
         if isinstance(result, State):
@@ -824,8 +837,8 @@ class CommandExecutable(object):
 class FirstCommandExecutable(CommandExecutable):
     """Wrapper around a registered first command"""
 
-    def __call__(self, state, *args, context=None):
-        argv, argmeta = self.parse_argv(args, context=context)
+    def __call__(self, state, *args, context=None, **kwargs):
+        argv, argmeta = self.parse_argv(args, kwargs=kwargs, context=context)
         result = self.f(*argv)
         if isinstance(result, State):
             result.arguments = argmeta
