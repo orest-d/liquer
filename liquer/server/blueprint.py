@@ -59,7 +59,7 @@ def response(state):
     return r
 
 
-@app.route("/q/<path:query>")
+@app.route("/q/<path:query>", methods=["GET", "POST"])
 def serve(query):
     """Main service for evaluating queries"""
     try:

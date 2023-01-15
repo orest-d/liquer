@@ -68,8 +68,12 @@ class SubmitHandler:
 class QueryHandler:
     def get(self, query):
         """Main service for evaluating queries"""
+        try:
+            kwargs = json.loads(self.request.body)
+        except:
+            kwargs = {}
         keys = self.request.arguments.keys()
-        kwargs = {key:self.get_argument(key) for key in keys}        
+        kwargs.update({key:self.get_argument(key) for key in keys})
         try:
             b, mimetype, filename = response(evaluate(query, extra_parameters=kwargs))
         except:
@@ -83,7 +87,8 @@ class QueryHandler:
         self.set_header(header, body)
 
         self.write(b)
-
+    def post(self, query):
+        self.get(query)
 
 #/api/cache/get/<path:query>
 class CacheGetDataHandler:
