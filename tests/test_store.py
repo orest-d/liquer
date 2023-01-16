@@ -199,3 +199,21 @@ class TestMountPointStore:
         assert "b/y" in list(d_root.keys())
         assert "d" in list(d_root.keys())
         assert store == d_root
+
+    def test_metadata_bug1(self, tmpdir):
+        import liquer.recipes as r
+        set_store(None)
+        mount("data",r.RecipeStore(FileStore(tmpdir)))
+        metadata=dict(title="Test")
+        get_store().store_metadata("data/hello.txt", metadata)
+        assert get_store().get_metadata("data/hello.txt")["title"] == "Test"
+        set_store(None)
+
+    def test_metadata_bug2(self, tmpdir):
+        import liquer.recipes as r
+        set_store(None)
+        mount("data",r.RecipeSpecStore(FileStore(tmpdir)))
+        metadata=dict(title="Test")
+        get_store().store_metadata("data/hello.txt", metadata)
+        assert get_store().get_metadata("data/hello.txt")["title"] == "Test"
+        set_store(None)

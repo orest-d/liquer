@@ -249,8 +249,13 @@ class RecipeStore(Store):
     def get_metadata(self, key):
         if self.ignore(key):
             raise KeyNotFoundStoreException(key=key, store=self)
-        if self.substore.contains(key):
-            return self.substore.get_metadata(key)
+        try:
+            metadata = self.substore.get_metadata(key)
+            if metadata is not None:
+                return metadata
+        except KeyNotFoundStoreException:
+            pass
+
         if self.is_dir(key):
             return self.finalize_metadata(
                 self.default_metadata(key=key, is_dir=True), key=key, is_dir=True
@@ -661,8 +666,12 @@ class NewRecipeSpecStore(Store):
     def get_metadata(self, key):
         if self.ignore(key):
             raise KeyNotFoundStoreException(key=key, store=self)
-        if self.substore.contains(key):
-            return self.substore.get_metadata(key)
+        try:
+            metadata = self.substore.get_metadata(key)
+            if metadata is not None:
+                return metadata
+        except KeyNotFoundStoreException:
+            pass
         if self.is_dir(key):
             return self.finalize_metadata(
                 self.default_metadata(key=key, is_dir=True), key=key, is_dir=True

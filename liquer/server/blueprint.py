@@ -268,6 +268,7 @@ def store_set(query):
         metadata = store.get_metadata(query)
     except KeyNotFoundStoreException:
         metadata={}
+        traceback.print_exc()
     try:        
         data = request.get_data()
         store.store(query, data, metadata)
@@ -293,6 +294,7 @@ def store_set_metadata(query):
     try:
         metadata = request.get_json(force=True)
         store.store_metadata(query, metadata)
+
         return jsonify(dict(query=query, message="Metadata stored", status="OK"))
     except:
         response = jsonify(
