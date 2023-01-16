@@ -336,7 +336,7 @@ class StoreMetadataHandler:
         self.set_header(header, body)
         self.write(json.dumps(metadata))
 
-    def post(self, param):
+    def post(self, query):
         """Set data from store. Equivalent to Store.store.
         Unlike store method, which stores both data and metadata in one call,
         the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
@@ -345,7 +345,6 @@ class StoreMetadataHandler:
         store = get_store()
         try:
             metadata = json.loads(self.request.body)
-            query = metadata.get('query')
             store.store_metadata(query, metadata)
             response = dict(query=query, message="Metadata stored", status="OK")
         except:

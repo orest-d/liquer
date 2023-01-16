@@ -790,28 +790,28 @@ class NewRecipeSpecStore(Store):
                 key
             ):
                 spec = yaml.load(self.substore.get_bytes(key), Loader=Loader)
-            recipes_key = key
-            metadata = StoreSyncMetadata(self.substore, key)
-            metadata.clear_log()
-            metadata.info(f"Update recipes for key '{key}'")
-            if spec is not None:
-                parent = parent_key(key)
-                for directory, items in spec.items():
-                    for i, r in enumerate(items):
-                        cwd = parent if directory == self.LOCAL_RECIPES else join_key(parent, directory)
-                        d = resolve_recipe_definition(r, cwd, metadata)
-                        if d is None:
-                            metadata.warning(f"Failed parsing the definition of recipe {i+1} in {directory}")
-                        d["recipe_name"] = self.to_root_key(recipes_key)+f"/-Ryaml/{directory}/{i}#"+d.get("filename","")
-                        d["recipes_key"] = self.to_root_key(recipes_key)
-                        d["recipes_directory"] = "" if directory == self.LOCAL_RECIPES else directory
-                        try:
-                            recipe = recipe_registry().from_dict(d)
-                        except:
-                            metadata.warning(f"Failed parsing recipe {i+1} in {directory}", traceback=traceback.format_exc())
-                        for name in recipe.provides():
-                            key = join_key(cwd, name)
-                            recipes[key]=recipe
+                recipes_key = key
+                metadata = StoreSyncMetadata(self.substore, key)
+                metadata.clear_log()
+                metadata.info(f"Update recipes for key '{key}'")
+                if spec is not None:
+                    parent = parent_key(key)
+                    for directory, items in spec.items():
+                        for i, r in enumerate(items):
+                            cwd = parent if directory == self.LOCAL_RECIPES else join_key(parent, directory)
+                            d = resolve_recipe_definition(r, cwd, metadata)
+                            if d is None:
+                                metadata.warning(f"Failed parsing the definition of recipe {i+1} in {directory}")
+                            d["recipe_name"] = self.to_root_key(recipes_key)+f"/-Ryaml/{directory}/{i}#"+d.get("filename","")
+                            d["recipes_key"] = self.to_root_key(recipes_key)
+                            d["recipes_directory"] = "" if directory == self.LOCAL_RECIPES else directory
+                            try:
+                                recipe = recipe_registry().from_dict(d)
+                            except:
+                                metadata.warning(f"Failed parsing recipe {i+1} in {directory}", traceback=traceback.format_exc())
+                            for name in recipe.provides():
+                                key = join_key(cwd, name)
+                                recipes[key]=recipe
         self._recipes = recipes
         return recipes
 
