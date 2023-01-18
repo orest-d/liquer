@@ -76,6 +76,10 @@ class RegisterCommandHandler(h.RegisterCommandHandler, tornado.web.RequestHandle
 class StoreDataHandler(h.StoreDataHandler, tornado.web.RequestHandler):
     pass
 
+#/api/store/upload/<path:query>
+class StoreUploadHandler(h.StoreUploadHandler, tornado.web.RequestHandler):
+    pass
+
 #/api/store/metadata/<path:query>
 class StoreMetadataHandler(h.StoreMetadataHandler, tornado.web.RequestHandler):
     pass
@@ -134,6 +138,7 @@ def url_mapping():
         (r"/liquer/api/build", BuildHandler),
         (r"/liquer/api/register_command", RegisterCommandHandler),
         (r"/liquer/api/store/data/(.*)", StoreDataHandler),
+        (r"/liquer/api/store/upload/(.*)", StoreUploadHandler),
         (r"/liquer/api/store/metadata/(.*)", StoreMetadataHandler),
         (r"/liquer/web/(.*)", WebStoreHandler),
         (r"/liquer/api/store/remove/(.*)", StoreRemoveHandler),

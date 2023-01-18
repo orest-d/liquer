@@ -83,7 +83,7 @@ class QueryHandler:
 
 
         header = "Content-Type"
-        body = mimetype
+        body = mimetype if mimetype is not None else "application/octet-stream"
         self.set_header(header, body)
 
         self.write(b)
@@ -298,7 +298,7 @@ class StoreDataHandler:
         self.write(b)
 
     def post(self, query):
-        """Set data from store. Equivalent to Store.store.
+        """Set data in store. Equivalent to Store.store.
         Unlike store method, which stores both data and metadata in one call,
         the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
         either before or after the api/store/data POST.
@@ -314,6 +314,55 @@ class StoreDataHandler:
             response = dict(query=query, message="Data stored", status="OK")
         except:
             response = dict(query=query, message=traceback.format_exc(), status="ERROR")
+
+        mimetype = "application/json"
+        header = "Content-Type"
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(response))
+
+#/api/store/upload/<path:query>
+class StoreUploadHandler:
+    def get(self, query):
+        """Returns an upload form
+        """
+
+        self.set_header("Content-Type", "text/html")
+        self.write(f'''
+        <!doctype html>
+        <title>Upload File</title>
+        <h1>Upload to {query}</h1>
+        <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file"/>
+        <input type="submit" value="Upload"/>
+        </form>
+        ''')
+
+    def post(self, query):
+        """Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
+        Unlike store method, which stores both data and metadata in one call,
+        the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+        either before or after the api/store/data POST.
+        """
+        if 'file' not in self.request.files:
+            response = dict(query=query, message="Request does not contain 'file'", status="ERROR")
+        else:
+            fileinfo = self.request.files['file'][0]
+
+            if fileinfo.filename == '':
+                response = dict(query=query, message="Request contains 'file' with an empty filename", status="ERROR")
+            else:
+                store = get_store()
+                try:
+                    metadata = store.get_metadata(query)
+                except KeyNotFoundStoreException:
+                    metadata={}    
+                try:        
+                    data = fileinfo["body"]
+                    store.store(query, data, metadata)
+                    response = dict(query=query, message="Data stored", size=len(data), status="OK")
+                except:
+                    response = dict(query=query, message=traceback.format_exc(), status="ERROR")
 
         mimetype = "application/json"
         header = "Content-Type"

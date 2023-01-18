@@ -258,7 +258,7 @@ def web_store_get(query):
 
 @app.route("/api/store/data/<path:query>", methods=["POST"])
 def store_set(query):
-    """Set data from store. Equivalent to Store.store.
+    """Set data in store. Equivalent to Store.store.
     Unlike store method, which stores both data and metadata in one call,
     the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
     either before or after the api/store/data POST.
@@ -279,6 +279,66 @@ def store_set(query):
         )
         response.status="404"
         return response
+
+@app.route("/api/store/upload/<path:query>", methods=["GET", "POST"])
+def store_upload(query):
+    """Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
+    Unlike store method, which stores both data and metadata in one call,
+    the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+    either before or after the api/store/data POST.
+    """
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            response = jsonify(
+                dict(query=query, message="Request does not contain 'file'", status="ERROR")
+            )
+            response.status="404"
+            return response
+        file = request.files['file']
+        if file.filename == '':
+            response = jsonify(
+                dict(query=query, message="Request contains 'file' with an empty filename", status="ERROR")
+            )
+            response.status="404"
+            return response
+
+        try:
+            data = file.read()
+        except:
+            response = jsonify(
+                dict(query=query, message=traceback.format_exc(), status="ERROR")
+            )
+            response.status="404"
+            return response
+        store = get_store()
+        try:
+            metadata = store.get_metadata(query)
+        except KeyNotFoundStoreException:
+            metadata={}
+            traceback.print_exc()
+        try:        
+            store.store(query, data, metadata)
+            return jsonify(dict(query=query, message="Data stored", size=len(data), status="OK"))
+        except:
+            response = jsonify(
+                dict(query=query, message=traceback.format_exc(), status="ERROR")
+            )
+            response.status="404"
+            return response
+
+    r = make_response(f'''
+    <!doctype html>
+    <title>Upload File</title>
+    <h1>Upload to {query}</h1>
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="file"/>
+      <input type="submit" value="Upload"/>
+    </form>
+    ''')
+
+    r.headers.set("Content-Type", "text/html")
+    return r
+
 
 
 @app.route("/api/store/metadata/<path:query>", methods=["GET"])

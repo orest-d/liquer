@@ -45,6 +45,8 @@ def index():
     <li><a href="/liquer/q/-R-meta/web/hello/-/ns-meta/status_md/status.txt">Dir status</a></li>
     <li><a href="/liquer/q/-R-meta/web/hello/-/ns-meta/dir_status/status.json">Dir status (json)</a></li>
     <li><a href="/liquer/q/-R-meta/web/hello/-/ns-meta/dir_status_df/status.html">Dir status (html)</a></li>
+    <li><a href="/liquer/api/store/upload/web/hello/test.txt">Upload test.txt</a></li>
+    <li><a href="/liquer/web/hello/test.txt">test.txt</a></li>
     </ul>
     """
 
