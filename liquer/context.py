@@ -988,7 +988,11 @@ class Context(MetadataContextMixin, object):
                     self.store_metadata()
 
         self._store_state(state)
-        state = self.index_state(state)
+        try:
+            state = self.index_state(state)
+        except:
+            traceback.print_exc()
+            self.warning("Indexer failed", traceback=traceback.format_exc())
         return state
 
     def evaluate_and_save(

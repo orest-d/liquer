@@ -3,6 +3,7 @@ from liquer.query import evaluate_template
 import liquer.ext.basic
 from liquer.context import *
 import traceback
+import json
 
 
 @first_command(ns="meta")
@@ -56,6 +57,11 @@ def state(state):
 def metadata(state):
     """Returns dictionary with all metadata for the resulting state"""
     return {**state.metadata}
+
+@command(ns="meta")
+def metadata_txt(state):
+    """Returns dictionary with all metadata for the resulting state"""
+    return json.dumps({**state.metadata}, indent=2)
 
 @command(ns="meta")
 def help(state, command_name, ns="root"):
