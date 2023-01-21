@@ -14,10 +14,11 @@ class Status(Enum):
     RECIPE       - data are not in store, but a recipe is available
     EXTERNAL     - data is from external source or modified by a user
     SIDE_EFFECT  - data has been created as a side-effect of a query
-    
+
     """
-    NONE = "none" # If status does not exist for some reason
-    SUBMITTED = "submitted" # Immediately after submission
+
+    NONE = "none"  # If status does not exist for some reason
+    SUBMITTED = "submitted"  # Immediately after submission
     EVALUATING_PARENT = "parent"
     EVALUATION = "evaluation"
     EVALUATING_DEPENDENCIES = "dependencies"
@@ -27,6 +28,7 @@ class Status(Enum):
     EXPIRED = "expired"
     EXTERNAL = "external"
     SIDE_EFFECT = "side-effect"
+
 
 MIMETYPES = dict(
     json="application/json",
@@ -76,7 +78,7 @@ MIMETYPES = dict(
     wmf="image/wmf",
     aiff="audio/aiff",
     avi="video/avi",
-    py='text/x-python',
+    py="text/x-python",
     ipynb="application/x-ipynb+json",
 )
 
@@ -119,8 +121,10 @@ TYPE_IDENTIFIER_BY_EXTENSION = dict(
     ipynb="generic",
 )
 
-def mimetype_from_extension(extension, default = "application/octet-stream"):
+
+def mimetype_from_extension(extension, default="application/octet-stream"):
     return MIMETYPES.get(extension, default)
+
 
 def type_identifier_from_extension(extension):
     return TYPE_IDENTIFIER_BY_EXTENSION.get(extension)

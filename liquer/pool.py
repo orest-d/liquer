@@ -6,6 +6,7 @@ from liquer.cache import set_cache, CacheProxy, NoCache
 from liquer import *
 from liquer.constants import *
 
+
 class PoolManager(BaseManager):
     pass
 
@@ -133,8 +134,8 @@ def evaluate_in_background(query):
     global _worker_config
     print(f"Evaluate {query} in background")
     metadata = get_context().metadata()
-    metadata["query"]=query
-    metadata["status"]=Status.SUBMITTED.value
+    metadata["query"] = query
+    metadata["status"] = Status.SUBMITTED.value
     cache = get_cache(_worker_config)
     cache.store_metadata(metadata)
 

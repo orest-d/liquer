@@ -8,6 +8,7 @@ from liquer.cache import get_cache
 from liquer.constants import Status, type_identifier_from_extension
 from liquer.context import get_context
 
+
 @command
 def let(state, name, value):
     """Set the state variable
@@ -190,8 +191,7 @@ def dr(state, type_identifier=None, extension=None, context=None):
     from liquer.parser import parse
 
     if state.data is None:
-        context.error(
-            f"Bytes expected, None received in dr from {state.query}")
+        context.error(f"Bytes expected, None received in dr from {state.query}")
         return
 
     if type_identifier is None:
@@ -201,8 +201,9 @@ def dr(state, type_identifier=None, extension=None, context=None):
         )
 
     if type_identifier in (None, "bytes"):
-        type_identifier = state.metadata.get(
-            "resource_metadata", {}).get("type_identifier")
+        type_identifier = state.metadata.get("resource_metadata", {}).get(
+            "type_identifier"
+        )
 
     if extension is None:
         extension = state.metadata.get("extension")
@@ -227,25 +228,37 @@ def dr(state, type_identifier=None, extension=None, context=None):
     if type_identifier in (None, "bytes"):
         type_identifier = type_identifier_from_extension(extension)
         context.info(
-            f"Type identifier: {type_identifier} - from extension '{extension}'")
+            f"Type identifier: {type_identifier} - from extension '{extension}'"
+        )
 
     if type_identifier is not None:
-        if extension in ("parquet", "xlsx", "csv", "tsv") and type_identifier in ("generic", "dictionary", "pickle"):
-            context.warning(f"Type identifier '{type_identifier}' seems to be inconsistent with the extension '{extension}'")
-            context.warning(f"This might indicate a problem with executing the partent query '{context.parent_query}'")
+        if extension in ("parquet", "xlsx", "csv", "tsv") and type_identifier in (
+            "generic",
+            "dictionary",
+            "pickle",
+        ):
+            context.warning(
+                f"Type identifier '{type_identifier}' seems to be inconsistent with the extension '{extension}'"
+            )
+            context.warning(
+                f"This might indicate a problem with executing the partent query '{context.parent_query}'"
+            )
             type_identifier = type_identifier_by_extension.get(extension)
             context.warning(
-                f"To fix the inconsistency, type identifier: {type_identifier} is used from extension '{extension}'")
-            
-        context.info(
-            f"Type identifier: {type_identifier},  Extension: {extension}")
+                f"To fix the inconsistency, type identifier: {type_identifier} is used from extension '{extension}'"
+            )
+
+        context.info(f"Type identifier: {type_identifier},  Extension: {extension}")
         t = state_types_registry().get(type_identifier)
         data = t.from_bytes(state.data, extension=extension)
         return state.with_data(data)
     else:
         context.error(f"Decode resource (dr) command failed")
-        raise Exception(f"Failed to resolve type for query {state.metadata.get('query')}")
+        raise Exception(
+            f"Failed to resolve type for query {state.metadata.get('query')}"
+        )
     return state
+
 
 @first_command
 def sync_store(context=None):

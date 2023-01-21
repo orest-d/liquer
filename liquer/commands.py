@@ -37,7 +37,16 @@ the "mainstream" way of command registration is by simply decorating a function 
 
 CommandMetadata = namedtuple(
     "CommandMetadata",
-    ["name", "label", "module", "doc", "state_argument", "arguments", "attributes", "version"],
+    [
+        "name",
+        "label",
+        "module",
+        "doc",
+        "state_argument",
+        "arguments",
+        "attributes",
+        "version",
+    ],
 )
 
 
@@ -629,11 +638,13 @@ def identifier_to_label(identifier):
     txt = txt[0].upper() + txt[1:]
     return txt
 
+
 def callable_hash(f):
     import hashlib
+
     h = hashlib.md5()
     h.update(f.__code__.co_code)
-    separator=b"__sep3024325ab2a7__" #random string of bytes
+    separator = b"__sep3024325ab2a7__"  # random string of bytes
     for x in f.__code__.co_consts:
         try:
             h.update(pickle.dumps(x))
@@ -643,7 +654,7 @@ def callable_hash(f):
 
     sig = inspect.signature(f)
     for argname in list(sig.parameters):
-        h.update(argname.encode('utf-8'))
+        h.update(argname.encode("utf-8"))
         h.update(separator)
         p = sig.parameters[argname]
         if p.default != inspect.Parameter.empty:
@@ -654,6 +665,7 @@ def callable_hash(f):
         h.update(separator)
 
     return h.hexdigest()
+
 
 def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
     """Extract command metadata structure from a callable.
@@ -727,7 +739,7 @@ def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
         state_argument=state_argument,
         arguments=arguments,
         attributes=attributes,
-        version=callable_hash(f)
+        version=callable_hash(f),
     )
 
 
@@ -774,7 +786,7 @@ class CommandExecutable(object):
             position = args[-1].position
         except:
             position = None
-        used_kwargs=[]
+        used_kwargs = []
         for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
             try:
                 position = args[i].position

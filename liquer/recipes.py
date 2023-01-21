@@ -1,4 +1,11 @@
-from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException, join_key, parent_key
+from liquer.store import (
+    get_store,
+    Store,
+    KeyNotFoundStoreException,
+    StoreException,
+    join_key,
+    parent_key,
+)
 from liquer.context import get_context
 from liquer.parser import parse
 from liquer.constants import Status
@@ -9,6 +16,7 @@ import hashlib
 from copy import deepcopy
 import traceback
 from yaml import load, dump
+
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
@@ -24,28 +32,35 @@ class RecipeException(Exception):
         super().__init__(message)
         self.key = key
 
+
 class RecipeRegistry(object):
     """Registry of recipes"""
+
     def __init__(self):
         self.recipe_dictionary = {}
+
     def register(self, recipe):
         """Register a Recipe class in the registry"""
         if recipe.recipe_type() in self.recipe_dictionary:
             print(f"WARNING: Recipe type '{recipe.recipe_type()}' already registered")
         self.recipe_dictionary[recipe.recipe_type()] = recipe
+
     def from_dict(self, d):
         """Construct a Recipe instance from a recipe description
         Recipe description is typically a dictionary. The 'type' item of the dictionary is matched with recipe_type()
-        class-method result for known recipes to find a suitable recipe constructor. 
+        class-method result for known recipes to find a suitable recipe constructor.
         """
         if type(d) != dict:
-            raise Exception("Dictionary expected as recipe definition for registered recipes")
+            raise Exception(
+                "Dictionary expected as recipe definition for registered recipes"
+            )
         if "type" not in d:
             raise Exception("Recipe definition is lacking a type")
         if d["type"] not in self.recipe_dictionary:
-            t=d["type"]
+            t = d["type"]
             raise Exception(f"Recipe type '{t}' not registered")
         return self.recipe_dictionary[d["type"]].from_dict(d)
+
 
 _recipe_registry = None
 
@@ -57,42 +72,45 @@ def recipe_registry():
         _recipe_registry = RecipeRegistry()
     return _recipe_registry
 
+
 def register_recipe(recipe):
-    """Function to register new recipe type.
-    """
+    """Function to register new recipe type."""
     recipe_registry().register(recipe)
 
+
 class Recipe:
-    def __init__(self,d):
+    def __init__(self, d):
         if type(d) != dict:
             raise Exception("Dictionary expected as recipe definition")
         if "type" in d:
-            if d["type"]!=self.recipe_type():
-                t=d["type"]
-                raise Exception(f"Recipe {self.recipe_type()} received definition with type='{t}'")
-        self.data=d
-    
+            if d["type"] != self.recipe_type():
+                t = d["type"]
+                raise Exception(
+                    f"Recipe {self.recipe_type()} received definition with type='{t}'"
+                )
+        self.data = d
+
     @classmethod
     def recipe_type(self):
         return "empty"
 
     @classmethod
-    def from_dict(cls,d):
+    def from_dict(cls, d):
         return cls(d)
-    
+
     def version(self):
         h = hashlib.md5()
         txt = json.dumps(self.data, sort_keys=True, indent=2)
         h.update(txt.encode("utf-8"))
-        return "md5:"+h.hexdigest()
-    
+        return "md5:" + h.hexdigest()
+
     def recipe_name(self):
-        return self.data.get("recipe_name","")
+        return self.data.get("recipe_name", "")
 
     def provides(self):
-        return self.data.get("provides",[])
+        return self.data.get("provides", [])
 
-    def can_create(self,name):
+    def can_create(self, name):
         return name in self.provides()
 
     def metadata(self, key):
@@ -101,17 +119,18 @@ class Recipe:
             metadata.metadata["title"] = self.data["title"]
         if "description" in self.data:
             metadata.metadata["description"] = self.data["description"]
-        metadata.key=key
-        metadata.metadata["recipes_key"]=self.data.get("recipes_key")
-        metadata.metadata["recipes_directory"]=self.data.get("recipes_directory")
-        metadata.metadata["recipe_name"]=self.data.get("recipe_name")
+        metadata.key = key
+        metadata.metadata["recipes_key"] = self.data.get("recipes_key")
+        metadata.metadata["recipes_directory"] = self.data.get("recipes_directory")
+        metadata.metadata["recipe_name"] = self.data.get("recipe_name")
         return metadata.as_dict()
-      
+
     def make(self, key, context=None):
-        raise RecipeException("Recipe undefined (make)",key=key)
+        raise RecipeException("Recipe undefined (make)", key=key)
 
     def is_volatile(self):
         return self.data.get("volatile", False)
+
 
 def resolve_recipe_definition(r, directory, metadata):
     if type(r) == str:
@@ -121,13 +140,15 @@ def resolve_recipe_definition(r, directory, metadata):
             return dict(
                 type="query",
                 query=r,
-                CWD = directory,
+                CWD=directory,
                 filename=filename,
-                provides=[filename]
+                provides=[filename],
             )
         except:
-            metadata.warning(f"Can't resolve recipe '{r}'", traceback=traceback.format_exc())
-            print (f"Can't resolve recipe '{r}'")
+            metadata.warning(
+                f"Can't resolve recipe '{r}'", traceback=traceback.format_exc()
+            )
+            print(f"Can't resolve recipe '{r}'")
             traceback.print_exc()
             return None
 
@@ -137,19 +158,23 @@ def resolve_recipe_definition(r, directory, metadata):
                 query = parse(r["query"])
                 filename = r.get("filename", query.filename())
                 title = r.get("title", filename)
-                description = r.get("description", f'Generated from query: {r["query"]}')
-                rkey =  join_key(directory, filename)
+                description = r.get(
+                    "description", f'Generated from query: {r["query"]}'
+                )
+                rkey = join_key(directory, filename)
                 return dict(
                     type="query",
                     query=r["query"],
                     title=title,
                     description=description,
-                    CWD = directory,
+                    CWD=directory,
                     filename=filename,
-                    provides=[filename]
+                    provides=[filename],
                 )
             except:
-                metadata.warning(f"Can't resolve query recipe", traceback=traceback.format_exc())
+                metadata.warning(
+                    f"Can't resolve query recipe", traceback=traceback.format_exc()
+                )
                 traceback.print_exc()
     else:
         print(f"Unsupported recipe type: {type(r)}")
@@ -157,20 +182,21 @@ def resolve_recipe_definition(r, directory, metadata):
         r["provides"] = [r["filename"]]
     return r
 
+
 class QueryRecipe(Recipe):
     @classmethod
     def recipe_type(self):
         return "query"
 
     @classmethod
-    def from_dict(cls,d):
+    def from_dict(cls, d):
         return cls(d)
-        
+
     def metadata(self, key):
         metadata = Metadata(super().metadata(key))
         metadata.query = self.data["query"]
         return metadata.as_dict()
-      
+
     def make(self, key, store=None, context=None):
         context = get_context(context)
         if store is None:
@@ -181,12 +207,14 @@ class QueryRecipe(Recipe):
             store_to=store,
         )
 
+
 register_recipe(QueryRecipe)
+
 
 class RecipeStore(Store):
     def __init__(self, store, recipes=None, context=None):
         self.substore = store
-        self.substore.parent_store=self
+        self.substore.parent_store = self
         self._recipes = {} if recipes is None else recipes
         self.context = context
 
@@ -576,6 +604,7 @@ class OldRecipeSpecStore(RecipeStore):
         else:
             self.create_status(key)
 
+
 class NewRecipeSpecStore(Store):
     RECIPES_FILE = "recipes.yaml"
     LOCAL_RECIPES = "RECIPES"
@@ -583,7 +612,7 @@ class NewRecipeSpecStore(Store):
 
     def __init__(self, store):
         self.substore = store
-        self.substore.parent_store=self
+        self.substore.parent_store = self
         self._recipes = {}
         self.update_recipes()
         self.update_all_status_files()
@@ -608,21 +637,29 @@ class NewRecipeSpecStore(Store):
             )
         try:
             recipe.make(key, store=self.substore)
-            is_error=False
+            is_error = False
         except:
-            is_error=True
+            is_error = True
             trace = traceback.format_exc()
             traceback.print_exc()
 
         metadata = self.substore.get_metadata(key)
         recipe_metadata = self.recipe_metadata(key)
 
-        for k in ["status","fileinfo","message","is_error","log","child_log","dependencies"]:
+        for k in [
+            "status",
+            "fileinfo",
+            "message",
+            "is_error",
+            "log",
+            "child_log",
+            "dependencies",
+        ]:
             if k in recipe_metadata:
                 del recipe_metadata[k]
-        
+
         metadata.update(recipe_metadata)
-        m= Metadata(metadata)
+        m = Metadata(metadata)
         if is_error:
             m.exception(f"Error evaluating recipe", traceback=trace)
         else:
@@ -633,7 +670,6 @@ class NewRecipeSpecStore(Store):
         self.substore.store_metadata(key, metadata)
         self.on_data_changed(key)
         self.on_metadata_changed(key)
-
 
     def recipe_metadata(self, key):
         if self.ignore(key):
@@ -701,8 +737,8 @@ class NewRecipeSpecStore(Store):
             raise Exception(f"Key {key} is ignored, can't store metadata into it")
         if key in self.recipes():
             rm = self.recipe_metadata(key)
-            metadata["title"] = rm.get("title",metadata.get("title"))
-            metadata["description"] = rm.get("description",metadata.get("description"))
+            metadata["title"] = rm.get("title", metadata.get("title"))
+            metadata["description"] = rm.get("description", metadata.get("description"))
 
         self.substore.store_metadata(key, metadata)
         self.on_metadata_changed(key)
@@ -776,7 +812,6 @@ class NewRecipeSpecStore(Store):
     def __repr__(self):
         return f"RecipeSpecStore({repr(self.substore)})"
 
-
     def update_all_status_files(self):
         if self.STATUS_FILE is not None:
             for dir_key in set(parent_key(key) for key in self.recipes().keys()):
@@ -786,7 +821,6 @@ class NewRecipeSpecStore(Store):
         if key is None:
             return True
         return any(x.startswith(".") for x in key.split("/"))
-
 
     def update_recipes(self):
         import yaml
@@ -807,20 +841,35 @@ class NewRecipeSpecStore(Store):
                     parent = parent_key(key)
                     for directory, items in spec.items():
                         for i, r in enumerate(items):
-                            cwd = parent if directory == self.LOCAL_RECIPES else join_key(parent, directory)
+                            cwd = (
+                                parent
+                                if directory == self.LOCAL_RECIPES
+                                else join_key(parent, directory)
+                            )
                             d = resolve_recipe_definition(r, cwd, metadata)
                             if d is None:
-                                metadata.warning(f"Failed parsing the definition of recipe {i+1} in {directory}")
-                            d["recipe_name"] = self.to_root_key(recipes_key)+f"/-Ryaml/{directory}/{i}#"+d.get("filename","")
+                                metadata.warning(
+                                    f"Failed parsing the definition of recipe {i+1} in {directory}"
+                                )
+                            d["recipe_name"] = (
+                                self.to_root_key(recipes_key)
+                                + f"/-Ryaml/{directory}/{i}#"
+                                + d.get("filename", "")
+                            )
                             d["recipes_key"] = self.to_root_key(recipes_key)
-                            d["recipes_directory"] = "" if directory == self.LOCAL_RECIPES else directory
+                            d["recipes_directory"] = (
+                                "" if directory == self.LOCAL_RECIPES else directory
+                            )
                             try:
                                 recipe = recipe_registry().from_dict(d)
                             except:
-                                metadata.warning(f"Failed parsing recipe {i+1} in {directory}", traceback=traceback.format_exc())
+                                metadata.warning(
+                                    f"Failed parsing recipe {i+1} in {directory}",
+                                    traceback=traceback.format_exc(),
+                                )
                             for name in recipe.provides():
                                 key = join_key(cwd, name)
-                                recipes[key]=recipe
+                                recipes[key] = recipe
         self._recipes = recipes
         return recipes
 
@@ -926,6 +975,7 @@ class NewRecipeSpecStore(Store):
             self.update_all_status_files()
         else:
             self.create_status(key)
+
 
 class RecipeSpecStore(NewRecipeSpecStore):
     pass

@@ -7,6 +7,7 @@ from liquer.context import get_context
 import pandas as pd
 import polars as pl
 
+
 class PolarsDataframeStateType(StateType):
     def identifier(self):
         return "polars_dataframe"
@@ -54,23 +55,26 @@ class PolarsDataframeStateType(StateType):
         return self.from_bytes(self.as_bytes(data)[0])
 
     def data_characteristics(self, data):
-        return dict(description=f"Polars data-frame with {len(data.columns)} and {len(data)} rows.")
-        
+        return dict(
+            description=f"Polars data-frame with {len(data.columns)} and {len(data)} rows."
+        )
+
 
 POLARS_DATAFRAME_STATE_TYPE = PolarsDataframeStateType()
 register_state_type(pl.DataFrame, POLARS_DATAFRAME_STATE_TYPE)
 
+
 @command
 def polars_df(data, extension=None, context=None):
-    """Convert bytes or a dataframe to a workbook"""
-    context=get_context(context)
-    if type(data)==bytes:
+    """Convert bytes or a pandas data-frame to a Polars data-frame"""
+    context = get_context(context)
+    if type(data) == bytes:
         context.info(f"Polars data-frame from bytes. Extension:'{extension}'")
         return POLARS_DATAFRAME_STATE_TYPE.from_bytes(data, extension=extension)
-    elif isinstance(data,pd.DataFrame):
+    elif isinstance(data, pd.DataFrame):
         context.info("Polars data-frame from Pandas data-frame")
         return pl.DataFrame(data)
-    elif isinstance(data,pl.DataFrame):
+    elif isinstance(data, pl.DataFrame):
         context.info("Polars data-frame kept as it is")
         return data
     raise Exception(f"Unsupported polars dataframe type: {type(data)}")

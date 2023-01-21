@@ -38,6 +38,7 @@ By convention, the folder "web" in the get_store() holds web interface and can b
 STORE = None
 WEB_STORE = None
 
+
 def get_store():
     global STORE
     if STORE is None:
@@ -49,6 +50,7 @@ def set_store(store):
     global STORE
     STORE = store
 
+
 def get_web_store():
     global WEB_STORE
     if WEB_STORE is None:
@@ -56,25 +58,30 @@ def get_web_store():
         get_store().mount("web", WEB_STORE)
     return WEB_STORE
 
+
 def mount(key, store=None):
     if store is None:
-        store=key
+        store = key
     if type(store) is str:
         store = FileStore(store)
     get_store().mount(key, store)
 
+
 def mount_folder(key, path):
     get_store().mount(key, FileStore(path))
 
+
 def web_mount(key, store=None):
     if store is None:
-        store=key
+        store = key
     if type(store) is str:
         store = FileStore(store)
     get_web_store().mount(key, store)
 
+
 def web_mount_folder(key, path):
     web_mount(key, FileStore(path))
+
 
 class StoreException(Exception):
     def __init__(self, message, key=None, store=None):
@@ -99,13 +106,16 @@ class KeyNotSupportedStoreException(StoreException):
     def __init__(self, message="Key not supported in store", key=None, store=None):
         super().__init__(message=message, key=key, store=store)
 
+
 class KeyRouteNotFoundStoreException(StoreException):
     def __init__(self, message="Key route not found", key=None, store=None):
         super().__init__(message=message, key=key, store=store)
 
+
 class ReadOnlyStoreException(StoreException):
     def __init__(self, message="Key is read only", key=None, store=None):
         super().__init__(message=message, key=key, store=store)
+
 
 class StoreMixin:
     def with_overlay(self, overlay):
@@ -138,21 +148,24 @@ def key_name(key):
         return ""
     return str(key.split("/")[-1])
 
+
 def key_name_without_extension(key):
     if key in ("", None):
         return None
     v = key_name(key).split(".")
-    if len(v)>=2:
+    if len(v) >= 2:
         return v[0]
     return None
+
 
 def key_extension(key):
     if key in ("", None):
         return None
     v = key_name(key).split(".")
-    if len(v)>=2:
+    if len(v) >= 2:
         return v[-1]
     return None
+
 
 def join_key(key, name):
     if key in ("", None):
@@ -163,14 +176,17 @@ def join_key(key, name):
         else:
             return f"{key}/{name}"
 
+
 def parent_key(key):
     if key == "":
         return None
     return "/".join(key.split("/")[:-1])
 
+
 class Store(StoreMixin):
-    parent_store=None
-    MD5_CHECKSUM=True
+    parent_store = None
+    MD5_CHECKSUM = True
+
     def parent_key(self, key):
         "For backwards compatibility only; use parent_key function"
         return parent_key(key)
@@ -178,7 +194,7 @@ class Store(StoreMixin):
     def key_name(self, key):
         "For backwards compatibility only; use key_name function"
         return key_name(key)
-    
+
     def join_key(self, key, name):
         "For backwards compatibility only; use join_key function"
         return join_key(key, name)
@@ -194,35 +210,35 @@ class Store(StoreMixin):
 
     def finalize_metadata(self, metadata, key, is_dir=False, data=None, update=False):
         if data is not None:
-            if type(data)!=bytes:
+            if type(data) != bytes:
                 print(f"WARNING: Non-binary data for '{key}': type is {type(data)}")
         if key is None:
             key = ""
         metadata["key"] = key
         update = update or data is not None
         if update:
-            metadata["updated"]=util.now()
+            metadata["updated"] = util.now()
         if data is not None:
-            metadata["created"]=metadata["updated"]
+            metadata["created"] = metadata["updated"]
         metadata["fileinfo"] = metadata.get("fileinfo", {})
         metadata["fileinfo"]["name"] = key_name(key)
         metadata["fileinfo"]["is_dir"] = is_dir
         metadata["fileinfo"]["filesystem_path"] = metadata["fileinfo"].get(
             "filesystem_path"
         )
-            
+
         if data is not None:
             metadata["fileinfo"]["size"] = len(data)
-            if self.MD5_CHECKSUM and type(data)==bytes:
+            if self.MD5_CHECKSUM and type(data) == bytes:
                 metadata["fileinfo"]["md5"] = hashlib.md5(data).hexdigest()
 
         if metadata.get("mimetype") is None:
             mimetype = mimetype_from_extension(key_extension(key))
-            metadata["mimetype"]=mimetype
+            metadata["mimetype"] = mimetype
 
         if metadata.get("type_identifier") is None:
             type_identifier = type_identifier_from_extension(key_extension(key))
-            metadata["type_identifier"]=type_identifier
+            metadata["type_identifier"] = type_identifier
 
         return Metadata(metadata).as_dict()
 
@@ -267,13 +283,13 @@ class Store(StoreMixin):
     def listdir(self, key):
         """Return names inside a directory specified by key.
         To get a key, names need to be joined with the key (key/name).
-        If you need keys, use the listdir_keys method.  
+        If you need keys, use the listdir_keys method.
         """
         return []
 
     def listdir_keys(self, key):
         """Return keys inside a directory specified by key."""
-        if key in ("",None):
+        if key in ("", None):
             return self.listdir(key)
         else:
             return [self.join_key(key, k) for k in self.listdir(key)]
@@ -290,7 +306,7 @@ class Store(StoreMixin):
     def is_supported(self, key):
         """Returns true is this store supports the supplied key.
         This allows layering Stores, e.g. by with_overlay, with_fallback
-        and store selectively certain data (keys) in certain stores. 
+        and store selectively certain data (keys) in certain stores.
         """
         return False
 
@@ -309,7 +325,7 @@ class Store(StoreMixin):
     def to_root_key(self, key):
         """Convert local store key to a key in a root store.
         This is can be used e.g. to convert a key valid in a mounted (child) store to
-        a key of a root store. 
+        a key of a root store.
         The to_root_key(key) in the root_store() should point to the same object as key in self.
         """
         if self.parent_store is None:
@@ -367,7 +383,7 @@ class FileStore(Store):
         if not self.path_for_key(key).exists():
             raise KeyNotFoundStoreException(key=key, store=self)
         with open(self.path_for_key(key), "rb") as f:
-            b=f.read()
+            b = f.read()
         return b
 
     def get_metadata(self, key):
@@ -381,9 +397,7 @@ class FileStore(Store):
                 if self.metadata_path_for_key(key).exists():
                     with open(self.metadata_path_for_key(key)) as f:
                         try:
-                            metadata.update(
-                                json.loads(f.read())
-                            )
+                            metadata.update(json.loads(f.read()))
                         except:
                             traceback.print_exc()
                             print(f"Removing {key} due to corrupted metadata (a)")
@@ -398,9 +412,7 @@ class FileStore(Store):
                 if self.metadata_path_for_key(key).exists():
                     with open(self.metadata_path_for_key(key)) as f:
                         try:
-                            metadata.update(
-                                json.loads(f.read())
-                            )
+                            metadata.update(json.loads(f.read()))
                         except:
                             traceback.print_exc()
                             print(f"Removing {key} due to corrupted metadata (b)")
@@ -422,7 +434,9 @@ class FileStore(Store):
 
     def store_metadata(self, key, metadata):
         self.metadata_path_for_key(key).parent.mkdir(parents=True, exist_ok=True)
-        metadata = self.finalize_metadata(metadata, key=key, is_dir=self.is_dir(key), update=True)
+        metadata = self.finalize_metadata(
+            metadata, key=key, is_dir=self.is_dir(key), update=True
+        )
         with open(self.metadata_path_for_key(key), "w") as f:
             json.dump(metadata, f)
         self.on_metadata_changed(key)
@@ -436,7 +450,7 @@ class FileStore(Store):
             self.metadata_path_for_key(key).unlink()
         except FileNotFoundError:
             pass
-        
+
         self.on_removed(key)
 
     def removedir(self, key):
@@ -445,12 +459,12 @@ class FileStore(Store):
         self.on_removed(key)
 
     def contains(self, key):
-        if key in ("",None):
+        if key in ("", None):
             return True
         return self.path_for_key(key).exists()
 
     def is_dir(self, key):
-        if key in ("",None):
+        if key in ("", None):
             return True
         return self.path_for_key(key).is_dir()
 
@@ -525,7 +539,9 @@ class MemoryStore(Store):
         self.on_metadata_changed(key)
 
     def store_metadata(self, key, metadata):
-        metadata = self.finalize_metadata(metadata, key=key, is_dir=self.is_dir(key), update=True)
+        metadata = self.finalize_metadata(
+            metadata, key=key, is_dir=self.is_dir(key), update=True
+        )
         self.metadata[key] = metadata
         self.on_metadata_changed(key)
 
@@ -553,7 +569,7 @@ class MemoryStore(Store):
         self.on_removed(key)
 
     def contains(self, key):
-        if key in ("",None):
+        if key in ("", None):
             return True
 
         return key in self.directories or key in self.data or key in self.metadata
@@ -572,7 +588,9 @@ class MemoryStore(Store):
 
     def listdir(self, key):
         if key in ("", None):
-            return sorted(set(k.split("/")[0] for k in self.keys() if k.split("/")[0]!=""))
+            return sorted(
+                set(k.split("/")[0] for k in self.keys() if k.split("/")[0] != "")
+            )
         if self.is_dir(key):
             return [key_name(k) for k in self.keys() if self.parent_key(k) == key]
 
@@ -582,7 +600,6 @@ class MemoryStore(Store):
             key = self.parent_key(key)
         self.on_data_changed(key)
         self.on_metadata_changed(key)
-
 
     def openbin(self, key, mode="r", buffering=-1):
         mode = dict(r="rb", w="wb").get(mode, mode)
@@ -599,9 +616,9 @@ class MemoryStore(Store):
     def __repr__(self):
         return f"MemoryStore()"
 
+
 class ProxyStore(Store):
-    """Proxy to another store - can be used as a basis to override certain behaviour
-    """
+    """Proxy to another store - can be used as a basis to override certain behaviour"""
 
     def __init__(self, store):
         self._store = store
@@ -661,27 +678,30 @@ class ProxyStore(Store):
     def __repr__(self):
         return f"ProxyStore({repr(self._store)})"
 
+
 class IndexerStore(ProxyStore):
-    """Indexer proxy to another store - this will call indexer on storing.
-    """
+    """Indexer proxy to another store - this will call indexer on storing."""
+
     def store(self, key, data, metadata):
         from liquer.indexer import index
+
         self._store.store(key, data, metadata)
         self.on_data_changed(key)
         self.on_metadata_changed(key)
-        query = None if metadata is None else metadata.get('query')
+        query = None if metadata is None else metadata.get("query")
         index(key=key, query=query, data=data, metadata=metadata)
 
     def store_metadata(self, key, metadata):
         from liquer.indexer import index
+
         self._store.store_metadata(key, metadata)
         self.on_metadata_changed(key)
-        query = None if metadata is None else metadata.get('query')
+        query = None if metadata is None else metadata.get("query")
         index(key=key, query=query, data=None, metadata=metadata)
 
+
 class ReadOnlyStore(ProxyStore):
-    """Read only proxy to a store
-    """
+    """Read only proxy to a store"""
 
     def store(self, key, data, metadata):
         raise ReadOnlyStoreException(key=key, store=self)
@@ -703,6 +723,7 @@ class ReadOnlyStore(ProxyStore):
 
     def __repr__(self):
         return f"ReadOnlyStore({repr(self._store)})"
+
 
 class OverlayStore(Store):
     """Overlay store combines two stores: overlay and fallback.
@@ -850,8 +871,8 @@ class RoutingStore(Store):
         return self.route_to(key).get_bytes(key)
 
     def get_metadata(self, key):
-        metadata=self.route_to(key).get_metadata(key)
-        metadata["key"]=key
+        metadata = self.route_to(key).get_metadata(key)
+        metadata["key"] = key
         return metadata
 
     def store(self, key, data, metadata):
@@ -901,7 +922,7 @@ class RoutingStore(Store):
 class KeyTranslatingStore(Store):
     def __init__(self, store):
         self.substore = store
-        self.substore.parent_store=self
+        self.substore.parent_store = self
 
     def sync(self):
         self.substore.sync()
@@ -912,7 +933,7 @@ class KeyTranslatingStore(Store):
     def to_root_key(self, key):
         """Convert local store key to a key in a root store.
         This is can be used e.g. to convert a key valid in a mounted (child) store to
-        a key of a root store. 
+        a key of a root store.
         """
         key = self.translate_key(key, inverse=True)
         if self.parent_store is None:
@@ -933,10 +954,12 @@ class KeyTranslatingStore(Store):
 
     def get_metadata(self, key):
         tkey = self.translate_key(key)
-        metadata=self.substore.get_metadata(tkey)
-        metadata["key"]= key
+        metadata = self.substore.get_metadata(tkey)
+        metadata["key"] = key
         if "recipes_key" in metadata:
-            metadata["recipes_key"] = self.translate_key(metadata["recipes_key"], inverse=True)
+            metadata["recipes_key"] = self.translate_key(
+                metadata["recipes_key"], inverse=True
+            )
         return metadata
 
     def store(self, key, data, metadata):
@@ -990,7 +1013,7 @@ class PrefixStore(KeyTranslatingStore):
     def __init__(self, store, prefix):
         self.substore = store
         self.prefix = prefix
-        self.substore.parent_store=self
+        self.substore.parent_store = self
 
     def translate_key(self, key, inverse=False):
         prefix = self.prefix + "/"
@@ -1029,26 +1052,29 @@ class MountPointStore(RoutingStore):
     def __init__(self, default_store=None, routing_table=None):
         self.default_store = default_store
         if default_store is not None:
-            self.default_store.parent_store=self
+            self.default_store.parent_store = self
         self.routing_table = [] if routing_table is None else routing_table
+
     def sync(self):
         for key, store in self.routing_table:
-            print("SYNC ",key)
+            print("SYNC ", key)
             store.sync()
         if self.default_store is not None:
             self.default_store.sync()
 
     def umount(self, umount_key):
         for key, store in self.routing_table:
-            if key==umount_key:
-                store.parent_store=None
-        self.routing_table = [(key, store) for key, store in self.routing_table if key!=umount_key]
+            if key == umount_key:
+                store.parent_store = None
+        self.routing_table = [
+            (key, store) for key, store in self.routing_table if key != umount_key
+        ]
         return self
 
     def mount(self, key, store):
         self.umount(key)
-        prefix_store=PrefixStore(store, prefix=key)
-        prefix_store.parent_store=self
+        prefix_store = PrefixStore(store, prefix=key)
+        prefix_store.parent_store = self
         self.routing_table.append((key, prefix_store))
         return self
 
@@ -1067,9 +1093,9 @@ class MountPointStore(RoutingStore):
 
     def get_metadata(self, key):
         try:
-            metadata=self.route_to(key).get_metadata(key)
-            metadata["key"]=key
-            
+            metadata = self.route_to(key).get_metadata(key)
+            metadata["key"] = key
+
             return metadata
         except KeyRouteNotFoundStoreException:
             if self.is_dir(key):
@@ -1077,13 +1103,13 @@ class MountPointStore(RoutingStore):
         raise KeyNotFoundStoreException(key=key, store=self)
 
     def is_dir(self, key):
-        if key=="":
+        if key == "":
             return True
         try:
             return self.route_to(key).is_dir(key)
         except KeyRouteNotFoundStoreException:
             for route, _ in reversed(self.routing_table):
-                if route==key or route.startswith(key+"/"):
+                if route == key or route.startswith(key + "/"):
                     return self.finalize_metadata({}, key, is_dir=True)
         return False
 
@@ -1196,7 +1222,9 @@ class FileSystemStore(Store):
                 if self.fs.exists(self.metadata_path_for_key(key)):
                     try:
                         metadata.update(
-                            json.loads(self.fs.readtext(self.metadata_path_for_key(key)))
+                            json.loads(
+                                self.fs.readtext(self.metadata_path_for_key(key))
+                            )
                         )
                     except:
                         traceback.print_exc()
@@ -1208,7 +1236,9 @@ class FileSystemStore(Store):
                 if self.fs.exists(self.metadata_path_for_key(key)):
                     try:
                         metadata.update(
-                            json.loads(self.fs.readtext(self.metadata_path_for_key(key)))
+                            json.loads(
+                                self.fs.readtext(self.metadata_path_for_key(key))
+                            )
                         )
                     except:
                         traceback.print_exc()
@@ -1231,7 +1261,9 @@ class FileSystemStore(Store):
 
     def store_metadata(self, key, metadata):
         parent = self.metadata_dir_path_for_key(key)
-        metadata = self.finalize_metadata(metadata, key=key, is_dir=self.is_dir(key), update=True)
+        metadata = self.finalize_metadata(
+            metadata, key=key, is_dir=self.is_dir(key), update=True
+        )
         self.fs.makedirs(parent)
         with self.fs.open(self.metadata_path_for_key(key), "w") as f:
             json.dump(metadata, f)
@@ -1266,13 +1298,13 @@ class FileSystemStore(Store):
         self.on_removed(key)
 
     def contains(self, key):
-        if key in ("",None):
+        if key in ("", None):
             return True
 
         return self.fs.exists(self.path_for_key(key))
 
     def is_dir(self, key):
-        if key in ("",None):
+        if key in ("", None):
             return True
         return self.fs.isdir(self.path_for_key(key))
 
@@ -1312,4 +1344,3 @@ class FileSystemStore(Store):
 
     def __repr__(self):
         return f"FileSystemStore({repr(self.fs)}, {repr(self.path)})"
-

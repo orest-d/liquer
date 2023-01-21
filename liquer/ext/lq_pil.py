@@ -6,6 +6,7 @@ from liquer.constants import mimetype_from_extension
 
 import PIL
 
+
 class PILImageStateType(StateType):
     def identifier(self):
         return "image"
@@ -19,7 +20,19 @@ class PILImageStateType(StateType):
     def format_from_extension(self, extension):
         if extension is None:
             extension = self.default_extension()
-        if extension.lower() in ("bmp", "eps", "jpeg", "pcx", "png", "ppm", "tga", "tiff", "xbm", "ico", "gif"):
+        if extension.lower() in (
+            "bmp",
+            "eps",
+            "jpeg",
+            "pcx",
+            "png",
+            "ppm",
+            "tga",
+            "tiff",
+            "xbm",
+            "ico",
+            "gif",
+        ):
             return extension.upper(), True, True
         if extension.lower() == "jpg":
             return "JPEG", True, True
@@ -34,7 +47,7 @@ class PILImageStateType(StateType):
         assert self.is_type_of(data)
         mimetype = mimetype_from_extension(extension)
         format_name, can_read, can_write = self.format_from_extension(extension)
-        if can_write: 
+        if can_write:
             output = BytesIO()
             data.save(output, format=format_name)
             return output.getvalue(), mimetype
@@ -51,9 +64,9 @@ class PILImageStateType(StateType):
     def from_bytes(self, b: bytes, extension=None):
         format_name, can_read, can_write = self.format_from_extension(extension)
         if extension is None:
-            formats=None
+            formats = None
         else:
-            formats=[format_name]
+            formats = [format_name]
 
         if can_read:
             f = BytesIO()
@@ -92,6 +105,6 @@ def resize(image, width, height, resample=None):
         hamming=PIL.Image.HAMMING,
         bicubic=PIL.Image.BICUBIC,
         lanczos=PIL.Image.LANCZOS,
-    ).get(str(resample).lower())     
-    
+    ).get(str(resample).lower())
+
     return image.copy().resize((int(width), int(height)), resample=resample)

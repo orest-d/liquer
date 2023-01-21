@@ -34,7 +34,6 @@ of a state being cached or served is limited.
 """
 
 
-
 def get_type_qualname(cls):
     """Get a string uniquely identifying the supplied class"""
     if isinstance(cls, str):
@@ -85,6 +84,7 @@ class StateTypesRegistry(object):
             if x.identifier() == type_identifier:
                 return x
 
+
 _state_types_registry = None
 
 
@@ -103,12 +103,14 @@ def data_characteristics(data):
     Type identifier is duplicate of the type identifier found in metadata, but makes
     the data characteristics self-contained.
     """
-    st = state_types_registry().get(get_type_qualname(type(data))) 
+    st = state_types_registry().get(get_type_qualname(type(data)))
     ch = st.data_characteristics(data)
     if not isinstance(ch, dict):
-        raise Exception(f"Data characteristics for {st.identifier()} must be a dictionary")
-    ch['description'] = ch.get('description','')
-    ch['type_identifier'] = ch.get("type_ident", st.identifier())
+        raise Exception(
+            f"Data characteristics for {st.identifier()} must be a dictionary"
+        )
+    ch["description"] = ch.get("description", "")
+    ch["type_identifier"] = ch.get("type_ident", st.identifier())
     return ch
 
 
@@ -116,10 +118,12 @@ def type_identifier_of(data):
     """Convenience function to return a state type identifier for supplied data"""
     return state_types_registry().get(get_type_qualname(type(data))).identifier()
 
+
 def state_type_from_type_identifier(type_identifier):
     """Convenience function to return a state type for supplied type identifier"""
 
     return state_types_registry().from_type_identifier(type_identifier)
+
 
 def register_state_type(type_qualname, state_type):
     """Function to register new state type for a qualified type name
@@ -290,7 +294,11 @@ class DictStateType(StateType):
         return deepcopy(data)
 
     def data_characteristics(self, data):
-        return dict(description=f"Dictionary with {len(data)} items.", keys=sorted(str(k) for k in data.keys()))
+        return dict(
+            description=f"Dictionary with {len(data)} items.",
+            keys=sorted(str(k) for k in data.keys()),
+        )
+
 
 class JsonStateType(StateType):
     """JSON serializable data."""
@@ -332,7 +340,10 @@ class JsonStateType(StateType):
 
     def data_characteristics(self, data):
         if isinstance(data, dict):
-            return dict(description=f"Dictionary with {len(data)} items.", keys=sorted(str(k) for k in data.keys()))
+            return dict(
+                description=f"Dictionary with {len(data)} items.",
+                keys=sorted(str(k) for k in data.keys()),
+            )
         elif isinstance(data, dict):
             return dict(description=f"Array with {len(data)} items.")
         elif isinstance(data, str):
@@ -394,7 +405,10 @@ class PickleStateType(StateType):
 
     def data_characteristics(self, data):
         if isinstance(data, dict):
-            return dict(description=f"Dictionary with {len(data)} items.", keys=sorted(str(k) for k in data.keys()))
+            return dict(
+                description=f"Dictionary with {len(data)} items.",
+                keys=sorted(str(k) for k in data.keys()),
+            )
         elif isinstance(data, dict):
             return dict(description=f"Array with {len(data)} items.")
         elif isinstance(data, str):
@@ -409,6 +423,7 @@ class PickleStateType(StateType):
             return dict(description=f"None")
         else:
             return dict(description=f"Data of type {type(data)}")
+
 
 class BytesStateType(StateType):
     """Binary data"""

@@ -13,112 +13,139 @@ def liquer_static_path():
 class LiquerIndexHandler(h.LiquerIndexHandler, tornado.web.RequestHandler):
     pass
 
+
 class LiquerJsHandler(h.LiquerJsHandler, tornado.web.RequestHandler):
     pass
+
 
 # /api/commands.json
 class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
     pass
 
+
 #'/submit/<query>
 class SubmitHandler(h.SubmitHandler, tornado.web.RequestHandler):
     pass
+
 
 # /q/<path:query>
 class QueryHandler(h.QueryHandler, tornado.web.RequestHandler):
     pass
 
-#/api/cache/get/<path:query>
+
+# /api/cache/get/<path:query>
 class CacheGetDataHandler(h.CacheGetDataHandler, tornado.web.RequestHandler):
     pass
 
-#/api/cache/meta/<path:query>
+
+# /api/cache/meta/<path:query>
 class CacheMetadataHandler(h.CacheMetadataHandler, tornado.web.RequestHandler):
     pass
 
-#/api/cache/remove/<path:query>
+
+# /api/cache/remove/<path:query>
 class CacheRemoveHandler(h.CacheRemoveHandler, tornado.web.RequestHandler):
     pass
 
-#/api/cache/contains/<path:query>
+
+# /api/cache/contains/<path:query>
 class CacheContainsHandler(h.CacheContainsHandler, tornado.web.RequestHandler):
     pass
 
-#/api/cache/keys.json
+
+# /api/cache/keys.json
 class CacheKeysHandler(h.CacheKeysHandler, tornado.web.RequestHandler):
     pass
 
-#/api/cache/clean
+
+# /api/cache/clean
 class CacheCleanHandler(h.CacheCleanHandler, tornado.web.RequestHandler):
     pass
 
-#/api/commands.json
+
+# /api/commands.json
 class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
     pass
 
-#/api/debug-json/<path:query>
+
+# /api/debug-json/<path:query>
 class GetMetadataHandler(h.GetMetadataHandler, tornado.web.RequestHandler):
     pass
 
-#/api/stored_metadata/<path:query>
+
+# /api/stored_metadata/<path:query>
 class GetStoredMetadataHandler(h.GetStoredMetadataHandler, tornado.web.RequestHandler):
     pass
+
 
 # /api/build
 class BuildHandler(h.BuildHandler, tornado.web.RequestHandler):
     pass
 
+
 #'/api/register_command/
 class RegisterCommandHandler(h.RegisterCommandHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/data/<path:query>
+
+# /api/store/data/<path:query>
 class StoreDataHandler(h.StoreDataHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/upload/<path:query>
+
+# /api/store/upload/<path:query>
 class StoreUploadHandler(h.StoreUploadHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/metadata/<path:query>
+
+# /api/store/metadata/<path:query>
 class StoreMetadataHandler(h.StoreMetadataHandler, tornado.web.RequestHandler):
     pass
 
-#/web/<path:query>
+
+# /web/<path:query>
 class WebStoreHandler(h.WebStoreHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/remove/<path:query>
+
+# /api/store/remove/<path:query>
 class StoreRemoveHandler(h.StoreRemoveHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/removedir/<path:query>
+
+# /api/store/removedir/<path:query>
 class StoreRemovedirHandler(h.StoreRemovedirHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/contains/<path:query>
+
+# /api/store/contains/<path:query>
 class StoreContainsHandler(h.StoreContainsHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/is_dir/<path:query>
+
+# /api/store/is_dir/<path:query>
 class StoreIsDirHandler(h.StoreIsDirHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/keys")
+
+# /api/store/keys")
 class StoreKeysHandler(h.StoreKeysHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/listdir/<path:query>
+
+# /api/store/listdir/<path:query>
 class StoreListdirHandler(h.StoreListdirHandler, tornado.web.RequestHandler):
     pass
 
-#/api/store/makedir/<path:query>
+
+# /api/store/makedir/<path:query>
 class StoreMakedirHandler(h.StoreMakedirHandler, tornado.web.RequestHandler):
     pass
 
 
-#class DebugQueryHandler(h.DebugQueryHandler, tornado.web.RequestHandler):
+# class DebugQueryHandler(h.DebugQueryHandler, tornado.web.RequestHandler):
 #    pass
+
 
 def url_mapping():
     return [
@@ -150,6 +177,7 @@ def url_mapping():
         (r"/liquer/api/store/makedir/(.*)", StoreMakedirHandler),
     ]
 
+
 if __name__ == "__main__":
     import liquer.ext.basic
     import liquer.ext.meta
@@ -169,7 +197,8 @@ if __name__ == "__main__":
     set_var("server", f"http://localhost:{port}")
 
     application = tornado.web.Application(
-        url_mapping() + [
+        url_mapping()
+        + [
             (
                 r"/static/(.*)",
                 tornado.web.StaticFileHandler,

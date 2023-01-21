@@ -295,6 +295,7 @@ class SegmentHeader(object):
     The header parameters may influence how the query is interpreted.
     The interpretation of the header parameters depends on the context object.
     """
+
     def __init__(
         self,
         name: str = "",
@@ -312,9 +313,9 @@ class SegmentHeader(object):
     def is_trivial(self):
         """Terurns true if the header does not contain any data,
         I.e. trivial header has no name, level is 1 and no parameters.
-        Trivial header can be both for resource and query, it does not depend on the resource flas. 
+        Trivial header can be both for resource and query, it does not depend on the resource flas.
         """
-        return self.name in ("", None) and self.level==1 and len(self.parameters)==0
+        return self.name in ("", None) and self.level == 1 and len(self.parameters) == 0
 
     def encode(self):
         assert self.level >= 1
@@ -344,6 +345,7 @@ class SegmentHeader(object):
 
 class TransformQuerySegment(object):
     """Query segment representing a transformation, i.e. a sequence of actions applied to a state."""
+
     def __init__(self, header=None, query=None, filename=None):
         "header can be SegmentHeader, query is a list of ActionRequest objects"
         self.header = header
@@ -453,6 +455,7 @@ class TransformQuerySegment(object):
 
 class ResourceQuerySegment(object):
     """Query segment representing a resource, i.e. path to a file in a store."""
+
     def __init__(self, header=None, query=None):
         "header can be SegmentHeader, query is a list of ActionRequest objects"
         self.header = header
@@ -497,11 +500,13 @@ class ResourceQuerySegment(object):
 class Query(object):
     """Query is a sequence of query segment.
     Typically this will be a resource and and/or a transformation applied to a resource."""
+
     def __init__(self, segments: list = None, absolute=False):
         self.segments = segments or []
         self.absolute = absolute
 
     def filename(self):
+        "Return filename if present, None otherwise."
         if len(self.segments):
             segment = self.segments[-1]
             if (
@@ -517,48 +522,69 @@ class Query(object):
                 return str(segment.query[-1])
         return None
 
+    def without_filename(self):
+        """Query without the filename."""
+        if self.filename() is None:
+            return self
+        else:
+            p, _ = self.predecessor()
+            return p
+
     def extension(self):
+        "Return file extension if present, None otherwise."
         filename = self.filename()
         if filename is not None:
             v = filename.split(".")
-            if len(v)>1:
+            if len(v) > 1:
                 return v[-1]
         return None
+
     def is_empty(self):
+        "Returns true if the query is empty, i.e. has no segments and thus is equivalent to an empty string."
         return len(self.segments) == 0
 
     def is_transform_query(self):
+        "Returns true if the query is a pure transformation query - i.e. a sequence of actions."
         return len(self.segments) == 1 and isinstance(
             self.segments[0], TransformQuerySegment
         )
 
     def transform_query(self):
+        "Returns TransformQuerySegment if the query is a pure transformation query, None otherwise."
         if self.is_transform_query():
             return self.segments[0]
         else:
             return None
 
     def is_resource_query(self):
+        "Returns true if the query is a pure resource query - i.e. a store key with an optional header (-R)."
         return len(self.segments) == 1 and isinstance(
             self.segments[0], ResourceQuerySegment
         )
 
     def resource_query(self):
+        "Returns ResourceQuerySegment if the query is a pure resource query, None otherwise."
         if self.is_resource_query():
             return self.segments[0]
         else:
             return None
 
     def is_action_request(self):
+        "Returns true if the query is a single action request."
         return self.is_transform_query() and self.segments[0].is_action_request()
 
     def action(self):
+        "Returns ActionRequest if the query is a single action request, None otherwise."
         if self.is_action_request():
             return self.segments[0].action()
         else:
             return None
 
     def predecessor(self):
+        """Return tuple of (predecessor, remainder).
+        Remainder is a last element (action or filename) or None if not available.
+        Predecessor is a query without the remainder (or None).
+        """
         if len(self.segments):
             if isinstance(self.segments[-1], TransformQuerySegment):
                 p, r = self.segments[-1].predecessor()
@@ -575,17 +601,22 @@ class Query(object):
         else:
             return None, None
 
-    def short(self):
+    def short(self, n=30):
+        """Make a shortened version of the at most n characters (30) of a query for printout purposes."""
         _, r = self.predecessor()
         if r is None:
             q = str(self)
-            if len(self) > 30:
-                q = "..." + q[-30:]
+            if len(self) > n:
+                q = "..." + q[-n:]
             return q
         else:
             return str(r)
 
     def all_predecessors(self):
+        """Iterate over all predecessors.
+        Iterator yields (predecessor, remainder) tuples from the full query (query, None)
+        removing remainders in each step until there is no predecessor left.
+        """
         qp, qr = self, None
         while qp is not None:
             yield qp, qr
@@ -614,13 +645,12 @@ class Query(object):
         return Query(self.segments + [tq], absolute=self.absolute)
 
     def encode(self):
-
         q = "/".join(x.encode() for x in self.segments)
         if self.is_resource_query():
             if not q.startswith("-"):
-                q="-R/"+q
+                q = "-R/" + q
         if self.absolute:
-            q="/"+q
+            q = "/" + q
         return q
 
     def __repr__(self):
@@ -856,7 +886,7 @@ resource_segment_with_header = (
     (
         resource_identifier
         + Group(ZeroOrMore(Word("-").suppress() + parameter))
-        + Optional(Literal("/").suppress()+Group(resource_path))
+        + Optional(Literal("/").suppress() + Group(resource_path))
     )
     .setParseAction(_resource_segment_with_header_parse_action)
     .setName("resource_segment_with_header")

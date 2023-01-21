@@ -11,6 +11,7 @@ from pathlib import Path
 from liquer.context import get_context
 from itertools import islice
 
+
 class OpenpyxlWorkbookStateType(StateType):
     def identifier(self):
         return "openpyxl_workbook"
@@ -27,11 +28,11 @@ class OpenpyxlWorkbookStateType(StateType):
         assert self.is_type_of(data)
         mimetype = mimetype_from_extension(extension)
 
-        if extension in ("xlsx","xltx"):
+        if extension in ("xlsx", "xltx"):
             with TemporaryDirectory() as tmpdir:
                 path = Path(tmpdir) / f"data.{extension}"
                 data.save(str(path))
-                b=path.read_bytes()
+                b = path.read_bytes()
                 return b, mimetype
         else:
             raise Exception(
@@ -44,7 +45,7 @@ class OpenpyxlWorkbookStateType(StateType):
         f = BytesIO()
         f.write(b)
         f.seek(0)
-        if extension in ("xlsx","xltx"):
+        if extension in ("xlsx", "xltx"):
             return load_workbook(f)
         raise Exception(
             f"Deserialization: file extension {extension} is not supported by openpyxl_workbook type."
@@ -55,42 +56,44 @@ class OpenpyxlWorkbookStateType(StateType):
 
     def data_characteristics(self, data):
         return dict(description=f"Excel workbook with {len(data.sheetnames)} sheets.")
-        
+
 
 OPENPYXL_WORKBOOK_STATE_TYPE = OpenpyxlWorkbookStateType()
 register_state_type(Workbook, OPENPYXL_WORKBOOK_STATE_TYPE)
 
+
 @command
 def workbook(data, index=True, header=True, context=None):
     """Convert bytes or a dataframe to a workbook"""
-    context=get_context(context)
-    if type(data)==bytes:
+    context = get_context(context)
+    if type(data) == bytes:
         context.info("Workbook from bytes")
         return OPENPYXL_WORKBOOK_STATE_TYPE.from_bytes(data)
-    elif isinstance(data,pd.DataFrame):
+    elif isinstance(data, pd.DataFrame):
         context.info("Workbook from pandas DataFrame")
-        wb=Workbook()
-        ws=wb.active
+        wb = Workbook()
+        ws = wb.active
         for r in dataframe_to_rows(df, index=index, header=header):
             ws.append(r)
         return wb
-    elif isinstance(data,Workbook):
+    elif isinstance(data, Workbook):
         return data
     raise Exception(f"Unsupported workbook type: {type(data)}")
+
 
 @command
 def workbook_sheet_df(wb, sheet=None, context=None):
     """Extract a workbook sheet as a data-frame"""
     context = get_context(context)
-    if type(wb)==bytes:
+    if type(wb) == bytes:
         wb = workbook(wb, context=context)
-    if sheet in ("",None):
+    if sheet in ("", None):
         context.info("Using active sheet")
-        ws=wb.active
+        ws = wb.active
     else:
-        ws=wb[sheet]
+        ws = wb[sheet]
     try:
-        i=int(sheet)
+        i = int(sheet)
         sheet = wb.sheetnames[i]
         context.info(f"Using sheet {i} with name '{sheet}'")
     except:
@@ -101,5 +104,5 @@ def workbook_sheet_df(wb, sheet=None, context=None):
     data = list(data)
     idx = [r[0] for r in data]
     data = (islice(r, 1, None) for r in data)
-    df = pd.DataFrame(data, index=idx, columns=cols)    
+    df = pd.DataFrame(data, index=idx, columns=cols)
     return df

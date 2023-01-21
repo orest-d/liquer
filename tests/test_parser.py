@@ -82,6 +82,20 @@ class TestNewParser:
     def test_parse_filename(self):
         q = parse("abc/def/file.txt")
         assert q.segments[0].filename == "file.txt"
+        assert q.filename() == "file.txt"
+
+    def test_parse_filename0(self):
+        q = parse("file.txt")
+        assert q.segments[0].filename == "file.txt"
+        assert q.filename() == "file.txt"
+
+    def test_without_filename(self):
+        q = parse("file.txt")
+        assert q.without_filename().encode() == ""
+        q = parse("abc/def/file.txt")
+        assert q.without_filename().encode() == "abc/def"
+        q = parse("abc/def")
+        assert q.without_filename().encode() == "abc/def"
 
     def test_parse_segments(self):
         q = parse("abc/def/-/xxx/-q/qqq")

@@ -98,9 +98,7 @@ class DatafusionContextStateType(StateType):
         )
 
     def copy(self, data):
-        raise Exception(
-            f"Copy is not supported by DataFusion SessionContext type."
-        )
+        raise Exception(f"Copy is not supported by DataFusion SessionContext type.")
 
     def data_characteristics(self, data):
         return dict(description=f"DataFusion session context")
@@ -129,11 +127,13 @@ class ParquetSQLRecipe(Recipe):
     def provides(self):
         if "filename" not in self.data:
             raise Exception(
-                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.")
+                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename."
+            )
         return self.data.get("provides", [self.data["filename"]])
 
     def make_context(self, tmpdir, store, context):
         import datafusion as daf
+
         ctx = daf.SessionContext()
         register = self.data.get("register", [])
         store = store.root_store()
@@ -145,7 +145,9 @@ class ParquetSQLRecipe(Recipe):
                 q = parse(query)
             except:
                 context.warning(
-                    f"Could not parse query '{query}' in parquet_sql recipe {self.recipe_name()}", traceback=traceback.format_exc())
+                    f"Could not parse query '{query}' in parquet_sql recipe {self.recipe_name()}",
+                    traceback=traceback.format_exc(),
+                )
             if q.is_resource_query():
                 key = q.resource_query().path()
                 if store.is_dir(key):
@@ -154,24 +156,29 @@ class ParquetSQLRecipe(Recipe):
                         if not store.is_dir(k) and key_extension(k) == "parquet":
                             (path / key_name(k)).write_bytes(store.get_bytes(k))
                             context.info(
-                                f"Registering {key_name_without_extension(k)} from {key}")
-                            ctx.register_parquet(key_name_without_extension(
-                                k), str(path / key_name(k)))
+                                f"Registering {key_name_without_extension(k)} from {key}"
+                            )
+                            ctx.register_parquet(
+                                key_name_without_extension(k), str(path / key_name(k))
+                            )
                 else:
                     (path / key_name(key)).write_bytes(store.get_bytes(key))
                     context.info(f"Registering resource {key}")
-                    ctx.register_parquet(key_name_without_extension(
-                        key), str(path / key_name(key)))
+                    ctx.register_parquet(
+                        key_name_without_extension(key), str(path / key_name(key))
+                    )
             else:
                 filename = q.filename()
                 if filename is None:
                     context.warning(
-                        f"Skipping '{query}' registering because it is lacking a filename")
+                        f"Skipping '{query}' registering because it is lacking a filename"
+                    )
                     continue
                 v = filename.split(".")
                 context.info(f"Evaluating query {query}")
                 context.evaluate_and_save(
-                    query, target_directory=str(tmpdir), target_file=filename)
+                    query, target_directory=str(tmpdir), target_file=filename
+                )
                 context.info(f"Registering {v[0]} from query {query}")
                 ctx.register_parquet(v[0], str(path / filename))
         return ctx
@@ -180,10 +187,12 @@ class ParquetSQLRecipe(Recipe):
         context = get_context(context)
         if "sql" not in self.data:
             raise Exception(
-                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have sql.")
+                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have sql."
+            )
         if "filename" not in self.data:
             raise Exception(
-                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.")
+                f"Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename."
+            )
         if store is None:
             store = context.store()
         with TemporaryDirectory() as tmpdir:
@@ -198,7 +207,10 @@ class ParquetSQLRecipe(Recipe):
                 store.store(key, b, metadata)
             except:
                 m = Metadata(metadata)
-                m.exception("Parquet SQL recipe failed",traceback=traceback.format_exc())
-                store.store_metadata(key,m.as_dict())
+                m.exception(
+                    "Parquet SQL recipe failed", traceback=traceback.format_exc()
+                )
+                store.store_metadata(key, m.as_dict())
+
 
 register_recipe(ParquetSQLRecipe)

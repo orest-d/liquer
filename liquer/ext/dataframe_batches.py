@@ -135,7 +135,7 @@ class StoredDataframeIterator(object):
 
         if store is None:
             store = get_store()
-        self.store= store
+        self.store = store
 
     def to_dict(self, with_batch_number=False):
         d = dict(
@@ -240,6 +240,7 @@ class StoredDataframeIterator(object):
     def __repr__(self):
         return f"StoredDataframeIterator('{self.key}')"
 
+
 class StoredDataframeIteratorStateType(StateType):
     def identifier(self):
         return "dataframe_iterator"
@@ -323,16 +324,18 @@ def _store_batches(idf, key, max_batches=None, context=None):
         sdfi.append(df)
         context.store_data(sdfi_key, sdfi)
         yield sdfi, df
-#        sdfi_bytes, mimetype = STORED_DATAFRAME_ITERATOR_STATE_TYPE.as_bytes(sdfi)
-#        dc = data_characteristics(sdfi)
-#        sdfi_metadata = context.metadata()
-#        sdfi_metadata.update(
-#            dict(type_identifier=dc["type_identifier"], data_characteristics=dc)
-#        )
-#        store.store(sdfi_key, sdfi_bytes, sdfi_metadata)
+        #        sdfi_bytes, mimetype = STORED_DATAFRAME_ITERATOR_STATE_TYPE.as_bytes(sdfi)
+        #        dc = data_characteristics(sdfi)
+        #        sdfi_metadata = context.metadata()
+        #        sdfi_metadata.update(
+        #            dict(type_identifier=dc["type_identifier"], data_characteristics=dc)
+        #        )
+        #        store.store(sdfi_key, sdfi_bytes, sdfi_metadata)
         if max_batches and batch_number > max_batches:
             context.info(f"Maximum number of batches reached")
             break
+
+
 @command
 def store_batches(idf, key, max_batches=None, context=None):
     """Store iterator of dataframes (batches) in a store.
@@ -347,6 +350,7 @@ def store_batches(idf, key, max_batches=None, context=None):
     for sdfi, df in _store_batches(idf, key, max_batches=max_batches, context=context):
         pass
     return sdfi
+
 
 @command(cache=False, volatile=True)
 def store_batches_pass_through(idf, key, max_batches=None, context=None):

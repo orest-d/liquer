@@ -10,12 +10,12 @@ class Metadata:
     Highlevel getters/setters and validation on top of a metadata dictionary object.
     Metadata dictionary is a simple JSON-able python dictionary.
     The Metadata class takes care that all required fields are filled in in the right format.
-    High-level logging functionality into the metadata is provided as well. 
+    High-level logging functionality into the metadata is provided as well.
     """
 
     def __init__(self, metadata=None):
         if metadata is None:
-            metadata={}
+            metadata = {}
         self.set_metadata(metadata)
 
     @classmethod
@@ -38,7 +38,9 @@ class Metadata:
             metadata["message"] = ""
         if "is_error" not in metadata:
             metadata["is_error"] = False
-        metadata["dependencies"] = Dependencies(metadata.get("dependencies",dict(query=metadata["query"]))).as_dict()
+        metadata["dependencies"] = Dependencies(
+            metadata.get("dependencies", dict(query=metadata["query"]))
+        ).as_dict()
         self.metadata = metadata
         return self
 
@@ -120,18 +122,18 @@ class Metadata:
     def add_command_dependency(self, ns, command_metadata, detect_collisions=True):
         dependencies = Dependencies(self.metadata["dependencies"])
         dependencies.add_command_dependency(ns, command_metadata, detect_collisions)
-        self.metadata["dependencies"]=dependencies.as_dict()
+        self.metadata["dependencies"] = dependencies.as_dict()
         return self
 
     def add_recipe_dependency(self, recipe, detect_collisions=True):
         dependencies = Dependencies(self.metadata["dependencies"])
         dependencies.add_recipe_dependency(recipe, detect_collisions)
-        self.metadata["dependencies"]=dependencies.as_dict()
+        self.metadata["dependencies"] = dependencies.as_dict()
         return self
 
     def clear_log(self):
         "Remove all the messages from the log."
-        self.metadata["log"]=[]
+        self.metadata["log"] = []
         self.info("Log cleared")
         self.updated()
         return self
@@ -187,32 +189,32 @@ class Metadata:
     def updated(self):
         pass
 
+
 class StoreSyncMetadata(Metadata):
-    """Metadata synchronizing with a store
-    """
+    """Metadata synchronizing with a store"""
 
     def __init__(self, store, key, create_if_not_found=True):
         """Store and metadata to be synchronized with. Metadata will be initialized from a store.
         If create_if_not_found is True (default), then in case of a failure to read (i.e. metadata does not exists, is None or it ends with an error),
         the new metadata is created under the key.
         """
-        self.store=store
-        self.sync_key=key
+        self.store = store
+        self.sync_key = key
         makenew = False
         try:
             metadata = self.store.get_metadata(key)
             makenew = True if metadata is None and create_if_not_found else False
         except:
             if create_if_not_found:
-                makenew=True
+                makenew = True
             else:
                 raise
         if makenew:
             self.store.store_metadata(key, Metadata().as_dict())
             metadata = self.store.get_metadata(key)
-            
+
         super().__init__(metadata)
-    
+
     def reload(self):
         "Reload metadata from store"
         metadata = self.store.get_metadata(self.sync_key)
@@ -220,4 +222,3 @@ class StoreSyncMetadata(Metadata):
 
     def updated(self):
         self.store.store_metadata(self.sync_key, self.as_dict())
-

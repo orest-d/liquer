@@ -40,7 +40,9 @@ def info():
 
 def response(state):
     """Create flask response from a State"""
-    b, mimetype, type_identifier = encode_state_data(state.get(), extension=state.extension)
+    b, mimetype, type_identifier = encode_state_data(
+        state.get(), extension=state.extension
+    )
     filename = state.metadata.get("filename")
     if filename is None:
         filename = state_types_registry().get(type_identifier).default_filename()
@@ -65,10 +67,10 @@ def serve(query):
     try:
         kwargs = request.get_json(force=True)
     except:
-        kwargs={}
-    assert type(kwargs)==dict
+        kwargs = {}
+    assert type(kwargs) == dict
     for k, v in request.args.items():
-        kwargs[k]=v
+        kwargs[k] = v
 
     try:
         return response(evaluate(query, extra_parameters=kwargs))
@@ -230,22 +232,23 @@ def store_get(query):
         response = jsonify(
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
-        response.status="404"
+        response.status = "404"
         return response
+
 
 @app.route("/web/<path:query>", methods=["GET"])
 def web_store_get(query):
     """Shortcut to the 'web' directory in the store.
     Similar to /store/data/web, except the index.html is automatically added if query is a directory.
-    The 'web' directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui. 
+    The 'web' directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui.
     """
     store = get_store()
     try:
-        query="web/"+query
+        query = "web/" + query
         if query.endswith("/"):
-            query+="index.html"
+            query += "index.html"
         if store.is_dir(query):
-            query+="/index.html"
+            query += "/index.html"
         metadata = store.get_metadata(query)
         mimetype = metadata.get("mimetype", "application/octet-stream")
         r = make_response(store.get_bytes(query))
@@ -255,6 +258,7 @@ def web_store_get(query):
         return jsonify(
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
+
 
 @app.route("/api/store/data/<path:query>", methods=["POST"])
 def store_set(query):
@@ -267,9 +271,9 @@ def store_set(query):
     try:
         metadata = store.get_metadata(query)
     except KeyNotFoundStoreException:
-        metadata={}
+        metadata = {}
         traceback.print_exc()
-    try:        
+    try:
         data = request.get_data()
         store.store(query, data, metadata)
         return jsonify(dict(query=query, message="Data stored", status="OK"))
@@ -277,8 +281,9 @@ def store_set(query):
         response = jsonify(
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
-        response.status="404"
+        response.status = "404"
         return response
+
 
 @app.route("/api/store/upload/<path:query>", methods=["GET", "POST"])
 def store_upload(query):
@@ -287,19 +292,27 @@ def store_upload(query):
     the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
     either before or after the api/store/data POST.
     """
-    if request.method == 'POST':
-        if 'file' not in request.files:
+    if request.method == "POST":
+        if "file" not in request.files:
             response = jsonify(
-                dict(query=query, message="Request does not contain 'file'", status="ERROR")
+                dict(
+                    query=query,
+                    message="Request does not contain 'file'",
+                    status="ERROR",
+                )
             )
-            response.status="404"
+            response.status = "404"
             return response
-        file = request.files['file']
-        if file.filename == '':
+        file = request.files["file"]
+        if file.filename == "":
             response = jsonify(
-                dict(query=query, message="Request contains 'file' with an empty filename", status="ERROR")
+                dict(
+                    query=query,
+                    message="Request contains 'file' with an empty filename",
+                    status="ERROR",
+                )
             )
-            response.status="404"
+            response.status = "404"
             return response
 
         try:
@@ -308,25 +321,28 @@ def store_upload(query):
             response = jsonify(
                 dict(query=query, message=traceback.format_exc(), status="ERROR")
             )
-            response.status="404"
+            response.status = "404"
             return response
         store = get_store()
         try:
             metadata = store.get_metadata(query)
         except KeyNotFoundStoreException:
-            metadata={}
+            metadata = {}
             traceback.print_exc()
-        try:        
+        try:
             store.store(query, data, metadata)
-            return jsonify(dict(query=query, message="Data stored", size=len(data), status="OK"))
+            return jsonify(
+                dict(query=query, message="Data stored", size=len(data), status="OK")
+            )
         except:
             response = jsonify(
                 dict(query=query, message=traceback.format_exc(), status="ERROR")
             )
-            response.status="404"
+            response.status = "404"
             return response
 
-    r = make_response(f'''
+    r = make_response(
+        f"""
     <!doctype html>
     <title>Upload File</title>
     <h1>Upload to {query}</h1>
@@ -334,11 +350,11 @@ def store_upload(query):
       <input type="file" name="file"/>
       <input type="submit" value="Upload"/>
     </form>
-    ''')
+    """
+    )
 
     r.headers.set("Content-Type", "text/html")
     return r
-
 
 
 @app.route("/api/store/metadata/<path:query>", methods=["GET"])
@@ -360,15 +376,18 @@ def store_set_metadata(query):
         response = jsonify(
             dict(query=query, message=traceback.format_exc(), status="ERROR")
         )
-        response.status="404"
+        response.status = "404"
         return response
+
 
 @app.route("/api/stored_metadata/<path:query>", methods=["GET"])
 def get_stored_metadata(query):
     """Get metadata stored in a store or cache"""
     import liquer.tools
+
     metadata = liquer.tools.get_stored_metadata(query)
     return jsonify(metadata)
+
 
 @app.route("/api/store/remove/<path:query>")
 def store_remove(query):

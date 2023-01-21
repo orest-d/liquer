@@ -53,15 +53,18 @@ def state(state):
     """Returns dictionary with all metadata for the resulting state"""
     return state.as_dict()
 
+
 @command(ns="meta")
 def metadata(state):
     """Returns dictionary with all metadata for the resulting state"""
     return {**state.metadata}
 
+
 @command(ns="meta")
 def metadata_txt(state):
     """Returns dictionary with all metadata for the resulting state"""
     return json.dumps({**state.metadata}, indent=2)
+
 
 @command(ns="meta")
 def help(state, command_name, ns="root"):
@@ -123,79 +126,89 @@ def help(state, command_name, ns="root"):
             f"<h1>Unknown namespace <em>{ns}</em></h1>"
         ).with_filename("help.html")
 
+
 @command(ns="meta")
 def status_md(metadata):
     txt = ""
-    txt+="# %s%s\n\n"%(metadata.get("title","???"), " (ERROR)" if metadata.get("is_error") else "")
+    txt += "# %s%s\n\n" % (
+        metadata.get("title", "???"),
+        " (ERROR)" if metadata.get("is_error") else "",
+    )
     if metadata.get("key") is not None:
-        txt+="KEY:             %s\n"%(metadata.get("key",""))
-        if metadata.get("has_recipe",False):
-            txt+="Resource has a recipe\n"
+        txt += "KEY:             %s\n" % (metadata.get("key", ""))
+        if metadata.get("has_recipe", False):
+            txt += "Resource has a recipe\n"
 
-    txt+="QUERY:           %s\n"%(metadata.get("query","???"))
-    txt+="STATUS:          %s\n"%(metadata.get("status","???"))
-    txt+="TYPE IDENTIFIER: %s\n"%(metadata.get("type_identifier","???"))
-    txt+="MIME:            %s\n"%(metadata.get("mimetype","???"))
-    txt+="PARENT:          %s\n"%(metadata.get("parent_query","???"))
-    txt+="\nMESSAGE:         %s\n\n"%(metadata.get("message",""))
+    txt += "QUERY:           %s\n" % (metadata.get("query", "???"))
+    txt += "STATUS:          %s\n" % (metadata.get("status", "???"))
+    txt += "TYPE IDENTIFIER: %s\n" % (metadata.get("type_identifier", "???"))
+    txt += "MIME:            %s\n" % (metadata.get("mimetype", "???"))
+    txt += "PARENT:          %s\n" % (metadata.get("parent_query", "???"))
+    txt += "\nMESSAGE:         %s\n\n" % (metadata.get("message", ""))
 
-    txt+="STARTED: %s\n"%(metadata.get("started","-"))
-    txt+="UPDATED: %s\n"%(metadata.get("updated","-"))
-    txt+="CREATED: %s\n"%(metadata.get("created","-"))
-    txt+="\n"
+    txt += "STARTED: %s\n" % (metadata.get("started", "-"))
+    txt += "UPDATED: %s\n" % (metadata.get("updated", "-"))
+    txt += "CREATED: %s\n" % (metadata.get("created", "-"))
+    txt += "\n"
 
     fileinfo = metadata.get("fileinfo")
     if fileinfo is not None:
-        txt+="\n## FILEINFO%s\n"%(" (DIRECTORY)" if fileinfo.get("is_dir") else "")
-        txt+="NAME   : %s\n"%(fileinfo.get("name",""))
-        txt+="PATH   : %s\n"%(fileinfo.get("filesystem_path","-"))
-        txt+="SIZE   : %s\n"%(fileinfo.get("size","?"))
-        txt+="\n"
+        txt += "\n## FILEINFO%s\n" % (" (DIRECTORY)" if fileinfo.get("is_dir") else "")
+        txt += "NAME   : %s\n" % (fileinfo.get("name", ""))
+        txt += "PATH   : %s\n" % (fileinfo.get("filesystem_path", "-"))
+        txt += "SIZE   : %s\n" % (fileinfo.get("size", "?"))
+        txt += "\n"
 
-    txt+="\n## DESCRIPTION:\n%s\n"%(metadata.get("description",""))
+    txt += "\n## DESCRIPTION:\n%s\n" % (metadata.get("description", ""))
 
-    
-    txt+="\n## DATA CHARACTERISTICS:\n%s\n\n"%(metadata.get("data_characteristics",{}).get("description",""))
+    txt += "\n## DATA CHARACTERISTICS:\n%s\n\n" % (
+        metadata.get("data_characteristics", {}).get("description", "")
+    )
 
-    for key,value in sorted(metadata.get("data_characteristics",{}).items()):
-        if key not in ("description","type_identifier"):
-            txt+="%-20s:%s\n"%(key, repr(value))
+    for key, value in sorted(metadata.get("data_characteristics", {}).items()):
+        if key not in ("description", "type_identifier"):
+            txt += "%-20s:%s\n" % (key, repr(value))
 
-    txt+="\n## STATE VARIABLES\n"
-    for key, value in sorted(metadata.get("vars",{}).items()):
-        txt+="%-20s:%s\n"%(key, repr(value))
-    
-    txt+="\n## LOGS\n"
+    txt += "\n## STATE VARIABLES\n"
+    for key, value in sorted(metadata.get("vars", {}).items()):
+        txt += "%-20s:%s\n" % (key, repr(value))
+
+    txt += "\n## LOGS\n"
     for name, log in [
-        ("Main log",metadata.get("log")),
-        ("Child log",metadata.get("child_log")),
-        ("Resource log",metadata.get("resource_metadata",{}).get("log")),
-        ("Resource child log",metadata.get("resource_metadata",{}).get("child_log"))
-        ]:
+        ("Main log", metadata.get("log")),
+        ("Child log", metadata.get("child_log")),
+        ("Resource log", metadata.get("resource_metadata", {}).get("log")),
+        ("Resource child log", metadata.get("resource_metadata", {}).get("child_log")),
+    ]:
         if log is not None and len(log):
-            txt+=f"\n### {name}\n"
+            txt += f"\n### {name}\n"
             for entry in log:
-                if type(entry)!=dict:
-                    txt+=f"INVALID ENTRY {repr(entry)}\n"
+                if type(entry) != dict:
+                    txt += f"INVALID ENTRY {repr(entry)}\n"
                 else:
-                    txt+="%-10s %-28s %s\n"%(entry.get("kind","?????"), entry.get("timestamp",""), entry.get("origin",""))
-                    txt+="%-10s %s\n"%("",entry.get("message"))
-                    tb = entry.get('traceback')
+                    txt += "%-10s %-28s %s\n" % (
+                        entry.get("kind", "?????"),
+                        entry.get("timestamp", ""),
+                        entry.get("origin", ""),
+                    )
+                    txt += "%-10s %s\n" % ("", entry.get("message"))
+                    tb = entry.get("traceback")
                     if tb is not None:
                         if len(tb):
-                            txt+=tb
-                            txt+="\n"
+                            txt += tb
+                            txt += "\n"
 
-#    txt+="## LOG\n"
-#    for record in metadata.get("log",[]):
-#        txt+=str(record)
+    #    txt+="## LOG\n"
+    #    for record in metadata.get("log",[]):
+    #        txt+=str(record)
     return txt
+
 
 @command(ns="meta", volatile=True)
 def dir_status(metadata, context=None):
     context = get_context(context)
     if metadata is None:
-        key=""
+        key = ""
     else:
         key = metadata.get("key")
     print("context", context)
@@ -205,37 +218,60 @@ def dir_status(metadata, context=None):
     data = []
     if store.is_dir(key):
         for name in store.listdir(key):
-            metadata = store.get_metadata(store.join_key(key,name))
-            fileinfo = metadata.get("fileinfo",{})
-            data.append(dict(
-                name=name,
-                key=metadata.get("key"),
-                query=metadata.get("query"),
-                title=metadata.get("title"),
-                description=metadata.get("description"),
-                status=metadata.get("status"),
-                is_error=metadata.get("is_error"),
-                message=metadata.get("message",""),
-                data_characteristics=metadata.get("data_characteristics",{}).get("description",""),
-                is_dir=fileinfo.get("is_dir"),
-                size=fileinfo.get("size"),
-                started=metadata.get("started"),
-                created=metadata.get("created"),
-                updated=metadata.get("updated"),
-                has_recipe=metadata.get("has_recipe",False),
-                ))
+            metadata = store.get_metadata(store.join_key(key, name))
+            fileinfo = metadata.get("fileinfo", {})
+            data.append(
+                dict(
+                    name=name,
+                    key=metadata.get("key"),
+                    query=metadata.get("query"),
+                    title=metadata.get("title"),
+                    description=metadata.get("description"),
+                    status=metadata.get("status"),
+                    is_error=metadata.get("is_error"),
+                    message=metadata.get("message", ""),
+                    data_characteristics=metadata.get("data_characteristics", {}).get(
+                        "description", ""
+                    ),
+                    is_dir=fileinfo.get("is_dir"),
+                    size=fileinfo.get("size"),
+                    started=metadata.get("started"),
+                    created=metadata.get("created"),
+                    updated=metadata.get("updated"),
+                    has_recipe=metadata.get("has_recipe", False),
+                )
+            )
         return dict(status="OK", message="OK", data=data)
     else:
         return dict(status="ERROR", message=f"Not a directory:{key}", data=[])
 
+
 @command(ns="meta")
 def dir_status_df(metadata, context=None):
     import pandas as pd
+
     context = get_context(context)
     data = dir_status(metadata, context=context)
-    return pd.DataFrame(data["data"], columns=[
-        "name", "title", "status", "is_error", "message", "data_characteristics", "started", "created", "updated",
-        "key", "query", "description", "is_dir", "size"])
+    return pd.DataFrame(
+        data["data"],
+        columns=[
+            "name",
+            "title",
+            "status",
+            "is_error",
+            "message",
+            "data_characteristics",
+            "started",
+            "created",
+            "updated",
+            "key",
+            "query",
+            "description",
+            "is_dir",
+            "size",
+        ],
+    )
+
 
 @command(ns="meta", volatile=True)
 def clean_recipes(metadata, recursive=False, context=None):
@@ -254,10 +290,10 @@ def clean_recipes(metadata, recursive=False, context=None):
         raise Exception("Valid metadata with a key expected in clean_recipes")
 
     key = metadata["key"]
-    store=context.store()
-    removed=[]
+    store = context.store()
+    removed = []
     if store.is_dir(key):
-        if key in ("",None):
+        if key in ("", None):
             if recursive:
                 keys = store.keys()
             else:
@@ -272,7 +308,7 @@ def clean_recipes(metadata, recursive=False, context=None):
             continue
         try:
             metadata = store.get_metadata(key)
-            if metadata.get("has_recipe",False):
+            if metadata.get("has_recipe", False):
                 context.info(f"Remove {key}")
                 store.remove(key)
                 removed.append(key)
@@ -281,6 +317,7 @@ def clean_recipes(metadata, recursive=False, context=None):
             context.warning(traceback.format_exc())
     context.info(f"Removed {len(removed)} items")
     return dict(status="OK", message=f"Removed {len(removed)} items", removed=removed)
+
 
 @command(ns="meta", volatile=True)
 def make_recipes(metadata, recursive=False, context=None):
@@ -294,10 +331,10 @@ def make_recipes(metadata, recursive=False, context=None):
         raise Exception("Valid metadata with a key expected in clean_recipes")
 
     key = metadata["key"]
-    store=context.store()
-    processed=[]
+    store = context.store()
+    processed = []
     if store.is_dir(key):
-        if key in ("",None):
+        if key in ("", None):
             if recursive:
                 keys = store.keys()
             else:
@@ -312,7 +349,11 @@ def make_recipes(metadata, recursive=False, context=None):
             continue
         try:
             metadata = store.get_metadata(key)
-            if metadata.get("has_recipe",False) and metadata.get("status") in (Status.RECIPE.value, Status.ERROR.value, Status.EXPIRED.value):
+            if metadata.get("has_recipe", False) and metadata.get("status") in (
+                Status.RECIPE.value,
+                Status.ERROR.value,
+                Status.EXPIRED.value,
+            ):
                 context.info(f"Make {key}")
                 store.remove(key)
                 store.get_bytes(key)
@@ -321,14 +362,28 @@ def make_recipes(metadata, recursive=False, context=None):
             context.warning(f"Failed to process {key} ")
             context.warning(traceback.format_exc())
     context.info(f"Successfully processed {len(processed)} items")
-    return dict(status="OK", message=f"Successfully processed {len(processed)} items", processed=processed)
+    return dict(
+        status="OK",
+        message=f"Successfully processed {len(processed)} items",
+        processed=processed,
+    )
+
 
 @first_command(ns="meta")
 def root_key():
     return dict(key="")
 
+
 @command(ns="meta", volatile=True)
-def clean(metadata, errors=True, expired=False, evaluation=False, recipes=False, recursive=False, context=None):
+def clean(
+    metadata,
+    errors=True,
+    expired=False,
+    evaluation=False,
+    recipes=False,
+    recursive=False,
+    context=None,
+):
     """Remove specific key or all the data in the directory of store.
     This command can delete from the store items in the following states:
     - errors (default behaviour)
@@ -341,10 +396,10 @@ def clean(metadata, errors=True, expired=False, evaluation=False, recipes=False,
         raise Exception("Valid metadata with a key expected in clean")
 
     key = metadata["key"]
-    store=context.store()
-    removed=[]
+    store = context.store()
+    removed = []
     if store.is_dir(key):
-        if key in ("",None):
+        if key in ("", None):
             if recursive:
                 keys = store.keys()
             else:
@@ -363,27 +418,33 @@ def clean(metadata, errors=True, expired=False, evaluation=False, recipes=False,
             status = metadata.get("status")
             if errors and status == Status.ERROR.value:
                 store.remove(key)
-                removed.append((key,status))
+                removed.append((key, status))
                 continue
             if expired and status == Status.EXPIRED.value:
                 store.remove(key)
-                removed.append((key,status))
+                removed.append((key, status))
                 continue
-            if evaluation and status in (Status.EVALUATION.value, Status.EVALUATING_DEPENDENCIES.value, Status.EVALUATING_PARENT.value, Status.SUBMITTED.value):
+            if evaluation and status in (
+                Status.EVALUATION.value,
+                Status.EVALUATING_DEPENDENCIES.value,
+                Status.EVALUATING_PARENT.value,
+                Status.SUBMITTED.value,
+            ):
                 store.remove(key)
-                removed.append((key,status))
+                removed.append((key, status))
                 continue
 
             if recipes:
-                if metadata.get("has_recipe",False):
+                if metadata.get("has_recipe", False):
                     context.info(f"Remove {key}")
                     store.remove(key)
-                    removed.append((key,"recipe"))
+                    removed.append((key, "recipe"))
         except:
             context.warning(f"Failed to process {key} ")
             context.warning(traceback.format_exc())
     context.info(f"Removed {len(removed)} items")
     return dict(status="OK", message=f"Removed {len(removed)} items", removed=removed)
+
 
 if __name__ == "__main__":
     from liquer import *

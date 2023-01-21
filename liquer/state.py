@@ -1,9 +1,5 @@
 import json
-from liquer.state_types import (
-    type_identifier_of,
-    copy_state_data,
-    data_characteristics
-)
+from liquer.state_types import type_identifier_of, copy_state_data, data_characteristics
 from liquer.constants import mimetype_from_extension
 
 from copy import deepcopy
@@ -65,7 +61,7 @@ class State(object):
                 type_identifier=type_identifier_of(data),
                 caching=True,
                 attributes={},
-                data_characteristics=data_characteristics(data)
+                data_characteristics=data_characteristics(data),
             )
         )
 
@@ -223,7 +219,7 @@ class State(object):
 
     def mimetype(self):
         """Return mime type of the data"""
-        
+
         return self.metadata.get("mimetype", mimetype_from_extension(self.extension))
 
     def from_dict(self, metadata):
@@ -248,5 +244,5 @@ class State(object):
         self.metadata["filename"] = filename
         if "." in filename:
             self.extension = filename.split(".")[-1].lower()
-            self.metadata["mimetype"] =  mimetype_from_extension(self.extension)
+            self.metadata["mimetype"] = mimetype_from_extension(self.extension)
         return self

@@ -39,7 +39,9 @@ class CommandsHandler:
 def response(state):
     """Create flask response from a State"""
     filename = state.metadata.get("filename")
-    b, mimetype, type_identifier = encode_state_data(state.get(), extension=state.extension)
+    b, mimetype, type_identifier = encode_state_data(
+        state.get(), extension=state.extension
+    )
     if filename is None:
         filename = state_types_registry().get(type_identifier).default_filename()
     return b, mimetype, filename
@@ -50,6 +52,7 @@ class SubmitHandler:
     """Submit query.
     Starts query in the background.
     """
+
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
@@ -57,12 +60,10 @@ class SubmitHandler:
 
     def get(self, query):
         from liquer.pool import evaluate_in_background
+
         evaluate_in_background(query)
-        self.write(
-            json.dumps(
-                dict(status="OK", message="Submitted", query=query)
-            )
-        )
+        self.write(json.dumps(dict(status="OK", message="Submitted", query=query)))
+
 
 # /q/<path:query>
 class QueryHandler:
@@ -73,7 +74,7 @@ class QueryHandler:
         except:
             kwargs = {}
         keys = self.request.arguments.keys()
-        kwargs.update({key:self.get_argument(key) for key in keys})
+        kwargs.update({key: self.get_argument(key) for key in keys})
         try:
             b, mimetype, filename = response(evaluate(query, extra_parameters=kwargs))
         except:
@@ -81,16 +82,17 @@ class QueryHandler:
             self.set_status(500)
             self.finish(f"500 - Failed to create a respone to {query}")
 
-
         header = "Content-Type"
         body = mimetype if mimetype is not None else "application/octet-stream"
         self.set_header(header, body)
 
         self.write(b)
+
     def post(self, query):
         self.get(query)
 
-#/api/cache/get/<path:query>
+
+# /api/cache/get/<path:query>
 class CacheGetDataHandler:
     def get(self, query):
         """Main service for evaluating queries"""
@@ -106,7 +108,8 @@ class CacheGetDataHandler:
 
         self.write(b)
 
-#/api/cache/meta/<path:query>
+
+# /api/cache/meta/<path:query>
 class CacheMetadataHandler:
     def get(self, query):
         metadata = get_cache().get_metadata(query)
@@ -118,10 +121,11 @@ class CacheMetadataHandler:
         body = mimetype
         self.set_header(header, body)
         self.write(json.dumps(metadata))
+
     def post(self, param):
         try:
             metadata = json.loads(self.request.body)
-            query = metadata.get('query')
+            query = metadata.get("query")
             result_code = get_cache().store_metadata(metadata)
             result = dict(
                 query=query, result=result_code, status="OK", message="OK", traceback=""
@@ -141,7 +145,7 @@ class CacheMetadataHandler:
         self.write(json.dumps(result))
 
 
-#/api/cache/remove/<path:query>
+# /api/cache/remove/<path:query>
 class CacheRemoveHandler:
     def get(self, query):
         r = get_cache().remove(query)
@@ -152,7 +156,7 @@ class CacheRemoveHandler:
         self.write(json.dumps(dict(query=query, removed=r)))
 
 
-#/api/cache/contains/<path:query>
+# /api/cache/contains/<path:query>
 class CacheContainsHandler:
     def get(self, query):
         contains = get_cache().contains(query)
@@ -163,7 +167,7 @@ class CacheContainsHandler:
         self.write(json.dumps(dict(query=query, cached=contains)))
 
 
-#/api/cache/keys.json
+# /api/cache/keys.json
 class CacheKeysHandler:
     def get(self, query):
         keys = dict(keys=list(get_cache().keys()))
@@ -174,7 +178,7 @@ class CacheKeysHandler:
         self.write(json.dumps(keys))
 
 
-#/api/cache/clean
+# /api/cache/clean
 class CacheCleanHandler:
     def get(self):
         get_cache().clean()
@@ -187,7 +191,7 @@ class CacheCleanHandler:
         self.write(json.dumps(keys))
 
 
-#/api/commands.json
+# /api/commands.json
 class CommandsHandler:
     def get(self):
         mimetype = "application/json"
@@ -197,28 +201,33 @@ class CommandsHandler:
         self.write(json.dumps(command_registry().as_dict()))
 
 
-#/api/debug-json/<path:query>
+# /api/debug-json/<path:query>
 class GetMetadataHandler:
     """Debug query - returns metadata from a state after a query is evaluated"""
+
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         state = evaluate(query)
         state_json = state.as_dict()
         self.write(json.dumps(state_json))
 
 
-#/api/stored_metadata/<path:query>
+# /api/stored_metadata/<path:query>
 class GetStoredMetadataHandler:
     """Get metadata stored in a store or cache"""
+
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         import liquer.tools
+
         metadata = liquer.tools.get_stored_metadata(query)
         self.write(json.dumps(metadata))
 
@@ -274,7 +283,8 @@ class RegisterCommandHandler:
             json.dumps(command_registry().register_remote_serialized(self.request.body))
         )
 
-#/api/store/data/<path:query>
+
+# /api/store/data/<path:query>
 class StoreDataHandler:
     def get(self, query):
         """Get data from store. Equivalent to Store.get_bytes.
@@ -285,13 +295,13 @@ class StoreDataHandler:
 
         try:
             mimetype = metadata.get("mimetype", "application/octet-stream")
-            b=store.get_bytes(query)
+            b = store.get_bytes(query)
         except:
             mimetype = "application/json"
             b = json.dumps(
                 dict(query=query, message=traceback.format_exc(), status="ERROR")
             )
- 
+
         header = "Content-Type"
         body = mimetype
         self.set_header(header, body)
@@ -307,8 +317,8 @@ class StoreDataHandler:
         try:
             metadata = store.get_metadata(query)
         except KeyNotFoundStoreException:
-            metadata={}
-        try:        
+            metadata = {}
+        try:
             data = self.request.body
             store.store(query, data, metadata)
             response = dict(query=query, message="Data stored", status="OK")
@@ -321,14 +331,15 @@ class StoreDataHandler:
         self.set_header(header, body)
         self.write(json.dumps(response))
 
-#/api/store/upload/<path:query>
+
+# /api/store/upload/<path:query>
 class StoreUploadHandler:
     def get(self, query):
-        """Returns an upload form
-        """
+        """Returns an upload form"""
 
         self.set_header("Content-Type", "text/html")
-        self.write(f'''
+        self.write(
+            f"""
         <!doctype html>
         <title>Upload File</title>
         <h1>Upload to {query}</h1>
@@ -336,7 +347,8 @@ class StoreUploadHandler:
         <input type="file" name="file"/>
         <input type="submit" value="Upload"/>
         </form>
-        ''')
+        """
+        )
 
     def post(self, query):
         """Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
@@ -344,25 +356,35 @@ class StoreUploadHandler:
         the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
         either before or after the api/store/data POST.
         """
-        if 'file' not in self.request.files:
-            response = dict(query=query, message="Request does not contain 'file'", status="ERROR")
+        if "file" not in self.request.files:
+            response = dict(
+                query=query, message="Request does not contain 'file'", status="ERROR"
+            )
         else:
-            fileinfo = self.request.files['file'][0]
+            fileinfo = self.request.files["file"][0]
 
-            if fileinfo.filename == '':
-                response = dict(query=query, message="Request contains 'file' with an empty filename", status="ERROR")
+            if fileinfo.filename == "":
+                response = dict(
+                    query=query,
+                    message="Request contains 'file' with an empty filename",
+                    status="ERROR",
+                )
             else:
                 store = get_store()
                 try:
                     metadata = store.get_metadata(query)
                 except KeyNotFoundStoreException:
-                    metadata={}    
-                try:        
+                    metadata = {}
+                try:
                     data = fileinfo["body"]
                     store.store(query, data, metadata)
-                    response = dict(query=query, message="Data stored", size=len(data), status="OK")
+                    response = dict(
+                        query=query, message="Data stored", size=len(data), status="OK"
+                    )
                 except:
-                    response = dict(query=query, message=traceback.format_exc(), status="ERROR")
+                    response = dict(
+                        query=query, message=traceback.format_exc(), status="ERROR"
+                    )
 
         mimetype = "application/json"
         header = "Content-Type"
@@ -370,7 +392,8 @@ class StoreUploadHandler:
         self.set_header(header, body)
         self.write(json.dumps(response))
 
-#/api/store/metadata/<path:query>
+
+# /api/store/metadata/<path:query>
 class StoreMetadataHandler:
     def get(self, query):
         """Get data from store. Equivalent to Store.get_bytes.
@@ -378,7 +401,7 @@ class StoreMetadataHandler:
         """
         store = get_store()
         metadata = store.get_metadata(query)
- 
+
         mimetype = "application/json"
         header = "Content-Type"
         body = mimetype
@@ -405,152 +428,213 @@ class StoreMetadataHandler:
         self.set_header(header, body)
         self.write(json.dumps(response))
 
-#/web/<path:query>
+
+# /web/<path:query>
 class WebStoreHandler:
     def get(self, query):
         """Shortcut to the 'web' directory in the store.
         Similar to /store/data/web, except the index.html is automatically added if query is a directory.
-        The 'web' directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui. 
+        The 'web' directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui.
         """
         store = get_store()
 
         try:
-            query="web/"+query
+            query = "web/" + query
             if query.endswith("/"):
-                query+="index.html"
+                query += "index.html"
             if store.is_dir(query):
-                query+="/index.html"
+                query += "/index.html"
             metadata = store.get_metadata(query)
             mimetype = metadata.get("mimetype", "application/octet-stream")
-            b=store.get_bytes(query)
+            b = store.get_bytes(query)
         except:
             mimetype = "application/json"
             b = json.dumps(
                 dict(query=query, message=traceback.format_exc(), status="ERROR")
             )
- 
+
         header = "Content-Type"
         body = mimetype
         self.set_header(header, body)
         self.write(b)
 
 
-#/api/store/remove/<path:query>
+# /api/store/remove/<path:query>
 class StoreRemoveHandler:
     """Handler to remove data from store"""
+
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         store = get_store()
         try:
             store.remove(query)
-            self.write(json.dumps(dict(query=query, message=f"Removed {query}", status="OK")))
+            self.write(
+                json.dumps(dict(query=query, message=f"Removed {query}", status="OK"))
+            )
         except:
-            self.write(json.dumps(dict(query=query, message=traceback.format_exc(), status="ERROR")))
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status="ERROR")
+                )
+            )
 
 
-#/api/store/removedir/<path:query>
+# /api/store/removedir/<path:query>
 class StoreRemovedirHandler:
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         store = get_store()
         try:
             store.removedir(query)
-            self.write(json.dumps(dict(query=query, message=f"Removed directory {query}", status="OK")))
+            self.write(
+                json.dumps(
+                    dict(query=query, message=f"Removed directory {query}", status="OK")
+                )
+            )
         except:
-            self.write(json.dumps(dict(query=query, message=traceback.format_exc(), status="ERROR")))
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status="ERROR")
+                )
+            )
 
 
-#/api/store/contains/<path:query>
+# /api/store/contains/<path:query>
 class StoreContainsHandler:
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         store = get_store()
         try:
             contains = store.contains(query)
-            self.write(json.dumps(
-                dict(
-                    query=query, message=f"Contains {query}", contains=contains, status="OK"
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f"Contains {query}",
+                        contains=contains,
+                        status="OK",
+                    )
                 )
-            ))
+            )
         except:
-            self.write(json.dumps(dict(query=query, message=traceback.format_exc(), status="ERROR")))
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status="ERROR")
+                )
+            )
 
 
-#/api/store/is_dir/<path:query>
+# /api/store/is_dir/<path:query>
 class StoreIsDirHandler:
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         store = get_store()
         try:
             is_dir = store.is_dir(query)
-            self.write(json.dumps(
-                dict(
-                    query=query, message=f"Is directory {query}", is_dir=is_dir, status="OK"
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f"Is directory {query}",
+                        is_dir=is_dir,
+                        status="OK",
+                    )
                 )
-            ))
+            )
         except:
-            self.write(json.dumps(dict(query=query, message=traceback.format_exc(), status="ERROR")))
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status="ERROR")
+                )
+            )
 
 
-#/api/store/keys")
+# /api/store/keys")
 class StoreKeysHandler:
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         store = get_store()
         try:
             keys = store.keys()
-            self.write(json.dumps(
-                dict(query=None, message=f"Keys obtained", keys=keys, status="OK")
-            ))
+            self.write(
+                json.dumps(
+                    dict(query=None, message=f"Keys obtained", keys=keys, status="OK")
+                )
+            )
         except:
-            self.write(json.dumps(dict(query=query, message=traceback.format_exc(), status="ERROR")))
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status="ERROR")
+                )
+            )
 
 
-#/api/store/listdir/<path:query>
+# /api/store/listdir/<path:query>
 class StoreListdirHandler:
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         store = get_store()
         try:
             listdir = store.listdir(query)
-            self.write(json.dumps(
-                dict(query=query, message=f"Keys obtained", listdir=listdir, status="OK")
-            ))
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f"Keys obtained",
+                        listdir=listdir,
+                        status="OK",
+                    )
+                )
+            )
         except:
-            self.write(json.dumps(dict(query=query, message=traceback.format_exc(), status="ERROR")))
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status="ERROR")
+                )
+            )
 
 
-#/api/store/makedir/<path:query>
+# /api/store/makedir/<path:query>
 class StoreMakedirHandler:
     def prepare(self):
         header = "Content-Type"
         body = "application/json"
         self.set_header(header, body)
+
     def get(self, query):
         store = get_store()
         try:
             store.makedir(query)
-            self.write(json.dumps(
-                dict(query=query, message=f"Makedir succeeded", status="OK")
-            ))
+            self.write(
+                json.dumps(dict(query=query, message=f"Makedir succeeded", status="OK"))
+            )
         except:
-            self.write(json.dumps(dict(query=query, message=traceback.format_exc(), status="ERROR")))
-
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status="ERROR")
+                )
+            )

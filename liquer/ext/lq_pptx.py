@@ -8,6 +8,8 @@ from liquer.commands import command, first_command
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from liquer.context import get_context
+
+
 class ResilientBytesIO(BytesIO):
     "Workaround to prevent closing the stream"
 
@@ -16,6 +18,7 @@ class ResilientBytesIO(BytesIO):
 
     def really_close(self):
         super().close()
+
 
 class PPTXPresentationStateType(StateType):
     def identifier(self):
@@ -63,7 +66,7 @@ class PPTXPresentationStateType(StateType):
 
     def data_characteristics(self, data):
         return dict(description=f"Presentation (pptx) with {len(data.slides)} slides.")
-        
+
 
 PPTX_PRESENTATION_STATE_TYPE = PPTXPresentationStateType()
 register_state_type(pptx.Presentation, PPTX_PRESENTATION_STATE_TYPE)

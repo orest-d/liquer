@@ -21,6 +21,7 @@ from liquer.query import evaluate
 from liquer.state import State
 from tensorflow.python.keras.engine.functional import Functional
 
+
 class KerasModelStateType(StateType):
     def identifier(self):
         return "kerasmodel"
@@ -48,7 +49,7 @@ class KerasModelStateType(StateType):
             with TemporaryDirectory() as tmpdir:
                 path = Path(tmpdir) / f"data.{extension}"
                 data.save(str(path))
-                b=path.read_bytes()
+                b = path.read_bytes()
                 return b, mimetype
         else:
             raise Exception(
@@ -76,11 +77,11 @@ class KerasModelStateType(StateType):
 
     def data_characteristics(self, data):
         s = StringIO()
-        summary=keras_summary(data)
+        summary = keras_summary(data)
         return dict(description=f"Keras model", summary=summary)
 
     def copy(self, data):
-        print ("KERAS MODEL COPY")
+        print("KERAS MODEL COPY")
         model = clone_model(data)
         model.set_weights(data.get_weights())
         return model
@@ -125,5 +126,5 @@ def keras_summary(model):
     "Keras model summary"
     s = StringIO()
     model.summary(print_fn=lambda x, s=s: s.write(str(x) + "\n"))
-    summary=s.getvalue()
+    summary = s.getvalue()
     return summary

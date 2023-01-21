@@ -30,7 +30,13 @@ from copy import deepcopy
 from liquer.metadata import Metadata
 from liquer.indexer import index, NullIndexer
 
-from liquer.store import get_store, Store, KeyNotFoundStoreException, StoreException, key_extension
+from liquer.store import (
+    get_store,
+    Store,
+    KeyNotFoundStoreException,
+    StoreException,
+    key_extension,
+)
 
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
@@ -97,6 +103,7 @@ def get_context(context=None):
     else:
         return context
 
+
 class MetadataContextMixin:
     def metadata(self):
         metadata = self._metadata.as_dict()
@@ -120,37 +127,39 @@ class MetadataContextMixin:
 
         message = self._metadata.message
         if message in (None, ""):
-            log = self._metadata.get("log",[])
+            log = self._metadata.get("log", [])
             if len(log):
                 message = log[-1]["message"]
         if message in (None, ""):
-            log = self._metadata.get("child_log",[])
+            log = self._metadata.get("child_log", [])
             if len(log):
                 message = log[-1]["message"]
 
-        metadata.update(dict(
-            status=self.status.value,
-            title=title,
-            description=description,
-            mimetype=mimetype,
-            query=self.raw_query,
-            parent_query=self.parent_query,
-            argument_queries=self.argument_queries,
-#            log=self.log[:],
-            is_error=self.is_error,
-            direct_subqueries=self.direct_subqueries[:],
-            progress_indicators=self.progress_indicators[:],
-            child_progress_indicators=self.child_progress_indicators[:],
-            child_log=self.child_log,
-            message=message,
-            started=self.started,
-            updated=self.now(),
-            created=self.created,
-            caching=self.caching,
-            vars=dict(self.vars),
-            html_preview=self.html_preview,
-            side_effect=False,
-        ))
+        metadata.update(
+            dict(
+                status=self.status.value,
+                title=title,
+                description=description,
+                mimetype=mimetype,
+                query=self.raw_query,
+                parent_query=self.parent_query,
+                argument_queries=self.argument_queries,
+                #            log=self.log[:],
+                is_error=self.is_error,
+                direct_subqueries=self.direct_subqueries[:],
+                progress_indicators=self.progress_indicators[:],
+                child_progress_indicators=self.child_progress_indicators[:],
+                child_log=self.child_log,
+                message=message,
+                started=self.started,
+                updated=self.now(),
+                created=self.created,
+                caching=self.caching,
+                vars=dict(self.vars),
+                html_preview=self.html_preview,
+                side_effect=False,
+            )
+        )
         return metadata
 
     def log_dict(self, d):
@@ -231,11 +240,12 @@ class MetadataContextMixin:
     def raw_query(self, value):
         self._metadata.query = value
 
+
 class Context(MetadataContextMixin, object):
     def __init__(self, parent_context=None, debug=False):
         self.parent_context = parent_context  # parent context - when in child context
 
-#        self.raw_query = None  # String with the evaluated query
+        #        self.raw_query = None  # String with the evaluated query
         self.query = None  # Query object of the evaluated query
         self.status = Status.NONE  # Status: ready, error...
         self.is_error = False  # True is evaluation failed
@@ -252,7 +262,7 @@ class Context(MetadataContextMixin, object):
         )  # list of argument subqueries specified as dictionaries with description and query
 
         self.progress_indicators = []  # progress indicators as a list of dictionaries
-        #self.log = []  # log of messages as a list of dictionaries
+        # self.log = []  # log of messages as a list of dictionaries
         self.child_progress_indicators = []  # progress indicator of a child
         self.child_log = []  # log of messages from child queries
         self.message = ""  # Last message from the log
@@ -277,7 +287,6 @@ class Context(MetadataContextMixin, object):
 
     def new_empty(self):
         return Context(debug=self.debug_messages)
-
 
     def store_data(self, key, data):
         """Convenience method to store data in the store including metadata.
@@ -315,7 +324,9 @@ class Context(MetadataContextMixin, object):
         """Call indexer on the state object."""
         indexer = self.indexer()
         if not state.is_error:
-            metadata = indexer(query = state.query, data = state.data, metadata = state.metadata)
+            metadata = indexer(
+                query=state.query, data=state.data, metadata=state.metadata
+            )
             if metadata is not None:
                 state.metadata = metadata
         return state
@@ -479,7 +490,6 @@ class Context(MetadataContextMixin, object):
             self.parent_context.log_child_dict(d)
         return self
 
-
     def child_context(self):
         return self.__class__(parent_context=self)
 
@@ -575,7 +585,7 @@ class Context(MetadataContextMixin, object):
         self.store_metadata(force=True)
         cache = cache or self.cache()
         cr = self.command_registry()
-        extra_parameters_dict={}
+        extra_parameters_dict = {}
 
         state.context = self
 
@@ -606,23 +616,29 @@ class Context(MetadataContextMixin, object):
             for p in action.parameters:
                 parameters.append(self.evaluate_parameter(p, action))
             if extra_parameters is not None and len(extra_parameters) > 0:
-                if type(extra_parameters)==list:
+                if type(extra_parameters) == list:
                     self.warning(f"Using {len(extra_parameters)} extra parameters")
                     parameters.extend(extra_parameters)
-                    is_volatile=True
-                elif type(extra_parameters)==dict:
-                    self.warning(f"Using {len(extra_parameters)} extra parameters dictionary")
-                    extra_parameters_dict=extra_parameters
-                    is_volatile=True
+                    is_volatile = True
+                elif type(extra_parameters) == dict:
+                    self.warning(
+                        f"Using {len(extra_parameters)} extra parameters dictionary"
+                    )
+                    extra_parameters_dict = extra_parameters
+                    is_volatile = True
                 else:
-                    self.error(f"Unsupported type for extra parameters: {type(extra_parameters)}")
+                    self.error(
+                        f"Unsupported type for extra parameters: {type(extra_parameters)}"
+                    )
 
             self.status = Status.EVALUATION
             self.store_metadata(force=True)
 
             try:
 
-                state = command(old_state, *parameters, context=self, **extra_parameters_dict)
+                state = command(
+                    old_state, *parameters, context=self, **extra_parameters_dict
+                )
                 assert type(state.metadata) is dict
             except EvaluationException as ee:
                 print("EE:", ee)
@@ -659,11 +675,14 @@ class Context(MetadataContextMixin, object):
             arguments = [to_arg(a) for a in arguments]
 
         metadata = self.metadata()
-        metadata["type_identifier"]=state.type_identifier
+        metadata["type_identifier"] = state.type_identifier
         metadata["commands"] = metadata.get("commands", []) + [action.to_list()]
-        if metadata.get("mimetype","application/octet-stream") == "application/octet-stream":
+        if (
+            metadata.get("mimetype", "application/octet-stream")
+            == "application/octet-stream"
+        ):
             metadata["mimetype"] = state.mimetype()
-            
+
         try:
             cmd_metadata_d = cmd_metadata._asdict()
         except:
@@ -734,8 +753,14 @@ class Context(MetadataContextMixin, object):
         try:
             metadata = store.get_metadata(key)
         except:
-            state.log_exception(f"Failed getting metadata for key '{key}'", traceback=traceback.format_exc())
-            self.warning(f"Failed getting metadata for key '{key}'", traceback=traceback.format_exc())
+            state.log_exception(
+                f"Failed getting metadata for key '{key}'",
+                traceback=traceback.format_exc(),
+            )
+            self.warning(
+                f"Failed getting metadata for key '{key}'",
+                traceback=traceback.format_exc(),
+            )
             return state
 
         try:
@@ -746,7 +771,7 @@ class Context(MetadataContextMixin, object):
                     )
                 else:
                     state.error(f"Metadata for key '{key}' not found in store")
-                    
+
             if (
                 resource_query.header is not None
                 and len(resource_query.header.parameters) > 0
@@ -855,7 +880,13 @@ class Context(MetadataContextMixin, object):
                     store.store_metadata(self.store_key, m.as_dict())
 
     def evaluate(
-        self, query, cache=None, description=None, store_key=None, store_to=None, extra_parameters=None
+        self,
+        query,
+        cache=None,
+        description=None,
+        store_key=None,
+        store_to=None,
+        extra_parameters=None,
     ):
         """Evaluate query, returns a State.
         This method can be used in a command to evaluate a subquery,
@@ -898,7 +929,7 @@ class Context(MetadataContextMixin, object):
             return state
 
         raw_query, query = self.to_query(query)
-        self.raw_query=raw_query
+        self.raw_query = raw_query
         self.query = query
         self.store_key = store_key
         self.store_to = store_to
@@ -1010,7 +1041,12 @@ class Context(MetadataContextMixin, object):
         Returns a state.
         """
 
-        if target_directory==None and target_file==None and target_resource_directory==None and store==None:
+        if (
+            target_directory == None
+            and target_file == None
+            and target_resource_directory == None
+            and store == None
+        ):
             target_directory = "."
 
         print(f"*** Evaluate and save {query} started")
@@ -1097,4 +1133,3 @@ class Context(MetadataContextMixin, object):
                     local_cache[q] = qr
                     result += qr
         return result
-
