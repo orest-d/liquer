@@ -11,6 +11,7 @@ from liquer.query import evaluate
 from liquer.state import State
 from liquer.recipes import Recipe, register_recipe
 from liquer.context import get_context
+from liquer.indexer import register_tool_for_type
 
 
 class ResilientBytesIO(BytesIO):
@@ -462,3 +463,10 @@ class PandasConcatRecipe(Recipe):
 
 
 register_recipe(PandasConcatRecipe)
+
+@command
+def describe_df(df):
+    """Wrapper around pandas describe"""
+    return df.describe().reset_index()
+
+register_tool_for_type("dataframe", "$$UNNAMED_URL$/describe_df/description.html", "Describe")

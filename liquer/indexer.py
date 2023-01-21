@@ -105,7 +105,7 @@ class IndexerRegistry(Indexer):
 
     def __call__(self, key=None, query=None, data=None, metadata=None):
         for p, r, i in self.identifiers:
-            print(f"INDEX ", p, r, i)
+#            print(f"INDEX ", p, r, i)
             metadata = self.indexers[i](
                 key=key, query=query, data=data, metadata=metadata
             )
@@ -144,7 +144,7 @@ def register_indexer(indexer, identifier=None, priority=100):
 
 
 def index(key=None, query=None, data=None, metadata=None):
-    indexer_registry()(key=key, query=query, data=data, metadata=metadata)
+    return indexer_registry()(key=key, query=query, data=data, metadata=metadata)
 
 
 class ToolEmbedding(Enum):
@@ -215,7 +215,7 @@ class AddTool(Indexer):
                 links.append(x["link"])
                 cleaned_tools.append(x)
         metadata["tools"] = cleaned_tools
-
+        
         return metadata
 
 

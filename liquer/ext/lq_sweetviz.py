@@ -18,4 +18,4 @@ def sweetviz_analyze(df, context=None):
         with path.open() as f:
             return f.read()
 
-register_tool_for_type("dataframe", "$$UNNAMED_QUERY_PATH$/sweetviz_analyze/sweetviz_analysis.html", "Sweetviz analysis")
+register_tool_for_type("dataframe", "$$UNNAMED_URL$/sweetviz_analyze/sweetviz_analysis.html", "Sweetviz analysis")

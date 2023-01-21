@@ -40,18 +40,33 @@ WEB_STORE = None
 
 
 def get_store():
+    """Get global Store
+    If no store is specified, a default store is created as a MountPointStore with indexer.
+    Note that This will run the global indexer whenever the data is written into the store.
+    See the StoreMixin.with_indexer method and the liquer.indexer module.
+    """
     global STORE
     if STORE is None:
-        STORE = MountPointStore()
+        STORE = MountPointStore().with_indexer()
     return STORE
 
 
 def set_store(store):
+    "Set global Store"
     global STORE
     STORE = store
 
 
 def get_web_store():
+    """Web store is the store for the /web folder.
+    The purpose of this folder is to be able to efficiently serve web content.
+
+    The web store is special in several ways:
+    - It must be a mount point store, since the LiQuer plugins (e.g. the liquer_gui)
+      mount sub folders with web applications into it.
+    - The content of the store is accessible through liquer/web (as well as via liquer/api/store/data).
+    - If the key points to a directory when accessed over liquer/web, the key/index.html is served.
+    """
     global WEB_STORE
     if WEB_STORE is None:
         WEB_STORE = MountPointStore()
@@ -60,6 +75,9 @@ def get_web_store():
 
 
 def mount(key, store=None):
+    """Mount a sub-store into the global store under the key.
+    If store argument is a string or Path, it is interpreted as a path and converted to a FileStore
+    """
     if store is None:
         store = key
     if type(store) is str:
@@ -72,6 +90,7 @@ def mount_folder(key, path):
 
 
 def web_mount(key, store=None):
+    """Like mount, but mounts into the web store. (see get_web_store)"""
     if store is None:
         store = key
     if type(store) is str:
@@ -84,6 +103,7 @@ def web_mount_folder(key, path):
 
 
 class StoreException(Exception):
+    """General superclass for exceptions associated with a store"""
     def __init__(self, message, key=None, store=None):
         self.original_message = message
         if key is not None:
@@ -118,6 +138,7 @@ class ReadOnlyStoreException(StoreException):
 
 
 class StoreMixin:
+    "Mixing adding extra functionality to stores."
     def with_overlay(self, overlay):
         """Create an overlay over the store.
         Overlay store will be consulted first, when the key is not supported or not found in the overlay,
@@ -136,11 +157,24 @@ class StoreMixin:
 
     def mount(self, key, store):
         """Mount a store in a mount-point"""
-        return MountPointStore(self).mount(key, store)
+        if isinstance(self, MountPointStore):
+            return self.mount(key, store)
+        else:
+            return MountPointStore(self).mount(key, store)
 
     def read_only(self):
         """Create a read-only proxy for the store."""
-        return ReadOnlyStore(self)
+        if isinstance(self, ReadOnlyStore):
+            return self
+        else:
+            return ReadOnlyStore(self)
+
+    def with_indexer(self):
+        """Create a proxy store that will run indexer on each write."""
+        if isinstance(self, IndexerStore):
+            return self
+        else:
+            return IndexerStore(self)
 
 
 def key_name(key):
@@ -685,20 +719,21 @@ class IndexerStore(ProxyStore):
     def store(self, key, data, metadata):
         from liquer.indexer import index
 
+        metadata = self._store.finalize_metadata(metadata, key=key, is_dir=False, data=data)
+        metadata = index(key=self.to_root_key(key), query=metadata.get("query"), data=data, metadata=metadata)
         self._store.store(key, data, metadata)
         self.on_data_changed(key)
         self.on_metadata_changed(key)
-        query = None if metadata is None else metadata.get("query")
-        index(key=key, query=query, data=data, metadata=metadata)
 
-    def store_metadata(self, key, metadata):
-        from liquer.indexer import index
+    def mount(self, key, store):
+        """Mount a store in a mount-point"""
+        return self._store.mount(key, store)
 
-        self._store.store_metadata(key, metadata)
-        self.on_metadata_changed(key)
-        query = None if metadata is None else metadata.get("query")
-        index(key=key, query=query, data=None, metadata=metadata)
+    def __str__(self):
+        return f"Indexing {self._store}"
 
+    def __repr__(self):
+        return f"IndexerStore({repr(self._store)})"
 
 class ReadOnlyStore(ProxyStore):
     """Read only proxy to a store"""

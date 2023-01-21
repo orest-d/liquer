@@ -50,7 +50,7 @@ class PolarsDataframeStateType(StateType):
         raise Exception(
             f"Deserialization: file extension {extension} is not supported by polars data-frame type."
         )
-
+    
     def copy(self, data):
         return self.from_bytes(self.as_bytes(data)[0])
 
@@ -78,3 +78,8 @@ def polars_df(data, extension=None, context=None):
         context.info("Polars data-frame kept as it is")
         return data
     raise Exception(f"Unsupported polars dataframe type: {type(data)}")
+
+@command
+def polars2pandas(df, context=None):
+    """Convert Polars data-frame to a Pandas data-frame"""
+    return df.to_pandas()
