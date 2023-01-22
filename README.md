@@ -34,6 +34,25 @@ pip install liquer-framework
 
 # News
 
+## Changes in v0.8
+- Early indexer support - customized updating of metadata, future integration into search engines
+- Specialized indexers allow to specify/customize *tools* that can be used for viewing and editing in GUI.
+- Added S3 store
+- Remote store allows to mount a remote LiQuer server as a store
+
+
+## Changes in v0.7
+
+### Breaking changes
+- liquer/cache api changed to liquer/api/cache to be consistent with the rest of the api (like store)
+- recipes refactored to its own module, therefore the e.g. RecipeSpecStore needs to be imported from liquer.recipes, not liquer.context 
+- metadata handling refactored to a separate metadata module, the refactoring is ongoing
+- lq_keras fixed, now depends on a more recent keras
+- liquer.ext.midi removed, code moved to an example
+- liquer.server.jupyter removed, to be reimplemented in a separate project (archived in liquer-prototyping)
+- OBSOLETE status changed to EXPIRED
+
+## Changelog
 - 2020-11-08 - v0.3.2  - Support for matplotlib figures, SQL cache and other minor changes
 - 2020-11-09 - v0.3.3  - SQL cache with base64 encoding, cache cleaning
 - 2020-11-11 - v0.3.4  - XOR file cache allows simple encoding of cached data
@@ -68,20 +87,7 @@ pip install liquer-framework
 - 2022-01-07 - v0.7.4  - more bugfixes
 - 2022-01-12 - v0.7.5  - more bugfixes, pandas_concat recipe
 - 2022-01-25 - v0.7.6  - bugfixes in recipe metadata, development of extra parameters to evaluate
-
-## Changes in v0.8
-- Remote store allows to mount a remote LiQuer server as a store
- 
-## Changes in v0.7
-
-### Breaking changes
-- liquer/cache api changed to liquer/api/cache to be consistent with the rest of the api (like store)
-- recipes refactored to its own module, therefore the e.g. RecipeSpecStore needs to be imported from liquer.recipes, not liquer.context 
-- metadata handling refactored to a separate metadata module, the refactoring is ongoing
-- lq_keras fixed, now depends on a more recent keras
-- liquer.ext.midi removed, code moved to an example
-- liquer.server.jupyter removed, to be reimplemented in a separate project (archived in liquer-prototyping)
-- OBSOLETE status changed to EXPIRED
+- 2022-01-22 - v0.8.0  - tools, indexers, S3 store, remote liquer as a store, 
 
 ### New features
 - API documentation improved on multiple places
