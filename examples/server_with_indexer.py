@@ -25,7 +25,7 @@ def df():
 def describe(df):
     return df.describe().reset_index()
 
-register_tool_for_type("dataframe", "$$UNNAMED_QUERY_PATH$/describe/description.html", "Description")
+register_tool_for_type("dataframe", "$$UNNAMED_URL$/describe/description.html", "Description")
 
 @app.route('/')
 @app.route('/index.html')
