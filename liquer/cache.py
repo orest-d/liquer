@@ -350,6 +350,9 @@ class CacheProxy:
 
 class NoCache(CacheMixin):
     """Trivial cache object which does not cache any state"""
+    @classmethod
+    def from_config(cls, config):
+        return cls()
 
     def clean(self):
         pass
@@ -391,6 +394,10 @@ class MemoryCache(CacheMixin):
 
     def __init__(self):
         self.storage = {}
+
+    @classmethod
+    def from_config(cls, config):
+        return cls()
 
     def clean(self):
         self.storage = {}
@@ -461,6 +468,9 @@ class FileCache(CacheMixin):
             makedirs(path)
         except FileExistsError:
             pass
+    @classmethod
+    def from_config(cls, config):
+        return cls(config["path"])
 
     def clean(self):
         import glob
@@ -619,6 +629,10 @@ class StoreCache(CacheMixin):
         if not self.storage.is_dir(path):
             self.storage.makedir(path)
         self.flat = flat
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(path=config["path"])
 
     def clean(self):
         import glob

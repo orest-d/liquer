@@ -81,6 +81,7 @@ class QueryHandler:
             traceback.print_exc()
             self.set_status(500)
             self.finish(f"500 - Failed to create a respone to {query}")
+            return
 
         header = "Content-Type"
         body = mimetype if mimetype is not None else "application/octet-stream"
@@ -100,6 +101,7 @@ class CacheGetDataHandler:
         if state is None:
             self.set_status(404)
             self.finish(f"404 - {query} not found in cache")
+            return
 
         b, mimetype, filename = response(state)
         header = "Content-Type"

@@ -186,6 +186,7 @@ class TestNewParser:
         assert len(q.segments) == 2
         assert q.segments[0].header.encode() == "-R"
         assert q.segments[0].encode() == "-R/a/b"
+
     def test_root1(self):
         q = parse("-R/a")
         assert len(q.segments) == 1
@@ -218,6 +219,74 @@ class TestNewParser:
         assert q.absolute
         assert q.is_resource_query()
         assert q.encode() == "/-R/a"
+
+    def test_parse_dot(self):
+        q = parse("/-R/.")
+        assert q.absolute
+        assert q.is_resource_query()
+        assert q.encode() == "/-R/."
+
+        q = parse("/-R/././x")
+        assert q.absolute
+        assert q.is_resource_query()
+        assert q.encode() == "/-R/././x"
+
+    def test_parse_doubledot(self):
+        q = parse("/-R/..")
+        assert q.absolute
+        assert q.is_resource_query()
+        assert q.encode() == "/-R/.."
+
+        q = parse("/-R/../../x")
+        assert q.absolute
+        assert q.is_resource_query()
+        assert q.encode() == "/-R/../../x"
+
+    def test_to_absolute(self):
+        q = parse("/-R/./a/b/c")
+        assert q.is_resource_query()
+        rq = q.resource_query()
+        assert rq.to_absolute("x/y").encode() == "-R/x/y/a/b/c"
+
+        q = parse("/-R/../a/b/c")
+        assert q.is_resource_query()
+        rq = q.resource_query()
+        assert rq.to_absolute("x/y").encode() == "-R/x/a/b/c"
+
+        q = parse("/-R/../../a/b/c")
+        assert q.is_resource_query()
+        rq = q.resource_query()
+        assert rq.to_absolute("x/y").encode() == "-R/a/b/c"
+
+        q = parse("/-R/./../a/b/c")
+        assert q.is_resource_query()
+        rq = q.resource_query()
+        assert rq.to_absolute("x/y").encode() == "-R/x/a/b/c"
+
+        q = parse("/-R/.././a/b/c")
+        assert q.is_resource_query()
+        rq = q.resource_query()
+        assert rq.to_absolute("x/y").encode() == "-R/x/a/b/c"
+
+    def test_to_absolute_query(self):
+        q = parse("/-R/./a/b/c/-/dr")
+        assert q.to_absolute("x/y").encode() == "/-R/x/y/a/b/c/-/dr"
+
+        q = parse("-R/./a/b/c/-/dr")
+        assert q.to_absolute("x/y").encode() == "-R/x/y/a/b/c/-/dr"
+
+        q = parse("/-R/../a/b/c")
+        assert q.to_absolute("x/y").encode() == "/-R/x/a/b/c"
+
+        q = parse("/-R/../../a/b/c/-/dr")
+        assert q.to_absolute("x/y").encode() == "/-R/a/b/c/-/dr"
+
+        q = parse("/-R/./../a/b/c")
+        assert q.to_absolute("x/y").encode() == "/-R/x/a/b/c"
+
+        q = parse("/-R/.././a/b/c")
+        assert q.to_absolute("x/y").encode() == "/-R/x/a/b/c"
+
 
 class TestQueryElements:
     def test_simple_action_request(self):

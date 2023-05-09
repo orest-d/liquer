@@ -160,6 +160,10 @@ class ActionParameter(object):
     def __init__(self, position=None):
         self.position = position or Position()
 
+    def clean_position(self):
+        self.position = Position()
+        return self
+
     def __repr__(self):
         return f"{self.__class__.__name__}({repr(self.position)})"
 
@@ -241,6 +245,12 @@ class ActionRequest(object):
         self.parameters = [] if parameters is None else parameters
         self.position = position or Position()
 
+    def clean_position(self):
+        self.position = Position()
+        for p in self.parameters:
+            p.clean_position()
+        return self
+
     @classmethod
     def from_arguments(cls, name: str, *parameters):
         assert type(name) == str
@@ -310,6 +320,12 @@ class SegmentHeader(object):
         self.resource = resource
         self.position = position or Position()
 
+    def clean_position(self):
+        self.position = Position()
+        for p in self.parameters:
+            p.clean_position()
+        return self
+
     def is_trivial(self):
         """Terurns true if the header does not contain any data,
         I.e. trivial header has no name, level is 1 and no parameters.
@@ -351,6 +367,18 @@ class TransformQuerySegment(object):
         self.header = header
         self.query = query or []
         self.filename = filename
+
+    def clean_position(self):
+        if self.header is not None:
+            self.header.clean_position()
+        for a in self.query:
+            a.clean_position()
+        try:
+            self.filename.clean_position()
+        except:
+            pass
+
+        return self
 
     def predecessor(self):
         if self.filename is None:
@@ -461,6 +489,19 @@ class ResourceQuerySegment(object):
         self.header = header
         self.query = query or []
 
+    def segment_name(self):
+        if self.header is None:
+            return ""
+        else:
+            return self.header.name
+
+    def clean_position(self):
+        if self.header is not None:
+            self.header.clean_position()
+        for a in self.query:
+            a.clean_position()
+        return self
+
     @property
     def position(self):
         if self.header is not None:
@@ -487,6 +528,43 @@ class ResourceQuerySegment(object):
         else:
             return rqs
 
+    def _query_to_absolute(self, path, processed, rest):
+        if len(rest) == 0:
+            return processed
+        if rest[0].encode() == ".":
+            if len(processed) == 0:
+                return self._query_to_absolute(path, path[:], rest[1:])
+            else:
+                return self._query_to_absolute(path, processed, rest[1:])
+
+        if rest[0].encode() == "..":
+            if len(processed) == 0:
+                if len(path) == 0:
+                    raise Exception("Can't go up from root")
+                return self._query_to_absolute(path, path[:-1], rest[1:])
+            else:
+                return self._query_to_absolute(path, processed[:-1], rest[1:])
+        return self._query_to_absolute(path, processed + [rest[0]], rest[1:])
+
+    def to_absolute(self, path):
+        """Convert relative path to absolute path.
+        Replace first "." with *path*, and interpret ".." returning the canonical absolute path.
+        Resource segment header stays unchanged.
+        Path argument should point to a directory key in a store - i.e. it should be an absolute path without a header.
+        Path may be a string or a ResourceQuerySegment.
+        """
+        if isinstance(path, str):
+            path = list(resource_path.parseString(path, True))
+            for s in path:
+                s.clean_position()
+        canonical_path = []
+
+        if self.query is None or len(self.query) == 0:
+            return self
+        return ResourceQuerySegment(
+            header=self.header, query=self._query_to_absolute(path, [], self.query)
+        )
+
     def __repr__(self):
         return f"""ResourceQuerySegment(
   header = {indent(repr(self.header))},
@@ -504,6 +582,11 @@ class Query(object):
     def __init__(self, segments: list = None, absolute=False):
         self.segments = segments or []
         self.absolute = absolute
+
+    def clean_position(self):
+        for s in self.segments:
+            s.clean_position()
+        return self
 
     def filename(self):
         "Return filename if present, None otherwise."
@@ -652,6 +735,31 @@ class Query(object):
         if self.absolute:
             q = "/" + q
         return q
+
+    def to_absolute(self, path, resource_segment_name=""):
+        """Convert relative path to absolute path in the selected resource.
+        Replace first "." with *path*, and interpret ".." returning the canonical absolute path.
+        Everything else besides selected resources stays unchanged.
+        Resources are selected by resource_segment_name (default is the unnamed default resource).
+        None resource_segment_name means all resources.
+        Path argument should point to a directory key in a store - i.e. it should be an absolute path without a header.
+        Path may be a string or a ResourceQuerySegment.
+        """
+        segments = []
+        for s in self.segments:
+            if isinstance(s, TransformQuerySegment):
+                segments.append(s)
+            elif isinstance(s, ResourceQuerySegment):
+                if (
+                    resource_segment_name is None
+                    or resource_segment_name == s.segment_name()
+                ):
+                    segments.append(s.to_absolute(path))
+                else:
+                    segments.append(s)
+            else:
+                raise ValueError(f"Unknown segment type {type(s)}")
+        return Query(segments, absolute=self.absolute)
 
     def __repr__(self):
         return f"""Query(
