@@ -554,9 +554,12 @@ class ResourceQuerySegment(object):
         Path may be a string or a ResourceQuerySegment.
         """
         if isinstance(path, str):
-            path = list(resource_path.parseString(path, True))
-            for s in path:
-                s.clean_position()
+            if len(path) == 0:
+                path = []
+            else:
+                path = list(resource_path.parseString(path, True))
+                for s in path:
+                    s.clean_position()
         canonical_path = []
 
         if self.query is None or len(self.query) == 0:

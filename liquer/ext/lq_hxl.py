@@ -111,7 +111,7 @@ def set_all_tags(df, *tags):
         columns=df.columns,
     )
     tags.fillna(value="", inplace=True)
-    return tags.append(df, ignore_index=True)
+    return pd.concat([tags,df], ignore_index=True)
 
 
 @command
@@ -136,4 +136,4 @@ def set_tags(df, *column_tag):
         columns=df.columns,
     )
     tags.fillna(value="", inplace=True)
-    return tags.append(df, ignore_index=True)
+    return pd.concat([tags, df], ignore_index=True)

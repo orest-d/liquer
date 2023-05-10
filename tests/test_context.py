@@ -242,6 +242,51 @@ subdir:
         assert store.get_bytes("x/hello3.txt") == b"Hello, RECIPES_X"
         assert store.get_bytes("x/subdir/hello4.txt") == b"Hello, subdir_x"
 
+    def test_relative_path(self):
+        import liquer.store as st
+
+        reset_command_registry()
+
+        @command
+        def c(x):
+            return x
+        
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        substore = st.MemoryStore()
+        substore.store(
+            "recipes.yaml",
+            """
+RECIPES:
+  - hello-RECIPES/hello1.txt
+subdir:
+  - hello-subdir/hello2.txt
+  - hello1.txt/-/c/hello1copy0.txt
+  - subdir/hello2.txt/-/c/hello2copy0.txt
+  - ./hello2.txt/-/c/hello2copy.txt
+  - ../hello1.txt/-/c/hello1copy.txt
+""",
+            {},
+        )
+        store = RecipeSpecStore(substore)
+        st.set_store(store)
+        assert "hello1.txt" in store.keys()
+        assert "subdir/hello2.txt" in store.keys()
+        assert "subdir/hello1copy0.txt" in store.keys()
+        assert "subdir/hello2copy0.txt" in store.keys()
+        assert "subdir/hello1copy.txt" in store.keys()
+        assert "subdir/hello2copy.txt" in store.keys()
+
+        assert store.get_bytes("hello1.txt") == b"Hello, RECIPES"
+        assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
+        assert store.get_bytes("subdir/hello1copy0.txt") == b"Hello, RECIPES"
+        assert store.get_bytes("subdir/hello2copy0.txt") == b"Hello, subdir"
+        assert store.get_bytes("subdir/hello1copy.txt") == b"Hello, RECIPES"
+        assert store.get_bytes("subdir/hello2copy.txt") == b"Hello, subdir"
+        st.set_store(None)
+
     def test_status(self):
         import liquer.store as st
 

@@ -135,11 +135,12 @@ class Recipe:
 def resolve_recipe_definition(r, directory, metadata):
     if type(r) == str:
         try:
-            query = parse(r)
+            query = parse(r).to_absolute(directory)
             filename = query.filename()
             return dict(
                 type="query",
-                query=r,
+                query=query.encode(),
+                original_query=r,
                 CWD=directory,
                 filename=filename,
                 provides=[filename],
@@ -155,7 +156,7 @@ def resolve_recipe_definition(r, directory, metadata):
     elif isinstance(r, dict):
         if r.get("type") in (None, "query") and "query" in r:
             try:
-                query = parse(r["query"])
+                query = parse(r["query"]).to_absolute(directory)
                 filename = r.get("filename", query.filename())
                 title = r.get("title", filename)
                 description = r.get(
@@ -164,7 +165,8 @@ def resolve_recipe_definition(r, directory, metadata):
                 rkey = join_key(directory, filename)
                 return dict(
                     type="query",
-                    query=r["query"],
+                    query=query.encode(),
+                    original_query=r["query"],
                     title=title,
                     description=description,
                     CWD=directory,
@@ -857,9 +859,12 @@ class NewRecipeSpecStore(Store):
                                 + d.get("filename", "")
                             )
                             d["recipes_key"] = self.to_root_key(recipes_key)
+
+                            
                             d["recipes_directory"] = (
                                 "" if directory == self.LOCAL_RECIPES else directory
                             )
+
                             try:
                                 recipe = recipe_registry().from_dict(d)
                             except:

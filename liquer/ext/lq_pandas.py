@@ -165,7 +165,7 @@ def df_from(url, extension=None):
 def append_df(df, url, extension=None):
     """Append dataframe from URL"""
     df1 = df_from(url, extension=extension).get()
-    return df.append(df1, ignore_index=True)
+    return pd.concat([df,df1], ignore_index=True)
 
 
 @command
@@ -180,7 +180,7 @@ def eq(state, *column_values):
         c = column_values[i]
         v = column_values[i + 1]
         state.log_info(f"Equals: {c} == {v}")
-        index = np.array([x == v for x in df[c]], np.bool)
+        index = np.array([x == v for x in df[c]], bool)
         try:
             if int(v) == float(v):
                 index = index | (df[c] == int(v))
@@ -207,7 +207,7 @@ def teq(state, *column_values):
         c = column_values[i]
         v = column_values[i + 1]
         state.log_info(f"Equals: {c} == {v}")
-        index = np.array([x == v for x in df[c]], np.bool)
+        index = np.array([x == v for x in df[c]], bool)
         try:
             if int(v) == float(v):
                 index = index | (df[c] == int(v))
@@ -216,7 +216,8 @@ def teq(state, *column_values):
         except:
             pass
         df = df.loc[index, :]
-    df = tags.append(df, ignore_index=True)
+    #df = tags.append(df, ignore_index=True)
+    df = pd.concat([tags, df], ignore_index=True)
     return state.with_data(df)
 
 
@@ -246,7 +247,8 @@ def qsplit_df(state, *columns):
         d = dict(pairs)
         query = encode(ql + [["eq"] + [str(x) for p in pairs for x in p]])
         d[query_column] = query
-        sdf = sdf.append(d, ignore_index=True)
+        data.append(d)
+    sdf = pd.concat([sdf, pd.DataFrame(data)], ignore_index=True)
 
     return state.with_data(sdf)
 
@@ -272,8 +274,8 @@ def qtsplit_df(state, *columns):
     if query_column is None:
         query_column = "query"
 
-    sdf = pd.DataFrame(columns=list(columns) + [query_column])
-    sdf = sdf.append({c: tags[c] for c in columns}, ignore_index=True)
+    sdf = pd.DataFrame([{c: tags[c] for c in columns}],columns=list(columns) + [query_column])
+    #sdf = sdf.append({c: tags[c] for c in columns}, ignore_index=True)
     data = []
     ql = decode(state.query)
     for row in keys:
@@ -281,8 +283,8 @@ def qtsplit_df(state, *columns):
         d = dict(pairs)
         query = encode(ql + [["teq"] + [str(x) for p in pairs for x in p]])
         d[query_column] = query
-        sdf = sdf.append(d, ignore_index=True)
-
+        data.append(d)
+    sdf = pd.concat([sdf, pd.DataFrame(data)], ignore_index=True)
     return state.with_data(sdf)
 
 

@@ -91,7 +91,7 @@ class IndexerRegistry(Indexer):
                 identifier = indexer.identifier()
             else:
                 identifier = indexer.__name__
-        print("REGISTER", indexer, identifier, priority)
+        #print("REGISTER", indexer, identifier, priority)
         self.indexers[identifier] = indexer
         self.identifiers = [
             (p, r, i)
