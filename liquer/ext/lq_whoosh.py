@@ -16,6 +16,7 @@ def init(dir="whoosh_index"):
     """Initialize the Whoosh search engine."""
     global _schema, _ix, _writer
     _schema = Schema(
+        type_identifier=ID(stored=True),
         title=TEXT(stored=True),
         description=TEXT(stored=True),
         characteristics=TEXT(stored=True),
@@ -45,15 +46,16 @@ class AddToWhooshIndex(Indexer):
         if metadata is None or key is None:
             return metadata
         add(
-            metadata.get("title", ""),
-            metadata.get("description", ""),
-            metadata.get("characteristics", ""),
+            title=metadata.get("title", ""),
+            description=metadata.get("description", ""),
+            characteristics=metadata.get("characteristics", {}).get("description",""),
             key=key,
+            type_identifier=metadata.get("type_identifier", ""),
         )
         return metadata
 
 
-def add(title, description, characteristics, key, commit=True, writer=None):
+def add(title, description, characteristics, key, type_identifier, commit=True, writer=None):
     if writer is None:
         writer = get_writer()
 
@@ -63,6 +65,7 @@ def add(title, description, characteristics, key, commit=True, writer=None):
         characteristics=characteristics,
         key=key,
         text_key=key,
+        type_identifier=type_identifier,
     )
     if commit:
         writer.commit()
@@ -82,6 +85,7 @@ def reindex_store(context=None):
                 description=metadata.get("description", ""),
                 characteristics=metadata.get("characteristics", ""),
                 key=key,
+                type_identifier=metadata.get("type_identifier", ""),
                 commit=False,
                 writer=writer,
             )
@@ -93,16 +97,18 @@ def search(query, limit=100, context=None):
     context = get_context(context)
     with _ix.searcher() as searcher:
         q = MultifieldParser(
-            ["title", "description", "key", "text_key"], _schema
+            ["title", "description", "key", "text_key", "characteristics", "type_identifier"], _schema
         ).parse(query)
         results = searcher.search(q)
         r = []
         for i, x in enumerate(results):
             r.append(
                 dict(
-                    key=x["key"],
-                    title=x["title"],
-                    description=x["description"],
+                    key=x.get("key"),
+                    title=x.get("title",""),
+                    description=x.get("description",""),
+                    characteristics=x.get("characteristics",""),
+                    type_identifier=x.get("type_identifier",""),
                     link=key_link(x["key"], path_only=True),
                 )
             )

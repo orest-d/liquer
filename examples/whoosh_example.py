@@ -24,9 +24,9 @@ temp_dir = tempfile.mkdtemp()
 whs.init(temp_dir)
 
 # Create some files in the web store 
-get_store().store("web/hello/index.html", "Hello from web store!", {"title":"Hello document"})
+get_store().store("web/hello/index.html", "Hello from web store!", {"title":"Hello document", "description":"This is a hello document"})
 # Create some files in the web store 
-get_store().store("web/hello/another.html", "Another document", {"title":"Another document"})
+get_store().store("web/hello/another.html", "Another document", {"title":"Another document", "description":"This is another document"})
 
 @command
 def display(txt):
@@ -46,6 +46,7 @@ def index():
     Index is in {temp_dir}
     <hr/>
     <ul>
+    <li><a href="/liquer/q/ns-whoosh/web/index.html">Search</a></li>
     <li><a href="/liquer/q/ns-whoosh/search-document/result.json">Search 'document' (json)</a></li>
     <li><a href="/liquer/q/ns-whoosh/search-document/to_html/result.html">Search 'document' (html)</a></li>
     <li><a href="/liquer/q/ns-whoosh/search-another/result.json">Search 'another' (json)</a></li>

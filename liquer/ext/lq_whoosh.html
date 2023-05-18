@@ -32,8 +32,21 @@
                         :headers="headers"
                         :items="data"
                         :items-per-page="5"
+                        :single-expand="singleExpand"
+                        single-expand="true"
+                        show-expand
+                        item-key="key"
+                        :expanded.sync="expanded"
                         class="elevation-1"
                       >
+                      <template v-slot:expanded-item="{ headers, item }">
+                        <td :colspan="headers.length">
+                          {{ item.description }}
+                          <b>
+                              {{ item.characteristics }}
+                          </b>
+                        </td>
+                      </template>
                       <template v-slot:item.key="{ item }">
                         <a :href="item.link">
                             {{ item.key }}
@@ -50,7 +63,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-  <script src=" https://cdn.jsdelivr.net/npm/axios@1.3.4/dist/axios.min.js "></script>
   <script>
 
 new Vue({
@@ -65,10 +77,12 @@ new Vue({
     data: () => ({
         url: '/liquer/q/ns-whoosh/search_json',
         fetching:false,
+        singleExpand: true,
         data: [
         ],
+        expanded: [],
         headers: [
-
+            {text: 'Type', value: 'type_identifier'},
             {text: 'Title', value: 'title'},
             {text: 'Key', value: 'key'},
         ]
@@ -86,6 +100,7 @@ new Vue({
         },
         fetch_data: function(query) {
             this.fetching = true;
+            this.expanded = [];
             const params = new URLSearchParams();
             params.append('query', query);
             var query_url = this.url + '?' + params.toString();
