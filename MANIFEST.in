@@ -1,1 +1,2 @@
 recursive-include liquer/server/static *
+include liquer/ext *.html
