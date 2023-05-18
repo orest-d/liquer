@@ -48,6 +48,7 @@ def index():
     <ul>
     <li><a href="/liquer/q/ns-whoosh/web/index.html">Search</a></li>
     <li><a href="/liquer/q/ns-whoosh/search-document/result.json">Search 'document' (json)</a></li>
+    <li><a href="/liquer/q/ns-whoosh/search_json?query=document">Search 'document' (query parameter API)</a></li>
     <li><a href="/liquer/q/ns-whoosh/search-document/to_html/result.html">Search 'document' (html)</a></li>
     <li><a href="/liquer/q/ns-whoosh/search-another/result.json">Search 'another' (json)</a></li>
     <li><a href="/liquer/q/ns-whoosh/search-another/to_html/result.html">Search 'another' (html)</a></li>
