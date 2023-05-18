@@ -37,12 +37,12 @@
 
 ## Indexer
 
-- [ ] data viewers and editors support, plugable tools
-- [ ] plugable tools - New Edit View Metadata
+- [x] data viewers and editors support, plugable tools
+- [x] plugable tools - New Edit View Metadata
 - [ ] field statistics
 - [ ] metadata dimensions and quantities
 - [ ] dataframe catalogue
-- [ ] search engine support
+- [x] search engine support
 - [ ] customizable dataframe search engine
 
 
@@ -69,10 +69,11 @@
 
 ## Server, Backend
 
-- [ ] REST command arguments to make web apps easier (get, post, json-encoded arguments)
+- [ ] REST command arguments to make web apps easier (post, json-encoded arguments)
+- [x] REST command arguments to make web apps easier (url parameters)
 - [x] REST command arguments preparation - evaluate with extra parameters
 - [ ] server info with supported features
-- [ ] make a server suitable for publishing (read only access to store)
+- [x] make a server suitable for publishing (read only access to store) - tornado only
 - [ ] server driver - function to start server from a particular driver
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
@@ -83,7 +84,7 @@
 
 ## Store and Cache enhancements
 
-- [ ] S3 store
+- [x] S3 store
 - [ ] external file storage - like file storage, but without storable metadata 
 - [ ] local file using context manager - enter, exit
 - [ ] async store and cache access to support async server frameworks
@@ -128,7 +129,7 @@
 - [ ] use line numbers in recipes.yaml (see https://stackoverflow.com/questions/13319067/parsing-yaml-return-with-line-number)
 - [x] recipe version
 - [ ] volatile recipes
-- [ ] CWD
+- [x] CWD
 - [ ] links in the description
 - [ ] parametric recipes - recipe templates
 - [ ] matplotlib charting recipe type
@@ -191,7 +192,7 @@
 - [ ] dependency injection input type
 - [ ] attribute to prevent cloning
 - [ ] git support
-- [ ] search engine(s) integration
+- [x] search engine(s) integration
 - [ ] commands from methods
 - [ ] automatic state type from classes
 - [ ] automatic argument type conversion

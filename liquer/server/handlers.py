@@ -80,7 +80,7 @@ class QueryHandler:
         except:
             traceback.print_exc()
             self.set_status(500)
-            self.finish(f"500 - Failed to create a respone to {query}")
+            self.finish(f"500 - Failed to create a response to {query}")
             return
 
         header = "Content-Type"
@@ -97,6 +97,17 @@ class QueryHandler:
 class CacheGetDataHandler:
     def get(self, query):
         """Main service for evaluating queries"""
+        try:
+            kwargs = json.loads(self.request.body)
+        except:
+            kwargs = {}
+        keys = self.request.arguments.keys()
+        kwargs.update({key: self.get_argument(key) for key in keys})
+        if len(kwargs):
+            self.set_status(404)
+            self.finish(f"404 - {query} parameters not allowed")
+            return
+
         state = get_cache().get(query)
         if state is None:
             self.set_status(404)
@@ -287,7 +298,7 @@ class RegisterCommandHandler:
 
 
 # /api/store/data/<path:query>
-class StoreDataHandler:
+class GetStoreDataHandler:
     def get(self, query):
         """Get data from store. Equivalent to Store.get_bytes.
         Content type (MIME) is obtained from the metadata.
@@ -309,6 +320,8 @@ class StoreDataHandler:
         self.set_header(header, body)
         self.write(b)
 
+# /api/store/data/<path:query>
+class StoreDataHandler(GetStoreDataHandler):
     def post(self, query):
         """Set data in store. Equivalent to Store.store.
         Unlike store method, which stores both data and metadata in one call,
@@ -396,7 +409,7 @@ class StoreUploadHandler:
 
 
 # /api/store/metadata/<path:query>
-class StoreMetadataHandler:
+class GetStoreMetadataHandler:
     def get(self, query):
         """Get data from store. Equivalent to Store.get_bytes.
         Content type (MIME) is obtained from the metadata.
@@ -410,6 +423,7 @@ class StoreMetadataHandler:
         self.set_header(header, body)
         self.write(json.dumps(metadata))
 
+class StoreMetadataHandler(GetStoreMetadataHandler):
     def post(self, query):
         """Set data from store. Equivalent to Store.store.
         Unlike store method, which stores both data and metadata in one call,

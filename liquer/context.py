@@ -942,12 +942,17 @@ class Context(MetadataContextMixin, object):
 
         self.debug(f"Using cache {repr(cache)}")
         self.debug(f"Try cache {query}")
-        state = cache.get(query.encode())
-        if state is not None:
-            self.debug(f"Cache hit {query}")
-            self._store_state(state)
-            state = self.index_state(state)
-            return state
+        if extra_parameters is None or len(extra_parameters)==0:
+            state = cache.get(query.encode())
+            if state is not None:
+                self.debug(f"Cache hit {query}")
+                self._store_state(state)
+                state = self.index_state(state)
+                return state
+        else:
+            state=None
+            print("Extra parameters specified, cache disabled", extra_parameters)
+            self.debug("Extra parameters specified, cache disabled")
         self.enable_store_metadata = (
             True  # Metadata can be only written after trying to read from cache,
         )

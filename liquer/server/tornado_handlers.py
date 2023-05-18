@@ -89,9 +89,12 @@ class RegisterCommandHandler(h.RegisterCommandHandler, tornado.web.RequestHandle
 
 
 # /api/store/data/<path:query>
-class StoreDataHandler(h.StoreDataHandler, tornado.web.RequestHandler):
+class GetStoreDataHandler(h.GetStoreDataHandler, tornado.web.RequestHandler):
     pass
 
+# /api/store/data/<path:query>
+class StoreDataHandler(h.StoreDataHandler, tornado.web.RequestHandler):
+    pass
 
 # /api/store/upload/<path:query>
 class StoreUploadHandler(h.StoreUploadHandler, tornado.web.RequestHandler):
@@ -99,9 +102,12 @@ class StoreUploadHandler(h.StoreUploadHandler, tornado.web.RequestHandler):
 
 
 # /api/store/metadata/<path:query>
-class StoreMetadataHandler(h.StoreMetadataHandler, tornado.web.RequestHandler):
+class GetStoreMetadataHandler(h.GetStoreMetadataHandler, tornado.web.RequestHandler):
     pass
 
+# /api/store/metadata/<path:query>
+class StoreMetadataHandler(h.StoreMetadataHandler, tornado.web.RequestHandler):
+    pass
 
 # /web/<path:query>
 class WebStoreHandler(h.WebStoreHandler, tornado.web.RequestHandler):
@@ -158,7 +164,6 @@ def url_mapping():
         (r"/liquer/api/cache/contains/(.*)", CacheContainsHandler),
         (r"/liquer/api/cache/keys.json", CacheKeysHandler),
         (r"/liquer/api/cache/clean", CacheCleanHandler),
-        (r"/liquer/api/commands.json", CommandsHandler),
         (r"/liquer/api/debug-json/(.*)", GetMetadataHandler),
         (r"/liquer/api/metadata/(.*)", GetMetadataHandler),
         (r"/liquer/api/stored_metadata/(.*)", GetStoredMetadataHandler),
@@ -175,6 +180,27 @@ def url_mapping():
         (r"/liquer/api/store/keys", StoreKeysHandler),
         (r"/liquer/api/store/listdir/(.*)", StoreListdirHandler),
         (r"/liquer/api/store/makedir/(.*)", StoreMakedirHandler),
+    ]
+
+def url_mapping_ro():
+    return [
+        (r"/liquer/api/commands.json", CommandsHandler),
+        (r"/liquer/api/cache/get/(.*)", CacheGetDataHandler),
+        (r"/liquer/api/cache/meta/(.*)", CacheMetadataHandler),
+        #(r"/liquer/api/cache/remove/(.*)", CacheRemoveHandler),
+        (r"/liquer/api/cache/contains/(.*)", CacheContainsHandler),
+        (r"/liquer/api/cache/keys.json", CacheKeysHandler),
+        (r"/liquer/q/(.*)", CacheGetDataHandler),
+        (r"/liquer/api/debug-json/(.*)", GetStoredMetadataHandler),
+        (r"/liquer/api/metadata/(.*)", GetStoredMetadataHandler),
+        (r"/liquer/api/stored_metadata/(.*)", GetStoredMetadataHandler),
+        (r"/liquer/api/store/data/(.*)", GetStoreDataHandler),
+        (r"/liquer/api/store/metadata/(.*)", GetStoreMetadataHandler),
+        (r"/liquer/web/(.*)", WebStoreHandler),
+        (r"/liquer/api/store/contains/(.*)", StoreContainsHandler),
+        (r"/liquer/api/store/is_dir/(.*)", StoreIsDirHandler),
+        (r"/liquer/api/store/keys", StoreKeysHandler),
+        (r"/liquer/api/store/listdir/(.*)", StoreListdirHandler),
     ]
 
 
