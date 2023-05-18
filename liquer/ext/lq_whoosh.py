@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from whoosh.index import create_in
 from whoosh.fields import *
 from liquer import *
@@ -91,11 +92,20 @@ def reindex_store(context=None):
 def search(query, limit=100, context=None):
     context = get_context(context)
     with _ix.searcher() as searcher:
-        q = MultifieldParser(["title", "description", "key", "text_key"], _schema).parse(query)
+        q = MultifieldParser(
+            ["title", "description", "key", "text_key"], _schema
+        ).parse(query)
         results = searcher.search(q)
         r = []
         for i, x in enumerate(results):
-            r.append(dict(key=x["key"], title=x["title"], description=x["description"]))
+            r.append(
+                dict(
+                    key=x["key"],
+                    title=x["title"],
+                    description=x["description"],
+                    link=key_link(x["key"], path_only=True),
+                )
+            )
             if i > limit:
                 break
         return r
@@ -131,3 +141,9 @@ def to_html(search_result, context=None):
 </html>
     """
     return text
+
+
+@command(ns="whoosh")
+def web(context=None):
+    context = get_context(context)
+    return (Path(__file__).parent / "lq_whoosh.html").read_text()
