@@ -34,6 +34,12 @@ pip install liquer-framework
 
 # News
 
+## Changes in v0.9
+- Basic search-engine support - [whoosh](https://whoosh.readthedocs.io/en/latest/intro.html) based on indexer. Current implementation is indexing title and description from the metadata and allows to search interactively via a simple web-interface. See *examples/whoosh_example.py*.
+- Relative path support in recipes (recipe queries can contain '.' and/or '..' as a reference to the current warking directory or parent directory). 
+- Tornad-based server with restricted access only supporting reading, but not writing and execution. This can be either used directly or as a starting point for developing a customized secure server. See *examples/hello_server_tornado_ro.py*.
+
+
 ## Changes in v0.8
 - Early indexer support - customized updating of metadata, future integration into search engines
 - Specialized indexers allow to specify/customize *tools* that can be used for viewing and editing in GUI.
@@ -87,13 +93,5 @@ pip install liquer-framework
 - 2022-01-07 - v0.7.4  - more bugfixes
 - 2022-01-12 - v0.7.5  - more bugfixes, pandas_concat recipe
 - 2022-01-25 - v0.7.6  - bugfixes in recipe metadata, development of extra parameters to evaluate
-- 2022-01-22 - v0.8.0  - tools, indexers, S3 store, remote liquer as a store, 
-
-### New features
-- API documentation improved on multiple places
-- EXTERNAL status
-- Basic support for DataFusion, pptx-python, Pillow images
-- Tornado driver updated
-- Extensible recipes; parquet_sql recipe type
-- Read-only store proxy
-- v0.7 is accompanied with new GUI [liquer-gui v0.1.0](https://github.com/orest-d/liquer-gui)
+- 2023-01-22 - v0.8.0  - tools, indexers, S3 store, remote liquer as a store, 
+- 2023-06-11 - v0.9.0  - relative path in recipes, experimental search engine support (whoosh) 

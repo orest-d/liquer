@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="liquer-framework",
-    version="0.8.0",
+    version="0.9.0",
     author="Orest Dubay",
     author_email="orest3.dubay@gmail.com",
     description="LiQuer - Query in (URL) link",
