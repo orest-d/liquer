@@ -848,6 +848,7 @@ class NewRecipeSpecStore(Store):
                                 if directory == self.LOCAL_RECIPES
                                 else join_key(parent, directory)
                             )
+                            cwd = self.to_root_key(cwd)
                             d = resolve_recipe_definition(r, cwd, metadata)
                             if d is None:
                                 metadata.warning(

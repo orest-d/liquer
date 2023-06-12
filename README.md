@@ -95,3 +95,4 @@ pip install liquer-framework
 - 2022-01-25 - v0.7.6  - bugfixes in recipe metadata, development of extra parameters to evaluate
 - 2023-01-22 - v0.8.0  - tools, indexers, S3 store, remote liquer as a store, 
 - 2023-06-11 - v0.9.0  - relative path in recipes, experimental search engine support (whoosh) 
+- 2023-06-12 - v0.9.1  - fixing bugs in relative path and search engine support

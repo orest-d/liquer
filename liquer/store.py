@@ -656,6 +656,7 @@ class ProxyStore(Store):
 
     def __init__(self, store):
         self._store = store
+        self._store.parent_store = self
 
     def sync(self):
         self._store.sync()
@@ -727,7 +728,9 @@ class IndexerStore(ProxyStore):
 
     def mount(self, key, store):
         """Mount a store in a mount-point"""
-        return self._store.mount(key, store)
+        r = self._store.mount(key, store)
+        self.sync()
+        return r
 
     def __str__(self):
         return f"Indexing {self._store}"
@@ -1111,6 +1114,7 @@ class MountPointStore(RoutingStore):
         prefix_store = PrefixStore(store, prefix=key)
         prefix_store.parent_store = self
         self.routing_table.append((key, prefix_store))
+        self.sync()
         return self
 
     def route_to(self, key):
