@@ -36,6 +36,7 @@ from liquer.store import (
     KeyNotFoundStoreException,
     StoreException,
     key_extension,
+    parent_key,
 )
 
 
@@ -284,6 +285,8 @@ class Context(MetadataContextMixin, object):
         self.store_to = None
 
         self._metadata = Metadata()
+        self.cwd_key=None
+        self.evaluated_key=None
 
     def new_empty(self):
         return Context(debug=self.debug_messages)
@@ -491,7 +494,11 @@ class Context(MetadataContextMixin, object):
         return self
 
     def child_context(self):
-        return self.__class__(parent_context=self)
+        """Create a new context that is a child of this context.
+        This is used to create a new context for a subquery.
+        """
+        c = self.__class__(parent_context=self)
+        return c
 
     def root_context(self):
         return (
@@ -909,6 +916,9 @@ class Context(MetadataContextMixin, object):
 
         self.vars = Vars(vars_clone())
 
+        self.evaluated_key = self.evaluated_key if store_key is None else store_key
+        self.cwd_key = self.cwd_key if store_key is None else parent_key(store_key)
+
         if self.query is not None:
             self.enable_store_metadata = True
             print(f"Subquery {query} called from {self.query.encode()}")
@@ -978,7 +988,10 @@ class Context(MetadataContextMixin, object):
                 self.parent_query = p.encode()
                 self.status = Status.EVALUATING_PARENT
                 self.store_metadata(force=True)
-                state = self.child_context().evaluate(p, cache=cache)
+                c=self.child_context()
+                c.evaluated_key = self.evaluated_key
+                c.cwd_key = self.cwd_key
+                state = c.evaluate(p, cache=cache)
             if state.is_error:
                 self.status = Status.ERROR
                 self.store_metadata()
@@ -1116,7 +1129,7 @@ class Context(MetadataContextMixin, object):
 
         return state
 
-    def evaluate_template(self, template: str, prefix="$", sufix="$", cache=None):
+    def evaluate_template(self, template: str, prefix="$", sufix="$", path=None, resource_segment_name=""):
         """Evaluate a string template; replace all queries by their values
         Queries in the template are delimited by prefix and sufix.
         Queries should evaluate to strings and should not cause errors.
@@ -1126,6 +1139,8 @@ class Context(MetadataContextMixin, object):
         for text, q in find_queries_in_template(template, prefix, sufix):
             result += text
             if q is not None:
+                if path is not None:
+                    q = parse(q).to_absolute(path, resource_segment_name=resource_segment_name).encode()
                 if q in local_cache:
                     result += local_cache[q]
                 else:

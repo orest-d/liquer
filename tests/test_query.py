@@ -351,6 +351,7 @@ class TestQuery:
         """,
             {},
         )
+        set_store(store)
         assert "results/subdir/hello.txt" in store.recipes()
         assert store.contains("results")
         assert store.contains("results/subdir")
@@ -359,6 +360,7 @@ class TestQuery:
         assert store.is_dir("results/subdir")
         assert not store.is_dir("results/subdir/hello.txt")
         assert store.get_bytes("results/subdir/hello.txt") == b"Hello"
+        set_store(None)
 
     def test_recipe_error_in_query_metadata(self):
         import liquer.store as st
@@ -421,6 +423,7 @@ class TestQuery:
         """,
             {},
         )
+        set_store(store)
         assert store.contains("results/subdir/hello.txt")
         assert not store.contains("results/subdir/hello2.txt")
         assert store.is_dir("results")
@@ -440,3 +443,4 @@ class TestQuery:
         assert store.contains("results/subdir/hello2.txt")
         assert store.get_bytes("results/subdir/hello2.txt") == b"Hello"
         reset_command_registry()
+        set_store(None)

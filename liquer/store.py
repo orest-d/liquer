@@ -1095,7 +1095,6 @@ class MountPointStore(RoutingStore):
 
     def sync(self):
         for key, store in self.routing_table:
-            print("SYNC ", key)
             store.sync()
         if self.default_store is not None:
             self.default_store.sync()

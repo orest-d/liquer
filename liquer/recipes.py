@@ -426,7 +426,6 @@ class OldRecipeSpecStore(RecipeStore):
         return metadata
 
     def make(self, key):
-        print(f"### MAKE {key}")
         super().make(key)
         metadata = self.substore.get_metadata(key)
         status = metadata.get("status", Status.RECIPE.value)
@@ -628,7 +627,6 @@ class NewRecipeSpecStore(Store):
         return self._recipes
 
     def make(self, key):
-        print(f"### MAKE {key}")
         if self.ignore(key):
             raise Exception(f"Key {key} is ignored, can't make it")
 
@@ -638,7 +636,8 @@ class NewRecipeSpecStore(Store):
                 f"Key {key} not found, recipe unknown", key=key, store=self
             )
         try:
-            recipe.make(key, store=self.substore)
+            #recipe.make(key, store=self.substore)
+            recipe.make(self.to_root_key(key))
             is_error = False
         except:
             is_error = True
@@ -848,8 +847,7 @@ class NewRecipeSpecStore(Store):
                                 if directory == self.LOCAL_RECIPES
                                 else join_key(parent, directory)
                             )
-                            cwd = self.to_root_key(cwd)
-                            d = resolve_recipe_definition(r, cwd, metadata)
+                            d = resolve_recipe_definition(r, self.to_root_key(cwd), metadata)
                             if d is None:
                                 metadata.warning(
                                     f"Failed parsing the definition of recipe {i+1} in {directory}"

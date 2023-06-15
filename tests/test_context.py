@@ -10,6 +10,7 @@ from liquer.parser import ActionRequest
 from liquer.state import State, set_var
 from liquer.commands import reset_command_registry, command, first_command
 from liquer import evaluate
+from liquer.store import set_store
 
 class TestContext:
     def test_evaluate_action(self):
@@ -232,6 +233,7 @@ subdir:
             {},
         )
         store = RecipeSpecStore(substore)
+        set_store(store)
         assert "hello1.txt" in store.keys()
         assert "subdir/hello2.txt" in store.keys()
         assert "x/hello3.txt" in store.keys()
@@ -241,6 +243,39 @@ subdir:
         assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
         assert store.get_bytes("x/hello3.txt") == b"Hello, RECIPES_X"
         assert store.get_bytes("x/subdir/hello4.txt") == b"Hello, subdir_x"
+        set_store(None)
+
+    def test_context_key(self):
+        import liquer.store as st
+
+        reset_command_registry()
+
+        @first_command
+        def hello(x, context=None):
+            s=f"Hello, {x} cwd_key:{repr(context.cwd_key)} evaluated_key:{repr(context.evaluated_key)}"
+            print("++++++",s)
+            print("CONTEXT IN hello:",id(context))
+            return s
+
+        substore = st.MemoryStore()
+        substore.store(
+            "recipes.yaml",
+            """
+RECIPES:
+  - hello-RECIPES/hello1.txt
+subdir:
+  - hello-subdir/hello2.txt
+""",
+            {},
+        )
+        store = RecipeSpecStore(substore)
+        set_store(store)
+        assert "hello1.txt" in store.keys()
+        assert "subdir/hello2.txt" in store.keys()
+
+        assert store.get_bytes("hello1.txt") == b"Hello, RECIPES cwd_key:'' evaluated_key:'hello1.txt'"
+        assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir cwd_key:'subdir' evaluated_key:'subdir/hello2.txt'"
+        set_store(None)
 
     def test_relative_path(self):
         import liquer.store as st
@@ -287,6 +322,61 @@ subdir:
         assert store.get_bytes("subdir/hello2copy.txt") == b"Hello, subdir"
         st.set_store(None)
 
+    def test_evaluate_template_with_relative_path(self):
+        import liquer.store as st
+
+        reset_command_registry()
+
+        @command
+        def c(x):
+            return x
+        
+        @first_command
+        def hello(x):
+            return f"Hello, {x}"
+
+        @first_command
+        def template1():
+            return f"Template1 $-R/./hello.txt$"
+
+        @first_command
+        def template2():
+            return f"Template2 $-R/../hello.txt$"
+
+        @command
+        def evaluate(txt, context=None):
+            return context.evaluate_template(txt, path=context.cwd_key)
+
+        substore = st.MemoryStore()
+        substore.store(
+            "recipes.yaml",
+            """
+RECIPES:
+  - hello-RECIPES/hello.txt
+  - template1/evaluate/template1.txt
+
+subdir:
+  - hello-subdir/hello.txt
+  - template1/evaluate/template1.txt
+  - template2/evaluate/template2.txt
+""",
+            {},
+        )
+        store = RecipeSpecStore(substore)
+        st.set_store(store)
+        assert "hello.txt" in store.keys()
+        assert "template1.txt" in store.keys()
+        assert "subdir/hello.txt" in store.keys()
+        assert "subdir/template1.txt" in store.keys()
+        assert "subdir/template2.txt" in store.keys()
+
+        assert store.get_bytes("hello.txt") == b"Hello, RECIPES"
+        assert store.get_bytes("subdir/hello.txt") == b"Hello, subdir"
+        assert store.get_bytes("template1.txt") == b"Template1 b'Hello, RECIPES'"
+        assert store.get_bytes("subdir/template1.txt") == b"Template1 b'Hello, subdir'"
+        assert store.get_bytes("subdir/template2.txt") == b"Template2 b'Hello, RECIPES'"
+        st.set_store(None)
+
     def test_status(self):
         import liquer.store as st
 
@@ -308,6 +398,7 @@ subdir:
             {},
         )
         store = RecipeSpecStore(substore)
+        set_store(store)
 
         assert "hello1.txt" in store.get_bytes(store.STATUS_FILE).decode("utf-8")
         assert "recipe " in store.get_bytes(store.STATUS_FILE).decode("utf-8")
@@ -317,6 +408,8 @@ subdir:
         assert store.get_bytes("subdir/hello2.txt") == b"Hello, subdir"
         assert "hello2.txt" in store.get_bytes("subdir/"+store.STATUS_FILE).decode("utf-8")
         assert "ready " in store.get_bytes("subdir/"+store.STATUS_FILE).decode("utf-8")
+
+        set_store(None)
 
     def test_clean_recipes(self):
         import importlib
@@ -425,6 +518,7 @@ subdir:
             {},
         )
         store = RecipeSpecStore(substore)
+        set_store(store)
         assert "hello1.txt" in store.keys()
         assert "subdir/hello2.txt" in store.keys()
 
@@ -455,6 +549,7 @@ subdir:
         assert (
             store.get_metadata("subdir/hello2.txt")["description"] == "This is hello 2."
         )
+        set_store(None)
 
     def test_indexer(self):
         import liquer.indexer as ix
