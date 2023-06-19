@@ -16,9 +16,9 @@ cd liquer
 python3 setup.py install
 ```
 
-# Hello, world!
+# Getting started
 
-The good tradition is to start with a Hello, world! example:
+The good tradition is to start with a *Hello, world!* example:
 
 ```python
 from liquer import *
@@ -35,7 +35,68 @@ print (evaluate("hello/greet").get())
 print (evaluate("hello/greet-everybody").get())
 ```
 
+In this example we first create to *commands* - *hello* and *greet*.
+Commands are ordinary python functions decorated with
+either ```@first_command``` or ```@command```.
+
+A sequence of commands can be written as a *link query*
+(the main concept of LiQuer).
+Simple query is a sequence of actions (commands with parameters) separated by *slash* ("/").
+A query is evaluated from left to right,
+always passing the output as a first argument to the next action.
+For example the query ```hello/greet```
+is roughly equivalent to evaluating
+
+```python
+greet(hello())
+```
+
+Query ```hello/greet-everybody``` (in the end of the example) is equivalent
+to
+
+```python
+greet(hello(), "everybody")
+```
+
+Here we specify the second argument to the function greet
+in the query. the arguments are separated by dash ("-").
+(This choice might look unusual, but it allows using such a *query*
+as a part of [URL](https://en.wikipedia.org/wiki/URL).
+
+(Link query syntax requires treating "/" and "-" as special characters
+and escape them when needed - as we will explain in the [query](query.md) chapter.
+
+*If the actions are always passing the result into the next action,
+what is passed into the very first action?*
+
+The very first action in the pipeline will not receive anything as a first
+argument (more precisely, it will receive ```None```).
+To avoid having such a useless
+argument in commands that are used at the beginning of the query,
+(in our example the ```hello``` function), we can use the
+decorator ```@first_command``` instead of ```@command```.
+This is more a convenience than necessity though.
+Commands and actions are explained in [this chapter](commands.md)
+
+Queries can be executed in multiple ways in LiQuer
+(programatically from scripts or commands,
+from recipes/batch jobs or interactively from a web API).
+In this example we just evaluate them in the script by the ```evaluate```
+function. 
+
+# What did we actually gain?
+*Link query* syntax allows to represent pipelines are relatively short strings.
+More importantly, *link query* can be used as
+a path part of the [URL](https://en.wikipedia.org/wiki/URL).
+Unlike the more conventional web services typically a separate request
+for each action, *link query* can specify
+sequences of actions (pipelines) in the URL.
+This gives LiQuer an incredible amount of  flexibility and expressiveness.
+
+
+
 A server version of the same example:
+
 ```python
 from liquer import *
 
@@ -56,41 +117,10 @@ def greet(greeting, who="world"):
 if __name__ == '__main__':
     app.run()
 ```
+
 This is a normal [flask](http://flask.pocoo.org/) server, registering LiQuer
 [blueprint](http://flask.pocoo.org/docs/1.0/blueprints/) which makes all the LiQuer functionality available
 in the web service.
-
-# Commands
-
-By decorating a function with ``@command`` or ``@first_command``, 
-the function is registered in a command registry.
-Function is only registered, not modified or wrapped in any way - therefore it can be used as if it would not be decorated at all.
-Commands (command functions) typically need to be enabled in a LiQuer application simply by importing a module
-with command-decorated functions. Built-in modules need to be imported as well - this gives control about enabled features
-and as well allows to limit dependencies (e.g. in principle LiQuer application only requires pandas when ``liquer.ext.lq_pandas`` is imported.) 
-
-When a command function is registered, metadata are extracted based on available informations and conventions:
-
-* Function name becomes a name of the command. Modules can not be distinguished inside the query, therefore command (and hence functions) should have unique names even when they are defined in multiple modules.
-* When decorated with ``@command``, the first argument of the function will always be a state.
-* If the first argument is called ``state``, command function will receive the state as an instance of ``State``,
-otherwise it will be just plain data. Plain data can be obtained from ``state`` by ``state.get()``.  
-* When decorated with ``@first_command``, command will not receive a state at all.
-* Command registration tries to identify all the arguments and their types. The types are guessed either from type annotations (if available) or from default values. Default values and ``*args`` are suported, the ``**kwargs`` are not supported in commands.
-* Parsed string arguments are converted to estimated types before they are passed to the command. This is done with help of argument parsers (see ``liquer.commands.ArgumentParser``).
-* Command function may return any data type. If it does not return an instance of ``State``, the returned data is automatically wrapped as a ``State`` when evaluated.
-
-The main purpose of ``State`` instance is to add metadata to the data (e.g. the query executed sofar, data sources used, type of the data, file name). It as well provides a logging functionality, which can record messages and errors during the execution of the query. See ``liquer.state`` for more info. 
-
-# Security
-LiQuer was so far only deployed on intranet. More development is needed to make interent deployment of LiQuer safe.
-
-LiQuer exposes only services defined in the ``liquer.blueprint`` module - and by extension all the registered commands.
-Only enable commands that do not put your system to risk.
-
-A big source of security concerns are DOS attacks:
-* It is easy to overload LiQuer server with huge queries. To solve this issue, queries need to be validated in some way.
-* Badly implemented cache may quickly exceed the storage capacity. (Default ``NoCache`` is a safe choice in this respect.) 
 
 # Working with pandas
 

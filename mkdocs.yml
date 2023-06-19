@@ -2,9 +2,12 @@ site_name: LiQuer Docs
 nav:
 - Home : 'index.md'
 - "User Guide":
-  - Query syntax: 'query.md'
-  - General guide : 'guide.md'
-- Examples : 'examples.md'
+  - Introduction : 'guide.md'
+  - "Query syntax": 'query.md'
+  - Store: 'store.md'
+  - Recipes: 'recipes.md'
+  - Commands: 'commands.md'
+  - Examples : 'examples.md'
 - API: 'api.md'
 
 plugins:
