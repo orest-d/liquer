@@ -90,7 +90,7 @@ def detached_serve(query):
 
 @app.route("/api/cache/get/<path:query>")
 def cache_get(query):
-    """Get cached metadata"""
+    """Get cached data"""
     state = get_cache().get(query)
     if state is None:
         abort(404)
@@ -102,7 +102,7 @@ def cache_get_metadata(query):
     """Get cached metadata"""
     metadata = get_cache().get_metadata(query)
     if metadata == False:
-        metadata = dict(query=query, status="not available", cached=False)
+        metadata = dict(query=query, status="not available", cached=False) # FIXME
     return jsonify(metadata)
 
 
