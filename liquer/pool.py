@@ -75,6 +75,10 @@ def set_local_cache_constructor(constructor, arg=None, kwarg=None):
     _worker_config.update(
         dict(cache_constructor=constructor, cache_arg=arg, cache_kwarg=kwarg)
     )
+    if arg is None:
+        arg = []
+    if kwarg is None:
+        kwarg = {}
     cache = constructor(*arg, **kwarg)
     set_cache(cache)
 

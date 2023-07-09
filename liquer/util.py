@@ -26,3 +26,17 @@ def to_datetime(x):
             return datetime.fromisoformat(x)
         except:
             return datetime.strptime(x, "%Y-%m-%d %H:%M:%S")
+
+def eval_fully_qualified_name(name):
+    """Evaluate fully qualified name to an object"""
+    if name is None:
+        return None
+    if isinstance(name, str):
+        if "." in name:
+            module_name, object_name = name.rsplit(".", 1)
+            module = __import__(module_name, fromlist=[object_name])
+            return getattr(module, object_name)
+        else:
+            return globals()[name]
+    else:
+        return name
