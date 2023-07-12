@@ -178,12 +178,15 @@ class StoreMixin:
 
 
 def key_name(key):
+    """Get name of the key - i.e. last component after slash.
+    If key is None or empty, empty string is returned."""
     if key in ("", None):
         return ""
     return str(key.split("/")[-1])
 
 
 def key_name_without_extension(key):
+    """Get name without the fileextension of the key. If key is None or empty, None is returned."""
     if key in ("", None):
         return None
     v = key_name(key).split(".")
@@ -193,6 +196,7 @@ def key_name_without_extension(key):
 
 
 def key_extension(key):
+    """Get fileextension of the key. If key is None or empty, None is returned."""
     if key in ("", None):
         return None
     v = key_name(key).split(".")
@@ -202,6 +206,7 @@ def key_extension(key):
 
 
 def join_key(key, name):
+    """Join key and name into a new key. If key is None or empty, name is returned."""
     if key in ("", None):
         return name
     else:
@@ -212,6 +217,7 @@ def join_key(key, name):
 
 
 def parent_key(key):
+    """Parent of the key (i.e. key without the last component)"""
     if key == "":
         return None
     return "/".join(key.split("/")[:-1])
@@ -1214,6 +1220,15 @@ class MountPointStore(RoutingStore):
 
 
 class FileSystemStore(Store):
+    """A store that uses the [PyFilesystem2](https://docs.pyfilesystem.org/en/latest/) as a backend.
+
+    Though it seems to be working fine in Linux, some issues were found in Windows.
+    This seems to not work reliable due to different implementations of PyFilesystem2.
+    Notably, listdir() sometimes returns list of recurently items in the subdirectories.
+    
+    Consider using FSSpecStore based on [fsspec](https://filesystem-spec.readthedocs.io/en/latest/),
+    which should have a better support.
+    """
     METADATA = "__metadata__"
 
     def __init__(self, fs, path=""):
@@ -1347,22 +1362,31 @@ class FileSystemStore(Store):
         return self.fs.isdir(self.path_for_key(key))
 
     def keys(self, parent=None):
+        if parent is not None and key_name(parent) == self.METADATA:
+            raise Exception(f"Invalid key {parent}")
         d = self.listdir(parent)
         if d is None:
             return []
         else:
             for k in d:
-                key = k if parent is None else parent + "/" + k
-                yield key
+                k=k.replace("\\","/")
+                if key_name(k) == self.METADATA:
+                    continue
+                key=join_key(parent, k)
                 for kk in self.keys(key):
                     yield kk
 
     def listdir(self, key):
         if self.is_dir(key):
+            listdir = [d.replace('\\','/') for d in self.fs.listdir(self.path_for_key(key)) if d is not None]
+            if any("/" in d for d in listdir):
+                print(f"WARNING - listdir on {repr(self)} not working properly")
+
             return [
                 key_name(d)
-                for d in self.fs.listdir(self.path_for_key(key))
+                for d in listdir
                 if key_name(d) != self.METADATA
+                and f"/{self.METADATA}/" not in d
             ]
 
     def makedir(self, key):
@@ -1382,3 +1406,195 @@ class FileSystemStore(Store):
 
     def __repr__(self):
         return f"FileSystemStore({repr(self.fs)}, {repr(self.path)})"
+
+
+class FSSpecStore(Store):
+    """A store that uses the [fsspec](https://filesystem-spec.readthedocs.io/en/latest/) as a backend.
+    """
+    METADATA = "__metadata__"
+
+    def __init__(self, fs, prefix:str):
+        """Create a new FSSpecStore out of a fsspec filesystem.
+        prefix needs to be provided to form a valid fsspec url when concatenating with the key
+        - without a slash.
+        When key is "", the prefix is returned as is.
+        """
+        self.prefix = prefix
+        self.fs = fs
+
+    def path_for_key(self, key):
+        """Convert key to a fsspec url."""
+        if key in("",None):
+            return self.prefix
+        assert key_name(key) != self.METADATA and ("/" + self.METADATA + "/") not in key
+        if key in (None, ""):
+            return self.prefix
+        p = self.prefix + "/" + key
+        return str(p)
+
+    def metadata_path_for_key(self, key):
+        """Convert key to a fsspec url pointing to the metadata of the key."""
+        return self.metadata_dir_path_for_key(key) + "/" + key_name(key) + ".json"
+
+    def metadata_dir_path_for_key(self, key):
+        if key in("",None):
+            return self.prefix+"/"+self.METADATA
+        assert key_name(key) != self.METADATA and ("/" + self.METADATA + "/") not in key
+        p = self.path_for_key(parent_key(key))
+        return p + "/" + self.METADATA
+
+    def get_bytes(self, key):
+        if not self.fs.exists(self.path_for_key(key)):
+            raise KeyNotFoundStoreException(
+                f"Can't find {self.path_for_key(key)} in filesystem {self.fs}",
+                key=key,
+                store=self,
+            )
+        return self.fs.read_bytes(self.path_for_key(key))
+
+    def get_metadata(self, key):
+        p = self.path_for_key(key)
+        isdir = self.fs.isdir(p)
+        metadata = self.default_metadata(key, isdir)
+        if isdir:
+            return self.finalize_metadata(metadata, key, is_dir=True)
+        else:
+            if self.fs.exists(self.path_for_key(key)):
+                if self.fs.exists(self.metadata_path_for_key(key)):
+                    try:
+                        metadata.update(
+                            json.loads(
+                                self.fs.read_text(self.metadata_path_for_key(key))
+                            )
+                        )
+                    except:
+                        traceback.print_exc()
+                        print(f"Removing {key} due to corrupted metadata (c)")
+                        self.remove(key)
+                        raise KeyNotFoundStoreException(key=key, store=self)
+
+            else:
+                if self.fs.exists(self.metadata_path_for_key(key)):
+                    try:
+                        metadata.update(
+                            json.loads(
+                                self.fs.read_text(self.metadata_path_for_key(key))
+                            )
+                        )
+                    except:
+                        traceback.print_exc()
+                        print(f"Removing {key} due to corrupted metadata (d)")
+                        self.remove(key)
+                        raise KeyNotFoundStoreException(key=key, store=self)
+                else:
+                    raise KeyNotFoundStoreException(key=key, store=self)
+            return self.finalize_metadata(metadata, key, is_dir=False)
+
+    def store(self, key, data, metadata):
+        self.fs.makedirs(self.path_for_key(self.parent_key(key)))
+        self.fs.write_bytes(self.path_for_key(key), data)
+        assert self.fs.exists(self.path_for_key(key))
+        self.store_metadata(
+            key, self.finalize_metadata(metadata, key=key, is_dir=False, data=data)
+        )
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
+
+    def store_metadata(self, key, metadata):
+        parent = self.metadata_dir_path_for_key(key)
+        metadata = self.finalize_metadata(
+            metadata, key=key, is_dir=self.is_dir(key), update=True
+        )
+        self.fs.makedirs(parent)
+        with self.fs.open(self.metadata_path_for_key(key), "w") as f:
+            json.dump(metadata, f)
+        self.on_metadata_changed(key)
+
+    def remove(self, key):
+        if not self.contains(key):
+            raise KeyNotFoundStoreException(key=key, store=self)
+        if self.is_dir(key):
+            raise KeyNotFoundStoreException(
+                message=f"Can't remove a directory {key}; use removedir",
+                key=key,
+                store=self,
+            )
+        try:
+            self.fs.rm(self.path_for_key(key))
+        except:
+            pass
+        try:
+            self.fs.rm(self.metadata_path_for_key(key))
+        except:
+            pass
+        self.on_removed(key)
+
+    def removedir(self, key):
+        metadir = self.path_for_key(key) + "/" + self.METADATA
+        try:
+            self.fs.rmdir(metadir)
+        except:
+            pass
+        self.fs.rmdir(self.path_for_key(key))
+        self.on_removed(key)
+
+    def contains(self, key):
+        if key in ("", None):
+            return True
+
+        return self.fs.exists(self.path_for_key(key))
+
+    def is_dir(self, key):
+        if key in ("", None):
+            return True
+        return self.fs.isdir(self.path_for_key(key))
+
+    def keys(self, parent=None):
+        if parent is not None and key_name(parent) == self.METADATA:
+            raise ValueError(f"Invalid key {parent}")
+        d = self.listdir(parent)
+        if d is None:
+            return []
+        else:
+            for k in d:
+                if key_name(k) == self.METADATA:
+                    continue                
+                key = join_key(parent, k)
+                yield key
+                for kk in self.keys(key):
+                    yield kk
+
+    def listdir(self, key):
+        if key is None:
+            key = ""
+        if self.is_dir(key):
+            listdir = self.fs.listdir(self.path_for_key(key), detail=False)
+            names=set()
+            for d in listdir:
+                print("  - ",d)
+                if d.startswith("/"):
+                    d = d[len(key)+1:]
+                if d.startswith("/"):
+                    d = d[1:]
+                if key_name(d) != self.METADATA and f"/{self.METADATA}/" not in d and len(d) > 0:
+                    print("    name: ",d.split("/")[0])
+                    names.add(d.split("/")[0])
+            return sorted(list(names))
+
+    def makedir(self, key):
+        self.fs.mkdir(self.path_for_key(key), recreate=True)
+        self.fs.mkdir(self.path_for_key(key) + "/" + self.METADATA, recreate=True)
+        self.on_data_changed(key)
+        self.on_metadata_changed(key)
+
+    def openbin(self, key, mode="rb", buffering=-1):
+        return self.fs.open(self.path_for_key(key), mode=mode, buffering=buffering)
+
+    def is_supported(self, key):
+        return True
+
+    def __str__(self):
+        return f"fsspec {self.fs} store at {self.prefix}"
+
+    def __repr__(self):
+        return f"FSSpecStore({repr(self.fs)}, {repr(self.prefix)})"

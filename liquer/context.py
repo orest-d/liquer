@@ -1026,7 +1026,11 @@ class Context(MetadataContextMixin, object):
             print("CACHE", state.query)
             #            self.status = "cache"
             #            self.store_metadata()
-            cache.store(state)
+            try:
+                cache.store(state)
+            except:
+                traceback.print_exc()
+                self.warning("Cache failed", traceback=traceback.format_exc())
         else:
             if state.is_error:
                 cache.store_metadata(state.metadata)

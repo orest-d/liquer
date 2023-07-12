@@ -22,6 +22,18 @@
 - [x] parser failure when capital case in resource path (?) - probably faulty logic in context.py:896, resource query should be handled separately - seems to be working
 - [x] root "-R/-/"
 
+## Unsorted
+- [ ] Make failed serialization when writing to cache not fatal
+- [ ] PandasAI support
+- [ ] fsspec support
+- [ ] DuckDB support
+- [ ] support for Polars context
+- [ ] basic portable dataframe operations
+- [ ] Redis cache
+- [ ] GIT read only store
+- [ ] refactor store to always have prefix
+- [ ] auto lookup of command modules in presets
+
 ## Refactoring and celanup
 - [ ] remove commands and extended commands from metadata
 - [ ] change /api/debug-json to /api/metadata

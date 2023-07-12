@@ -27,7 +27,7 @@ def to_numpy(df):
 
 
 @command(ns="sklearn")
-def linear_regression(df, ycolumn=None, fit_intercept=True, normalize=False):
+def linear_regression(df, ycolumn=None, fit_intercept=True):
     from sklearn.linear_model import LinearRegression
 
     if ycolumn is None:
@@ -37,7 +37,7 @@ def linear_regression(df, ycolumn=None, fit_intercept=True, normalize=False):
     xcolumns = feature_columns(df)
     X = to_numpy(df[xcolumns])
     Y = to_numpy(df[ycolumn]).flatten()
-    fit = LinearRegression(fit_intercept=fit_intercept, normalize=normalize).fit(X, Y)
+    fit = LinearRegression(fit_intercept=fit_intercept).fit(X, Y)
     coefficients = list(fit.coef_)
     model_df = pd.DataFrame([coefficients], columns=xcolumns)
     if fit_intercept:
@@ -46,7 +46,7 @@ def linear_regression(df, ycolumn=None, fit_intercept=True, normalize=False):
 
 
 @command(ns="sklearn")
-def ridge(df, alpha=0.1, ycolumn=None, fit_intercept=True, normalize=False):
+def ridge(df, alpha=0.1, ycolumn=None, fit_intercept=True):
     from sklearn.linear_model import Ridge
 
     if ycolumn is None:
@@ -56,7 +56,7 @@ def ridge(df, alpha=0.1, ycolumn=None, fit_intercept=True, normalize=False):
     xcolumns = feature_columns(df)
     X = to_numpy(df[xcolumns])
     Y = to_numpy(df[ycolumn]).flatten()
-    fit = Ridge(alpha=alpha, fit_intercept=fit_intercept, normalize=normalize).fit(X, Y)
+    fit = Ridge(alpha=alpha, fit_intercept=fit_intercept).fit(X, Y)
     coefficients = list(fit.coef_)
     model_df = pd.DataFrame([coefficients], columns=xcolumns)
     if fit_intercept:

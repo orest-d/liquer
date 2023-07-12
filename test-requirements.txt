@@ -1,9 +1,9 @@
-pytest==6.0.1
-pytest-cov==2.6.0
-pytest-httpserver>=0.3.0
+pytest
+pytest-cov
+pytest-httpserver
 keras>=2.3.0
 pydot>=1.4.1
-sklearn
+scikit-learn
 libhxl
 Pygments
 cryptography
@@ -17,4 +17,9 @@ mkdocstrings
 pytkdocs
 python-pptx
 Pillow
+datafusion
+polars==0.18.6 # did not work with 0.18.7 at the time of writing
+boto3
+tensorflow
+fsspec
 -r requirements.txt

@@ -26,11 +26,11 @@ class PolarsDataframeStateType(StateType):
 
         if extension == "csv":
             output = BytesIO()
-            data.to_csv(output)
+            data.write_csv(output)
             return output.getvalue(), mimetype
         elif extension == "parquet":
             output = BytesIO()
-            data.to_parquet(output)
+            data.write_parquet(output)
             return output.getvalue(), mimetype
         else:
             raise Exception(

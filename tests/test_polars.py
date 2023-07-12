@@ -43,8 +43,8 @@ class TestPolars:
         df = evaluate(f"df_from-{filename}/polars_df").get()
         assert "a" in df.columns
         assert "b" in df.columns
-        assert list(df.a) == [1, 3]
-        assert list(df.b) == [2, 4]
+        assert list(df.select('a').to_numpy().flatten()) == [1, 3]
+        assert list(df.select('b').to_numpy().flatten()) == [2, 4]
 
     def test_save_parquet(self):
 

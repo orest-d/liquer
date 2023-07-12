@@ -1,3 +1,4 @@
+import os
 import pytest
 from liquer.store import *
 
@@ -98,6 +99,12 @@ class TestFileSystemStore(TestStore):
 
         return FileSystemStore(fs.open_fs("mem://"))
 
+class TestFSSpecStore(TestStore):
+    @pytest.fixture
+    def store(self, tmpdir):
+        import fsspec
+
+        return FSSpecStore(fsspec.filesystem("memory"), "")
 
 class TestFileStore(TestStore):
     @pytest.fixture
@@ -113,7 +120,7 @@ class TestFileStore(TestStore):
         ].startswith(str(store.path))
         assert store.get_metadata("dir_a/file_b")["fileinfo"][
             "filesystem_path"
-        ].endswith("dir_a/file_b")
+        ].endswith(f"dir_a{os.path.sep}file_b")
 
     def test_md5(self, store):
         import hashlib
