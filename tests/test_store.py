@@ -104,7 +104,7 @@ class TestFSSpecStore(TestStore):
     def store(self, tmpdir):
         import fsspec
 
-        return FSSpecStore(fsspec.filesystem("memory"), "")
+        return FSSpecStore(fsspec.filesystem("memory"))
 
 class TestFileStore(TestStore):
     @pytest.fixture

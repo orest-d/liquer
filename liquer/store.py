@@ -1413,10 +1413,9 @@ class FSSpecStore(Store):
     """
     METADATA = "__metadata__"
 
-    def __init__(self, fs, prefix:str):
+    def __init__(self, fs, prefix:str=""):
         """Create a new FSSpecStore out of a fsspec filesystem.
-        prefix needs to be provided to form a valid fsspec url when concatenating with the key
-        - without a slash.
+        prefix needs to be provided to form a valid fsspec url when concatenating with the key (via a slash).        
         When key is "", the prefix is returned as is.
         """
         self.prefix = prefix

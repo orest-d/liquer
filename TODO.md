@@ -1,8 +1,9 @@
 # TODO
 
 ## Bugs
+- [ ] handle undefined and null in COntent.vue 207 (just_load)s
 - [ ] metadata viewer lacks length
-- [ ] import Metadata in lq_pandas
+- [x] import Metadata in lq_pandas
 - [x] recipes.py line 128 - improve error reporting 
 - [?] context.py line 754 metadata referenced before assignment
 - [ ] looks like that GUI executes the query even when just metadata should be shown for #-i-km
@@ -23,14 +24,15 @@
 - [x] root "-R/-/"
 
 ## Unsorted
-- [ ] Make failed serialization when writing to cache not fatal
+- [x] Make failed serialization when writing to cache not fatal
 - [ ] PandasAI support
-- [ ] fsspec support
+- [x] fsspec support
 - [ ] DuckDB support
-- [ ] support for Polars context
+- [x] support for Polars SQLContext
+- [x] support for Polars LazyFrame
 - [ ] basic portable dataframe operations
 - [ ] Redis cache
-- [ ] GIT read only store
+- [?] GIT read only store - via fsspec
 - [ ] refactor store to always have prefix
 - [ ] auto lookup of command modules in presets
 

@@ -33,6 +33,7 @@ class Status(Enum):
 MIMETYPES = dict(
     json="application/json",
     djson="application/json",
+    ndjson="application/json",
     js="text/javascript",
     txt="text/plain",
     html="text/html",
@@ -85,6 +86,7 @@ MIMETYPES = dict(
 TYPE_IDENTIFIER_BY_EXTENSION = dict(
     json="generic",
     djson="dictionary",
+    ndjson="polars_dataframe",
     js="text",
     txt="text",
     html="text",
