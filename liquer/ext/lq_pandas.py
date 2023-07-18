@@ -13,6 +13,7 @@ from liquer.recipes import Recipe, register_recipe
 from liquer.context import get_context
 from liquer.indexer import register_tool_for_type
 from liquer.metadata import Metadata
+import traceback
 
 
 class ResilientBytesIO(BytesIO):
