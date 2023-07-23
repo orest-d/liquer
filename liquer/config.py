@@ -39,8 +39,10 @@ _initializer = None
 def initializer():
     """Return the initializer function"""
     global _initializer
+    def __initializer(config, worker_environment=False):
+        preset().initialize(config, worker_environment=worker_environment)
     if _initializer is None:
-        _initializer = lambda config, worker_environment=False: preset().initialize(config, worker_environment=worker_environment)
+        _initializer = __initializer
     return _initializer
 
 def set_initializer(f):
@@ -112,38 +114,66 @@ class Preset(object):
     It as well can create default configuration files,
     initialize and start the pool, server and other services
     """
+    modules=[]
     def __init__(self):
         pass
 
     @classmethod
     def preset_class(cls):
         """Return the preset class name"""
-        x = __package__
-        if x is None:
-            x=""
-        x=x.strip()
-        if len(x):
+        x=""
+        if cls.__module__ != "__main__":          
+            x+=cls.__module__
             x+="."
-        x+=cls.__class__.__name__
+        x+=cls.__name__
         return x
     
+    def _find_modules(self, path):
+        """Find modules in a path containing LiQuer commands"""
+        from glob import glob
+        import os
+        for filename in glob(os.path.join(path,"*.py")):
+            with open(filename,"r") as f:
+                mod = f.read()
+                if "@command" in mod or "@first_command" in mod:
+                    yield os.path.splitext(os.path.basename(filename))[0]
+    def find_modules(self, path):
+        """Find modules in a path containing LiQuer commands"""
+        import os
+        for root, dirs, files in os.walk(path):
+            rootpath = os.path.relpath(root, path)
+            module = rootpath.replace(os.path.sep,".")
+            while module.startswith("."):
+                module = module[1:]
+
+            for file in files:
+                if file.endswith(".py") and not file.startswith("_") and not file.startswith("test_"):
+                    with open(os.path.join(root, file),"r") as f:
+                        mod = f.read()
+                        if "@command" in mod or "@first_command" in mod:
+                            x = module + "." + os.path.splitext(file)[0]
+                            print(x, "found in", root)
+                            self.modules.append(x)
+        return self.modules
+
     def default_config(self):
         """Return a default configuration file in yaml format"""
+        modules = sorted(set(self.modules
+                             + ["liquer.ext.meta", "liquer.ext.basic"]))
+        modules_list="\n".join([f"      - {m}" for m in modules])
         return f"""
 setup:
-    preset:            {self.preset_class():<40} # Preset class name
-    modules:           {"":<40} # Modules with commands to import
-      - liquer.ext.meta
-      - liquer.ext.basic
+    preset:            {self.preset_class():<35} # Preset class name
+    modules:           {"":<35} # Modules with commands to import
+{modules_list}
+    cache:             {"off":<35} # Cache type (off, memory, file, ...)
+    cache_path:        {"cache":<35} # Cache path (for file cache)
+    cache_concurrency: {"central":<35} # Cache concurrency (off, local, central)
+    recipe_folders:    {"[]":<35} # Recipe folders
 
-    cache:             {"off":<40} # Cache type (off, memory, file, ...)
-    cache_path:        {"cache":<40} # Cache path (for file cache)
-    cache_concurrency: {"central":<40} # Cache concurrency (off, local, central)
-    recipe_folders:    {"[]":<40} # Recipe folders
-
-    server_type:       {"flask":<40} # Server type (flask, tornado, ...)
-    url_prefix:        {'"/liquer"':<40} # URL prefix for the server
-    port:              {5000:<40} # Server port
+    server_type:       {"flask":<35} # Server type (flask, tornado, ...)
+    url_prefix:        {'"/liquer"':<35} # URL prefix for the server
+    port:              {5000:<35} # Server port
 """
     
     def initialize(self, config, worker_environment=False):        
@@ -267,28 +297,28 @@ setup:
         else:
             raise Exception(f"Unknown server type: {server_type}")
 
-def set_preset(preset=None):
+def set_preset(preset_def=None):
     """Set the preset object
     Preset can either be a preset object (instance of Preset class), a preset class name (string) or configuration (dictionary).
     If preset is None, preset is loaded based on the configuration file.
     """
     import liquer.util
     global _preset
-    if preset is None:
-        preset = config()
-    if isinstance(preset, dict):
-        if "setup" not in preset:
+    if preset_def is None:
+        preset_def = config()
+    if isinstance(preset_def, dict):
+        if "setup" not in preset_def:
             raise Exception("No setup section in configuration")
-        if "preset" not in preset["setup"]:
+        if "preset" not in preset_def["setup"]:
             raise Exception("No preset specified in the setup section in configuration")
-        preset = preset["setup"]["preset"]
-        if not isinstance(preset, str):
+        preset_def = preset_def["setup"]["preset"]
+        if not isinstance(preset_def, str):
             raise Exception("Preset must be a fully qualified class name")
-    if isinstance(preset, str):
-        logger.info(f"Instantiating preset {preset}")
-        preset = liquer.util.eval_fully_qualified_name(preset)()    
-    if isinstance(preset, Preset):
-        logger.info(f"Instantance of {preset.preset_class()} used as preset")
-        _preset = preset
+    if isinstance(preset_def, str):
+        logger.info(f"Instantiating preset {preset_def}")
+        preset_def = liquer.util.eval_fully_qualified_name(preset_def)()    
+    if isinstance(preset_def, Preset):
+        logger.info(f"Instantance of {preset_def.preset_class()} used as preset")
+        _preset = preset_def
     else:
-        raise Exception(f"Unknown preset type {repr(preset)}")
+        raise Exception(f"Unknown preset type {repr(preset_def)}")

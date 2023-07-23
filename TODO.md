@@ -34,7 +34,7 @@
 - [ ] Redis cache
 - [?] GIT read only store - via fsspec
 - [ ] refactor store to always have prefix
-- [ ] auto lookup of command modules in presets
+- [?] (pending) auto lookup of command modules in presets
 
 ## Refactoring and celanup
 - [ ] remove commands and extended commands from metadata

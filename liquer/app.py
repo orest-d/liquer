@@ -11,6 +11,8 @@ from liquer.config import load_config, initialize, preset, config
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Liquer command line interface')
     parser.add_argument('--config', '-c', type=str, action="store", help='Configuration file')
+    parser.add_argument('--create-config', type=str, action="store", help='Create configuration file')
+    parser.add_argument('--find-modules', type=str, action="store", help='Find modules in directory')
     parser.add_argument('--preset', type=str, action="store", help='Set configuration preset')
     parser.add_argument('--query', '-q', type=str, action="store", help='Query to execute')
     parser.add_argument('--output', '-o', type=str, action="store", help='Output directory') 
@@ -27,6 +29,15 @@ if __name__=="__main__":
         conf["setup"]["preset"] = args.preset
 
     initialize()
+
+    if args.find_modules:
+        preset().find_modules(args.find_modules)
+        
+    if args.create_config:
+        with open(args.create_config,"w") as f:
+            f.write(preset().default_config())
+            print(f"Configuration file {args.create_config} created.")
+            sys.exit(0)
 
     if args.query:
         query = args.query
