@@ -1,19 +1,34 @@
 site_name: LiQuer Docs
+repo_name: LiQuer
+repo_url: https://github.com/orest-d/liquer
 nav:
-- Home : 'index.md'
-- "User Guide":
-  - Introduction : 'guide.md'
-  - "Query syntax": 'query.md'
-  - Store: 'store.md'
-  - Recipes: 'recipes.md'
-  - Commands: 'commands.md'
-  - Examples : 'examples.md'
-- API: 'api.md'
-
-plugins:
-- search
-- mkdocstrings
+  - Home : 'index.md'
+  - "User Guide":
+    - Introduction : 'guide.md'
+    - "Query syntax": 'query.md'
+    - "Store and Cache": 'store.md'
+    - Recipes: 'recipes.md'
+    - "Metadata and state": 'metadata.md'
+    - Commands: 'commands.md'
+    - "Web service": 'web_service.md'
+    - "Security": 'security.md'
+    - Examples : 'examples.md'
+  - API: "apidocs/liquer/index.html"
+#
+#plugins:
+#  - search
+#  - mkdocstrings
 
 markdown_extensions:
   - admonition
   - codehilite
+
+theme:
+  name: readthedocs
+  highlightjs: true
+  search: true
+  hljs_languages:
+    - python
+    - yaml
+    - html
+    - rust

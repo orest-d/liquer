@@ -24,6 +24,9 @@
 - [x] root "-R/-/"
 
 ## Unsorted
+- [ ] Avoid multiple sync in store initialization - require sync or init after setup
+- [ ] Lazy generation of recipes_status.txt
+- [ ] Lazy initialization of recipes description?
 - [x] Make failed serialization when writing to cache not fatal
 - [ ] PandasAI support
 - [x] fsspec support
