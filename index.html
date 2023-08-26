@@ -1,258 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <title>Liquer</title>
+        <meta name="description" content="">
+        <meta name="keywords" content="">
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="None">
+        <meta name="author" content="KhanTech">
+        <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         
-        
-        <link rel="shortcut icon" href="img/favicon.ico">
-        <title>LiQuer Docs</title>
-        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+        <!-- Favicons -->
+        <link rel="shortcut icon" href="images/favicon.png">
 
-        <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap-3.0.3.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/style-responsive.css">
+        <link rel="stylesheet" href="css/vertical-LiQuer.min.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/owl.carousel.css">
+        <link rel="stylesheet" href="css/animate.min.css">
+        <link rel="stylesheet" href="css/splitting.css">
+
+         
+
     </head>
-
-    <body class="homepage">
-
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-
-                <!-- Collapsed navigation -->
-                <div class="navbar-header">
-                    <!-- Expander button -->
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href=".">LiQuer Docs</a>
-                </div>
-
-                <!-- Expanded navigation -->
-                <div class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="active">
-                                <a href=".">Home</a>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    
-<li >
-    <a href="query/">Query syntax</a>
-</li>
-                                    
-<li >
-    <a href="guide/">General guide</a>
-</li>
-                                </ul>
-                            </li>
-                            <li >
-                                <a href="examples/">Examples</a>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
-                            </a>
-                        </li>
-                            <li class="disabled">
-                                <a rel="next" >
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li >
-                                <a rel="prev" href="query/">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
+    <body class="appear-animate">
+        
+        <!-- Page Loader -->        
+        <div class="page-loader dark">
+            <div class="loader">Loading...</div>
         </div>
+        <!-- End Page Loader -->
 
-        <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#welcome-to-liquer">Welcome to LiQuer</a></li>
-            <li><a href="#three-use-cases-two-more">Three use-cases + two more</a></li>
-            <li><a href="#hello-world">Hello, world!</a></li>
-    </ul>
-</div></div>
-                <div class="col-md-9" role="main">
-
-<h1 id="welcome-to-liquer">Welcome to LiQuer</h1>
-<p>LiQuer is a leightweighted open-source framework (see <a href="https://github.com/orest-d/liquer">repo</a> )
-covering a large number of usecases
-associated with machine learning, data science and other computational experimentation tasks
-requiring flexible analysis.</p>
-<p>LiQuer is a versatile tool - it helps to create interactive dashboards and web applications,
-working with tables, creating charts, images, reports - but as well non-interactive batch processes.
-The core of Liquer is a minimalistic query language, that represents 
-a sequence of actions as a compact (but still human readable) string, or as URL "link".
-(Hence the name Link Query.) The second pillar of LiQuer is metadata: LiQuer always keeps track of metadata associated with the data.
-LiQuer queries can
-* execute interactively in a browser,
-* execute non-interactively in a batch,
-* referenced in reports,
-* efficiently cache the final and intermediate results,
-* improve the transparency, traceability and discoverability by the use of metadata - and more.</p>
-<p>Design of LiQuer is guided by the following principles:</p>
-<ul>
-<li><strong>Simplicity and flexibility</strong> - Make simple things simple, complex things possible.</li>
-<li><strong>Batteries included</strong> - Provide useful features and integration of 3rd party libraries out of the box in a modular way.</li>
-<li><strong>Don't stand in the way - collaborate!</strong> - Do not force one way of doing things. Be technology neutral and integrate well 
-with other libraries and frameworks. LiQuer-enabled code should run as well without the framework and thus using LiQuer should be low risk in terms of dependencies. Make all parts modular, replaceable and customizable.</li>
-</ul>
-<p><strong>LiQuer is extremely easy to use</strong> - just decorate ordinary python functions with a simple decorator.
-LiQuer provides integration of essential data-science tools like Pandas, Scikit-Learn and Keras without having a hard dependency on these frameworks - you need them only when you are going to use them.
-LiQuer's main web-framework is Flask (because of its simplicity), but other frameworks can easily be supported (there is a basic Tornado support available, others will follow as needed).</p>
-<p>LiQuer enabled code can be used (in most cases) exactly the same way as if LiQuer would not be there - so no LiQuer knowledge is needed to use your code.
-That makes it easy for newcommers to use the existing code, but as well start quickly contributing to a LiQuer-enabled code base.</p>
-<h2 id="three-use-cases-two-more">Three use-cases + two more</h2>
-<p>LiQuer was born from three quite different use-cases:
-* When preparing the presentation on a larger demographics dataset, we have had many questions in mind: What if we show the results ony for the students? How is the geographic distribution? How is the geographics distribution of students? Can we show it graphically? Can we see the raw data in a spreadsheet? The questions started to multiply. There were too many questions to prepare a slide for each possibility and the Jupyter notebooks were too technical for the end-users. We needed to have some interface flexible enough to express all these demands in a simple form...
-* We have been contributing to a large effort of consolidating data scraped from multiple sources. This has been usually performed by batch jobs, sometimes by specialized proxies. Proxy approach seems very promissing - data is fresh, on demand and there is no trouble with batch job monitoring - but proxies are not simple to construct. If only there would be a way how to make a flexible universal proxy, that would support tasks like filtering, basic processing and some visualization...
-* When preparing an implementation of an important complex machine learning model in production, many questions about model reliability, expected performance, monitoring and ethical concerns have been raised. We have been producing report after report, presentation after presentation and we needed to document all the aspects of the model development in a concise,  transparent and reproducible way. A single data scientist can perform several analytic tasks a day - and a small team can easily create several hundreds of artefacts (reports, charts, data sets, numerical experiments) per month. It is very easy to loose track of what exactly has been done and how. It is difficult to refer to all those calculations and document them in such a way that they can be reproduced: it is not practical to have several hundred scripts and/or document several hundred ways of how the scripts can be configured. If there only would be a way to represent all those calculations in a concise way - and possibly refer to them via URLs...</p>
-<p>After LiQuer was created, there appered more and more ways how to use it:
-* Data scientists often store intermediate results to accelerate the development. LiQuer provides two natural ingrediences for a cache: a) each step of the pipeline has a natural key and b) each result has a defined way how to deal with serialization (which format to use or whether the data is serializable at all). Metadata can be used to control the caching mechanism - e.g. prevent caching of sensitive data to support GDPR compliance.
-* Metadata allow discoverability and traceability of all the artefacts - all data sets, filters and reports can be equipped with tags and searchable from an user interface. This can be a big help for knowledge sharing. Data can be (in somo cases automatically) equipped with supplementary informations like required access rights, persons to contact, pointers to source code or SQL queries.</p>
-<h2 id="hello-world">Hello, world!</h2>
-<p>Let's start with a Hello, world! example:</p>
-<pre><code class="python">from liquer import *
-
-@first_command
-def hello():
-    return &quot;Hello&quot;
-
-@command
-def greet(greeting, who=&quot;world&quot;):
-    return f&quot;{greeting}, {who}!&quot;
-
-print (evaluate(&quot;hello/greet&quot;).get())
-print (evaluate(&quot;hello/greet-everybody&quot;).get())
-</code></pre>
-
-<p>What is happening here? There are two functions: <code>hello</code> and <code>greet</code>.
-Both of them are turned into "commands" with the decorators (<code>@first_command</code> and <code>@command</code>).
-This means, that they are "published" and can be called via a web interface.
-In this example, we just call them via the <code>evaluate</code> function.
-Evaluate accepts a LiQuer query, which consists out of a chain of slash-separated commands;
-output of each command becomes an input of a next command.</p>
-<p>What is at the beginning of the chain? As you might have guessed, it is <em>None</em>.
-However, to avoid passing meaningless arguments - and to highlight that some commands are meant to be "the first command" in the pipeline, there is the <code>@first_command</code> decorator. The only difference between the <code>@first_command</code> and <code>@command</code>
-if that the <code>@first_command</code> does not get the first argument from the previous step. (If such a command appears in the middle of a query, the query before the first_command is effectively ignored.)</p>
-<p>The complete query <code>hello/greet</code> calls function hello() and then passes the return value as a
-first argument of greet - i.e. <code>hello/greet</code> is equivalent to <code>greet(hello())</code>.</p>
-<p>Commands can as well pass arguments to the functions, which are dash-separated,
-i.e. <code>hello/greet-everybody</code> query is equivalent to python expression <code>greet(hello(), "everybody")</code>.
-This way multiple function calls can be combined in a single query, which may combine
-data fetching, filters, various analysis/calculations with parameters and visualizations.</p>
-<p>Of course, the arguments must be represented as strings in the query. LiQuer takes care of
-proper escaping and type conversion.</p>
-<p>LiQuer always keeps track of the metadata associated with the data.
-Metadata contain various supplementary data useful e.g. for debugging and tracking the data source - e.g. the query itself.
-Metadata can be enhanced by the user in several ways.</p>
-<p>The combination of data and metadata is the <code>State</code> object. The <code>State</code> object is as well returned by <code>evaluate</code>.
-The main payload (the "data") is extracted from <code>State</code> using the <code>get()</code> method.</p></div>
-        </div>
-
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>
-            var base_url = ".",
-                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
-        </script>
-        <script src="js/base.js" defer></script>
-        <script src="search/main.js" defer></script>
-
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
-            </div>
-            <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
-                <form role="form">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+        <!-- Skip to Content -->
+        <a href="#main" class="btn skip-to-content">Skip to Content</a>
+        <!-- End Skip to Content -->
+        
+        <!-- Page Wrap -->
+        <div class="page bg-dark light-content" id="top">
+            
+            <!-- Navigation panel -->
+            <nav class="main-nav dark transparent stick-fixed wow-menubar">
+                <div class="full-wrapper relative clearfix">
+                    
+                    <!-- Logo ( * your text or image into link tag *) -->
+                    <div class="nav-logo-wrap local-scroll">
+                        <a href="index.html" class="logo">
+                            <img src="images/logo1.png" alt="LiQuer logo" width="188" height="37" />
+                        </a>
                     </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <div class="mobile-nav" role="button" tabindex="0">
+                        <i class="fa fa-bars"></i>
+                        <span class="sr-only">Menu</span>
+                    </div>
+                    
+                    <!-- Mobile Cart -->
+                    <a href="shop-cart-dark.html" class="mobile-cart"><i class="main-nav-icon-cart"></i> (0)</a>
+                    
+                    <!-- Main Menu -->
+                    <div class="inner-nav desktop-nav">
+                        <ul class="clearlist">
+                              <li>
+                                <a href="/liquer/index.html" >Home </a>
 
+                            </li>
+                            <!-- End Item With Sub -->
+                            
+                            <!-- Item With Sub -->
+                            <!-- <li><a href="#">Blog</a></li> -->
+							
+                            <li>
+                                <a href="./site/apidocs/liquer/index.html">API</a>
+                                <!-- <a href="/liquer/site/index.html" class="mn-has-sub active">Documentation <i class="fa fa-angle-down"></i></a> -->
+                                
+                                <!-- Sub -->
+                                <!--
+
+                                    <ul class="mn-sub">
+                                        
+                                        <li>
+                                            <a href="https://orest-d.github.io/liquer/#hello-world" class="mn-has-sub">Getting Started</a>
+                                            
+                                        </li>
+                                        <li>
+                                            <a href="https://orest-d.github.io/liquer/guide">Guide</a>
+                                        </li>
+                                        
+                                        
+                                    </ul>
+                                -->
+                                    <!-- End Sub -->
+                                
+                            </li>
+                            <li><a href="./site/index.html">Documentation</a></li>
+                            <li><a href="https://github.com/orest-d/liquer">Github <i class="fa fa-github" aria-hidden="true"></i></a></li>
+
+                            
+                        </ul>
+                    </div>
+                    <!-- End Main Menu -->
+                    
+                </div>
+            </nav>
+            <!-- End Navigation panel -->
+            
+            <main id="main">    
+            
+                <!-- Home Section -->
+                <section class="home-section bg-dark-alfa-70 parallax-5" data-background="images/full-width-images/section-bg-4.jpg" id="home">
+                    <div class="container min-height-100vh d-flex align-items-center pt-100 pb-100">
+                        
+                        <!-- Hero Content -->
+                        <div class="home-content">
+                            <div class="wow fadeInUpShort" data-wow-delay=".1s">
+                                <h1 class="hs-line-1 opacity-085 mb-70 mb-sm-40"><span style="color:#09bd25;">LiQ</span>uer Framework</h1>
+                            </div>
+                            <div class="wow fadeInUpShort" data-wow-delay=".2s">
+                                <p class="hs-line-6 opacity-07">
+                                     Web Framework for Data Science
+                                </p>
+                            </div>
+							 <div class="local-scroll">
+                                <a href="#overview" class="btn btn-mod btn-w btn-medium btn-round hidden-xs btn-wall">Overview</a>
+                                 <span class="hidden-xs">&nbsp;</span>
+								 <a href="#features" class="btn btn-mod btn-w btn-medium btn-round hidden-xs btn-wall">Features</a>
+								 <span class="hidden-xs">&nbsp;</span>
+                                <a href="./site/index.html" class="btn btn-mod btn-w btn-medium btn-round hidden-xs btn-wall">Documentation</a>
+                            </div>
+                        </div>
+                        <!-- End Hero Content -->
+                        
+                        <!-- Scroll Down -->
+                        <div class="local-scroll scroll-down-wrap wow fadeInUpShort" data-wow-offset="0">
+                            <a href="#about" class="scroll-down opacity-085"><i class="scroll-down-icon"></i><span class="sr-only">Scroll to the next section</span></a>
+                        </div>
+                        <!-- End Scroll Down -->
+                        
+                    </div>
+                </section>
+                <!-- End Home Section -->
+                
+                
+                <!-- About Section -->
+                <section class="page-section bg-dark light-content" id="overview">
+                    <div class="container relative">
+                        
+                        <div class="mb-120 mb-sm-50 mb-xs-20">
+                            <div class="row section-text">
+                            
+                                <div class="col-md-12 col-lg-4 mb-md-50 mb-xs-30">
+                                    <div class="lead-alt wow linesAnimIn" data-splitting="lines">
+                                          LiQuer is a leightweighted open-source framework for managing data-science projects
+                                          from exploration phase to end-user applications.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 col-lg-4 mb-sm-50 mb-xs-30 wow linesAnimIn" data-splitting="lines">
+                                    LiQuer is designed to be easy to use, easy to learn, easy to extend and easy to integrate with other frameworks.
+                                    LiQuer puts emphasis on the transparency, traceability and discoverability of the data-science projects.
+                                    LiQuer is a versatile tool - it helps to create interactive dashboards and web applications, working with tables, creating charts, images, reports.
+                                     LiQuer can be used to build both interactive applications and non-interactive batch processes.
+                                    </div>
+                                    
+                                <div class="col-md-6 col-lg-4 mb-sm-50 mb-xs-30 wow linesAnimIn" data-splitting="lines">
+                                    At the core of Liquer is a minimalistic query language (<em>Link Query</em>), representing a pipeline, i.e. a sequence of actions.
+                                    In its compact form it can be used as a part of URL "link" - hence the name <em>Link Query</em>.
+                                    This query language is human readable and easy to learn. It is useful in multiple contexts:
+                                    <ul>
+                                        <li>as a pipeline definition for data-science projects,</li>
+                                        <li>as a rich interactive REST API</li>
+                                        <li>in batch process definition</li>
+                                        <li>as a link identifying data sets, documents and other resources</li>
+                                        <li>as unique key for caching and long term storage</li>
+                                    </ul>
+                                </div>                                
+                            </div>
+                        </div>                        
+                                            
+                    </div>
+                </section>
+                <!-- End About Section -->
+                
+                <!-- Divider -->
+                <hr class="mt-0 mb-0 white" />
+                <!-- End Divider -->
+                
+                
+                <!-- Features Section -->
+                <section class="page-section bg-dark light-content bg-dark-alfa-70" data-background="images/bg2.png" id="features">
+                    <div class="container relative">
+                        
+                        <div class="text-center mb-80 mb-sm-50">
+                            <h2 class="section-title">LiQuer Features</h2>
+                            <p class="section-title-descr">
+                                Simplicity, Flexibility, Transparency and Interoperability
+                            </p>
+                        </div>
+                        
+                        <!-- Services Grid -->
+                        <div class="row services-grid">
+                            
+                            <!-- Services Item -->
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="services-item text-center wow fadeIn" data-wow-delay="0" data-wow-duration="1.5s">
+                                    <div class="services-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+                                            <path d="M13.5 20c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-10.551 4c-.598 0-2.429-1.754-2.747-4.304-.424-3.414 2.124-5.593 4.413-5.87.587-1.895 2.475-4.684 6.434-4.77.758-1.982 3.409-4.507 6.84-3.186 1.647.634 3.101 2.101 3.705 3.737.231.624-.71.965-.937.347-.51-1.378-1.737-2.615-3.127-3.151-2.577-.99-4.695.731-5.422 2.298 1.107.12 2.092.455 2.755.889.909.594 1.473 1.558 1.508 2.577.031.889-.33 1.687-.991 2.187-.654.496-1.492.643-2.298.404-.966-.286-1.748-1.076-2.143-2.169-.287-.793-.384-1.847-.178-2.921-3.064.185-4.537 2.306-5.075 3.742 1.18.102 2.211.574 2.831 1.012.959.676 1.497 1.6 1.513 2.599.015.859-.363 1.664-1.011 2.155-.608.46-1.535.599-2.363.348-.961-.289-1.7-1.041-2.079-2.118-.255-.723-.375-1.776-.204-2.919-1.631.361-3.512 1.995-3.178 4.685.18 1.448 1.008 2.888 2.015 3.502.43.261.242.926-.261.926zm10.551-1c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1zm8.011-6.801l2.489.459-1.744 1.833.333 2.509-2.283-1.092-2.283 1.092.333-2.509-1.744-1.833 2.489-.459 1.205-2.225 1.205 2.225zm-1.759.897l-1.143.21.801.843-.153 1.152 1.049-.501 1.049.501-.153-1.152.801-.843-1.143-.21-.554-1.022-.554 1.022zm-14.345-2.3c-.202 1.024-.128 1.993.113 2.678.347.984.966 1.355 1.424 1.492.604.183 1.175.036 1.472-.187.388-.294.624-.808.614-1.34-.011-.673-.398-1.313-1.09-1.801-.545-.385-1.479-.803-2.533-.842zm6.373-4.716c-.226 1.018-.11 1.99.099 2.569.287.79.828 1.356 1.486 1.55.501.148 1.014.06 1.411-.242.398-.301.615-.795.596-1.355-.025-.705-.409-1.353-1.056-1.775-.511-.334-1.448-.657-2.536-.747zm-5.812-7.369l3.032.558-2.124 2.234.405 3.057-2.781-1.331-2.781 1.331.405-3.057-2.124-2.234 3.032-.558 1.468-2.711 1.468 2.711zm-2.285.897l-1.686.31 1.182 1.243-.226 1.7 1.547-.74 1.547.74-.226-1.7 1.182-1.243-1.686-.31-.817-1.508-.817 1.508zm17.817-3.608c-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5-1.12-2.5-2.5-2.5zm0 4c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="services-title">Friendly</h3>
+                                    <div class="services-descr">
+                                        LiQuer is simple to use. Just create a python function and add a decorator to it.
+                                    </div>
+                                    <div class="services-more">
+                                        <a href="./site/guide/index.html" class="text-link">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Services Item -->
+                            
+                            <!-- Services Item -->
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="services-item text-center wow fadeIn" data-wow-delay=".1s" data-wow-duration="1.5s">
+                                    <div class="services-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+                                            <path d="M5 22h4v-3h-9v-18h24v18h-10v3h4v1h-13v-1zm5-3v3h3v-3h-3zm13-17h-22v16h22v-16z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="services-title">Web-Powered</h3>
+                                    <div class="services-descr">
+                                        LiQuer allows to access all its data and functionality via web interface.
+                                        It empowers data scientists to create and host interactive dashboards, universal analytical tools and complete web applications.
+                                    </div>
+                                    <div class="services-more">
+                                        <a href="./site/web_service/index.html" class="text-link">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Services Item -->
+                            
+                            <!-- Services Item -->
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="services-item text-center wow fadeIn" data-wow-delay=".2s" data-wow-duration="1.5s">
+                                    <div class="services-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+                                            <path d="M24 23h-20c-2.208 0-4-1.792-4-4v-15.694c.313-1.071 1.285-2.306 3-2.306 1.855 0 2.769 1.342 2.995 2.312l.005 1.688h18v18zm-1-17h-17v13s-.665-1-2-1c-1.104 0-2 .896-2 2s.896 2 2 2h19v-16zm-18-2.68c-.427-.971-1.327-1.325-2-1.32-.661.005-1.568.3-2 1.32v16.178c.394-1.993 2.245-2.881 4-2.401v-13.777zm15 15.68h-12v-10h12v10zm-8-9h-3v8h10v-4h-2v3h-1v-3h-3v3h-1v-7zm7 0h-6v3h6v-3z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="services-title">Document-oriented</h3>
+                                    <div class="services-descr">
+                                        LiQuer supports automatically generated interactive and non-interactive documents and reports,
+                                        while maintaining the reproducability and tracking the origin of the data in the metadata.
+                                        Each document and data asset can be identified and re-created by its LiQuer link.
+                                    </div>
+                                    <div class="services-more">
+                                        <a href="./site/guide/index.html" class="text-link">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Services Item -->
+                            
+                            <!-- Services Item -->
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="services-item text-center wow fadeIn" data-wow-delay=".0s" data-wow-duration="1.5s">
+                                    <div class="services-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+                                            <path d="M9.484 15.696l-.711-.696-2.552 2.607-1.539-1.452-.698.709 2.25 2.136 3.25-3.304zm0-5l-.711-.696-2.552 2.607-1.539-1.452-.698.709 2.25 2.136 3.25-3.304zm0-5l-.711-.696-2.552 2.607-1.539-1.452-.698.709 2.25 2.136 3.25-3.304zm10.516 11.304h-8v1h8v-1zm0-5h-8v1h8v-1zm0-5h-8v1h8v-1zm4-5h-24v20h24v-20zm-1 19h-22v-18h22v18z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="services-title">Rich Metadata</h3>
+                                    <div class="services-descr">
+                                        Every asset created in LiQuer is equipped with metadata, describing its origin, processing history and other properties.
+                                        This metadata is stored in a structured way and can be used for searching, filtering and other operations.
+                                        Metadata are suitable for data-scientists e.g. for cataloguing the experiments,
+                                        but as well for auditing purposes in regulated environments - e.g. for tracking data lineage.
+                                    </div>
+                                    <div class="services-more">
+                                        <a href="./site/metadata/index.html" class="text-link">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Services Item -->
+                            
+                            <!-- Services Item -->
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="services-item text-center wow fadeIn" data-wow-delay=".1s" data-wow-duration="1.5s">
+                                    <div class="services-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+                                            <path d="M15 7h4v5h5v6h-5v5h-19v-21h15v5zm-5 11h-9v4h9v-4zm8 0h-7v4h7v-4zm-11-5h-6v4h6v-4zm9 0h-8v4h8v-4zm7 0h-6v4h6v-4zm-12-5v4h7v-4h-7zm-1 0h-9v4h9v-4zm-3-5h-6v4h6v-4zm7 0h-6v4h6v-4z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="services-title">Modular</h3>
+                                    <div class="services-descr">
+                                        LiQuer is designed to be modular. It is technology-agnostic and can be used with any data-science stack.
+                                        For example: LiQuer supports multiple data-frame libraries, multiple charting libraries and multiple web frameworks as backends.
+                                        LiQuer can be extended in multiple ways: by adding new data-frame libraries, new charting libraries, new web frameworks, new data sources, caching and storage options, new data sinks, new interactive frontend tools.
+                                    </div>
+                                    <div class="services-more">
+                                        <a href="./site/apidocs/liquer/index.html" class="text-link">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Services Item -->
+                            
+                            <!-- Services Item -->
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="services-item text-center wow fadeIn" data-wow-delay=".2s" data-wow-duration="1.5s">
+                                    <div class="services-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+                                            <path d="M14.889 23.652c-.923.227-1.888.348-2.881.348-6.627 0-12.008-5.377-12.008-12s5.381-12 12.008-12c6.628 0 12.009 5.377 12.009 12 0 1.027-.13 2.023-.373 2.975l-.965-.34c.21-.847.321-1.732.321-2.643 0-6.066-4.929-10.992-11-10.992s-11 4.926-11 10.992c0 6.067 4.929 10.993 11 10.993.887 0 1.751-.106 2.577-.304l.312.971zm-2.889-13.652c-1.104 0-2 .896-2 2s.896 2 2 2c.28 0 .546-.057.788-.162l3.06 9.525 2.174-3.622 4.116 4.259 1.879-1.828-4.087-4.216 3.671-1.926-9.694-3.426c.06-.19.093-.393.093-.604 0-1.104-.896-2-2-2zm1.768 3.615l7.333 2.597-2.823 1.481 4.324 4.461-.445.431-4.324-4.473-1.716 2.86-2.349-7.357zm.049 6.692c-.583.126-1.188.193-1.809.193-4.691 0-8.5-3.809-8.5-8.5s3.809-8.5 8.5-8.5c4.692 0 8.5 3.809 8.5 8.5 0 .619-.066 1.222-.192 1.803l-.959-.337c.094-.474.143-.964.143-1.466 0-4.139-3.361-7.5-7.5-7.5-4.139 0-7.5 3.361-7.5 7.5 0 4.139 3.361 7.5 7.5 7.5.517 0 1.022-.052 1.51-.152l.307.959zm-1.076-3.36c-.239.035-.484.053-.733.053-2.759 0-5-2.24-5-5s2.241-5 5-5c2.76 0 5 2.24 5 5 0 .212-.013.421-.039.626l-.979-.345.01-.281c0-2.208-1.792-4-4-4s-4 1.792-4 4 1.792 4 4 4l.43-.023.311.97zm-.741-5.947c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="services-title">Link Query</h3>
+                                    <div class="services-descr">
+                                        Link Query is a minimalistic query language, living in a sweet spot between simplicity and expressiveness.
+                                        It is human readable and easy to learn. It is useful in many contexts.
+                                        A huge benefit is its ability to represent the whole pipeline leading to creation of any data asset, chart or document.
+                                    </div>
+                                    <div class="services-more">
+                                        <a href="./site/query/index.html" class="text-link">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Services Item -->
+                            
+                        </div>
+                        <!-- End Services Grid -->
+                        
+                    </div>
+                </section>
+                <!-- End Features Section -->
+                
+                                                    
+                
+            
+                
+                              
+                
+            </main>
+            
+            <!-- Footer -->
+            <footer class="page-section bg-dark light-content footer pb-100 pb-sm-50">
+                <div class="container">
+                    
+                    
+                    <!-- Footer Text -->
+                    <div class="footer-text">
+                        
+                        <!-- Copyright -->
+                        <div class="footer-copy">
+                            <a href="index.html">© LiQuer Framework 2023</a>.
+                        </div>
+                        <!-- End Copyright -->
+                                                
+                    </div>
+                    <!-- End Footer Text --> 
+                    
+                 </div>
+                 
+                 <!-- Top Link -->
+                 <div class="local-scroll">
+                     <a href="#top" class="link-to-top"><i class="link-to-top-icon"></i><span class="sr-only">Scroll to top</span></a>
+                 </div>
+                 <!-- End Top Link -->
+                 
+            </footer>
+            <!-- End Footer -->
+        
+        </div>
+        <!-- End Page Wrap -->
+        
+        
+        <!-- JS -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery.easing.1.3.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/SmoothScroll.js"></script>
+        <script src="js/jquery.scrollTo.min.js"></script>
+        <script src="js/jquery.localScroll.min.js"></script>
+        <script src="js/jquery.viewport.mini.js"></script>
+        <script src="js/jquery.parallax-1.1.3.js"></script>
+        <script src="js/jquery.fitvids.js"></script>
+        <script src="js/owl.carousel.min.js"></script>
+        <script src="js/isotope.pkgd.min.js"></script>
+        <script src="js/imagesloaded.pkgd.min.js"></script>
+        <script src="js/jquery.magnific-popup.min.js"></script>
+        <script src="js/masonry.pkgd.min.js"></script>
+        <script src="js/jquery.lazyload.min.js"></script>
+        <script src="js/wow.min.js"></script>
+        <script src="js/morphext.js"></script>
+        <script src="js/typed.min.js"></script>
+        <script src="js/all.js"></script>
+        <script src="js/contact-form.js"></script>
+        <script src="js/jquery.ajaxchimp.min.js"></script>
+        <script src="js/objectFitPolyfill.min.js"></script>
+        <script src="js/splitting.min.js"></script>
+        <script type="text/javascript" src="js/jquery.countTo.js"></script>
+        <script type="text/javascript" src="js/jquery.appear.js"></script>
+        <script type="text/javascript" src="js/jquery.sticky.js"></script>
+        <script type="text/javascript" src="js/owl.carousel.min.js"></script>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=en"></script>
+        <script type="text/javascript" src="js/gmap3.min.js"></script>
+        <script type="text/javascript" src="js/jquery.simple-text-rotator.min.js"></script>
+		
+		
     </body>
 </html>
-
-<!--
-MkDocs version : 1.0.4
-Build Date UTC : 2020-12-31 12:02:09
--->
