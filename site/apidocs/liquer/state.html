@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.state API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.state</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import json
+from liquer.state_types import type_identifier_of, copy_state_data, data_characteristics
+from liquer.constants import mimetype_from_extension
+
+from copy import deepcopy
+from liquer.parser import QueryException, Position
+
+_vars = None
+
+
+class EvaluationException(QueryException):
+    pass
+
+
+def get_vars():
+    global _vars
+    if _vars is None:
+        _vars = {}
+    return _vars
+
+
+def vars_clone():
+    &#34;&#34;&#34;Return a copy of state variables dictionary
+    This is used to set the initial content of State.vars for a newly created state.
+    &#34;&#34;&#34;
+    return deepcopy(get_vars())
+
+
+def set_var(name, value):
+    &#34;&#34;&#34;Set initial value of a state variable
+    This is used to configure initial content of the state variables.
+
+    It should be done before any query is evaluated.
+    Calls at a later stage may lead to unintended behaviour like
+    cache inconsistencies (query result may depend on initial value of a state variable,
+    but this is not reflected in a query string).
+    &#34;&#34;&#34;
+    get_vars()
+    _vars[name] = value
+
+
+class State(object):
+    def __init__(self, data=None, metadata=None, context=None):
+        self.data = data
+        self.exception = None
+        self.context = context
+        self.metadata = (
+            metadata
+            if metadata is not None
+            else dict(
+                query=&#34;&#34;,
+                sources=[],
+                log=[],
+                is_error=False,
+                vars=vars_clone(),
+                filename=None,
+                extension=None,
+                message=&#34;&#34;,
+                commands=[],
+                extended_commands=[],
+                type_identifier=type_identifier_of(data),
+                caching=True,
+                attributes={},
+                data_characteristics=data_characteristics(data),
+            )
+        )
+
+    def next_state(self):
+        state = self.__class__()
+        state = state.from_dict(self.as_dict()).with_data(None)
+        return state
+
+    @property
+    def query(self):
+        return self.metadata[&#34;query&#34;]
+
+    @query.setter
+    def query(self, value):
+        self.metadata[&#34;query&#34;] = value
+
+    @property
+    def is_error(self):
+        return self.metadata[&#34;is_error&#34;]
+
+    @is_error.setter
+    def is_error(self, value):
+        self.metadata[&#34;is_error&#34;] = value
+
+    @property
+    def vars(self):
+        return self.metadata[&#34;vars&#34;]
+
+    @vars.setter
+    def vars(self, value):
+        self.metadata[&#34;vars&#34;] = value
+
+    @property
+    def type_identifier(self):
+        return self.metadata[&#34;type_identifier&#34;]
+
+    @type_identifier.setter
+    def type_identifier(self, value):
+        self.metadata[&#34;type_identifier&#34;] = value
+
+    @property
+    def extension(self):
+        return self.metadata.get(&#34;extension&#34;)
+
+    @extension.setter
+    def extension(self, value):
+        self.metadata[&#34;extension&#34;] = value
+
+    #    def with_caching(self, caching=True):
+    #        &#34;&#34;&#34;Enables or disables caching for this state&#34;&#34;&#34;
+    #        # TODO: Make sure caching is propagated to dependent states
+    #        # TODO: Examples and documentation
+    #        print(f&#34;QUERY {self.query}\nWITH CACHING {caching}&#34;)
+    #        if self.context is not None:
+    #            self.context.caching = caching
+    #            print(f&#34;set context {id(self.context)} caching {self.context.caching}&#34;)
+    #        self.metadata[&#34;caching&#34;] = caching
+    #        return self
+
+    def with_data(self, data):
+        &#34;&#34;&#34;Set the data&#34;&#34;&#34;
+        self.data = data
+        self.metadata[&#34;type_identifier&#34;] = type_identifier_of(data)
+        self.metadata[&#34;data_characteristics&#34;] = data_characteristics(data)
+        return self
+
+    def with_source(self, source):
+        &#34;&#34;&#34;Add sources to the state&#34;&#34;&#34;
+        self.metadata[&#34;sources&#34;] = [source] + self.metadata[&#34;sources&#34;]
+        return self
+
+    def is_volatile(self):
+        return self.metadata.get(&#34;attributes&#34;, {}).get(&#34;volatile&#34;, False)
+
+    def set_volatile(self, flag):
+        self.metadata[&#34;attributes&#34;][&#34;volatile&#34;] = flag
+        return self
+
+    def get(self):
+        &#34;&#34;&#34;Get data from the state&#34;&#34;&#34;
+        if self.is_error:
+            tb = &#34;\n&#34;.join((m.get(&#34;traceback&#34;, &#34;&#34;) or &#34;-&#34;) for m in self.metadata[&#34;log&#34;])
+            print(tb)
+            position = None
+            query = None
+            for entry in self.metadata[&#34;log&#34;]:
+                if entry.get(&#34;kind&#34;) == &#34;error&#34;:
+                    position = Position.from_dict(entry.get(&#34;position&#34;))
+                    query = entry.get(&#34;query&#34;)
+
+            if self.exception is None:
+                raise EvaluationException(
+                    tb + &#34;\n&#34; + self.metadata[&#34;message&#34;], position=position, query=query
+                )
+            else:
+                raise self.exception
+
+        return self.data
+
+    def log_command(self, qv, number):
+        &#34;&#34;&#34;Log a command&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(
+                dict(kind=&#34;command&#34;, qv=qv, command_number=number)
+            )
+        else:
+            self.context.log_action(qv, number)
+        return self
+
+    def log_error(self, message):
+        &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(dict(kind=&#34;error&#34;, message=message))
+            self.is_error = True
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.error(message)
+        return self
+
+    def log_warning(self, message):
+        &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(dict(kind=&#34;warning&#34;, message=message))
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.warning(message)
+        return self
+
+    def log_exception(self, message, traceback):
+        &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(
+                dict(kind=&#34;error&#34;, message=message, traceback=traceback)
+            )
+            self.is_error = True
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.exception(message, traceback)
+        return self
+
+    def log_info(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(dict(kind=&#34;info&#34;, message=message))
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.info(message)
+        return self
+
+    def as_dict(self):
+        &#34;&#34;&#34;Represent state metadata as a dictionary - suitable for json serialization
+        State data is NOT part of the returned dictionary.
+        &#34;&#34;&#34;
+        return deepcopy(self.metadata)
+
+    def mimetype(self):
+        &#34;&#34;&#34;Return mime type of the data&#34;&#34;&#34;
+
+        return self.metadata.get(&#34;mimetype&#34;, mimetype_from_extension(self.extension))
+
+    def from_dict(self, metadata):
+        &#34;&#34;&#34;Fill state by valueas from a dictionary&#34;&#34;&#34;
+        if isinstance(metadata, self.__class__):
+            metadata = metadata.metadata
+        self.metadata = deepcopy(metadata)
+        return self
+
+    def has_flag(self, name):
+        return self.metadata[&#34;vars&#34;].get(name) == True
+
+    def clone(self):
+        &#34;&#34;&#34;Clone the state including the deep copy of the data&#34;&#34;&#34;
+        state = self.__class__()
+        state = state.from_dict(self.as_dict())
+        state.data = copy_state_data(self.data)
+        return state
+
+    def with_filename(self, filename):
+        &#34;&#34;&#34;set filename&#34;&#34;&#34;
+        self.metadata[&#34;filename&#34;] = filename
+        if &#34;.&#34; in filename:
+            self.extension = filename.split(&#34;.&#34;)[-1].lower()
+            self.metadata[&#34;mimetype&#34;] = mimetype_from_extension(self.extension)
+        return self</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.state.get_vars"><code class="name flex">
+<span>def <span class="ident">get_vars</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vars():
+    global _vars
+    if _vars is None:
+        _vars = {}
+    return _vars</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.set_var"><code class="name flex">
+<span>def <span class="ident">set_var</span></span>(<span>name, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set initial value of a state variable
+This is used to configure initial content of the state variables.</p>
+<p>It should be done before any query is evaluated.
+Calls at a later stage may lead to unintended behaviour like
+cache inconsistencies (query result may depend on initial value of a state variable,
+but this is not reflected in a query string).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_var(name, value):
+    &#34;&#34;&#34;Set initial value of a state variable
+    This is used to configure initial content of the state variables.
+
+    It should be done before any query is evaluated.
+    Calls at a later stage may lead to unintended behaviour like
+    cache inconsistencies (query result may depend on initial value of a state variable,
+    but this is not reflected in a query string).
+    &#34;&#34;&#34;
+    get_vars()
+    _vars[name] = value</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.vars_clone"><code class="name flex">
+<span>def <span class="ident">vars_clone</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy of state variables dictionary
+This is used to set the initial content of State.vars for a newly created state.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vars_clone():
+    &#34;&#34;&#34;Return a copy of state variables dictionary
+    This is used to set the initial content of State.vars for a newly created state.
+    &#34;&#34;&#34;
+    return deepcopy(get_vars())</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.state.EvaluationException"><code class="flex name class">
+<span>class <span class="ident">EvaluationException</span></span>
+<span>(</span><span>message, position=None, query=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EvaluationException(QueryException):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.parser.QueryException" href="parser.html#liquer.parser.QueryException">QueryException</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="liquer.state.State"><code class="flex name class">
+<span>class <span class="ident">State</span></span>
+<span>(</span><span>data=None, metadata=None, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class State(object):
+    def __init__(self, data=None, metadata=None, context=None):
+        self.data = data
+        self.exception = None
+        self.context = context
+        self.metadata = (
+            metadata
+            if metadata is not None
+            else dict(
+                query=&#34;&#34;,
+                sources=[],
+                log=[],
+                is_error=False,
+                vars=vars_clone(),
+                filename=None,
+                extension=None,
+                message=&#34;&#34;,
+                commands=[],
+                extended_commands=[],
+                type_identifier=type_identifier_of(data),
+                caching=True,
+                attributes={},
+                data_characteristics=data_characteristics(data),
+            )
+        )
+
+    def next_state(self):
+        state = self.__class__()
+        state = state.from_dict(self.as_dict()).with_data(None)
+        return state
+
+    @property
+    def query(self):
+        return self.metadata[&#34;query&#34;]
+
+    @query.setter
+    def query(self, value):
+        self.metadata[&#34;query&#34;] = value
+
+    @property
+    def is_error(self):
+        return self.metadata[&#34;is_error&#34;]
+
+    @is_error.setter
+    def is_error(self, value):
+        self.metadata[&#34;is_error&#34;] = value
+
+    @property
+    def vars(self):
+        return self.metadata[&#34;vars&#34;]
+
+    @vars.setter
+    def vars(self, value):
+        self.metadata[&#34;vars&#34;] = value
+
+    @property
+    def type_identifier(self):
+        return self.metadata[&#34;type_identifier&#34;]
+
+    @type_identifier.setter
+    def type_identifier(self, value):
+        self.metadata[&#34;type_identifier&#34;] = value
+
+    @property
+    def extension(self):
+        return self.metadata.get(&#34;extension&#34;)
+
+    @extension.setter
+    def extension(self, value):
+        self.metadata[&#34;extension&#34;] = value
+
+    #    def with_caching(self, caching=True):
+    #        &#34;&#34;&#34;Enables or disables caching for this state&#34;&#34;&#34;
+    #        # TODO: Make sure caching is propagated to dependent states
+    #        # TODO: Examples and documentation
+    #        print(f&#34;QUERY {self.query}\nWITH CACHING {caching}&#34;)
+    #        if self.context is not None:
+    #            self.context.caching = caching
+    #            print(f&#34;set context {id(self.context)} caching {self.context.caching}&#34;)
+    #        self.metadata[&#34;caching&#34;] = caching
+    #        return self
+
+    def with_data(self, data):
+        &#34;&#34;&#34;Set the data&#34;&#34;&#34;
+        self.data = data
+        self.metadata[&#34;type_identifier&#34;] = type_identifier_of(data)
+        self.metadata[&#34;data_characteristics&#34;] = data_characteristics(data)
+        return self
+
+    def with_source(self, source):
+        &#34;&#34;&#34;Add sources to the state&#34;&#34;&#34;
+        self.metadata[&#34;sources&#34;] = [source] + self.metadata[&#34;sources&#34;]
+        return self
+
+    def is_volatile(self):
+        return self.metadata.get(&#34;attributes&#34;, {}).get(&#34;volatile&#34;, False)
+
+    def set_volatile(self, flag):
+        self.metadata[&#34;attributes&#34;][&#34;volatile&#34;] = flag
+        return self
+
+    def get(self):
+        &#34;&#34;&#34;Get data from the state&#34;&#34;&#34;
+        if self.is_error:
+            tb = &#34;\n&#34;.join((m.get(&#34;traceback&#34;, &#34;&#34;) or &#34;-&#34;) for m in self.metadata[&#34;log&#34;])
+            print(tb)
+            position = None
+            query = None
+            for entry in self.metadata[&#34;log&#34;]:
+                if entry.get(&#34;kind&#34;) == &#34;error&#34;:
+                    position = Position.from_dict(entry.get(&#34;position&#34;))
+                    query = entry.get(&#34;query&#34;)
+
+            if self.exception is None:
+                raise EvaluationException(
+                    tb + &#34;\n&#34; + self.metadata[&#34;message&#34;], position=position, query=query
+                )
+            else:
+                raise self.exception
+
+        return self.data
+
+    def log_command(self, qv, number):
+        &#34;&#34;&#34;Log a command&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(
+                dict(kind=&#34;command&#34;, qv=qv, command_number=number)
+            )
+        else:
+            self.context.log_action(qv, number)
+        return self
+
+    def log_error(self, message):
+        &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(dict(kind=&#34;error&#34;, message=message))
+            self.is_error = True
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.error(message)
+        return self
+
+    def log_warning(self, message):
+        &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(dict(kind=&#34;warning&#34;, message=message))
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.warning(message)
+        return self
+
+    def log_exception(self, message, traceback):
+        &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(
+                dict(kind=&#34;error&#34;, message=message, traceback=traceback)
+            )
+            self.is_error = True
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.exception(message, traceback)
+        return self
+
+    def log_info(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        if self.context is None:
+            self.metadata[&#34;log&#34;].append(dict(kind=&#34;info&#34;, message=message))
+            self.metadata[&#34;message&#34;] = message
+        else:
+            self.context.info(message)
+        return self
+
+    def as_dict(self):
+        &#34;&#34;&#34;Represent state metadata as a dictionary - suitable for json serialization
+        State data is NOT part of the returned dictionary.
+        &#34;&#34;&#34;
+        return deepcopy(self.metadata)
+
+    def mimetype(self):
+        &#34;&#34;&#34;Return mime type of the data&#34;&#34;&#34;
+
+        return self.metadata.get(&#34;mimetype&#34;, mimetype_from_extension(self.extension))
+
+    def from_dict(self, metadata):
+        &#34;&#34;&#34;Fill state by valueas from a dictionary&#34;&#34;&#34;
+        if isinstance(metadata, self.__class__):
+            metadata = metadata.metadata
+        self.metadata = deepcopy(metadata)
+        return self
+
+    def has_flag(self, name):
+        return self.metadata[&#34;vars&#34;].get(name) == True
+
+    def clone(self):
+        &#34;&#34;&#34;Clone the state including the deep copy of the data&#34;&#34;&#34;
+        state = self.__class__()
+        state = state.from_dict(self.as_dict())
+        state.data = copy_state_data(self.data)
+        return state
+
+    def with_filename(self, filename):
+        &#34;&#34;&#34;set filename&#34;&#34;&#34;
+        self.metadata[&#34;filename&#34;] = filename
+        if &#34;.&#34; in filename:
+            self.extension = filename.split(&#34;.&#34;)[-1].lower()
+            self.metadata[&#34;mimetype&#34;] = mimetype_from_extension(self.extension)
+        return self</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="liquer.state.State.extension"><code class="name">var <span class="ident">extension</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def extension(self):
+    return self.metadata.get(&#34;extension&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.is_error"><code class="name">var <span class="ident">is_error</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_error(self):
+    return self.metadata[&#34;is_error&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.query"><code class="name">var <span class="ident">query</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def query(self):
+    return self.metadata[&#34;query&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.type_identifier"><code class="name">var <span class="ident">type_identifier</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def type_identifier(self):
+    return self.metadata[&#34;type_identifier&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.vars"><code class="name">var <span class="ident">vars</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def vars(self):
+    return self.metadata[&#34;vars&#34;]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.state.State.as_dict"><code class="name flex">
+<span>def <span class="ident">as_dict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represent state metadata as a dictionary - suitable for json serialization
+State data is NOT part of the returned dictionary.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def as_dict(self):
+    &#34;&#34;&#34;Represent state metadata as a dictionary - suitable for json serialization
+    State data is NOT part of the returned dictionary.
+    &#34;&#34;&#34;
+    return deepcopy(self.metadata)</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.clone"><code class="name flex">
+<span>def <span class="ident">clone</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Clone the state including the deep copy of the data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clone(self):
+    &#34;&#34;&#34;Clone the state including the deep copy of the data&#34;&#34;&#34;
+    state = self.__class__()
+    state = state.from_dict(self.as_dict())
+    state.data = copy_state_data(self.data)
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.from_dict"><code class="name flex">
+<span>def <span class="ident">from_dict</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fill state by valueas from a dictionary</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_dict(self, metadata):
+    &#34;&#34;&#34;Fill state by valueas from a dictionary&#34;&#34;&#34;
+    if isinstance(metadata, self.__class__):
+        metadata = metadata.metadata
+    self.metadata = deepcopy(metadata)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get data from the state</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self):
+    &#34;&#34;&#34;Get data from the state&#34;&#34;&#34;
+    if self.is_error:
+        tb = &#34;\n&#34;.join((m.get(&#34;traceback&#34;, &#34;&#34;) or &#34;-&#34;) for m in self.metadata[&#34;log&#34;])
+        print(tb)
+        position = None
+        query = None
+        for entry in self.metadata[&#34;log&#34;]:
+            if entry.get(&#34;kind&#34;) == &#34;error&#34;:
+                position = Position.from_dict(entry.get(&#34;position&#34;))
+                query = entry.get(&#34;query&#34;)
+
+        if self.exception is None:
+            raise EvaluationException(
+                tb + &#34;\n&#34; + self.metadata[&#34;message&#34;], position=position, query=query
+            )
+        else:
+            raise self.exception
+
+    return self.data</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.has_flag"><code class="name flex">
+<span>def <span class="ident">has_flag</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_flag(self, name):
+    return self.metadata[&#34;vars&#34;].get(name) == True</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.is_volatile"><code class="name flex">
+<span>def <span class="ident">is_volatile</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_volatile(self):
+    return self.metadata.get(&#34;attributes&#34;, {}).get(&#34;volatile&#34;, False)</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.log_command"><code class="name flex">
+<span>def <span class="ident">log_command</span></span>(<span>self, qv, number)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a command</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_command(self, qv, number):
+    &#34;&#34;&#34;Log a command&#34;&#34;&#34;
+    if self.context is None:
+        self.metadata[&#34;log&#34;].append(
+            dict(kind=&#34;command&#34;, qv=qv, command_number=number)
+        )
+    else:
+        self.context.log_action(qv, number)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.log_error"><code class="name flex">
+<span>def <span class="ident">log_error</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log an error message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_error(self, message):
+    &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+    if self.context is None:
+        self.metadata[&#34;log&#34;].append(dict(kind=&#34;error&#34;, message=message))
+        self.is_error = True
+        self.metadata[&#34;message&#34;] = message
+    else:
+        self.context.error(message)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.log_exception"><code class="name flex">
+<span>def <span class="ident">log_exception</span></span>(<span>self, message, traceback)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log an exception</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_exception(self, message, traceback):
+    &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+    if self.context is None:
+        self.metadata[&#34;log&#34;].append(
+            dict(kind=&#34;error&#34;, message=message, traceback=traceback)
+        )
+        self.is_error = True
+        self.metadata[&#34;message&#34;] = message
+    else:
+        self.context.exception(message, traceback)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.log_info"><code class="name flex">
+<span>def <span class="ident">log_info</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a message (info)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_info(self, message):
+    &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+    if self.context is None:
+        self.metadata[&#34;log&#34;].append(dict(kind=&#34;info&#34;, message=message))
+        self.metadata[&#34;message&#34;] = message
+    else:
+        self.context.info(message)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.log_warning"><code class="name flex">
+<span>def <span class="ident">log_warning</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a warning message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_warning(self, message):
+    &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+    if self.context is None:
+        self.metadata[&#34;log&#34;].append(dict(kind=&#34;warning&#34;, message=message))
+        self.metadata[&#34;message&#34;] = message
+    else:
+        self.context.warning(message)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.mimetype"><code class="name flex">
+<span>def <span class="ident">mimetype</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return mime type of the data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mimetype(self):
+    &#34;&#34;&#34;Return mime type of the data&#34;&#34;&#34;
+
+    return self.metadata.get(&#34;mimetype&#34;, mimetype_from_extension(self.extension))</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.next_state"><code class="name flex">
+<span>def <span class="ident">next_state</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_state(self):
+    state = self.__class__()
+    state = state.from_dict(self.as_dict()).with_data(None)
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.set_volatile"><code class="name flex">
+<span>def <span class="ident">set_volatile</span></span>(<span>self, flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_volatile(self, flag):
+    self.metadata[&#34;attributes&#34;][&#34;volatile&#34;] = flag
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.with_data"><code class="name flex">
+<span>def <span class="ident">with_data</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def with_data(self, data):
+    &#34;&#34;&#34;Set the data&#34;&#34;&#34;
+    self.data = data
+    self.metadata[&#34;type_identifier&#34;] = type_identifier_of(data)
+    self.metadata[&#34;data_characteristics&#34;] = data_characteristics(data)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.with_filename"><code class="name flex">
+<span>def <span class="ident">with_filename</span></span>(<span>self, filename)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>set filename</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def with_filename(self, filename):
+    &#34;&#34;&#34;set filename&#34;&#34;&#34;
+    self.metadata[&#34;filename&#34;] = filename
+    if &#34;.&#34; in filename:
+        self.extension = filename.split(&#34;.&#34;)[-1].lower()
+        self.metadata[&#34;mimetype&#34;] = mimetype_from_extension(self.extension)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.state.State.with_source"><code class="name flex">
+<span>def <span class="ident">with_source</span></span>(<span>self, source)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add sources to the state</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def with_source(self, source):
+    &#34;&#34;&#34;Add sources to the state&#34;&#34;&#34;
+    self.metadata[&#34;sources&#34;] = [source] + self.metadata[&#34;sources&#34;]
+    return self</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer" href="index.html">liquer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.state.get_vars" href="#liquer.state.get_vars">get_vars</a></code></li>
+<li><code><a title="liquer.state.set_var" href="#liquer.state.set_var">set_var</a></code></li>
+<li><code><a title="liquer.state.vars_clone" href="#liquer.state.vars_clone">vars_clone</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.state.EvaluationException" href="#liquer.state.EvaluationException">EvaluationException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.state.State" href="#liquer.state.State">State</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.state.State.as_dict" href="#liquer.state.State.as_dict">as_dict</a></code></li>
+<li><code><a title="liquer.state.State.clone" href="#liquer.state.State.clone">clone</a></code></li>
+<li><code><a title="liquer.state.State.extension" href="#liquer.state.State.extension">extension</a></code></li>
+<li><code><a title="liquer.state.State.from_dict" href="#liquer.state.State.from_dict">from_dict</a></code></li>
+<li><code><a title="liquer.state.State.get" href="#liquer.state.State.get">get</a></code></li>
+<li><code><a title="liquer.state.State.has_flag" href="#liquer.state.State.has_flag">has_flag</a></code></li>
+<li><code><a title="liquer.state.State.is_error" href="#liquer.state.State.is_error">is_error</a></code></li>
+<li><code><a title="liquer.state.State.is_volatile" href="#liquer.state.State.is_volatile">is_volatile</a></code></li>
+<li><code><a title="liquer.state.State.log_command" href="#liquer.state.State.log_command">log_command</a></code></li>
+<li><code><a title="liquer.state.State.log_error" href="#liquer.state.State.log_error">log_error</a></code></li>
+<li><code><a title="liquer.state.State.log_exception" href="#liquer.state.State.log_exception">log_exception</a></code></li>
+<li><code><a title="liquer.state.State.log_info" href="#liquer.state.State.log_info">log_info</a></code></li>
+<li><code><a title="liquer.state.State.log_warning" href="#liquer.state.State.log_warning">log_warning</a></code></li>
+<li><code><a title="liquer.state.State.mimetype" href="#liquer.state.State.mimetype">mimetype</a></code></li>
+<li><code><a title="liquer.state.State.next_state" href="#liquer.state.State.next_state">next_state</a></code></li>
+<li><code><a title="liquer.state.State.query" href="#liquer.state.State.query">query</a></code></li>
+<li><code><a title="liquer.state.State.set_volatile" href="#liquer.state.State.set_volatile">set_volatile</a></code></li>
+<li><code><a title="liquer.state.State.type_identifier" href="#liquer.state.State.type_identifier">type_identifier</a></code></li>
+<li><code><a title="liquer.state.State.vars" href="#liquer.state.State.vars">vars</a></code></li>
+<li><code><a title="liquer.state.State.with_data" href="#liquer.state.State.with_data">with_data</a></code></li>
+<li><code><a title="liquer.state.State.with_filename" href="#liquer.state.State.with_filename">with_filename</a></code></li>
+<li><code><a title="liquer.state.State.with_source" href="#liquer.state.State.with_source">with_source</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

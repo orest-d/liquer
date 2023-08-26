@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Web service - LiQuer Docs</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Web service";
+        var mkdocs_page_input_path = "web_service.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/html.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> LiQuer Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../guide/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../query/">Query syntax</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../store/">Store and Cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../recipes/">Recipes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../metadata/">Metadata and state</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../commands/">Commands</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Web service</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#core-service-for-query-execution">Core service for query execution</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#route-qquery-get-post">Route /q/QUERY (GET, POST)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-submitquery-get">Route /submit/QUERY (GET)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#cache-interface">Cache interface</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#routeapicachegetquery-get-post">Route/api/cache/get/QUERY (GET, POST)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apicachemetaquery-get-post">Route /api/cache/meta/QUERY (GET, POST)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apicacheremovequery-get">Route /api/cache/remove/QUERY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#apicachecontainsquery-get">/api/cache/contains/QUERY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apicachekeysjson-get">Route /api/cache/keys.json (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apicacheclean-get">Route /api/cache/clean (GET)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#miscellaneous-services">Miscellaneous services</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apicommandsjson-get">Route /api/commands.json (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apidebug-jsonquery-get">Route /api/debug-json/QUERY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apibuild-post">Route /api/build (POST)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apiregister_commanddata-get-post">Route /api/register_command/DATA (GET, POST)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#store-interface">Store interface</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistoredataquery-get-post">Route /api/store/data/QUERY, (GET, POST)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistoreuploadkey-post-optional-get">Route /api/store/upload/KEY (POST, optional GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistoremetadatakey-get-post">Route /api/store/metadata/KEY (GET, POST)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-webkey-get">Route /web/KEY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistored_metadataquery-get">Route /api/stored_metadata/QUERY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistoreremovekey-get">Route /api/store/remove/KEY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistoreremovedirkey-get">Route /api/store/removedir/KEY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistorecontainskey-get">Route /api/store/contains/KEY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistoreis_dirkey-get">Route /api/store/is_dir/KEY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistorekeys-get">Route /api/store/keys (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistorelistdirkey-get">Route /api/store/listdir/KEY (GET)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-apistoremakedirkey-get">Route /api/store/makedir/KEY (GET)</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../security/">Security</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../apidocs/liquer/index.html">API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">LiQuer Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+          <li>User Guide &raquo;</li>
+      <li>Web service</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/orest-d/liquer/edit/master/docs/web_service.md">Edit on LiQuer</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="web-service">Web service</h1>
+<p>Web service is typically installed with an absolute paths
+starting with <em>/liquer</em>, e.g. <em>/liquer/q/hello</em>.
+Though this can be changed (and should be fully configurable in the future),
+some extensions currently (e.g. <a href="https://github.com/orest-d/liquer-gui">liquer gui</a>)
+currently rely on this absolute location.</p>
+<h2 id="core-service-for-query-execution">Core service for query execution</h2>
+<h3 id="route-qquery-get-post">Route /q/QUERY (GET, POST)</h3>
+<p>Main service for evaluating queries.
+Service allows to supply named arguments, that will be passed
+to the last command in the query. These arguments can be passed as URL query
+or POSTed as <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> dictionary.</p>
+<h3 id="route-submitquery-get">Route /submit/QUERY (GET)</h3>
+<p>Main service for evaluating queries.
+Like <em>/q/QUERY</em>, but the <em>QUERY</em> is executed in the background.
+Service returns status as a JSON document.
+Status contains</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> short text message describing the status of the submission</li>
+<li><strong>query</strong> query that was submitted</li>
+</ul>
+<h2 id="cache-interface">Cache interface</h2>
+<h3 id="routeapicachegetquery-get-post">Route/api/cache/get/QUERY (GET, POST)</h3>
+<p>FIXME: POST not implemented(?)</p>
+<p>Get cached data. If the result of the <em>QUERY</em> is stored in cache,
+it is returned immediately, otherwise the call fails.
+POST method may be supported, which allows using the service as a remote cache.</p>
+<h3 id="route-apicachemetaquery-get-post">Route /api/cache/meta/QUERY (GET, POST)</h3>
+<p>Get cached metadata as JSON for <em>QUERY</em> if available, a status JSON otherwise:
+POST method may be supported, which allows using the service as a remote cache.</p>
+<ul>
+<li><strong>status</strong> FIXME</li>
+<li><strong>message</strong> (FIXME: missing) short text message describing the status of the submission</li>
+<li><strong>query</strong> query that was submitted</li>
+<li><strong>cached</strong> boolean, True when cached.</li>
+</ul>
+<h3 id="route-apicacheremovequery-get">Route /api/cache/remove/QUERY (GET)</h3>
+<p>FIXME: Support http DELETE ?
+Interface to cache remove. Removes the query from cache.
+Returns status JSON:</p>
+<ul>
+<li><strong>status</strong> FIXME</li>
+<li><strong>message</strong> (FIXME: missing) short text message describing the status of the submission</li>
+<li><strong>query</strong> query that was submitted</li>
+<li><strong>removed</strong> boolean, True when the remove operation was successful.</li>
+</ul>
+<h3 id="apicachecontainsquery-get">/api/cache/contains/QUERY (GET)</h3>
+<p>Interface to cache contains. Returns whether <em>QUERY</em> is cached in
+a JSON status document: </p>
+<ul>
+<li><strong>status</strong> FIXME</li>
+<li><strong>message</strong> (FIXME: missing) short text message describing the status of the submission</li>
+<li><strong>query</strong> query that was submitted</li>
+<li><strong>cached</strong> boolean, True when query is in the cache</li>
+</ul>
+<h3 id="route-apicachekeysjson-get">Route /api/cache/keys.json (GET)</h3>
+<p>FIXME Remove .json or unify with /api/store
+Interface to cache keys. Returns list of all keys in the cache as a JSON list.</p>
+<h3 id="route-apicacheclean-get">Route /api/cache/clean (GET)</h3>
+<p>Interface to cache clean. Cleans the whole cache. Returns a JSON document.</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the result of the operation.</li>
+</ul>
+<h2 id="miscellaneous-services">Miscellaneous services</h2>
+<h3 id="route-apicommandsjson-get">Route /api/commands.json (GET)</h3>
+<p>Returns a list of commands in json format</p>
+<h3 id="route-apidebug-jsonquery-get">Route /api/debug-json/QUERY (GET)</h3>
+<p>FIXME: Obsolete?
+Debug query - returns metadata from a state after a query is evaluated</p>
+<h3 id="route-apibuild-post">Route /api/build (POST)</h3>
+<p>FIXME: Obsolete?
+Build a query from a posted decoded query (list of lists of strings).
+Result is a dictionary with encoded query and link.</p>
+<h3 id="route-apiregister_commanddata-get-post">Route /api/register_command/DATA (GET, POST)</h3>
+<p>Remote command registration service.
+This has to be enabled by liquer.commands.enable_remote_registration()</p>
+<div class="codehilite"><pre><span></span><code><span class="n">WARNING</span><span class="o">:</span><span class="w"> </span><span class="n">Remote</span><span class="w"> </span><span class="n">command</span><span class="w"> </span><span class="n">registration</span><span class="w"> </span><span class="n">allows</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">deploy</span><span class="w"> </span><span class="n">arbitrary</span><span class="w"> </span><span class="n">python</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">LiQuer</span><span class="w"> </span><span class="n">server</span><span class="o">,</span>
+<span class="n">therefore</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">HUGE</span><span class="w"> </span><span class="n">SECURITY</span><span class="w"> </span><span class="n">RISK</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">other</span><span class="w"> </span><span class="n">security</span><span class="w"> </span><span class="n">measures</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">taken</span>
+<span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">g</span><span class="o">.</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">localhost</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">intranet</span><span class="w"> </span><span class="n">where</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">trusted</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">access</span><span class="o">).</span>
+<span class="n">This</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">Jupyter</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="n">extension</span><span class="o">.</span>
+</code></pre></div>
+
+<h2 id="store-interface">Store interface</h2>
+<h3 id="route-apistoredataquery-get-post">Route /api/store/data/QUERY, (GET, POST)</h3>
+<p>Get or set data in store.</p>
+<p>GET method is equivalent to Store.get_bytes.
+Content type (MIME) is obtained from the metadata.</p>
+<p>POST method sets data in store. Equivalent to Store.store.
+Unlike store method, which stores both data and metadata in one call,
+the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+either before or after the api/store/data POST.</p>
+<p>On failure, a 404 error is returned with a JSON in the body:</p>
+<ul>
+<li><strong>status</strong> ERROR</li>
+<li><strong>message</strong> Short text describing the error. (typically a python traceback)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+</ul>
+<h3 id="route-apistoreuploadkey-post-optional-get">Route /api/store/upload/KEY (POST, optional GET)</h3>
+<p>Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
+Unlike store method, which stores both data and metadata in one call,
+the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+either before or after the api/store/data POST.</p>
+<p>On failure, a 404 error is returned with a JSON in the body:</p>
+<ul>
+<li><strong>status</strong> ERROR</li>
+<li><strong>message</strong> Short text describing the error. (typically a python traceback)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+</ul>
+<p>GET method (if supported) may return a basic html interface to facilitate the
+file upload.</p>
+<h3 id="route-apistoremetadatakey-get-post">Route /api/store/metadata/KEY (GET, POST)</h3>
+<p>FIXME: KEY, not QUERY
+Getting or setting the metadata for KEY.
+On successful GET returns the metadata as JSON.
+Otherwise a status JSON document is returned:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+<li><strong>key</strong> FIXME: <em>KEY</em> passed as an argument</li>
+</ul>
+<h3 id="route-webkey-get">Route /web/KEY (GET)</h3>
+<p>FIXME: it should be key, not query in the code</p>
+<p>Shortcut to the 'web' directory in the store.
+Similar to /store/data/web, except the index.html is automatically added if query is a directory.
+The 'web' directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui.</p>
+<p>On failure, a 404 error is returned with a JSON in the body:</p>
+<ul>
+<li><strong>status</strong> ERROR</li>
+<li><strong>message</strong> Short text describing the error. (typically a python traceback)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+<li><strong>key</strong> FIXME: <em>KEY</em> passed as an argument</li>
+</ul>
+<h3 id="route-apistored_metadataquery-get">Route /api/stored_metadata/QUERY (GET)</h3>
+<p>Get metadata stored in a store or cache.
+This will not trigger an execution of a query or recipe.</p>
+<p>FIXME: Make sure that recipes are not executed.</p>
+<h3 id="route-apistoreremovekey-get">Route /api/store/remove/KEY (GET)</h3>
+<p>Remove key from store.
+FIXME KEY
+FIXME support http DELETE</p>
+<p>Status JSON document is returned:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+<li><strong>key</strong> FIXME: <em>KEY</em> passed as an argument</li>
+</ul>
+<h3 id="route-apistoreremovedirkey-get">Route /api/store/removedir/KEY (GET)</h3>
+<p>Remove directory key from store.
+FIXME KEY
+FIXME support http DELETE</p>
+<p>Status JSON document is returned:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+<li><strong>key</strong> FIXME: <em>KEY</em> passed as an argument</li>
+</ul>
+<h3 id="route-apistorecontainskey-get">Route /api/store/contains/KEY (GET)</h3>
+<p>Check whether the <em>KEY</em> exists in the store.
+FIXME KEY
+FIXME support http DELETE</p>
+<p>Status JSON document is returned:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>contains</strong> result of <em>store.contains</em> if operation is successful (true if <em>KEY</em> is in the store)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+<li><strong>key</strong> FIXME: <em>KEY</em> passed as an argument</li>
+</ul>
+<h3 id="route-apistoreis_dirkey-get">Route /api/store/is_dir/KEY (GET)</h3>
+<p>Check whether the <em>KEY</em> is a directory in the store.
+FIXME KEY
+FIXME support http DELETE</p>
+<p>Status JSON document is returned:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>is_dir</strong> result of <em>store.is_dir</em> if operation is successful (true if <em>KEY</em> is a directory)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+<li><strong>key</strong> FIXME: <em>KEY</em> passed as an argument</li>
+</ul>
+<h3 id="route-apistorekeys-get">Route /api/store/keys (GET)</h3>
+<p>Return the list of keys in the store.
+Returns JSON document with a result:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>keys</strong> list of keys (on success)</li>
+</ul>
+<h3 id="route-apistorelistdirkey-get">Route /api/store/listdir/KEY (GET)</h3>
+<p>Get list of names in a directory <em>KEY</em>.
+FIXME KEY</p>
+<p>Returns JSON document with a result:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>listdir</strong> list of names (on success)
+FIXME key, query</li>
+</ul>
+<h3 id="route-apistoremakedirkey-get">Route /api/store/makedir/KEY (GET)</h3>
+<p>Make a directory specified by <em>KEY</em>.
+FIXME KEY
+Returns JSON document with a result:</p>
+<ul>
+<li><strong>status</strong> OK or ERROR</li>
+<li><strong>message</strong> Short text describing the status. (typically a python traceback on error)</li>
+<li><strong>query</strong> <em>QUERY</em> passed as an argument</li>
+<li><strong>key</strong> FIXME: <em>KEY</em> passed as an argument</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../commands/" class="btn btn-neutral float-left" title="Commands"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../security/" class="btn btn-neutral float-right" title="Security">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../commands/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../security/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

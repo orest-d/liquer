@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.ext.basic API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.ext.basic</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import io
+from urllib.request import urlopen
+import base64
+from liquer.commands import command, first_command
+from liquer.parser import encode, decode
+from liquer.state_types import encode_state_data
+from liquer.cache import get_cache
+from liquer.constants import Status, type_identifier_from_extension
+from liquer.context import get_context
+
+
+@command
+def let(state, name, value):
+    &#34;&#34;&#34;Set the state variable
+    Sets a state variable with &#39;name&#39; to &#39;value&#39;.
+    &#34;&#34;&#34;
+    state.vars[name] = value
+    return state
+
+
+@command
+def flag(state, name, value: bool = True):
+    &#34;&#34;&#34;Set the state variable as a flag (boolean value)&#34;&#34;&#34;
+    state.vars[name] = bool(value)
+    return state
+
+
+@command
+def state_variable(state, name):
+    &#34;&#34;&#34;Get the state variable value
+    Useful mainly for debugging and testing
+    &#34;&#34;&#34;
+    return state.with_data(state.vars.get(name))
+
+
+@command
+def link(state, linktype=None, extension=None):
+    &#34;&#34;&#34;Return a link to the result.
+    Linktype can be specified as parameter or as a state variable (e.g. Set~linktype~query)
+    linktype can be
+    - query : just a query from the state - without the last command (Link) if removelast is True
+    - dataurl : data URL (base64-encoded)
+    - htmlimage : html image element
+    - path : absolute url path (without server)
+    - url : complete url
+    &#34;&#34;&#34;
+    q = state.query
+    if linktype in (None, &#34;default&#34;):
+        linktype = state.vars.get(&#34;linktype&#34;, &#34;query&#34;)
+    if linktype == &#34;query&#34;:
+        return state.with_data(q)
+    elif linktype == &#34;dataurl&#34;:
+        b, mime, typeid = encode_state_data(state.get(), extension=extension)
+        encoded = base64.b64encode(b).decode(&#34;ascii&#34;)
+        return state.with_data(f&#34;data:{mime};base64,{encoded}&#34;)
+    elif linktype == &#34;htmlimage&#34;:
+        b, mime, typeid = encode_state_data(state.get(), extension=extension)
+        encoded = base64.b64encode(b).decode(&#34;ascii&#34;)
+        return state.with_filename(&#34;image.html&#34;).with_data(
+            f&#39;&lt;img src=&#34;data:{mime};base64,{encoded}&#34;/&gt;&#39;
+        )
+    elif linktype == &#34;path&#34;:
+        return state.with_data(state.vars.get(&#34;api_path&#34;, &#34;/q/&#34;) + q)
+    elif linktype == &#34;url&#34;:
+        return state.with_data(
+            state.vars.get(&#34;server&#34;, &#34;http://localhost&#34;)
+            + state.vars.get(&#34;api_path&#34;, &#34;/q/&#34;)
+            + q
+        )
+
+    raise Exception(f&#34;Unsupported link type: {linktype}&#34;)
+
+
+@command
+def html_a(state, linktype=None, value=None, extension=None):
+    &#34;&#34;&#34;Create a html link tag
+    If value is None, query is displayed as a value.
+    &#34;&#34;&#34;
+    if value is None:
+        value = state.query
+
+    lnk = link(state, linktype=linktype, extension=extension)
+    return state.with_data(f&#39;&lt;a href=&#34;{lnk}&#34;&gt;{value}&lt;/a&gt;&#39;)
+
+
+@first_command
+def fetch(url):
+    &#34;&#34;&#34;Load binary data from URL&#34;&#34;&#34;
+    return urlopen(url).read()
+
+
+@first_command
+def fetch_utf8(url):
+    &#34;&#34;&#34;Load text data encoded as utf-8 from URL&#34;&#34;&#34;
+    return urlopen(url).read().decode(&#34;utf-8&#34;)
+
+
+@command
+def filename(state, name):
+    &#34;&#34;&#34;Set filename&#34;&#34;&#34;
+    return state.with_filename(name)
+
+
+@command
+def ns(state, *namespaces):
+    &#34;&#34;&#34;Set command namespaces to be included
+
+    By default only the root namespace is enabled. The &#39;ns&#39; command enables commands present in specified namespaces.
+    This works by setting &#34;active_namespaces&#34; state variable.
+    The &#34;root&#34; namespace is appended to the active_namespaces if not already present.
+    When command is executed, all the active namespaces are searched one by one until the command is found.
+    Note that order of active_namespaces is significant.
+    &#34;&#34;&#34;
+    namespaces = list(namespaces)
+    if &#34;root&#34; not in namespaces:
+        namespaces.append(&#34;root&#34;)
+    state.vars[&#34;active_namespaces&#34;] = namespaces
+
+    return state
+
+
+@first_command(volatile=True)
+def clean_cache():
+    print(f&#34;clean cache {get_cache()}&#34;)
+    get_cache().clean()
+    return &#34;Cache cleaned&#34;
+
+
+@first_command(volatile=True)
+def queries_status(include_ready=False, reduce=True):
+    import liquer.parser as lp
+    import traceback
+
+    try:
+        cache = get_cache()
+        data = []
+        for key in sorted(cache.keys()):
+            metadata = cache.get_metadata(key)
+            if metadata is None:
+                continue
+            progress = metadata.get(&#34;progress_indicators&#34;, []) + metadata.get(
+                &#34;child_progress_indicators&#34;, []
+            )
+            d = dict(
+                query=key,
+                short=lp.parse(key).short(),
+                status=metadata.get(&#34;status&#34;, &#34;none&#34;),
+                updated=metadata.get(&#34;updated&#34;, &#34;?&#34;),
+                message=metadata.get(&#34;message&#34;, &#34;&#34;),
+                progress=progress[:3],
+            )
+            if include_ready or d[&#34;status&#34;] != Status.READY.value:
+                data.append((key, d))
+        data = [x[1] for x in sorted(data)]
+        if reduce and len(data):
+            reduced_data = [data[0]]
+            for d, next_d in zip(data[1:], data[2:]):
+                previous_d = reduced_data[-1]
+                if not (
+                    previous_d[&#34;status&#34;] == Status.EVALUATING_PARENT.value
+                    and d[&#34;status&#34;] == Status.EVALUATING_PARENT.value
+                    and d[&#34;query&#34;].startswith(previous_d[&#34;query&#34;])
+                    and next_d[&#34;query&#34;].startswith(d[&#34;query&#34;])
+                ):
+                    reduced_data.append(d)
+            reduced_data.append(data[-1])
+            data = reduced_data
+        return data
+    except:
+        return [
+            dict(
+                query=&#34;&#34;,
+                status=&#34;not available&#34;,
+                updated=&#34;&#34;,
+                message=traceback.format_exc(),
+                progress=[],
+            )
+        ]
+
+
+@command
+def dr(state, type_identifier=None, extension=None, context=None):
+    &#34;&#34;&#34;Decode resource
+    Decodes the bytes into a data structure. This is meant to be used in connection to a resource query.
+    Resource part of the query will typically fetch the data from a store and thus return bytes (together with metadata).
+    Command dr will convert the bytes (assuming proper metadata are provided) into a data structure.
+    The metadata must contain type_identifier in metadata or metadata[&#39;resource_metadata&#39;], a filename with extension
+    or extension with known decoding.
+    &#34;&#34;&#34;
+    from liquer.state_types import state_types_registry
+    from liquer.parser import parse
+
+    if state.data is None:
+        context.error(f&#34;Bytes expected, None received in dr from {state.query}&#34;)
+        return
+
+    if type_identifier is None:
+        type_identifier = state.metadata.get(
+            &#34;type_identifier&#34;,
+            state.metadata.get(&#34;resource_metadata&#34;, {}).get(&#34;type_identifier&#34;),
+        )
+
+    if type_identifier in (None, &#34;bytes&#34;):
+        type_identifier = state.metadata.get(&#34;resource_metadata&#34;, {}).get(
+            &#34;type_identifier&#34;
+        )
+
+    if extension is None:
+        extension = state.metadata.get(&#34;extension&#34;)
+    if extension is None:
+        query = state.metadata.get(&#34;query&#34;)
+        if query is not None:
+            filename = parse(query).filename()
+        if filename is not None:
+            v = filename.split(&#34;.&#34;)
+            if len(v) &gt; 1:
+                extension = v[-1]
+                context.info(f&#34;Extension: {extension} - from query &#39;{query}&#39;&#34;)
+        else:
+            key = state.metadata.get(&#34;resource_metadata&#34;, {}).get(&#34;key&#34;)
+            if key is not None:
+                filename = context.store().key_name(key)
+            v = filename.split(&#34;.&#34;)
+            if len(v) &gt; 1:
+                extension = v[-1]
+                context.info(f&#34;Extension: {extension} - from key &#39;{key}&#39;&#34;)
+
+    if type_identifier in (None, &#34;bytes&#34;):
+        type_identifier = type_identifier_from_extension(extension)
+        context.info(
+            f&#34;Type identifier: {type_identifier} - from extension &#39;{extension}&#39;&#34;
+        )
+
+    if type_identifier is not None:
+        if extension in (&#34;parquet&#34;, &#34;xlsx&#34;, &#34;csv&#34;, &#34;tsv&#34;) and type_identifier in (
+            &#34;generic&#34;,
+            &#34;dictionary&#34;,
+            &#34;pickle&#34;,
+        ):
+            context.warning(
+                f&#34;Type identifier &#39;{type_identifier}&#39; seems to be inconsistent with the extension &#39;{extension}&#39;&#34;
+            )
+            context.warning(
+                f&#34;This might indicate a problem with executing the partent query &#39;{context.parent_query}&#39;&#34;
+            )
+            type_identifier = type_identifier_by_extension.get(extension)
+            context.warning(
+                f&#34;To fix the inconsistency, type identifier: {type_identifier} is used from extension &#39;{extension}&#39;&#34;
+            )
+
+        context.info(f&#34;Type identifier: {type_identifier},  Extension: {extension}&#34;)
+        t = state_types_registry().get(type_identifier)
+        data = t.from_bytes(state.data, extension=extension)
+        return state.with_data(data)
+    else:
+        context.error(f&#34;Decode resource (dr) command failed&#34;)
+        raise Exception(
+            f&#34;Failed to resolve type for query {state.metadata.get(&#39;query&#39;)}&#34;
+        )
+    return state
+
+
+@first_command
+def sync_store(context=None):
+    context = get_context(context)
+    context.info(f&#34;Sync store&#34;)
+    context.store().sync()
+    return dict(status=&#34;OK&#34;, message=&#34;Store synchronized&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.ext.basic.clean_cache"><code class="name flex">
+<span>def <span class="ident">clean_cache</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@first_command(volatile=True)
+def clean_cache():
+    print(f&#34;clean cache {get_cache()}&#34;)
+    get_cache().clean()
+    return &#34;Cache cleaned&#34;</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.dr"><code class="name flex">
+<span>def <span class="ident">dr</span></span>(<span>state, type_identifier=None, extension=None, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode resource
+Decodes the bytes into a data structure. This is meant to be used in connection to a resource query.
+Resource part of the query will typically fetch the data from a store and thus return bytes (together with metadata).
+Command dr will convert the bytes (assuming proper metadata are provided) into a data structure.
+The metadata must contain type_identifier in metadata or metadata['resource_metadata'], a filename with extension
+or extension with known decoding.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def dr(state, type_identifier=None, extension=None, context=None):
+    &#34;&#34;&#34;Decode resource
+    Decodes the bytes into a data structure. This is meant to be used in connection to a resource query.
+    Resource part of the query will typically fetch the data from a store and thus return bytes (together with metadata).
+    Command dr will convert the bytes (assuming proper metadata are provided) into a data structure.
+    The metadata must contain type_identifier in metadata or metadata[&#39;resource_metadata&#39;], a filename with extension
+    or extension with known decoding.
+    &#34;&#34;&#34;
+    from liquer.state_types import state_types_registry
+    from liquer.parser import parse
+
+    if state.data is None:
+        context.error(f&#34;Bytes expected, None received in dr from {state.query}&#34;)
+        return
+
+    if type_identifier is None:
+        type_identifier = state.metadata.get(
+            &#34;type_identifier&#34;,
+            state.metadata.get(&#34;resource_metadata&#34;, {}).get(&#34;type_identifier&#34;),
+        )
+
+    if type_identifier in (None, &#34;bytes&#34;):
+        type_identifier = state.metadata.get(&#34;resource_metadata&#34;, {}).get(
+            &#34;type_identifier&#34;
+        )
+
+    if extension is None:
+        extension = state.metadata.get(&#34;extension&#34;)
+    if extension is None:
+        query = state.metadata.get(&#34;query&#34;)
+        if query is not None:
+            filename = parse(query).filename()
+        if filename is not None:
+            v = filename.split(&#34;.&#34;)
+            if len(v) &gt; 1:
+                extension = v[-1]
+                context.info(f&#34;Extension: {extension} - from query &#39;{query}&#39;&#34;)
+        else:
+            key = state.metadata.get(&#34;resource_metadata&#34;, {}).get(&#34;key&#34;)
+            if key is not None:
+                filename = context.store().key_name(key)
+            v = filename.split(&#34;.&#34;)
+            if len(v) &gt; 1:
+                extension = v[-1]
+                context.info(f&#34;Extension: {extension} - from key &#39;{key}&#39;&#34;)
+
+    if type_identifier in (None, &#34;bytes&#34;):
+        type_identifier = type_identifier_from_extension(extension)
+        context.info(
+            f&#34;Type identifier: {type_identifier} - from extension &#39;{extension}&#39;&#34;
+        )
+
+    if type_identifier is not None:
+        if extension in (&#34;parquet&#34;, &#34;xlsx&#34;, &#34;csv&#34;, &#34;tsv&#34;) and type_identifier in (
+            &#34;generic&#34;,
+            &#34;dictionary&#34;,
+            &#34;pickle&#34;,
+        ):
+            context.warning(
+                f&#34;Type identifier &#39;{type_identifier}&#39; seems to be inconsistent with the extension &#39;{extension}&#39;&#34;
+            )
+            context.warning(
+                f&#34;This might indicate a problem with executing the partent query &#39;{context.parent_query}&#39;&#34;
+            )
+            type_identifier = type_identifier_by_extension.get(extension)
+            context.warning(
+                f&#34;To fix the inconsistency, type identifier: {type_identifier} is used from extension &#39;{extension}&#39;&#34;
+            )
+
+        context.info(f&#34;Type identifier: {type_identifier},  Extension: {extension}&#34;)
+        t = state_types_registry().get(type_identifier)
+        data = t.from_bytes(state.data, extension=extension)
+        return state.with_data(data)
+    else:
+        context.error(f&#34;Decode resource (dr) command failed&#34;)
+        raise Exception(
+            f&#34;Failed to resolve type for query {state.metadata.get(&#39;query&#39;)}&#34;
+        )
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.fetch"><code class="name flex">
+<span>def <span class="ident">fetch</span></span>(<span>url)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load binary data from URL</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@first_command
+def fetch(url):
+    &#34;&#34;&#34;Load binary data from URL&#34;&#34;&#34;
+    return urlopen(url).read()</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.fetch_utf8"><code class="name flex">
+<span>def <span class="ident">fetch_utf8</span></span>(<span>url)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load text data encoded as utf-8 from URL</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@first_command
+def fetch_utf8(url):
+    &#34;&#34;&#34;Load text data encoded as utf-8 from URL&#34;&#34;&#34;
+    return urlopen(url).read().decode(&#34;utf-8&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.filename"><code class="name flex">
+<span>def <span class="ident">filename</span></span>(<span>state, name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set filename</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def filename(state, name):
+    &#34;&#34;&#34;Set filename&#34;&#34;&#34;
+    return state.with_filename(name)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.flag"><code class="name flex">
+<span>def <span class="ident">flag</span></span>(<span>state, name, value: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the state variable as a flag (boolean value)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def flag(state, name, value: bool = True):
+    &#34;&#34;&#34;Set the state variable as a flag (boolean value)&#34;&#34;&#34;
+    state.vars[name] = bool(value)
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.html_a"><code class="name flex">
+<span>def <span class="ident">html_a</span></span>(<span>state, linktype=None, value=None, extension=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a html link tag
+If value is None, query is displayed as a value.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def html_a(state, linktype=None, value=None, extension=None):
+    &#34;&#34;&#34;Create a html link tag
+    If value is None, query is displayed as a value.
+    &#34;&#34;&#34;
+    if value is None:
+        value = state.query
+
+    lnk = link(state, linktype=linktype, extension=extension)
+    return state.with_data(f&#39;&lt;a href=&#34;{lnk}&#34;&gt;{value}&lt;/a&gt;&#39;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.let"><code class="name flex">
+<span>def <span class="ident">let</span></span>(<span>state, name, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the state variable
+Sets a state variable with 'name' to 'value'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def let(state, name, value):
+    &#34;&#34;&#34;Set the state variable
+    Sets a state variable with &#39;name&#39; to &#39;value&#39;.
+    &#34;&#34;&#34;
+    state.vars[name] = value
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.link"><code class="name flex">
+<span>def <span class="ident">link</span></span>(<span>state, linktype=None, extension=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a link to the result.
+Linktype can be specified as parameter or as a state variable (e.g. Set~linktype~query)
+linktype can be
+- query : just a query from the state - without the last command (Link) if removelast is True
+- dataurl : data URL (base64-encoded)
+- htmlimage : html image element
+- path : absolute url path (without server)
+- url : complete url</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def link(state, linktype=None, extension=None):
+    &#34;&#34;&#34;Return a link to the result.
+    Linktype can be specified as parameter or as a state variable (e.g. Set~linktype~query)
+    linktype can be
+    - query : just a query from the state - without the last command (Link) if removelast is True
+    - dataurl : data URL (base64-encoded)
+    - htmlimage : html image element
+    - path : absolute url path (without server)
+    - url : complete url
+    &#34;&#34;&#34;
+    q = state.query
+    if linktype in (None, &#34;default&#34;):
+        linktype = state.vars.get(&#34;linktype&#34;, &#34;query&#34;)
+    if linktype == &#34;query&#34;:
+        return state.with_data(q)
+    elif linktype == &#34;dataurl&#34;:
+        b, mime, typeid = encode_state_data(state.get(), extension=extension)
+        encoded = base64.b64encode(b).decode(&#34;ascii&#34;)
+        return state.with_data(f&#34;data:{mime};base64,{encoded}&#34;)
+    elif linktype == &#34;htmlimage&#34;:
+        b, mime, typeid = encode_state_data(state.get(), extension=extension)
+        encoded = base64.b64encode(b).decode(&#34;ascii&#34;)
+        return state.with_filename(&#34;image.html&#34;).with_data(
+            f&#39;&lt;img src=&#34;data:{mime};base64,{encoded}&#34;/&gt;&#39;
+        )
+    elif linktype == &#34;path&#34;:
+        return state.with_data(state.vars.get(&#34;api_path&#34;, &#34;/q/&#34;) + q)
+    elif linktype == &#34;url&#34;:
+        return state.with_data(
+            state.vars.get(&#34;server&#34;, &#34;http://localhost&#34;)
+            + state.vars.get(&#34;api_path&#34;, &#34;/q/&#34;)
+            + q
+        )
+
+    raise Exception(f&#34;Unsupported link type: {linktype}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.ns"><code class="name flex">
+<span>def <span class="ident">ns</span></span>(<span>state, *namespaces)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set command namespaces to be included</p>
+<p>By default only the root namespace is enabled. The 'ns' command enables commands present in specified namespaces.
+This works by setting "active_namespaces" state variable.
+The "root" namespace is appended to the active_namespaces if not already present.
+When command is executed, all the active namespaces are searched one by one until the command is found.
+Note that order of active_namespaces is significant.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def ns(state, *namespaces):
+    &#34;&#34;&#34;Set command namespaces to be included
+
+    By default only the root namespace is enabled. The &#39;ns&#39; command enables commands present in specified namespaces.
+    This works by setting &#34;active_namespaces&#34; state variable.
+    The &#34;root&#34; namespace is appended to the active_namespaces if not already present.
+    When command is executed, all the active namespaces are searched one by one until the command is found.
+    Note that order of active_namespaces is significant.
+    &#34;&#34;&#34;
+    namespaces = list(namespaces)
+    if &#34;root&#34; not in namespaces:
+        namespaces.append(&#34;root&#34;)
+    state.vars[&#34;active_namespaces&#34;] = namespaces
+
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.queries_status"><code class="name flex">
+<span>def <span class="ident">queries_status</span></span>(<span>include_ready=False, reduce=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@first_command(volatile=True)
+def queries_status(include_ready=False, reduce=True):
+    import liquer.parser as lp
+    import traceback
+
+    try:
+        cache = get_cache()
+        data = []
+        for key in sorted(cache.keys()):
+            metadata = cache.get_metadata(key)
+            if metadata is None:
+                continue
+            progress = metadata.get(&#34;progress_indicators&#34;, []) + metadata.get(
+                &#34;child_progress_indicators&#34;, []
+            )
+            d = dict(
+                query=key,
+                short=lp.parse(key).short(),
+                status=metadata.get(&#34;status&#34;, &#34;none&#34;),
+                updated=metadata.get(&#34;updated&#34;, &#34;?&#34;),
+                message=metadata.get(&#34;message&#34;, &#34;&#34;),
+                progress=progress[:3],
+            )
+            if include_ready or d[&#34;status&#34;] != Status.READY.value:
+                data.append((key, d))
+        data = [x[1] for x in sorted(data)]
+        if reduce and len(data):
+            reduced_data = [data[0]]
+            for d, next_d in zip(data[1:], data[2:]):
+                previous_d = reduced_data[-1]
+                if not (
+                    previous_d[&#34;status&#34;] == Status.EVALUATING_PARENT.value
+                    and d[&#34;status&#34;] == Status.EVALUATING_PARENT.value
+                    and d[&#34;query&#34;].startswith(previous_d[&#34;query&#34;])
+                    and next_d[&#34;query&#34;].startswith(d[&#34;query&#34;])
+                ):
+                    reduced_data.append(d)
+            reduced_data.append(data[-1])
+            data = reduced_data
+        return data
+    except:
+        return [
+            dict(
+                query=&#34;&#34;,
+                status=&#34;not available&#34;,
+                updated=&#34;&#34;,
+                message=traceback.format_exc(),
+                progress=[],
+            )
+        ]</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.state_variable"><code class="name flex">
+<span>def <span class="ident">state_variable</span></span>(<span>state, name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the state variable value
+Useful mainly for debugging and testing</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def state_variable(state, name):
+    &#34;&#34;&#34;Get the state variable value
+    Useful mainly for debugging and testing
+    &#34;&#34;&#34;
+    return state.with_data(state.vars.get(name))</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.basic.sync_store"><code class="name flex">
+<span>def <span class="ident">sync_store</span></span>(<span>context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@first_command
+def sync_store(context=None):
+    context = get_context(context)
+    context.info(f&#34;Sync store&#34;)
+    context.store().sync()
+    return dict(status=&#34;OK&#34;, message=&#34;Store synchronized&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer.ext" href="index.html">liquer.ext</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="liquer.ext.basic.clean_cache" href="#liquer.ext.basic.clean_cache">clean_cache</a></code></li>
+<li><code><a title="liquer.ext.basic.dr" href="#liquer.ext.basic.dr">dr</a></code></li>
+<li><code><a title="liquer.ext.basic.fetch" href="#liquer.ext.basic.fetch">fetch</a></code></li>
+<li><code><a title="liquer.ext.basic.fetch_utf8" href="#liquer.ext.basic.fetch_utf8">fetch_utf8</a></code></li>
+<li><code><a title="liquer.ext.basic.filename" href="#liquer.ext.basic.filename">filename</a></code></li>
+<li><code><a title="liquer.ext.basic.flag" href="#liquer.ext.basic.flag">flag</a></code></li>
+<li><code><a title="liquer.ext.basic.html_a" href="#liquer.ext.basic.html_a">html_a</a></code></li>
+<li><code><a title="liquer.ext.basic.let" href="#liquer.ext.basic.let">let</a></code></li>
+<li><code><a title="liquer.ext.basic.link" href="#liquer.ext.basic.link">link</a></code></li>
+<li><code><a title="liquer.ext.basic.ns" href="#liquer.ext.basic.ns">ns</a></code></li>
+<li><code><a title="liquer.ext.basic.queries_status" href="#liquer.ext.basic.queries_status">queries_status</a></code></li>
+<li><code><a title="liquer.ext.basic.state_variable" href="#liquer.ext.basic.state_variable">state_variable</a></code></li>
+<li><code><a title="liquer.ext.basic.sync_store" href="#liquer.ext.basic.sync_store">sync_store</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

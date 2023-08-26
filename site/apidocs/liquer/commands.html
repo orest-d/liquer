@@ -1,0 +1,3164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.commands API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.commands</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import traceback
+from collections import namedtuple
+import inspect
+from liquer.state import State
+from liquer.parser import encode
+import marshal
+import pickle
+import types
+import traceback
+import base64
+from liquer.parser import (
+    StringActionParameter,
+    ActionParameter,
+    QueryException,
+    ExpandedActionParameter,
+)
+
+
+&#34;&#34;&#34;This module is responsible for registering commands
+Commands are composed of a command executable and command metadata, which are collected in a command registry.
+CommandRegistry is a singleton that can be obtained by get_command_registry().
+
+Command metadata (CommandMetadata tuple) contain informations about the command and its arguments
+(type, parsing and editing of each argument). These metadata are a basis for parsing of arguments as well as command editor creation.
+
+Argument parsers are responsible for parsing command arguments into desired types.
+ArgumentParser has a parse method, which takes argument metadata and list of arguments (typically supplied as list of strings
+resulting from liquer.parser.decode). Parsing may extract arbitrary amount of arguments and thus support more complex data structures.
+Parse method returns a tuple with the parsed argument and remaining unparsed arguments.
+Argument parsers which do not need multiple instances (typical case) have predefined constants.
+Multiple argument parsers may be collected in a SequenceArgumentParser by use of + operator (e.g. INT_AP + FLOAT_AP).
+
+Though commands can be registered with a low level method &#39;register&#39; of CommandRegistry (which allows the greatest flexibility),
+the &#34;mainstream&#34; way of command registration is by simply decorating a function with @command or @first_command.
+
+&#34;&#34;&#34;
+
+CommandMetadata = namedtuple(
+    &#34;CommandMetadata&#34;,
+    [
+        &#34;name&#34;,
+        &#34;label&#34;,
+        &#34;module&#34;,
+        &#34;doc&#34;,
+        &#34;state_argument&#34;,
+        &#34;arguments&#34;,
+        &#34;attributes&#34;,
+        &#34;version&#34;,
+    ],
+)
+
+
+_remote_registration = False
+
+
+def is_remote_registration_enabled():
+    &#34;&#34;&#34;Returns true if remote registration is enabled.
+    This is a flag that a web interface can use to enable or disable the remote command registration.
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.
+    &#34;&#34;&#34;
+    return _remote_registration
+
+
+def enable_remote_registration():
+    &#34;&#34;&#34;Enable remote registration service
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.
+    &#34;&#34;&#34;
+    global _remote_registration
+    _remote_registration = True
+
+
+def disable_remote_registration():
+    &#34;Disable remote registration service&#34;
+    global _remote_registration
+    _remote_registration = True
+
+
+class RegisterRemoteMixin:
+    def register_remote_serialized(self, b):
+        &#34;&#34;&#34;Helper method used to register serialized command in remote registration&#34;&#34;&#34;
+        if is_remote_registration_enabled():
+            try:
+                f, metadata, modify = self.decode_registration(b)
+                self.register_command(f, metadata, modify=modify)
+                ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+                return dict(
+                    message=f&#34;Function {f.__name__} in namespace {ns} is registered as command&#34;,
+                    status=&#34;OK&#34;,
+                )
+            except:
+                return dict(
+                    message=&#34;Error while registering command&#34;,
+                    traceback=traceback.format_exc(),
+                    status=&#34;ERROR&#34;,
+                )
+        else:
+            return dict(
+                message=&#34;Remote command registration is disabled.&#34;, status=&#34;ERROR&#34;
+            )
+
+    @classmethod
+    def encode_registration(cls, f, metadata, modify=False):
+        code = marshal.dumps(f.__code__)
+        return b&#34;B&#34; + pickle.dumps(
+            (
+                code,
+                f.__name__,
+                f.__defaults__,
+                f.__closure__,
+                metadata._asdict(),
+                modify,
+            )
+        )
+
+    @classmethod
+    def encode_registration_base64(cls, f, metadata, modify=False):
+        return b&#34;E&#34; + base64.urlsafe_b64encode(
+            cls.encode_registration(f, metadata, modify)
+        )
+
+    @classmethod
+    def decode_registration(cls, b):
+        assert type(b) == bytes
+        if b[0] == b&#34;E&#34;[0]:
+            print(&#34;DECODE E:&#34;, b[:20])
+            print()
+            b = base64.urlsafe_b64decode(b[1:])
+        print(&#34;DECODE B:&#34;, b[:20])
+        print()
+        print()
+        assert b[0] == b&#34;B&#34;[0]
+        b = b[1:]
+
+        code, name, defaults, closure, metadata, modify = pickle.loads(b)
+        bc = marshal.loads(code)
+        f = types.FunctionType(bc, globals(), name, defaults, closure)
+        return (f, CommandMetadata(**metadata), modify)
+
+
+class RemoteCommandRegistry(RegisterRemoteMixin, object):
+    &#34;&#34;&#34;Remote command registry allows to register commands into a remote LiQuer server, e.g. Jupyter server extension&#34;&#34;&#34;
+
+    def __init__(self, url, use_get_method=False):
+        self.url = url
+        self.use_get_method = use_get_method
+
+    def register_command(self, f, metadata, modify=False):
+        import requests
+
+        url = self.url
+        url += &#34;&#34; if url[-1] == &#34;/&#34; else &#34;/&#34;
+
+        if self.use_get_method:
+            b = self.encode_registration_base64(f, metadata, modify)
+            encoded = b.decode(&#34;ascii&#34;)
+            response = requests.get(url=url + encoded)
+        else:
+            b = self.encode_registration(f, metadata, modify)
+            response = requests.post(url=url, data=b)
+
+        if response.ok:
+            response = response.json()
+            if response[&#34;status&#34;] != &#34;OK&#34;:
+                print(response.get(&#34;traceback&#34;, &#34;&#34;))
+                raise Exception(
+                    &#34;Remote registration failed: &#34;
+                    + response.get(&#34;message&#34;, f&#34;Error registering {f.__name__}&#34;)
+                )
+        else:
+            response.raise_for_status()
+
+
+class CommandRegistry(RegisterRemoteMixin, object):
+    &#34;&#34;&#34;Class responsible for registering all commands and their metadata&#34;&#34;&#34;
+
+    def __init__(self):
+        &#34;&#34;&#34;Create empty command registry&#34;&#34;&#34;
+        self.executables = {}
+        self.metadata = {}
+        self.namespaces = {}
+
+    def is_doubleregistered(self, executable, metadata):
+        &#34;&#34;&#34;Returns True if the same function is already registered as a command.
+        Another function registered under the same name would return False.
+        &#34;&#34;&#34;
+        name = metadata.name
+        ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+        self.executables[ns] = self.executables.get(ns, {})
+        self.metadata[ns] = self.metadata.get(ns, {})
+
+        if name in self.executables[ns]:
+            registered = self.metadata[ns][name]
+            return (
+                name == registered.name
+                and executable.inner_id() == self.executables[ns][name].inner_id()
+            )
+        return False
+
+    def register_command(self, f, metadata, modify=False):
+        parser = argument_parser_from_command_metadata(metadata)
+        if metadata.state_argument is None:
+            executable = FirstCommandExecutable(f, metadata, parser)
+        else:
+            executable = CommandExecutable(f, metadata, parser)
+        return self.register(executable, metadata)
+
+    def register(self, executable, metadata, modify=False):
+        &#34;&#34;&#34;Create command
+        executable is an CommandExecutable of the command,
+        metadata is CommandMetadata
+        &#34;&#34;&#34;
+        name = metadata.name
+        ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+
+        modify = modify or metadata.attributes.get(&#34;modify_command&#34;, False)
+        can_register = modify
+        self.executables[ns] = self.executables.get(ns, {})
+        self.metadata[ns] = self.metadata.get(ns, {})
+        if name in self.executables[ns]:
+            if self.is_doubleregistered(executable, metadata):
+                can_register = True
+        else:
+            can_register = True
+        if can_register:
+            self.executables[ns][name] = executable
+            self.metadata[ns][name] = metadata
+        else:
+            raise Exception(f&#34;Command {name} is already registered&#34;)
+
+    def as_dict(self):
+        &#34;&#34;&#34;Returns dictionary representation of the registry, safe to serialize as json&#34;&#34;&#34;
+        return {
+            ns: {name: cmd._asdict() for name, cmd in metadata.items()}
+            for ns, metadata in self.metadata.items()
+        }
+
+    def evaluate_command_old(self, state, qcommand: list):
+        if not state.is_volatile():
+            state = state.clone()
+        command_name = qcommand[0]
+        ns, command, metadata = self.resolve_command(state, command_name)
+        if command is None:
+            print(f&#34;Unknown command: {command_name}&#34;)
+            return state.with_data(None).log_error(
+                message=f&#34;Unknown command: {command_name}&#34;
+            )
+        else:
+            try:
+                state = command(state, *qcommand[1:])
+            except Exception as e:
+                traceback.print_exc()
+                state.log_exception(message=str(e), traceback=traceback.format_exc())
+                state.exception = e
+        arguments = getattr(state, &#34;arguments&#34;, None)
+        state.metadata[&#34;commands&#34;].append(qcommand)
+        state.metadata[&#34;extended_commands&#34;].append(
+            dict(
+                command_name=command_name,
+                ns=ns,
+                qcommand=qcommand,
+                command_metadata=metadata._asdict(),
+                arguments=arguments,
+            )
+        )
+        state.query = encode(state.metadata[&#34;commands&#34;])
+        state.metadata[&#34;attributes&#34;] = {
+            key: value
+            for key, value in state.metadata[&#34;attributes&#34;].items()
+            if key[0].isupper()
+        }
+        if metadata is not None:
+            state.metadata[&#34;attributes&#34;].update(metadata.attributes)
+
+        return state
+
+    def resolve_command(self, state, command_name):
+        for ns in state.vars.get(&#34;active_namespaces&#34;, [&#34;root&#34;]):
+            if ns not in self.executables:
+                print(f&#34;Unknown namespace: {ns}&#34;)
+                continue
+            if command_name in self.executables[ns]:
+                break
+
+        if command_name in self.executables[ns]:
+            command = self.executables[ns][command_name]
+            if command_name in self.metadata[ns]:
+                return ns, command, self.metadata[ns][command_name]
+            else:
+                print(f&#34;Unknown command (metadata): {command_name}&#34;)
+                return ns, command, None
+
+        return None, None, None
+
+
+_command_registry = None
+
+
+def command_registry():
+    &#34;&#34;&#34;Return global the command registry object&#34;&#34;&#34;
+    global _command_registry
+    if _command_registry is None:
+        _command_registry = CommandRegistry()
+    return _command_registry
+
+
+def remote_command_registry(url, use_get_method=False):
+    &#34;&#34;&#34;Configure the command registry to use remote LiQuer server
+    Provide url to the registration service
+    &#34;&#34;&#34;
+    global _command_registry
+    _command_registry = RemoteCommandRegistry(url, use_get_method=use_get_method)
+    return _command_registry
+
+
+def reset_command_registry():
+    &#34;&#34;&#34;Create empty global command registry&#34;&#34;&#34;
+    global _command_registry
+    _command_registry = CommandRegistry()
+    return _command_registry
+
+
+class ArgumentParserException(QueryException):
+    def __init__(self, message, position=None, query=None):
+        super().__init__(message, position, query)
+
+
+class ArgumentParser(object):
+    is_argv = False
+
+    def __add__(self, ap):
+        return SequenceArgumentParser(self, ap)
+
+    def parse(self, metadata, args):
+        return args[0], args[1:]
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+        if isinstance(args[0], str):
+            return args[0], (args[0], metadata), args[1:]
+        elif isinstance(args[0], StringActionParameter):
+            return args[0].string, (args[0].string, metadata), args[1:]
+        elif isinstance(args[0], ExpandedActionParameter):
+            return args[0].value, (args[0].value, metadata), args[1:]
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter {repr(args[0])}  in ArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            return args[0], (args[0], metadata), args[1:]
+
+
+class SequenceArgumentParser(ArgumentParser):
+    def __init__(self, *sequence):
+        self.sequence = list(sequence)
+
+    def __add__(self, ap):
+        return SequenceArgumentParser(*(self.sequence + [ap]))
+
+    def __iadd__(self, ap):
+        self.sequence.append(ap)
+        return self
+
+    def parse(self, metadata, args):
+        parsed_arguments = []
+        for ap, meta in zip(self.sequence, metadata):
+            parsed, args = ap.parse(meta, args)
+            if ap.is_argv:
+                parsed_arguments.extend(parsed)
+            else:
+                parsed_arguments.append(parsed)
+        return parsed_arguments, args
+
+    def parse_meta(self, metadata, args, context=None):
+        parsed_arguments = []
+        parsed_meta = []
+        for ap, meta in zip(self.sequence, metadata):
+            parsed, argmeta, args = ap.parse_meta(meta, args, context=context)
+            if ap.is_argv:
+                parsed_arguments.extend(parsed)
+            else:
+                parsed_arguments.append(parsed)
+            parsed_meta.append(argmeta)
+        return parsed_arguments, parsed_meta, args
+
+
+class ContextArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return None, args
+
+    def parse_meta(self, metadata, args, context=None):
+        return context, (context, metadata), args
+
+
+class IntArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return int(args[0]), args[1:]
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+        if isinstance(args[0], str):
+            try:
+                value = int(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+        elif isinstance(args[0], StringActionParameter):
+            try:
+                value = int(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from {repr(args[0].string)}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = int(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter type {repr(args[0])} in IntArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            try:
+                value = int(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), args[1:]
+
+
+class FloatArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return float(args[0]), args[1:]
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+        if isinstance(args[0], str):
+            try:
+                value = float(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+        elif isinstance(args[0], StringActionParameter):
+            try:
+                value = float(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from {repr(args[0].string)}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = float(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter type {repr(args[0])} in FloatArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            try:
+                value = float(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), args[1:]
+
+
+class BooleanArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return (
+            dict(
+                y=True,
+                yes=True,
+                n=False,
+                no=False,
+                t=True,
+                true=True,
+                f=False,
+                false=False,
+            ).get(str(args[0]).lower(), False),
+            args[1:],
+        )
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+
+        def to_bool(x):
+            return dict(
+                y=True,
+                yes=True,
+                n=False,
+                no=False,
+                t=True,
+                true=True,
+                f=False,
+                false=False,
+            ).get(str(x).lower(), False)
+
+        if isinstance(args[0], str):
+            try:
+                value = to_bool(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+        elif isinstance(args[0], StringActionParameter):
+            try:
+                value = to_bool(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from value {repr(args[0].string)}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = to_bool(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter type {repr(args[0])} in BooleanArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            try:
+                value = dict(
+                    y=True,
+                    yes=True,
+                    n=False,
+                    no=False,
+                    t=True,
+                    true=True,
+                    f=False,
+                    false=False,
+                ).get(str(args[0]).lower(), False)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), args[1:]
+
+
+class ListArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return args, []
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+
+        value = []
+        for x in args:
+            if isinstance(x, str):
+                value.append(x)
+            elif isinstance(x, StringActionParameter):
+                value.append(x.string)
+            elif isinstance(x, ExpandedActionParameter):
+                value.append(x.value)
+            elif isinstance(x, ActionParameter):
+                raise ArgumentParserException(
+                    f&#34;Unsupported action parameter type {repr(x)} in ListArgumentParser&#34;,
+                    position=x.position,
+                    query=query,
+                )
+            else:
+                raise ArgumentParserException(
+                    f&#34;Unsupported action parameter object {repr(x)} in ListArgumentParser&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), []
+
+
+class ArgvArgumentParser(ListArgumentParser):
+    is_argv = True
+
+
+GENERIC_AP = ArgumentParser()
+CONTEXT_AP = ContextArgumentParser()
+INT_AP = IntArgumentParser()
+FLOAT_AP = FloatArgumentParser()
+BOOLEAN_AP = BooleanArgumentParser()
+LIST_AP = ListArgumentParser()
+ARGV_AP = ArgvArgumentParser()
+
+
+def identifier_to_label(identifier):
+    &#34;&#34;&#34;Tries to convert an identifier to a more human readable text label.
+    Replaces underscores by spaces and may do other tweaks.
+    &#34;&#34;&#34;
+    txt = identifier.replace(&#34;_&#34;, &#34; &#34;)
+    txt = txt.replace(&#34; id&#34;, &#34;ID&#34;)
+    txt = dict(url=&#34;URL&#34;).get(txt, txt)
+    txt = txt[0].upper() + txt[1:]
+    return txt
+
+
+def callable_hash(f):
+    import hashlib
+
+    h = hashlib.md5()
+    h.update(f.__code__.co_code)
+    separator = b&#34;__sep3024325ab2a7__&#34;  # random string of bytes
+    for x in f.__code__.co_consts:
+        try:
+            h.update(pickle.dumps(x))
+        except:
+            continue
+        h.update(separator)
+
+    sig = inspect.signature(f)
+    for argname in list(sig.parameters):
+        h.update(argname.encode(&#34;utf-8&#34;))
+        h.update(separator)
+        p = sig.parameters[argname]
+        if p.default != inspect.Parameter.empty:
+            try:
+                h.update(pickle.dumps(x))
+            except:
+                continue
+        h.update(separator)
+
+    return h.hexdigest()
+
+
+def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
+    &#34;&#34;&#34;Extract command metadata structure from a callable.
+    Function interprets function name, document string, argument names and annotations into command metadata.
+    &#34;&#34;&#34;
+    name = f.__name__
+    doc = f.__doc__
+    module = f.__module__
+    annotations = f.__annotations__
+    if attributes is None:
+        attributes = dict(ns=None)
+    if doc is None:
+        doc = &#34;&#34;
+    arguments = []
+    sig = inspect.signature(f)
+    for argname in list(sig.parameters):
+        arg = dict(name=argname, label=identifier_to_label(argname))
+        if argname == &#34;context&#34;:
+            p = sig.parameters[argname]
+            if p.default != inspect.Parameter.empty:
+                if p.default is not None:
+                    raise Exception(
+                        f&#34;Default value for context in command {name} should be None&#34;
+                    )
+                arg[&#34;default&#34;] = p.default
+            if argname in annotations:
+                raise Exception(
+                    f&#34;Context in command {name} should not have type annotations&#34;
+                )
+            arg[&#34;multiple&#34;] = False
+            arg[&#34;optional&#34;] = True
+            arg[&#34;type&#34;] = &#34;context&#34;
+            arg[&#34;editor&#34;] = &#34;ignore&#34;
+            arguments.append(arg)
+            continue
+
+        arg_type = None
+        if argname in annotations:
+            arg_annotation = annotations[argname]
+            if type(arg_annotation) == type:
+                arg_type = arg_annotation.__name__
+
+        p = sig.parameters[argname]
+        if p.default != inspect.Parameter.empty:
+            arg[&#34;default&#34;] = p.default
+            arg[&#34;optional&#34;] = True
+            if arg_type is None and p.default is not None:
+                arg_type = type(p.default).__name__
+        else:
+            arg[&#34;optional&#34;] = False
+        arg[&#34;multiple&#34;] = p.kind is inspect.Parameter.VAR_POSITIONAL
+        arg_editor = None
+        if arg_type is not None:
+            arg_editor = arg_type
+        arg[&#34;type&#34;] = arg_type
+        arg[&#34;editor&#34;] = arg_editor
+        arguments.append(arg)
+
+    if has_state_argument and len(arguments):
+        state_argument = arguments[0]
+        state_argument[&#34;pass_state&#34;] = state_argument[&#34;name&#34;] == &#34;state&#34;
+        arguments = arguments[1:]
+    else:
+        state_argument = None
+
+    return CommandMetadata(
+        name=name,
+        label=identifier_to_label(name),
+        module=module,
+        doc=doc,
+        state_argument=state_argument,
+        arguments=arguments,
+        attributes=attributes,
+        version=callable_hash(f),
+    )
+
+
+def argument_parser_from_command_metadata(command_metadata):
+    &#34;&#34;&#34;Create argument parser from command metadata&#34;&#34;&#34;
+    ap = SequenceArgumentParser()
+    for arg in command_metadata.arguments:
+        if arg.get(&#34;multiple&#34;, False):
+            ap += ARGV_AP
+            break
+        arg_type = arg.get(&#34;type&#34;)
+        ap += dict(
+            context=CONTEXT_AP,
+            str=GENERIC_AP,
+            int=INT_AP,
+            float=FLOAT_AP,
+            bool=BOOLEAN_AP,
+            list=LIST_AP,
+        ).get(arg_type, GENERIC_AP)
+    return ap
+
+
+class CommandExecutable(object):
+    &#34;&#34;&#34;Wrapper around a registered command
+    Adapts arbitrary function to be used as a command.
+    Function needs to be described by a command metadata structure and accompanied by an argument parser.
+    This decodes all the arguments, executes the command and (if needed) wraps the result as a State.
+    &#34;&#34;&#34;
+
+    def __init__(self, f, metadata, argument_parser):
+        self.f = f
+        self.metadata = metadata
+        self.argument_parser = argument_parser
+
+    def inner_id(self):
+        return id(self.f)
+
+    def parse_argv(self, args, kwargs=None, context=None):
+        if kwargs is None:
+            kwargs = {}
+        query = None if context is None else context.raw_query
+        args = list(args)
+        try:
+            position = args[-1].position
+        except:
+            position = None
+        used_kwargs = []
+        for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
+            try:
+                position = args[i].position
+            except:
+                position = None
+            if a[&#34;name&#34;] in kwargs:
+                used_kwargs.append(a[&#34;name&#34;])
+                args.append(kwargs[a[&#34;name&#34;]])
+                if context is not None:
+                    context.debug(f&#34;Using keyword argument {repr(a[&#39;name&#39;])}&#34;)
+            else:
+                if not a.get(&#34;multiple&#34;, False) and a[&#34;name&#34;] != &#34;context&#34;:
+                    if &#34;default&#34; in a:
+                        args.append(a[&#34;default&#34;])
+                    else:
+                        raise ArgumentParserException(
+                            f&#34;Expected &#39;{a[&#39;name&#39;]}&#39; argument for &#39;{self.metadata.name}&#39;, no default&#34;,
+                            position=position,
+                            query=query,
+                        )
+        if context is not None:
+            unused = [x for x in kwargs.keys() if x not in used_kwargs]
+            if len(unused):
+                context.warning(f&#34;Unused keyword arguments: {unused}&#34;)
+        try:
+            argv, argmeta, remainder = self.argument_parser.parse_meta(
+                self.metadata.arguments, args, context=context
+            )
+        except ArgumentParserException as e:
+            raise ArgumentParserException(
+                f&#34;{e.original_message} while executing &#39;{self.metadata.name}&#39;&#34;,
+                position=e.position,
+                query=query,
+            ) from e
+        if len(remainder) != 0:
+            position = (
+                remainder[0].position
+                if isinstance(remainder[0], ActionParameter)
+                else None
+            )
+            raise ArgumentParserException(
+                f&#34;Too many arguments for &#39;{self.metadata.name}&#39;: {repr(remainder)}&#34;,
+                position=position,
+                query=query,
+            )
+        return argv, argmeta
+
+    def __call__(self, state, *args, context=None, **kwargs):
+        argv, argmeta = self.parse_argv(args, kwargs=kwargs, context=context)
+        state_arg = state if self.metadata.state_argument[&#34;pass_state&#34;] else state.get()
+        result = self.f(state_arg, *argv)
+        if isinstance(result, State):
+            result.arguments = argmeta
+            return result
+        else:
+            state.arguments = argmeta
+            return state.with_data(result)
+
+
+class FirstCommandExecutable(CommandExecutable):
+    &#34;&#34;&#34;Wrapper around a registered first command&#34;&#34;&#34;
+
+    def __call__(self, state, *args, context=None, **kwargs):
+        argv, argmeta = self.parse_argv(args, kwargs=kwargs, context=context)
+        result = self.f(*argv)
+        if isinstance(result, State):
+            result.arguments = argmeta
+            return result
+        else:
+            state.arguments = argmeta
+            return state.with_data(result)
+
+
+def command(*arg, **kwarg):
+    &#34;&#34;&#34;Register a callable as a command.
+    Callable is expected to take a state data as a first argument.
+
+    This function typically can be used as a decorator.
+    As a decorator it can be used directly (@command) or it can have parameters,
+    e.g. @command(ns=&#34;MyNameSpace&#34;)
+    &#34;&#34;&#34;
+    if len(arg) == 1:
+        assert callable(arg[0])
+        f = arg[0]
+        if &#34;ns&#34; not in kwarg:
+            kwarg[&#34;ns&#34;] = &#34;root&#34;
+        metadata = command_metadata_from_callable(f, attributes=kwarg)
+        command_registry().register_command(f, metadata)
+        return f
+    else:
+        assert len(arg) == 0
+        return lambda f, attributes=kwarg: command(f, **attributes)
+
+
+def first_command(*arg, **kwarg):
+    &#34;&#34;&#34;Register a callable as a command.
+    Unlike in command(), callable is expected NOT to take a state data as a first argument.
+    Thus first_command can be a first command in the query - does not require a state to be applied on.
+    However, first_command is a perfectly valid command, so it can as well be used inside the query and
+    then the state passed to the command is ignored (and not passed to f).
+    This typically can be used as a decorator.
+    &#34;&#34;&#34;
+    if len(arg) == 1:
+        assert callable(arg[0])
+        f = arg[0]
+        if &#34;ns&#34; not in kwarg:
+            kwarg[&#34;ns&#34;] = &#34;root&#34;
+        metadata = command_metadata_from_callable(
+            f, has_state_argument=False, attributes=kwarg
+        )
+        command_registry().register_command(f, metadata)
+        return f
+    else:
+        assert len(arg) == 0
+        return lambda f, attributes=kwarg: first_command(f, **attributes)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.commands.argument_parser_from_command_metadata"><code class="name flex">
+<span>def <span class="ident">argument_parser_from_command_metadata</span></span>(<span>command_metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create argument parser from command metadata</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def argument_parser_from_command_metadata(command_metadata):
+    &#34;&#34;&#34;Create argument parser from command metadata&#34;&#34;&#34;
+    ap = SequenceArgumentParser()
+    for arg in command_metadata.arguments:
+        if arg.get(&#34;multiple&#34;, False):
+            ap += ARGV_AP
+            break
+        arg_type = arg.get(&#34;type&#34;)
+        ap += dict(
+            context=CONTEXT_AP,
+            str=GENERIC_AP,
+            int=INT_AP,
+            float=FLOAT_AP,
+            bool=BOOLEAN_AP,
+            list=LIST_AP,
+        ).get(arg_type, GENERIC_AP)
+    return ap</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.callable_hash"><code class="name flex">
+<span>def <span class="ident">callable_hash</span></span>(<span>f)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def callable_hash(f):
+    import hashlib
+
+    h = hashlib.md5()
+    h.update(f.__code__.co_code)
+    separator = b&#34;__sep3024325ab2a7__&#34;  # random string of bytes
+    for x in f.__code__.co_consts:
+        try:
+            h.update(pickle.dumps(x))
+        except:
+            continue
+        h.update(separator)
+
+    sig = inspect.signature(f)
+    for argname in list(sig.parameters):
+        h.update(argname.encode(&#34;utf-8&#34;))
+        h.update(separator)
+        p = sig.parameters[argname]
+        if p.default != inspect.Parameter.empty:
+            try:
+                h.update(pickle.dumps(x))
+            except:
+                continue
+        h.update(separator)
+
+    return h.hexdigest()</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.command"><code class="name flex">
+<span>def <span class="ident">command</span></span>(<span>*arg, **kwarg)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register a callable as a command.
+Callable is expected to take a state data as a first argument.</p>
+<p>This function typically can be used as a decorator.
+As a decorator it can be used directly (@command) or it can have parameters,
+e.g. @command(ns="MyNameSpace")</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def command(*arg, **kwarg):
+    &#34;&#34;&#34;Register a callable as a command.
+    Callable is expected to take a state data as a first argument.
+
+    This function typically can be used as a decorator.
+    As a decorator it can be used directly (@command) or it can have parameters,
+    e.g. @command(ns=&#34;MyNameSpace&#34;)
+    &#34;&#34;&#34;
+    if len(arg) == 1:
+        assert callable(arg[0])
+        f = arg[0]
+        if &#34;ns&#34; not in kwarg:
+            kwarg[&#34;ns&#34;] = &#34;root&#34;
+        metadata = command_metadata_from_callable(f, attributes=kwarg)
+        command_registry().register_command(f, metadata)
+        return f
+    else:
+        assert len(arg) == 0
+        return lambda f, attributes=kwarg: command(f, **attributes)</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.command_metadata_from_callable"><code class="name flex">
+<span>def <span class="ident">command_metadata_from_callable</span></span>(<span>f, has_state_argument=True, attributes=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract command metadata structure from a callable.
+Function interprets function name, document string, argument names and annotations into command metadata.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def command_metadata_from_callable(f, has_state_argument=True, attributes=None):
+    &#34;&#34;&#34;Extract command metadata structure from a callable.
+    Function interprets function name, document string, argument names and annotations into command metadata.
+    &#34;&#34;&#34;
+    name = f.__name__
+    doc = f.__doc__
+    module = f.__module__
+    annotations = f.__annotations__
+    if attributes is None:
+        attributes = dict(ns=None)
+    if doc is None:
+        doc = &#34;&#34;
+    arguments = []
+    sig = inspect.signature(f)
+    for argname in list(sig.parameters):
+        arg = dict(name=argname, label=identifier_to_label(argname))
+        if argname == &#34;context&#34;:
+            p = sig.parameters[argname]
+            if p.default != inspect.Parameter.empty:
+                if p.default is not None:
+                    raise Exception(
+                        f&#34;Default value for context in command {name} should be None&#34;
+                    )
+                arg[&#34;default&#34;] = p.default
+            if argname in annotations:
+                raise Exception(
+                    f&#34;Context in command {name} should not have type annotations&#34;
+                )
+            arg[&#34;multiple&#34;] = False
+            arg[&#34;optional&#34;] = True
+            arg[&#34;type&#34;] = &#34;context&#34;
+            arg[&#34;editor&#34;] = &#34;ignore&#34;
+            arguments.append(arg)
+            continue
+
+        arg_type = None
+        if argname in annotations:
+            arg_annotation = annotations[argname]
+            if type(arg_annotation) == type:
+                arg_type = arg_annotation.__name__
+
+        p = sig.parameters[argname]
+        if p.default != inspect.Parameter.empty:
+            arg[&#34;default&#34;] = p.default
+            arg[&#34;optional&#34;] = True
+            if arg_type is None and p.default is not None:
+                arg_type = type(p.default).__name__
+        else:
+            arg[&#34;optional&#34;] = False
+        arg[&#34;multiple&#34;] = p.kind is inspect.Parameter.VAR_POSITIONAL
+        arg_editor = None
+        if arg_type is not None:
+            arg_editor = arg_type
+        arg[&#34;type&#34;] = arg_type
+        arg[&#34;editor&#34;] = arg_editor
+        arguments.append(arg)
+
+    if has_state_argument and len(arguments):
+        state_argument = arguments[0]
+        state_argument[&#34;pass_state&#34;] = state_argument[&#34;name&#34;] == &#34;state&#34;
+        arguments = arguments[1:]
+    else:
+        state_argument = None
+
+    return CommandMetadata(
+        name=name,
+        label=identifier_to_label(name),
+        module=module,
+        doc=doc,
+        state_argument=state_argument,
+        arguments=arguments,
+        attributes=attributes,
+        version=callable_hash(f),
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.command_registry"><code class="name flex">
+<span>def <span class="ident">command_registry</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return global the command registry object</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def command_registry():
+    &#34;&#34;&#34;Return global the command registry object&#34;&#34;&#34;
+    global _command_registry
+    if _command_registry is None:
+        _command_registry = CommandRegistry()
+    return _command_registry</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.disable_remote_registration"><code class="name flex">
+<span>def <span class="ident">disable_remote_registration</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Disable remote registration service</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def disable_remote_registration():
+    &#34;Disable remote registration service&#34;
+    global _remote_registration
+    _remote_registration = True</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.enable_remote_registration"><code class="name flex">
+<span>def <span class="ident">enable_remote_registration</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enable remote registration service</p>
+<p>WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+(e.g. on localhost or intranet where only trusted users have access).
+This is on by default on Jupyter server extension.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable_remote_registration():
+    &#34;&#34;&#34;Enable remote registration service
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.
+    &#34;&#34;&#34;
+    global _remote_registration
+    _remote_registration = True</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.first_command"><code class="name flex">
+<span>def <span class="ident">first_command</span></span>(<span>*arg, **kwarg)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register a callable as a command.
+Unlike in command(), callable is expected NOT to take a state data as a first argument.
+Thus first_command can be a first command in the query - does not require a state to be applied on.
+However, first_command is a perfectly valid command, so it can as well be used inside the query and
+then the state passed to the command is ignored (and not passed to f).
+This typically can be used as a decorator.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def first_command(*arg, **kwarg):
+    &#34;&#34;&#34;Register a callable as a command.
+    Unlike in command(), callable is expected NOT to take a state data as a first argument.
+    Thus first_command can be a first command in the query - does not require a state to be applied on.
+    However, first_command is a perfectly valid command, so it can as well be used inside the query and
+    then the state passed to the command is ignored (and not passed to f).
+    This typically can be used as a decorator.
+    &#34;&#34;&#34;
+    if len(arg) == 1:
+        assert callable(arg[0])
+        f = arg[0]
+        if &#34;ns&#34; not in kwarg:
+            kwarg[&#34;ns&#34;] = &#34;root&#34;
+        metadata = command_metadata_from_callable(
+            f, has_state_argument=False, attributes=kwarg
+        )
+        command_registry().register_command(f, metadata)
+        return f
+    else:
+        assert len(arg) == 0
+        return lambda f, attributes=kwarg: first_command(f, **attributes)</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.identifier_to_label"><code class="name flex">
+<span>def <span class="ident">identifier_to_label</span></span>(<span>identifier)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Tries to convert an identifier to a more human readable text label.
+Replaces underscores by spaces and may do other tweaks.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def identifier_to_label(identifier):
+    &#34;&#34;&#34;Tries to convert an identifier to a more human readable text label.
+    Replaces underscores by spaces and may do other tweaks.
+    &#34;&#34;&#34;
+    txt = identifier.replace(&#34;_&#34;, &#34; &#34;)
+    txt = txt.replace(&#34; id&#34;, &#34;ID&#34;)
+    txt = dict(url=&#34;URL&#34;).get(txt, txt)
+    txt = txt[0].upper() + txt[1:]
+    return txt</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.is_remote_registration_enabled"><code class="name flex">
+<span>def <span class="ident">is_remote_registration_enabled</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns true if remote registration is enabled.
+This is a flag that a web interface can use to enable or disable the remote command registration.</p>
+<p>WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+(e.g. on localhost or intranet where only trusted users have access).
+This is on by default on Jupyter server extension.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_remote_registration_enabled():
+    &#34;&#34;&#34;Returns true if remote registration is enabled.
+    This is a flag that a web interface can use to enable or disable the remote command registration.
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.
+    &#34;&#34;&#34;
+    return _remote_registration</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.remote_command_registry"><code class="name flex">
+<span>def <span class="ident">remote_command_registry</span></span>(<span>url, use_get_method=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Configure the command registry to use remote LiQuer server
+Provide url to the registration service</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remote_command_registry(url, use_get_method=False):
+    &#34;&#34;&#34;Configure the command registry to use remote LiQuer server
+    Provide url to the registration service
+    &#34;&#34;&#34;
+    global _command_registry
+    _command_registry = RemoteCommandRegistry(url, use_get_method=use_get_method)
+    return _command_registry</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.reset_command_registry"><code class="name flex">
+<span>def <span class="ident">reset_command_registry</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create empty global command registry</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_command_registry():
+    &#34;&#34;&#34;Create empty global command registry&#34;&#34;&#34;
+    global _command_registry
+    _command_registry = CommandRegistry()
+    return _command_registry</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.commands.ArgumentParser"><code class="flex name class">
+<span>class <span class="ident">ArgumentParser</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArgumentParser(object):
+    is_argv = False
+
+    def __add__(self, ap):
+        return SequenceArgumentParser(self, ap)
+
+    def parse(self, metadata, args):
+        return args[0], args[1:]
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+        if isinstance(args[0], str):
+            return args[0], (args[0], metadata), args[1:]
+        elif isinstance(args[0], StringActionParameter):
+            return args[0].string, (args[0].string, metadata), args[1:]
+        elif isinstance(args[0], ExpandedActionParameter):
+            return args[0].value, (args[0].value, metadata), args[1:]
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter {repr(args[0])}  in ArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            return args[0], (args[0], metadata), args[1:]</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.BooleanArgumentParser" href="#liquer.commands.BooleanArgumentParser">BooleanArgumentParser</a></li>
+<li><a title="liquer.commands.ContextArgumentParser" href="#liquer.commands.ContextArgumentParser">ContextArgumentParser</a></li>
+<li><a title="liquer.commands.FloatArgumentParser" href="#liquer.commands.FloatArgumentParser">FloatArgumentParser</a></li>
+<li><a title="liquer.commands.IntArgumentParser" href="#liquer.commands.IntArgumentParser">IntArgumentParser</a></li>
+<li><a title="liquer.commands.ListArgumentParser" href="#liquer.commands.ListArgumentParser">ListArgumentParser</a></li>
+<li><a title="liquer.commands.SequenceArgumentParser" href="#liquer.commands.SequenceArgumentParser">SequenceArgumentParser</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="liquer.commands.ArgumentParser.is_argv"><code class="name">var <span class="ident">is_argv</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.ArgumentParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, metadata, args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, metadata, args):
+    return args[0], args[1:]</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.ArgumentParser.parse_meta"><code class="name flex">
+<span>def <span class="ident">parse_meta</span></span>(<span>self, metadata, args, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_meta(self, metadata, args, context=None):
+    query = None if context is None else context.raw_query
+    if isinstance(args[0], str):
+        return args[0], (args[0], metadata), args[1:]
+    elif isinstance(args[0], StringActionParameter):
+        return args[0].string, (args[0].string, metadata), args[1:]
+    elif isinstance(args[0], ExpandedActionParameter):
+        return args[0].value, (args[0].value, metadata), args[1:]
+    elif isinstance(args[0], ActionParameter):
+        raise ArgumentParserException(
+            f&#34;Unsupported action parameter {repr(args[0])}  in ArgumentParser&#34;,
+            position=args[0].position,
+            query=query,
+        )
+    else:
+        return args[0], (args[0], metadata), args[1:]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.ArgumentParserException"><code class="flex name class">
+<span>class <span class="ident">ArgumentParserException</span></span>
+<span>(</span><span>message, position=None, query=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArgumentParserException(QueryException):
+    def __init__(self, message, position=None, query=None):
+        super().__init__(message, position, query)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.parser.QueryException" href="parser.html#liquer.parser.QueryException">QueryException</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="liquer.commands.ArgvArgumentParser"><code class="flex name class">
+<span>class <span class="ident">ArgvArgumentParser</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArgvArgumentParser(ListArgumentParser):
+    is_argv = True</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ListArgumentParser" href="#liquer.commands.ListArgumentParser">ListArgumentParser</a></li>
+<li><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="liquer.commands.ArgvArgumentParser.is_argv"><code class="name">var <span class="ident">is_argv</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.BooleanArgumentParser"><code class="flex name class">
+<span>class <span class="ident">BooleanArgumentParser</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BooleanArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return (
+            dict(
+                y=True,
+                yes=True,
+                n=False,
+                no=False,
+                t=True,
+                true=True,
+                f=False,
+                false=False,
+            ).get(str(args[0]).lower(), False),
+            args[1:],
+        )
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+
+        def to_bool(x):
+            return dict(
+                y=True,
+                yes=True,
+                n=False,
+                no=False,
+                t=True,
+                true=True,
+                f=False,
+                false=False,
+            ).get(str(x).lower(), False)
+
+        if isinstance(args[0], str):
+            try:
+                value = to_bool(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+        elif isinstance(args[0], StringActionParameter):
+            try:
+                value = to_bool(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from value {repr(args[0].string)}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = to_bool(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter type {repr(args[0])} in BooleanArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            try:
+                value = dict(
+                    y=True,
+                    yes=True,
+                    n=False,
+                    no=False,
+                    t=True,
+                    true=True,
+                    f=False,
+                    false=False,
+                ).get(str(args[0]).lower(), False)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), args[1:]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.BooleanArgumentParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, metadata, args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, metadata, args):
+    return (
+        dict(
+            y=True,
+            yes=True,
+            n=False,
+            no=False,
+            t=True,
+            true=True,
+            f=False,
+            false=False,
+        ).get(str(args[0]).lower(), False),
+        args[1:],
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.BooleanArgumentParser.parse_meta"><code class="name flex">
+<span>def <span class="ident">parse_meta</span></span>(<span>self, metadata, args, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_meta(self, metadata, args, context=None):
+    query = None if context is None else context.raw_query
+
+    def to_bool(x):
+        return dict(
+            y=True,
+            yes=True,
+            n=False,
+            no=False,
+            t=True,
+            true=True,
+            f=False,
+            false=False,
+        ).get(str(x).lower(), False)
+
+    if isinstance(args[0], str):
+        try:
+            value = to_bool(args[0])
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                query=query,
+            )
+    elif isinstance(args[0], StringActionParameter):
+        try:
+            value = to_bool(args[0].string)
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from value {repr(args[0].string)}&#34;&#34;&#34;,
+                position=args[0].position,
+                query=query,
+            )
+    elif isinstance(args[0], ExpandedActionParameter):
+        try:
+            value = to_bool(args[0].value)
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                position=args[0].position,
+                query=query,
+            )
+    elif isinstance(args[0], ActionParameter):
+        raise ArgumentParserException(
+            f&#34;Unsupported action parameter type {repr(args[0])} in BooleanArgumentParser&#34;,
+            position=args[0].position,
+            query=query,
+        )
+    else:
+        try:
+            value = dict(
+                y=True,
+                yes=True,
+                n=False,
+                no=False,
+                t=True,
+                true=True,
+                f=False,
+                false=False,
+            ).get(str(args[0]).lower(), False)
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing boolean argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                query=query,
+            )
+
+    return value, (value, metadata), args[1:]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.CommandExecutable"><code class="flex name class">
+<span>class <span class="ident">CommandExecutable</span></span>
+<span>(</span><span>f, metadata, argument_parser)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper around a registered command
+Adapts arbitrary function to be used as a command.
+Function needs to be described by a command metadata structure and accompanied by an argument parser.
+This decodes all the arguments, executes the command and (if needed) wraps the result as a State.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CommandExecutable(object):
+    &#34;&#34;&#34;Wrapper around a registered command
+    Adapts arbitrary function to be used as a command.
+    Function needs to be described by a command metadata structure and accompanied by an argument parser.
+    This decodes all the arguments, executes the command and (if needed) wraps the result as a State.
+    &#34;&#34;&#34;
+
+    def __init__(self, f, metadata, argument_parser):
+        self.f = f
+        self.metadata = metadata
+        self.argument_parser = argument_parser
+
+    def inner_id(self):
+        return id(self.f)
+
+    def parse_argv(self, args, kwargs=None, context=None):
+        if kwargs is None:
+            kwargs = {}
+        query = None if context is None else context.raw_query
+        args = list(args)
+        try:
+            position = args[-1].position
+        except:
+            position = None
+        used_kwargs = []
+        for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
+            try:
+                position = args[i].position
+            except:
+                position = None
+            if a[&#34;name&#34;] in kwargs:
+                used_kwargs.append(a[&#34;name&#34;])
+                args.append(kwargs[a[&#34;name&#34;]])
+                if context is not None:
+                    context.debug(f&#34;Using keyword argument {repr(a[&#39;name&#39;])}&#34;)
+            else:
+                if not a.get(&#34;multiple&#34;, False) and a[&#34;name&#34;] != &#34;context&#34;:
+                    if &#34;default&#34; in a:
+                        args.append(a[&#34;default&#34;])
+                    else:
+                        raise ArgumentParserException(
+                            f&#34;Expected &#39;{a[&#39;name&#39;]}&#39; argument for &#39;{self.metadata.name}&#39;, no default&#34;,
+                            position=position,
+                            query=query,
+                        )
+        if context is not None:
+            unused = [x for x in kwargs.keys() if x not in used_kwargs]
+            if len(unused):
+                context.warning(f&#34;Unused keyword arguments: {unused}&#34;)
+        try:
+            argv, argmeta, remainder = self.argument_parser.parse_meta(
+                self.metadata.arguments, args, context=context
+            )
+        except ArgumentParserException as e:
+            raise ArgumentParserException(
+                f&#34;{e.original_message} while executing &#39;{self.metadata.name}&#39;&#34;,
+                position=e.position,
+                query=query,
+            ) from e
+        if len(remainder) != 0:
+            position = (
+                remainder[0].position
+                if isinstance(remainder[0], ActionParameter)
+                else None
+            )
+            raise ArgumentParserException(
+                f&#34;Too many arguments for &#39;{self.metadata.name}&#39;: {repr(remainder)}&#34;,
+                position=position,
+                query=query,
+            )
+        return argv, argmeta
+
+    def __call__(self, state, *args, context=None, **kwargs):
+        argv, argmeta = self.parse_argv(args, kwargs=kwargs, context=context)
+        state_arg = state if self.metadata.state_argument[&#34;pass_state&#34;] else state.get()
+        result = self.f(state_arg, *argv)
+        if isinstance(result, State):
+            result.arguments = argmeta
+            return result
+        else:
+            state.arguments = argmeta
+            return state.with_data(result)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.FirstCommandExecutable" href="#liquer.commands.FirstCommandExecutable">FirstCommandExecutable</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.CommandExecutable.inner_id"><code class="name flex">
+<span>def <span class="ident">inner_id</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inner_id(self):
+    return id(self.f)</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.CommandExecutable.parse_argv"><code class="name flex">
+<span>def <span class="ident">parse_argv</span></span>(<span>self, args, kwargs=None, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_argv(self, args, kwargs=None, context=None):
+    if kwargs is None:
+        kwargs = {}
+    query = None if context is None else context.raw_query
+    args = list(args)
+    try:
+        position = args[-1].position
+    except:
+        position = None
+    used_kwargs = []
+    for i, a in list(enumerate(self.metadata.arguments))[len(args) :]:
+        try:
+            position = args[i].position
+        except:
+            position = None
+        if a[&#34;name&#34;] in kwargs:
+            used_kwargs.append(a[&#34;name&#34;])
+            args.append(kwargs[a[&#34;name&#34;]])
+            if context is not None:
+                context.debug(f&#34;Using keyword argument {repr(a[&#39;name&#39;])}&#34;)
+        else:
+            if not a.get(&#34;multiple&#34;, False) and a[&#34;name&#34;] != &#34;context&#34;:
+                if &#34;default&#34; in a:
+                    args.append(a[&#34;default&#34;])
+                else:
+                    raise ArgumentParserException(
+                        f&#34;Expected &#39;{a[&#39;name&#39;]}&#39; argument for &#39;{self.metadata.name}&#39;, no default&#34;,
+                        position=position,
+                        query=query,
+                    )
+    if context is not None:
+        unused = [x for x in kwargs.keys() if x not in used_kwargs]
+        if len(unused):
+            context.warning(f&#34;Unused keyword arguments: {unused}&#34;)
+    try:
+        argv, argmeta, remainder = self.argument_parser.parse_meta(
+            self.metadata.arguments, args, context=context
+        )
+    except ArgumentParserException as e:
+        raise ArgumentParserException(
+            f&#34;{e.original_message} while executing &#39;{self.metadata.name}&#39;&#34;,
+            position=e.position,
+            query=query,
+        ) from e
+    if len(remainder) != 0:
+        position = (
+            remainder[0].position
+            if isinstance(remainder[0], ActionParameter)
+            else None
+        )
+        raise ArgumentParserException(
+            f&#34;Too many arguments for &#39;{self.metadata.name}&#39;: {repr(remainder)}&#34;,
+            position=position,
+            query=query,
+        )
+    return argv, argmeta</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.CommandMetadata"><code class="flex name class">
+<span>class <span class="ident">CommandMetadata</span></span>
+<span>(</span><span>name, label, module, doc, state_argument, arguments, attributes, version)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>CommandMetadata(name, label, module, doc, state_argument, arguments, attributes, version)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="liquer.commands.CommandMetadata.arguments"><code class="name">var <span class="ident">arguments</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="liquer.commands.CommandMetadata.attributes"><code class="name">var <span class="ident">attributes</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="liquer.commands.CommandMetadata.doc"><code class="name">var <span class="ident">doc</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="liquer.commands.CommandMetadata.label"><code class="name">var <span class="ident">label</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="liquer.commands.CommandMetadata.module"><code class="name">var <span class="ident">module</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="liquer.commands.CommandMetadata.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="liquer.commands.CommandMetadata.state_argument"><code class="name">var <span class="ident">state_argument</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="liquer.commands.CommandMetadata.version"><code class="name">var <span class="ident">version</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.CommandRegistry"><code class="flex name class">
+<span>class <span class="ident">CommandRegistry</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class responsible for registering all commands and their metadata</p>
+<p>Create empty command registry</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CommandRegistry(RegisterRemoteMixin, object):
+    &#34;&#34;&#34;Class responsible for registering all commands and their metadata&#34;&#34;&#34;
+
+    def __init__(self):
+        &#34;&#34;&#34;Create empty command registry&#34;&#34;&#34;
+        self.executables = {}
+        self.metadata = {}
+        self.namespaces = {}
+
+    def is_doubleregistered(self, executable, metadata):
+        &#34;&#34;&#34;Returns True if the same function is already registered as a command.
+        Another function registered under the same name would return False.
+        &#34;&#34;&#34;
+        name = metadata.name
+        ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+        self.executables[ns] = self.executables.get(ns, {})
+        self.metadata[ns] = self.metadata.get(ns, {})
+
+        if name in self.executables[ns]:
+            registered = self.metadata[ns][name]
+            return (
+                name == registered.name
+                and executable.inner_id() == self.executables[ns][name].inner_id()
+            )
+        return False
+
+    def register_command(self, f, metadata, modify=False):
+        parser = argument_parser_from_command_metadata(metadata)
+        if metadata.state_argument is None:
+            executable = FirstCommandExecutable(f, metadata, parser)
+        else:
+            executable = CommandExecutable(f, metadata, parser)
+        return self.register(executable, metadata)
+
+    def register(self, executable, metadata, modify=False):
+        &#34;&#34;&#34;Create command
+        executable is an CommandExecutable of the command,
+        metadata is CommandMetadata
+        &#34;&#34;&#34;
+        name = metadata.name
+        ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+
+        modify = modify or metadata.attributes.get(&#34;modify_command&#34;, False)
+        can_register = modify
+        self.executables[ns] = self.executables.get(ns, {})
+        self.metadata[ns] = self.metadata.get(ns, {})
+        if name in self.executables[ns]:
+            if self.is_doubleregistered(executable, metadata):
+                can_register = True
+        else:
+            can_register = True
+        if can_register:
+            self.executables[ns][name] = executable
+            self.metadata[ns][name] = metadata
+        else:
+            raise Exception(f&#34;Command {name} is already registered&#34;)
+
+    def as_dict(self):
+        &#34;&#34;&#34;Returns dictionary representation of the registry, safe to serialize as json&#34;&#34;&#34;
+        return {
+            ns: {name: cmd._asdict() for name, cmd in metadata.items()}
+            for ns, metadata in self.metadata.items()
+        }
+
+    def evaluate_command_old(self, state, qcommand: list):
+        if not state.is_volatile():
+            state = state.clone()
+        command_name = qcommand[0]
+        ns, command, metadata = self.resolve_command(state, command_name)
+        if command is None:
+            print(f&#34;Unknown command: {command_name}&#34;)
+            return state.with_data(None).log_error(
+                message=f&#34;Unknown command: {command_name}&#34;
+            )
+        else:
+            try:
+                state = command(state, *qcommand[1:])
+            except Exception as e:
+                traceback.print_exc()
+                state.log_exception(message=str(e), traceback=traceback.format_exc())
+                state.exception = e
+        arguments = getattr(state, &#34;arguments&#34;, None)
+        state.metadata[&#34;commands&#34;].append(qcommand)
+        state.metadata[&#34;extended_commands&#34;].append(
+            dict(
+                command_name=command_name,
+                ns=ns,
+                qcommand=qcommand,
+                command_metadata=metadata._asdict(),
+                arguments=arguments,
+            )
+        )
+        state.query = encode(state.metadata[&#34;commands&#34;])
+        state.metadata[&#34;attributes&#34;] = {
+            key: value
+            for key, value in state.metadata[&#34;attributes&#34;].items()
+            if key[0].isupper()
+        }
+        if metadata is not None:
+            state.metadata[&#34;attributes&#34;].update(metadata.attributes)
+
+        return state
+
+    def resolve_command(self, state, command_name):
+        for ns in state.vars.get(&#34;active_namespaces&#34;, [&#34;root&#34;]):
+            if ns not in self.executables:
+                print(f&#34;Unknown namespace: {ns}&#34;)
+                continue
+            if command_name in self.executables[ns]:
+                break
+
+        if command_name in self.executables[ns]:
+            command = self.executables[ns][command_name]
+            if command_name in self.metadata[ns]:
+                return ns, command, self.metadata[ns][command_name]
+            else:
+                print(f&#34;Unknown command (metadata): {command_name}&#34;)
+                return ns, command, None
+
+        return None, None, None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.RegisterRemoteMixin" href="#liquer.commands.RegisterRemoteMixin">RegisterRemoteMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.CommandRegistry.as_dict"><code class="name flex">
+<span>def <span class="ident">as_dict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns dictionary representation of the registry, safe to serialize as json</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def as_dict(self):
+    &#34;&#34;&#34;Returns dictionary representation of the registry, safe to serialize as json&#34;&#34;&#34;
+    return {
+        ns: {name: cmd._asdict() for name, cmd in metadata.items()}
+        for ns, metadata in self.metadata.items()
+    }</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.CommandRegistry.evaluate_command_old"><code class="name flex">
+<span>def <span class="ident">evaluate_command_old</span></span>(<span>self, state, qcommand: list)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_command_old(self, state, qcommand: list):
+    if not state.is_volatile():
+        state = state.clone()
+    command_name = qcommand[0]
+    ns, command, metadata = self.resolve_command(state, command_name)
+    if command is None:
+        print(f&#34;Unknown command: {command_name}&#34;)
+        return state.with_data(None).log_error(
+            message=f&#34;Unknown command: {command_name}&#34;
+        )
+    else:
+        try:
+            state = command(state, *qcommand[1:])
+        except Exception as e:
+            traceback.print_exc()
+            state.log_exception(message=str(e), traceback=traceback.format_exc())
+            state.exception = e
+    arguments = getattr(state, &#34;arguments&#34;, None)
+    state.metadata[&#34;commands&#34;].append(qcommand)
+    state.metadata[&#34;extended_commands&#34;].append(
+        dict(
+            command_name=command_name,
+            ns=ns,
+            qcommand=qcommand,
+            command_metadata=metadata._asdict(),
+            arguments=arguments,
+        )
+    )
+    state.query = encode(state.metadata[&#34;commands&#34;])
+    state.metadata[&#34;attributes&#34;] = {
+        key: value
+        for key, value in state.metadata[&#34;attributes&#34;].items()
+        if key[0].isupper()
+    }
+    if metadata is not None:
+        state.metadata[&#34;attributes&#34;].update(metadata.attributes)
+
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.CommandRegistry.is_doubleregistered"><code class="name flex">
+<span>def <span class="ident">is_doubleregistered</span></span>(<span>self, executable, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns True if the same function is already registered as a command.
+Another function registered under the same name would return False.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_doubleregistered(self, executable, metadata):
+    &#34;&#34;&#34;Returns True if the same function is already registered as a command.
+    Another function registered under the same name would return False.
+    &#34;&#34;&#34;
+    name = metadata.name
+    ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+    self.executables[ns] = self.executables.get(ns, {})
+    self.metadata[ns] = self.metadata.get(ns, {})
+
+    if name in self.executables[ns]:
+        registered = self.metadata[ns][name]
+        return (
+            name == registered.name
+            and executable.inner_id() == self.executables[ns][name].inner_id()
+        )
+    return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.CommandRegistry.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>self, executable, metadata, modify=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create command
+executable is an CommandExecutable of the command,
+metadata is CommandMetadata</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register(self, executable, metadata, modify=False):
+    &#34;&#34;&#34;Create command
+    executable is an CommandExecutable of the command,
+    metadata is CommandMetadata
+    &#34;&#34;&#34;
+    name = metadata.name
+    ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+
+    modify = modify or metadata.attributes.get(&#34;modify_command&#34;, False)
+    can_register = modify
+    self.executables[ns] = self.executables.get(ns, {})
+    self.metadata[ns] = self.metadata.get(ns, {})
+    if name in self.executables[ns]:
+        if self.is_doubleregistered(executable, metadata):
+            can_register = True
+    else:
+        can_register = True
+    if can_register:
+        self.executables[ns][name] = executable
+        self.metadata[ns][name] = metadata
+    else:
+        raise Exception(f&#34;Command {name} is already registered&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.CommandRegistry.register_command"><code class="name flex">
+<span>def <span class="ident">register_command</span></span>(<span>self, f, metadata, modify=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_command(self, f, metadata, modify=False):
+    parser = argument_parser_from_command_metadata(metadata)
+    if metadata.state_argument is None:
+        executable = FirstCommandExecutable(f, metadata, parser)
+    else:
+        executable = CommandExecutable(f, metadata, parser)
+    return self.register(executable, metadata)</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.CommandRegistry.resolve_command"><code class="name flex">
+<span>def <span class="ident">resolve_command</span></span>(<span>self, state, command_name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resolve_command(self, state, command_name):
+    for ns in state.vars.get(&#34;active_namespaces&#34;, [&#34;root&#34;]):
+        if ns not in self.executables:
+            print(f&#34;Unknown namespace: {ns}&#34;)
+            continue
+        if command_name in self.executables[ns]:
+            break
+
+    if command_name in self.executables[ns]:
+        command = self.executables[ns][command_name]
+        if command_name in self.metadata[ns]:
+            return ns, command, self.metadata[ns][command_name]
+        else:
+            print(f&#34;Unknown command (metadata): {command_name}&#34;)
+            return ns, command, None
+
+    return None, None, None</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.commands.RegisterRemoteMixin" href="#liquer.commands.RegisterRemoteMixin">RegisterRemoteMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.commands.RegisterRemoteMixin.register_remote_serialized" href="#liquer.commands.RegisterRemoteMixin.register_remote_serialized">register_remote_serialized</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.commands.ContextArgumentParser"><code class="flex name class">
+<span>class <span class="ident">ContextArgumentParser</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ContextArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return None, args
+
+    def parse_meta(self, metadata, args, context=None):
+        return context, (context, metadata), args</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.ContextArgumentParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, metadata, args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, metadata, args):
+    return None, args</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.ContextArgumentParser.parse_meta"><code class="name flex">
+<span>def <span class="ident">parse_meta</span></span>(<span>self, metadata, args, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_meta(self, metadata, args, context=None):
+    return context, (context, metadata), args</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.FirstCommandExecutable"><code class="flex name class">
+<span>class <span class="ident">FirstCommandExecutable</span></span>
+<span>(</span><span>f, metadata, argument_parser)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper around a registered first command</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FirstCommandExecutable(CommandExecutable):
+    &#34;&#34;&#34;Wrapper around a registered first command&#34;&#34;&#34;
+
+    def __call__(self, state, *args, context=None, **kwargs):
+        argv, argmeta = self.parse_argv(args, kwargs=kwargs, context=context)
+        result = self.f(*argv)
+        if isinstance(result, State):
+            result.arguments = argmeta
+            return result
+        else:
+            state.arguments = argmeta
+            return state.with_data(result)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.CommandExecutable" href="#liquer.commands.CommandExecutable">CommandExecutable</a></li>
+</ul>
+</dd>
+<dt id="liquer.commands.FloatArgumentParser"><code class="flex name class">
+<span>class <span class="ident">FloatArgumentParser</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FloatArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return float(args[0]), args[1:]
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+        if isinstance(args[0], str):
+            try:
+                value = float(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+        elif isinstance(args[0], StringActionParameter):
+            try:
+                value = float(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from {repr(args[0].string)}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = float(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter type {repr(args[0])} in FloatArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            try:
+                value = float(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), args[1:]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.FloatArgumentParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, metadata, args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, metadata, args):
+    return float(args[0]), args[1:]</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.FloatArgumentParser.parse_meta"><code class="name flex">
+<span>def <span class="ident">parse_meta</span></span>(<span>self, metadata, args, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_meta(self, metadata, args, context=None):
+    query = None if context is None else context.raw_query
+    if isinstance(args[0], str):
+        try:
+            value = float(args[0])
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                query=query,
+            )
+    elif isinstance(args[0], StringActionParameter):
+        try:
+            value = float(args[0].string)
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from {repr(args[0].string)}&#34;&#34;&#34;,
+                position=args[0].position,
+                query=query,
+            )
+    elif isinstance(args[0], ExpandedActionParameter):
+        try:
+            value = float(args[0].value)
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                position=args[0].position,
+                query=query,
+            )
+    elif isinstance(args[0], ActionParameter):
+        raise ArgumentParserException(
+            f&#34;Unsupported action parameter type {repr(args[0])} in FloatArgumentParser&#34;,
+            position=args[0].position,
+            query=query,
+        )
+    else:
+        try:
+            value = float(args[0])
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing float argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                query=query,
+            )
+
+    return value, (value, metadata), args[1:]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.IntArgumentParser"><code class="flex name class">
+<span>class <span class="ident">IntArgumentParser</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IntArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return int(args[0]), args[1:]
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+        if isinstance(args[0], str):
+            try:
+                value = int(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+        elif isinstance(args[0], StringActionParameter):
+            try:
+                value = int(args[0].string)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from {repr(args[0].string)}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ExpandedActionParameter):
+            try:
+                value = int(args[0].value)
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                    position=args[0].position,
+                    query=query,
+                )
+        elif isinstance(args[0], ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter type {repr(args[0])} in IntArgumentParser&#34;,
+                position=args[0].position,
+                query=query,
+            )
+        else:
+            try:
+                value = int(args[0])
+            except:
+                raise ArgumentParserException(
+                    f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), args[1:]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.IntArgumentParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, metadata, args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, metadata, args):
+    return int(args[0]), args[1:]</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.IntArgumentParser.parse_meta"><code class="name flex">
+<span>def <span class="ident">parse_meta</span></span>(<span>self, metadata, args, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_meta(self, metadata, args, context=None):
+    query = None if context is None else context.raw_query
+    if isinstance(args[0], str):
+        try:
+            value = int(args[0])
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from string {repr(args[0])}&#34;&#34;&#34;,
+                query=query,
+            )
+    elif isinstance(args[0], StringActionParameter):
+        try:
+            value = int(args[0].string)
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from {repr(args[0].string)}&#34;&#34;&#34;,
+                position=args[0].position,
+                query=query,
+            )
+    elif isinstance(args[0], ExpandedActionParameter):
+        try:
+            value = int(args[0].value)
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from link {repr(args[0].link.encode())}&#34;&#34;&#34;,
+                position=args[0].position,
+                query=query,
+            )
+    elif isinstance(args[0], ActionParameter):
+        raise ArgumentParserException(
+            f&#34;Unsupported action parameter type {repr(args[0])} in IntArgumentParser&#34;,
+            position=args[0].position,
+            query=query,
+        )
+    else:
+        try:
+            value = int(args[0])
+        except:
+            raise ArgumentParserException(
+                f&#34;&#34;&#34;Error parsing integer argument &#39;{metadata[&#34;name&#34;]}&#39; from object {repr(args[0])}&#34;&#34;&#34;,
+                query=query,
+            )
+
+    return value, (value, metadata), args[1:]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.ListArgumentParser"><code class="flex name class">
+<span>class <span class="ident">ListArgumentParser</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ListArgumentParser(ArgumentParser):
+    def parse(self, metadata, args):
+        return args, []
+
+    def parse_meta(self, metadata, args, context=None):
+        query = None if context is None else context.raw_query
+
+        value = []
+        for x in args:
+            if isinstance(x, str):
+                value.append(x)
+            elif isinstance(x, StringActionParameter):
+                value.append(x.string)
+            elif isinstance(x, ExpandedActionParameter):
+                value.append(x.value)
+            elif isinstance(x, ActionParameter):
+                raise ArgumentParserException(
+                    f&#34;Unsupported action parameter type {repr(x)} in ListArgumentParser&#34;,
+                    position=x.position,
+                    query=query,
+                )
+            else:
+                raise ArgumentParserException(
+                    f&#34;Unsupported action parameter object {repr(x)} in ListArgumentParser&#34;,
+                    query=query,
+                )
+
+        return value, (value, metadata), []</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ArgvArgumentParser" href="#liquer.commands.ArgvArgumentParser">ArgvArgumentParser</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.ListArgumentParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, metadata, args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, metadata, args):
+    return args, []</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.ListArgumentParser.parse_meta"><code class="name flex">
+<span>def <span class="ident">parse_meta</span></span>(<span>self, metadata, args, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_meta(self, metadata, args, context=None):
+    query = None if context is None else context.raw_query
+
+    value = []
+    for x in args:
+        if isinstance(x, str):
+            value.append(x)
+        elif isinstance(x, StringActionParameter):
+            value.append(x.string)
+        elif isinstance(x, ExpandedActionParameter):
+            value.append(x.value)
+        elif isinstance(x, ActionParameter):
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter type {repr(x)} in ListArgumentParser&#34;,
+                position=x.position,
+                query=query,
+            )
+        else:
+            raise ArgumentParserException(
+                f&#34;Unsupported action parameter object {repr(x)} in ListArgumentParser&#34;,
+                query=query,
+            )
+
+    return value, (value, metadata), []</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.RegisterRemoteMixin"><code class="flex name class">
+<span>class <span class="ident">RegisterRemoteMixin</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegisterRemoteMixin:
+    def register_remote_serialized(self, b):
+        &#34;&#34;&#34;Helper method used to register serialized command in remote registration&#34;&#34;&#34;
+        if is_remote_registration_enabled():
+            try:
+                f, metadata, modify = self.decode_registration(b)
+                self.register_command(f, metadata, modify=modify)
+                ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+                return dict(
+                    message=f&#34;Function {f.__name__} in namespace {ns} is registered as command&#34;,
+                    status=&#34;OK&#34;,
+                )
+            except:
+                return dict(
+                    message=&#34;Error while registering command&#34;,
+                    traceback=traceback.format_exc(),
+                    status=&#34;ERROR&#34;,
+                )
+        else:
+            return dict(
+                message=&#34;Remote command registration is disabled.&#34;, status=&#34;ERROR&#34;
+            )
+
+    @classmethod
+    def encode_registration(cls, f, metadata, modify=False):
+        code = marshal.dumps(f.__code__)
+        return b&#34;B&#34; + pickle.dumps(
+            (
+                code,
+                f.__name__,
+                f.__defaults__,
+                f.__closure__,
+                metadata._asdict(),
+                modify,
+            )
+        )
+
+    @classmethod
+    def encode_registration_base64(cls, f, metadata, modify=False):
+        return b&#34;E&#34; + base64.urlsafe_b64encode(
+            cls.encode_registration(f, metadata, modify)
+        )
+
+    @classmethod
+    def decode_registration(cls, b):
+        assert type(b) == bytes
+        if b[0] == b&#34;E&#34;[0]:
+            print(&#34;DECODE E:&#34;, b[:20])
+            print()
+            b = base64.urlsafe_b64decode(b[1:])
+        print(&#34;DECODE B:&#34;, b[:20])
+        print()
+        print()
+        assert b[0] == b&#34;B&#34;[0]
+        b = b[1:]
+
+        code, name, defaults, closure, metadata, modify = pickle.loads(b)
+        bc = marshal.loads(code)
+        f = types.FunctionType(bc, globals(), name, defaults, closure)
+        return (f, CommandMetadata(**metadata), modify)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.CommandRegistry" href="#liquer.commands.CommandRegistry">CommandRegistry</a></li>
+<li><a title="liquer.commands.RemoteCommandRegistry" href="#liquer.commands.RemoteCommandRegistry">RemoteCommandRegistry</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.commands.RegisterRemoteMixin.decode_registration"><code class="name flex">
+<span>def <span class="ident">decode_registration</span></span>(<span>b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def decode_registration(cls, b):
+    assert type(b) == bytes
+    if b[0] == b&#34;E&#34;[0]:
+        print(&#34;DECODE E:&#34;, b[:20])
+        print()
+        b = base64.urlsafe_b64decode(b[1:])
+    print(&#34;DECODE B:&#34;, b[:20])
+    print()
+    print()
+    assert b[0] == b&#34;B&#34;[0]
+    b = b[1:]
+
+    code, name, defaults, closure, metadata, modify = pickle.loads(b)
+    bc = marshal.loads(code)
+    f = types.FunctionType(bc, globals(), name, defaults, closure)
+    return (f, CommandMetadata(**metadata), modify)</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.RegisterRemoteMixin.encode_registration"><code class="name flex">
+<span>def <span class="ident">encode_registration</span></span>(<span>f, metadata, modify=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def encode_registration(cls, f, metadata, modify=False):
+    code = marshal.dumps(f.__code__)
+    return b&#34;B&#34; + pickle.dumps(
+        (
+            code,
+            f.__name__,
+            f.__defaults__,
+            f.__closure__,
+            metadata._asdict(),
+            modify,
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.RegisterRemoteMixin.encode_registration_base64"><code class="name flex">
+<span>def <span class="ident">encode_registration_base64</span></span>(<span>f, metadata, modify=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def encode_registration_base64(cls, f, metadata, modify=False):
+    return b&#34;E&#34; + base64.urlsafe_b64encode(
+        cls.encode_registration(f, metadata, modify)
+    )</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.RegisterRemoteMixin.register_remote_serialized"><code class="name flex">
+<span>def <span class="ident">register_remote_serialized</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper method used to register serialized command in remote registration</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_remote_serialized(self, b):
+    &#34;&#34;&#34;Helper method used to register serialized command in remote registration&#34;&#34;&#34;
+    if is_remote_registration_enabled():
+        try:
+            f, metadata, modify = self.decode_registration(b)
+            self.register_command(f, metadata, modify=modify)
+            ns = metadata.attributes.get(&#34;ns&#34;, &#34;root&#34;)
+            return dict(
+                message=f&#34;Function {f.__name__} in namespace {ns} is registered as command&#34;,
+                status=&#34;OK&#34;,
+            )
+        except:
+            return dict(
+                message=&#34;Error while registering command&#34;,
+                traceback=traceback.format_exc(),
+                status=&#34;ERROR&#34;,
+            )
+    else:
+        return dict(
+            message=&#34;Remote command registration is disabled.&#34;, status=&#34;ERROR&#34;
+        )</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.commands.RemoteCommandRegistry"><code class="flex name class">
+<span>class <span class="ident">RemoteCommandRegistry</span></span>
+<span>(</span><span>url, use_get_method=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remote command registry allows to register commands into a remote LiQuer server, e.g. Jupyter server extension</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RemoteCommandRegistry(RegisterRemoteMixin, object):
+    &#34;&#34;&#34;Remote command registry allows to register commands into a remote LiQuer server, e.g. Jupyter server extension&#34;&#34;&#34;
+
+    def __init__(self, url, use_get_method=False):
+        self.url = url
+        self.use_get_method = use_get_method
+
+    def register_command(self, f, metadata, modify=False):
+        import requests
+
+        url = self.url
+        url += &#34;&#34; if url[-1] == &#34;/&#34; else &#34;/&#34;
+
+        if self.use_get_method:
+            b = self.encode_registration_base64(f, metadata, modify)
+            encoded = b.decode(&#34;ascii&#34;)
+            response = requests.get(url=url + encoded)
+        else:
+            b = self.encode_registration(f, metadata, modify)
+            response = requests.post(url=url, data=b)
+
+        if response.ok:
+            response = response.json()
+            if response[&#34;status&#34;] != &#34;OK&#34;:
+                print(response.get(&#34;traceback&#34;, &#34;&#34;))
+                raise Exception(
+                    &#34;Remote registration failed: &#34;
+                    + response.get(&#34;message&#34;, f&#34;Error registering {f.__name__}&#34;)
+                )
+        else:
+            response.raise_for_status()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.RegisterRemoteMixin" href="#liquer.commands.RegisterRemoteMixin">RegisterRemoteMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.RemoteCommandRegistry.register_command"><code class="name flex">
+<span>def <span class="ident">register_command</span></span>(<span>self, f, metadata, modify=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_command(self, f, metadata, modify=False):
+    import requests
+
+    url = self.url
+    url += &#34;&#34; if url[-1] == &#34;/&#34; else &#34;/&#34;
+
+    if self.use_get_method:
+        b = self.encode_registration_base64(f, metadata, modify)
+        encoded = b.decode(&#34;ascii&#34;)
+        response = requests.get(url=url + encoded)
+    else:
+        b = self.encode_registration(f, metadata, modify)
+        response = requests.post(url=url, data=b)
+
+    if response.ok:
+        response = response.json()
+        if response[&#34;status&#34;] != &#34;OK&#34;:
+            print(response.get(&#34;traceback&#34;, &#34;&#34;))
+            raise Exception(
+                &#34;Remote registration failed: &#34;
+                + response.get(&#34;message&#34;, f&#34;Error registering {f.__name__}&#34;)
+            )
+    else:
+        response.raise_for_status()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.commands.RegisterRemoteMixin" href="#liquer.commands.RegisterRemoteMixin">RegisterRemoteMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.commands.RegisterRemoteMixin.register_remote_serialized" href="#liquer.commands.RegisterRemoteMixin.register_remote_serialized">register_remote_serialized</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.commands.SequenceArgumentParser"><code class="flex name class">
+<span>class <span class="ident">SequenceArgumentParser</span></span>
+<span>(</span><span>*sequence)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SequenceArgumentParser(ArgumentParser):
+    def __init__(self, *sequence):
+        self.sequence = list(sequence)
+
+    def __add__(self, ap):
+        return SequenceArgumentParser(*(self.sequence + [ap]))
+
+    def __iadd__(self, ap):
+        self.sequence.append(ap)
+        return self
+
+    def parse(self, metadata, args):
+        parsed_arguments = []
+        for ap, meta in zip(self.sequence, metadata):
+            parsed, args = ap.parse(meta, args)
+            if ap.is_argv:
+                parsed_arguments.extend(parsed)
+            else:
+                parsed_arguments.append(parsed)
+        return parsed_arguments, args
+
+    def parse_meta(self, metadata, args, context=None):
+        parsed_arguments = []
+        parsed_meta = []
+        for ap, meta in zip(self.sequence, metadata):
+            parsed, argmeta, args = ap.parse_meta(meta, args, context=context)
+            if ap.is_argv:
+                parsed_arguments.extend(parsed)
+            else:
+                parsed_arguments.append(parsed)
+            parsed_meta.append(argmeta)
+        return parsed_arguments, parsed_meta, args</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.commands.SequenceArgumentParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, metadata, args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, metadata, args):
+    parsed_arguments = []
+    for ap, meta in zip(self.sequence, metadata):
+        parsed, args = ap.parse(meta, args)
+        if ap.is_argv:
+            parsed_arguments.extend(parsed)
+        else:
+            parsed_arguments.append(parsed)
+    return parsed_arguments, args</code></pre>
+</details>
+</dd>
+<dt id="liquer.commands.SequenceArgumentParser.parse_meta"><code class="name flex">
+<span>def <span class="ident">parse_meta</span></span>(<span>self, metadata, args, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_meta(self, metadata, args, context=None):
+    parsed_arguments = []
+    parsed_meta = []
+    for ap, meta in zip(self.sequence, metadata):
+        parsed, argmeta, args = ap.parse_meta(meta, args, context=context)
+        if ap.is_argv:
+            parsed_arguments.extend(parsed)
+        else:
+            parsed_arguments.append(parsed)
+        parsed_meta.append(argmeta)
+    return parsed_arguments, parsed_meta, args</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer" href="index.html">liquer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.commands.argument_parser_from_command_metadata" href="#liquer.commands.argument_parser_from_command_metadata">argument_parser_from_command_metadata</a></code></li>
+<li><code><a title="liquer.commands.callable_hash" href="#liquer.commands.callable_hash">callable_hash</a></code></li>
+<li><code><a title="liquer.commands.command" href="#liquer.commands.command">command</a></code></li>
+<li><code><a title="liquer.commands.command_metadata_from_callable" href="#liquer.commands.command_metadata_from_callable">command_metadata_from_callable</a></code></li>
+<li><code><a title="liquer.commands.command_registry" href="#liquer.commands.command_registry">command_registry</a></code></li>
+<li><code><a title="liquer.commands.disable_remote_registration" href="#liquer.commands.disable_remote_registration">disable_remote_registration</a></code></li>
+<li><code><a title="liquer.commands.enable_remote_registration" href="#liquer.commands.enable_remote_registration">enable_remote_registration</a></code></li>
+<li><code><a title="liquer.commands.first_command" href="#liquer.commands.first_command">first_command</a></code></li>
+<li><code><a title="liquer.commands.identifier_to_label" href="#liquer.commands.identifier_to_label">identifier_to_label</a></code></li>
+<li><code><a title="liquer.commands.is_remote_registration_enabled" href="#liquer.commands.is_remote_registration_enabled">is_remote_registration_enabled</a></code></li>
+<li><code><a title="liquer.commands.remote_command_registry" href="#liquer.commands.remote_command_registry">remote_command_registry</a></code></li>
+<li><code><a title="liquer.commands.reset_command_registry" href="#liquer.commands.reset_command_registry">reset_command_registry</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.commands.ArgumentParser" href="#liquer.commands.ArgumentParser">ArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.ArgumentParser.is_argv" href="#liquer.commands.ArgumentParser.is_argv">is_argv</a></code></li>
+<li><code><a title="liquer.commands.ArgumentParser.parse" href="#liquer.commands.ArgumentParser.parse">parse</a></code></li>
+<li><code><a title="liquer.commands.ArgumentParser.parse_meta" href="#liquer.commands.ArgumentParser.parse_meta">parse_meta</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.ArgumentParserException" href="#liquer.commands.ArgumentParserException">ArgumentParserException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.commands.ArgvArgumentParser" href="#liquer.commands.ArgvArgumentParser">ArgvArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.ArgvArgumentParser.is_argv" href="#liquer.commands.ArgvArgumentParser.is_argv">is_argv</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.BooleanArgumentParser" href="#liquer.commands.BooleanArgumentParser">BooleanArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.BooleanArgumentParser.parse" href="#liquer.commands.BooleanArgumentParser.parse">parse</a></code></li>
+<li><code><a title="liquer.commands.BooleanArgumentParser.parse_meta" href="#liquer.commands.BooleanArgumentParser.parse_meta">parse_meta</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.CommandExecutable" href="#liquer.commands.CommandExecutable">CommandExecutable</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.CommandExecutable.inner_id" href="#liquer.commands.CommandExecutable.inner_id">inner_id</a></code></li>
+<li><code><a title="liquer.commands.CommandExecutable.parse_argv" href="#liquer.commands.CommandExecutable.parse_argv">parse_argv</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.CommandMetadata" href="#liquer.commands.CommandMetadata">CommandMetadata</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.commands.CommandMetadata.arguments" href="#liquer.commands.CommandMetadata.arguments">arguments</a></code></li>
+<li><code><a title="liquer.commands.CommandMetadata.attributes" href="#liquer.commands.CommandMetadata.attributes">attributes</a></code></li>
+<li><code><a title="liquer.commands.CommandMetadata.doc" href="#liquer.commands.CommandMetadata.doc">doc</a></code></li>
+<li><code><a title="liquer.commands.CommandMetadata.label" href="#liquer.commands.CommandMetadata.label">label</a></code></li>
+<li><code><a title="liquer.commands.CommandMetadata.module" href="#liquer.commands.CommandMetadata.module">module</a></code></li>
+<li><code><a title="liquer.commands.CommandMetadata.name" href="#liquer.commands.CommandMetadata.name">name</a></code></li>
+<li><code><a title="liquer.commands.CommandMetadata.state_argument" href="#liquer.commands.CommandMetadata.state_argument">state_argument</a></code></li>
+<li><code><a title="liquer.commands.CommandMetadata.version" href="#liquer.commands.CommandMetadata.version">version</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.CommandRegistry" href="#liquer.commands.CommandRegistry">CommandRegistry</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.CommandRegistry.as_dict" href="#liquer.commands.CommandRegistry.as_dict">as_dict</a></code></li>
+<li><code><a title="liquer.commands.CommandRegistry.evaluate_command_old" href="#liquer.commands.CommandRegistry.evaluate_command_old">evaluate_command_old</a></code></li>
+<li><code><a title="liquer.commands.CommandRegistry.is_doubleregistered" href="#liquer.commands.CommandRegistry.is_doubleregistered">is_doubleregistered</a></code></li>
+<li><code><a title="liquer.commands.CommandRegistry.register" href="#liquer.commands.CommandRegistry.register">register</a></code></li>
+<li><code><a title="liquer.commands.CommandRegistry.register_command" href="#liquer.commands.CommandRegistry.register_command">register_command</a></code></li>
+<li><code><a title="liquer.commands.CommandRegistry.resolve_command" href="#liquer.commands.CommandRegistry.resolve_command">resolve_command</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.ContextArgumentParser" href="#liquer.commands.ContextArgumentParser">ContextArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.ContextArgumentParser.parse" href="#liquer.commands.ContextArgumentParser.parse">parse</a></code></li>
+<li><code><a title="liquer.commands.ContextArgumentParser.parse_meta" href="#liquer.commands.ContextArgumentParser.parse_meta">parse_meta</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.FirstCommandExecutable" href="#liquer.commands.FirstCommandExecutable">FirstCommandExecutable</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.commands.FloatArgumentParser" href="#liquer.commands.FloatArgumentParser">FloatArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.FloatArgumentParser.parse" href="#liquer.commands.FloatArgumentParser.parse">parse</a></code></li>
+<li><code><a title="liquer.commands.FloatArgumentParser.parse_meta" href="#liquer.commands.FloatArgumentParser.parse_meta">parse_meta</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.IntArgumentParser" href="#liquer.commands.IntArgumentParser">IntArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.IntArgumentParser.parse" href="#liquer.commands.IntArgumentParser.parse">parse</a></code></li>
+<li><code><a title="liquer.commands.IntArgumentParser.parse_meta" href="#liquer.commands.IntArgumentParser.parse_meta">parse_meta</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.ListArgumentParser" href="#liquer.commands.ListArgumentParser">ListArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.ListArgumentParser.parse" href="#liquer.commands.ListArgumentParser.parse">parse</a></code></li>
+<li><code><a title="liquer.commands.ListArgumentParser.parse_meta" href="#liquer.commands.ListArgumentParser.parse_meta">parse_meta</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.RegisterRemoteMixin" href="#liquer.commands.RegisterRemoteMixin">RegisterRemoteMixin</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.RegisterRemoteMixin.decode_registration" href="#liquer.commands.RegisterRemoteMixin.decode_registration">decode_registration</a></code></li>
+<li><code><a title="liquer.commands.RegisterRemoteMixin.encode_registration" href="#liquer.commands.RegisterRemoteMixin.encode_registration">encode_registration</a></code></li>
+<li><code><a title="liquer.commands.RegisterRemoteMixin.encode_registration_base64" href="#liquer.commands.RegisterRemoteMixin.encode_registration_base64">encode_registration_base64</a></code></li>
+<li><code><a title="liquer.commands.RegisterRemoteMixin.register_remote_serialized" href="#liquer.commands.RegisterRemoteMixin.register_remote_serialized">register_remote_serialized</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.RemoteCommandRegistry" href="#liquer.commands.RemoteCommandRegistry">RemoteCommandRegistry</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.RemoteCommandRegistry.register_command" href="#liquer.commands.RemoteCommandRegistry.register_command">register_command</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.commands.SequenceArgumentParser" href="#liquer.commands.SequenceArgumentParser">SequenceArgumentParser</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.commands.SequenceArgumentParser.parse" href="#liquer.commands.SequenceArgumentParser.parse">parse</a></code></li>
+<li><code><a title="liquer.commands.SequenceArgumentParser.parse_meta" href="#liquer.commands.SequenceArgumentParser.parse_meta">parse_meta</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

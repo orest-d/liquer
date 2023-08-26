@@ -1,0 +1,1382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.ext.lq_pandas API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.ext.lq_pandas</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from io import StringIO, BytesIO
+from urllib.request import urlopen
+import pandas as pd
+import numpy as np
+from liquer.state_types import StateType, register_state_type
+from liquer.constants import mimetype_from_extension
+
+from liquer.commands import command, first_command
+from liquer.parser import encode, decode
+from liquer.query import evaluate
+from liquer.state import State
+from liquer.recipes import Recipe, register_recipe
+from liquer.context import get_context
+from liquer.indexer import register_tool_for_type
+from liquer.metadata import Metadata
+import traceback
+
+
+class ResilientBytesIO(BytesIO):
+    &#34;Workaround to prevent closing the stream&#34;
+
+    def close(self):
+        pass  # Refuse to close to avoid pandas bug
+
+    def really_close(self):
+        super().close()
+
+
+class DataframeStateType(StateType):
+    def identifier(self):
+        return &#34;dataframe&#34;
+
+    def default_extension(self):
+        return &#34;pickle&#34;
+
+    def is_type_of(self, data):
+        return isinstance(data, pd.DataFrame)
+
+    def as_bytes(self, data, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        assert self.is_type_of(data)
+        mimetype = mimetype_from_extension(extension)
+        if extension == &#34;csv&#34;:
+            output = StringIO()
+            data.to_csv(output, index=False)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension == &#34;tsv&#34;:
+            output = StringIO()
+            data.to_csv(output, index=False, sep=&#34;\t&#34;)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension == &#34;json&#34;:
+            output = StringIO()
+            data.to_json(output, index=False, orient=&#34;table&#34;)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension in (&#34;html&#34;, &#34;htm&#34;):
+            output = StringIO()
+            data.to_html(output, index=False)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension in (&#34;pkl&#34;, &#34;pickle&#34;):
+            output = ResilientBytesIO()
+            data.to_pickle(output, compression=None)
+            b = output.getvalue()
+            output.really_close()
+            return b, mimetype
+        elif extension == &#34;parquet&#34;:
+            output = ResilientBytesIO()
+            data.to_parquet(output, engine=&#34;pyarrow&#34;)
+            b = output.getvalue()
+            output.really_close()
+            return b, mimetype
+        elif extension == &#34;feather&#34;:
+            output = ResilientBytesIO()
+            data.to_feather(output)
+            b = output.getvalue()
+            output.really_close()
+            return b, mimetype
+        elif extension == &#34;xlsx&#34;:
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine=&#34;xlsxwriter&#34;)
+            data.to_excel(writer)
+            writer.close()
+            return output.getvalue(), mimetype
+        elif extension == &#34;msgpack&#34;:
+            output = BytesIO()
+            data.to_msgpack(output)
+            return output.getvalue(), mimetype
+        else:
+            raise Exception(
+                f&#34;Serialization: file extension {extension} is not supported by dataframe type.&#34;
+            )
+
+    def from_bytes(self, b: bytes, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        f = BytesIO()
+        f.write(b)
+        f.seek(0)
+
+        if extension == &#34;csv&#34;:
+            return pd.read_csv(f)
+        elif extension == &#34;tsv&#34;:
+            return pd.read_csv(f, sep=&#34;\t&#34;)
+        elif extension == &#34;json&#34;:
+            return pd.read_json(f, orient=&#34;table&#34;)
+        elif extension == &#34;parquet&#34;:
+            return pd.read_parquet(f)
+        elif extension == &#34;feather&#34;:
+            return pd.read_feather(f)
+        elif extension in (&#34;pickle&#34;, &#34;pkl&#34;):
+            return pd.read_pickle(f, compression=None)
+        elif extension == &#34;xlsx&#34;:
+            return pd.read_excel(f, engine=&#34;openpyxl&#34;)
+        elif extension == &#34;msgpack&#34;:
+            return pd.read_msgpack(f)
+        raise Exception(
+            f&#34;Deserialization: file extension {extension} is not supported by dataframe type.&#34;
+        )
+
+    def copy(self, data):
+        return data.copy()
+
+    def data_characteristics(self, data):
+        return dict(
+            description=f&#34;Dataframe with {len(data.columns)} columns and {len(data)} rows.&#34;,
+            columns=[str(c) for c in data.columns],
+            number_of_columns=len(data.columns),
+            number_of_rows=len(data),
+        )
+
+
+DATAFRAME_STATE_TYPE = DataframeStateType()
+register_state_type(pd.DataFrame, DATAFRAME_STATE_TYPE)
+
+
+@command
+def to_df(data):
+    &#34;Convert data to DataFrame; data should be list of dicts or dict of lists.&#34;
+    return pd.DataFrame(data)
+
+
+@first_command
+def df_from(url, extension=None):
+    &#34;&#34;&#34;Load data from URL&#34;&#34;&#34;
+    if extension is None:
+        extension = url.split(&#34;.&#34;)[-1]
+        if extension not in &#34;csv tsv xls xlsx msgpack&#34;.split():
+            extension = &#34;csv&#34;
+    if url.startswith(&#34;http:&#34;) or url.startswith(&#34;https:&#34;) or url.startswith(&#34;ftp:&#34;):
+        f = BytesIO(urlopen(url).read())
+    else:
+        f = open(url)
+    state = State().with_source(url)
+    if extension == &#34;csv&#34;:
+        return state.with_data(pd.read_csv(f))
+    elif extension == &#34;tsv&#34;:
+        return state.with_data(pd.read_csv(f, sep=&#34;\t&#34;))
+    elif extension in (&#34;xls&#34;, &#34;xlsx&#34;):
+        return state.with_data(pd.read_excel(f))
+    elif extension == &#34;msgpack&#34;:
+        return state.with_data(pd.read_msgpack(f))
+    else:
+        raise Exception(f&#34;Unsupported file extension: {extension}&#34;)
+
+
+@command
+def append_df(df, url, extension=None):
+    &#34;&#34;&#34;Append dataframe from URL&#34;&#34;&#34;
+    df1 = df_from(url, extension=extension).get()
+    return pd.concat([df,df1], ignore_index=True)
+
+
+@command
+def eq(state, *column_values):
+    &#34;&#34;&#34;Equals filter
+    Accepts one or more column-value pairs. Keep only rows where value in the column equals specified value.
+    Example: eq-column1-1
+    &#34;&#34;&#34;
+    df = state.get()
+    assert state.type_identifier == &#34;dataframe&#34;
+    for i in range(0, len(column_values), 2):
+        c = column_values[i]
+        v = column_values[i + 1]
+        state.log_info(f&#34;Equals: {c} == {v}&#34;)
+        index = np.array([x == v for x in df[c]], bool)
+        try:
+            if int(v) == float(v):
+                index = index | (df[c] == int(v))
+            else:
+                index = index | (df[c] == float(v))
+        except:
+            pass
+        df = df.loc[index, :]
+    return state.with_data(df)
+
+
+@command
+def teq(state, *column_values):
+    &#34;&#34;&#34;Tag-Equals filter. Expects, that a first row contains tags and/or metadata
+    Tag row is ignored in comparison, but prepended to the result (in order to maintain the first row in the results).
+    Accepts one or more column-value pairs. Keep only rows where value in the column equals specified value.
+    Example: teq-column1-1
+    &#34;&#34;&#34;
+    df = state.get()
+    tags = df.iloc[:1, :]
+    df = df.iloc[1:, :]
+    assert state.type_identifier == &#34;dataframe&#34;
+    for i in range(0, len(column_values), 2):
+        c = column_values[i]
+        v = column_values[i + 1]
+        state.log_info(f&#34;Equals: {c} == {v}&#34;)
+        index = np.array([x == v for x in df[c]], bool)
+        try:
+            if int(v) == float(v):
+                index = index | (df[c] == int(v))
+            else:
+                index = index | (df[c] == float(v))
+        except:
+            pass
+        df = df.loc[index, :]
+    #df = tags.append(df, ignore_index=True)
+    df = pd.concat([tags, df], ignore_index=True)
+    return state.with_data(df)
+
+
+@command
+def qsplit_df(state, *columns):
+    &#34;&#34;&#34;Quick/query split of dataframe by columns
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+    Resulting queries are put in query column. Name of the query column
+    can be overriden by query_column state variable.
+    &#34;&#34;&#34;
+    df = state.get()
+    if len(columns) == 1:
+        keys = [(x,) for x in sorted(df.groupby(by=list(columns)).groups.keys())]
+    else:
+        keys = sorted(df.groupby(by=list(columns)).groups.keys())
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    sdf = pd.DataFrame(columns=list(columns) + [query_column])
+    data = []
+    ql = decode(state.query)
+    for row in keys:
+        pairs = list(zip(columns, row))
+        d = dict(pairs)
+        query = encode(ql + [[&#34;eq&#34;] + [str(x) for p in pairs for x in p]])
+        d[query_column] = query
+        data.append(d)
+    sdf = pd.concat([sdf, pd.DataFrame(data)], ignore_index=True)
+
+    return state.with_data(sdf)
+
+
+@command
+def qtsplit_df(state, *columns):
+    &#34;&#34;&#34;Quick/query split of dataframe by columns (version expecting a first row with tags)
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+    Resulting queries are put in query column. Name of the query column
+    can be overriden by query_column state variable.
+    &#34;&#34;&#34;
+    df = state.get()
+    tags = df.iloc[0]
+    df = df.iloc[1:]
+
+    if len(columns) == 1:
+        keys = [(x,) for x in sorted(df.groupby(by=list(columns)).groups.keys())]
+    else:
+        keys = sorted(df.groupby(by=list(columns)).groups.keys())
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    sdf = pd.DataFrame([{c: tags[c] for c in columns}],columns=list(columns) + [query_column])
+    #sdf = sdf.append({c: tags[c] for c in columns}, ignore_index=True)
+    data = []
+    ql = decode(state.query)
+    for row in keys:
+        pairs = list(zip(columns, row))
+        d = dict(pairs)
+        query = encode(ql + [[&#34;teq&#34;] + [str(x) for p in pairs for x in p]])
+        d[query_column] = query
+        data.append(d)
+    sdf = pd.concat([sdf, pd.DataFrame(data)], ignore_index=True)
+    return state.with_data(sdf)
+
+
+@command
+def split_df(state, *columns):
+    &#34;&#34;&#34;Split of dataframe by columns
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+
+    This behaves like qsplit_df, with two important differenced:
+    - each generated query is evaluated (and thus eventually cached)
+    - link is generated and put into link column (state variable link_column)
+    The split_link_type state variable is used to determine the link type; url by default.
+    &#34;&#34;&#34;
+    from liquer.parser import parse
+
+    state = qsplit_df(state, *columns)
+    df = state.get().copy()
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    link_column = state.vars.get(&#34;link_column&#34;)
+    if link_column is None:
+        link_column = &#34;link&#34;
+
+    split_link_type = state.vars.get(&#34;split_link_type&#34;)
+    if split_link_type is None:
+        split_link_type = &#34;url&#34;
+
+    #    df.loc[:,link_column] = [evaluate(encode(decode(q)+[[&#34;link&#34;,split_link_type]])).get() for q in df[query_column]]
+    df.loc[:, link_column] = [
+        evaluate(parse(q).with_action(&#34;link&#34;, split_link_type).encode()).get()
+        for q in df[query_column]
+    ]
+    return state.with_data(df)
+
+
+@command
+def tsplit_df(state, *columns):
+    &#34;&#34;&#34;Split of dataframe by columns (version of split_df expecting a first row with tags)&#34;&#34;&#34;
+    from liquer.parser import parse
+
+    state = qtsplit_df(state, *columns)
+    df = state.get().copy()
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    link_column = state.vars.get(&#34;link_column&#34;)
+    if link_column is None:
+        link_column = &#34;link&#34;
+
+    split_link_type = state.vars.get(&#34;split_link_type&#34;)
+    if split_link_type is None:
+        split_link_type = &#34;url&#34;
+
+    #    df.loc[:,link_column] = [&#34;&#34;]+[evaluate(encode(decode(q)+[[&#34;link&#34;,split_link_type]])).get() for q in list(df[query_column])[1:]]
+    df.loc[:, link_column] = [&#34;&#34;] + [
+        evaluate(parse(q).with_action(&#34;link&#34;, split_link_type).encode()).get()
+        for q in list(df[query_column])[1:]
+    ]
+    return state.with_data(df)
+
+
+@command
+def df_columns(df):
+    return list(df.columns)
+
+
+@command
+def columns_info(df):
+    if len(df):
+        tags = {str(key): str(value) for key, value in dict(df.iloc[0, :]).items()}
+        has_tags = any(str(tag).strip().startswith(&#34;#&#34;) for tag in tags.values())
+    else:
+        tags = None
+        has_tags = False
+
+    return dict(
+        columns=list(map(str, df.columns)),
+        tags=tags,
+        has_tags=has_tags,
+        types={str(key): str(value) for key, value in df.dtypes.items()},
+    )
+
+
+@command
+def head_df(df, count=50):
+    if count &lt; len(df):
+        return df.iloc[:count, :]
+    else:
+        return df
+
+
+@command
+def groupby_mean(df, mean_column, *groupby_columns):
+    return (
+        df.groupby(groupby_columns)
+        .mean()
+        .reset_index()
+        .loc[:, list(groupby_columns) + [mean_column]]
+    )
+
+
+class PandasConcatRecipe(Recipe):
+    @classmethod
+    def recipe_type(self):
+        return &#34;pandas_concat&#34;
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(d)
+
+    def provides(self):
+        if &#34;filename&#34; not in self.data:
+            raise Exception(
+                f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.&#34;
+            )
+        return self.data.get(&#34;provides&#34;, [self.data[&#34;filename&#34;]])
+
+    def make(self, key, store=None, context=None):
+        import liquer.store as ls
+        import liquer.state_types as st
+
+        context = get_context(context)
+        try:
+            if &#34;filename&#34; not in self.data:
+                raise Exception(
+                    f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.&#34;
+                )
+            if &#34;concat&#34; not in self.data:
+                raise Exception(
+                    f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a &#39;concat&#39; section with queries to concatenate.&#34;
+                )
+            if store is None:
+                store = context.store()
+
+            to_join = []
+            for i, x in enumerate(self.data[&#34;concat&#34;]):
+                if type(x) == str:
+                    context.info(f&#34;Evaluate query {i+1}: {x}&#34;)
+                    df = context.evaluate(x).get()
+                    if not isinstance(df, pd.DataFrame):
+                        raise Exception(
+                            f&#34;Query {i+1} ({x}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}&#34;
+                        )
+                    to_join.append(df)
+                elif type(x) == dict:
+                    q = x[&#34;query&#34;]
+                    column = x[&#34;column&#34;]
+                    value = x[&#34;value&#34;]
+                    context.info(f&#34;Evaluate query {i+1}: {q}&#34;)
+                    df = context.evaluate(q).get()
+                    if not isinstance(df, pd.DataFrame):
+                        raise Exception(
+                            f&#34;Query {i+1} ({q}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}&#34;
+                        )
+                    df[column] = value
+                    to_join.append(df)
+                else:
+                    raise Exception(f&#34;Unrecognized element {i+1} to concat: {x}&#34;)
+            df = pd.concat(to_join, sort=False)
+
+            extension = ls.key_extension(key)
+            b, mimetype, type_identifier = st.encode_state_data(df, extension=extension)
+            metadata = self.metadata(key)
+            metadata.update({type_identifier: type_identifier, mimetype: mimetype})
+            metadata[&#34;data_characteristics&#34;] = st.data_characteristics(df)
+            store.store(key, b, metadata=metadata)
+        except:
+            metadata = self.metadata(key)
+            m = Metadata(metadata)
+            m.exception(&#34;Pandas concat recipe failed&#34;, traceback=traceback.format_exc())
+            store.store_metadata(key, m.as_dict())
+
+
+register_recipe(PandasConcatRecipe)
+
+@command
+def describe_df(df):
+    &#34;&#34;&#34;Wrapper around pandas describe&#34;&#34;&#34;
+    return df.describe().reset_index()
+
+register_tool_for_type(&#34;dataframe&#34;, &#34;$$UNNAMED_URL$/describe_df/description.html&#34;, &#34;Describe&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.ext.lq_pandas.append_df"><code class="name flex">
+<span>def <span class="ident">append_df</span></span>(<span>df, url, extension=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Append dataframe from URL</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def append_df(df, url, extension=None):
+    &#34;&#34;&#34;Append dataframe from URL&#34;&#34;&#34;
+    df1 = df_from(url, extension=extension).get()
+    return pd.concat([df,df1], ignore_index=True)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.columns_info"><code class="name flex">
+<span>def <span class="ident">columns_info</span></span>(<span>df)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def columns_info(df):
+    if len(df):
+        tags = {str(key): str(value) for key, value in dict(df.iloc[0, :]).items()}
+        has_tags = any(str(tag).strip().startswith(&#34;#&#34;) for tag in tags.values())
+    else:
+        tags = None
+        has_tags = False
+
+    return dict(
+        columns=list(map(str, df.columns)),
+        tags=tags,
+        has_tags=has_tags,
+        types={str(key): str(value) for key, value in df.dtypes.items()},
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.describe_df"><code class="name flex">
+<span>def <span class="ident">describe_df</span></span>(<span>df)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper around pandas describe</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def describe_df(df):
+    &#34;&#34;&#34;Wrapper around pandas describe&#34;&#34;&#34;
+    return df.describe().reset_index()</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.df_columns"><code class="name flex">
+<span>def <span class="ident">df_columns</span></span>(<span>df)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def df_columns(df):
+    return list(df.columns)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.df_from"><code class="name flex">
+<span>def <span class="ident">df_from</span></span>(<span>url, extension=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load data from URL</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@first_command
+def df_from(url, extension=None):
+    &#34;&#34;&#34;Load data from URL&#34;&#34;&#34;
+    if extension is None:
+        extension = url.split(&#34;.&#34;)[-1]
+        if extension not in &#34;csv tsv xls xlsx msgpack&#34;.split():
+            extension = &#34;csv&#34;
+    if url.startswith(&#34;http:&#34;) or url.startswith(&#34;https:&#34;) or url.startswith(&#34;ftp:&#34;):
+        f = BytesIO(urlopen(url).read())
+    else:
+        f = open(url)
+    state = State().with_source(url)
+    if extension == &#34;csv&#34;:
+        return state.with_data(pd.read_csv(f))
+    elif extension == &#34;tsv&#34;:
+        return state.with_data(pd.read_csv(f, sep=&#34;\t&#34;))
+    elif extension in (&#34;xls&#34;, &#34;xlsx&#34;):
+        return state.with_data(pd.read_excel(f))
+    elif extension == &#34;msgpack&#34;:
+        return state.with_data(pd.read_msgpack(f))
+    else:
+        raise Exception(f&#34;Unsupported file extension: {extension}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.eq"><code class="name flex">
+<span>def <span class="ident">eq</span></span>(<span>state, *column_values)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Equals filter
+Accepts one or more column-value pairs. Keep only rows where value in the column equals specified value.
+Example: eq-column1-1</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def eq(state, *column_values):
+    &#34;&#34;&#34;Equals filter
+    Accepts one or more column-value pairs. Keep only rows where value in the column equals specified value.
+    Example: eq-column1-1
+    &#34;&#34;&#34;
+    df = state.get()
+    assert state.type_identifier == &#34;dataframe&#34;
+    for i in range(0, len(column_values), 2):
+        c = column_values[i]
+        v = column_values[i + 1]
+        state.log_info(f&#34;Equals: {c} == {v}&#34;)
+        index = np.array([x == v for x in df[c]], bool)
+        try:
+            if int(v) == float(v):
+                index = index | (df[c] == int(v))
+            else:
+                index = index | (df[c] == float(v))
+        except:
+            pass
+        df = df.loc[index, :]
+    return state.with_data(df)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.groupby_mean"><code class="name flex">
+<span>def <span class="ident">groupby_mean</span></span>(<span>df, mean_column, *groupby_columns)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def groupby_mean(df, mean_column, *groupby_columns):
+    return (
+        df.groupby(groupby_columns)
+        .mean()
+        .reset_index()
+        .loc[:, list(groupby_columns) + [mean_column]]
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.head_df"><code class="name flex">
+<span>def <span class="ident">head_df</span></span>(<span>df, count=50)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def head_df(df, count=50):
+    if count &lt; len(df):
+        return df.iloc[:count, :]
+    else:
+        return df</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.qsplit_df"><code class="name flex">
+<span>def <span class="ident">qsplit_df</span></span>(<span>state, *columns)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Quick/query split of dataframe by columns
+Creates a dataframe with unique (combinations of) value from supplied columns and queries
+to obtain the corresponding filtered dataframes from the original dataframe.
+Resulting queries are put in query column. Name of the query column
+can be overriden by query_column state variable.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def qsplit_df(state, *columns):
+    &#34;&#34;&#34;Quick/query split of dataframe by columns
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+    Resulting queries are put in query column. Name of the query column
+    can be overriden by query_column state variable.
+    &#34;&#34;&#34;
+    df = state.get()
+    if len(columns) == 1:
+        keys = [(x,) for x in sorted(df.groupby(by=list(columns)).groups.keys())]
+    else:
+        keys = sorted(df.groupby(by=list(columns)).groups.keys())
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    sdf = pd.DataFrame(columns=list(columns) + [query_column])
+    data = []
+    ql = decode(state.query)
+    for row in keys:
+        pairs = list(zip(columns, row))
+        d = dict(pairs)
+        query = encode(ql + [[&#34;eq&#34;] + [str(x) for p in pairs for x in p]])
+        d[query_column] = query
+        data.append(d)
+    sdf = pd.concat([sdf, pd.DataFrame(data)], ignore_index=True)
+
+    return state.with_data(sdf)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.qtsplit_df"><code class="name flex">
+<span>def <span class="ident">qtsplit_df</span></span>(<span>state, *columns)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Quick/query split of dataframe by columns (version expecting a first row with tags)
+Creates a dataframe with unique (combinations of) value from supplied columns and queries
+to obtain the corresponding filtered dataframes from the original dataframe.
+Resulting queries are put in query column. Name of the query column
+can be overriden by query_column state variable.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def qtsplit_df(state, *columns):
+    &#34;&#34;&#34;Quick/query split of dataframe by columns (version expecting a first row with tags)
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+    Resulting queries are put in query column. Name of the query column
+    can be overriden by query_column state variable.
+    &#34;&#34;&#34;
+    df = state.get()
+    tags = df.iloc[0]
+    df = df.iloc[1:]
+
+    if len(columns) == 1:
+        keys = [(x,) for x in sorted(df.groupby(by=list(columns)).groups.keys())]
+    else:
+        keys = sorted(df.groupby(by=list(columns)).groups.keys())
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    sdf = pd.DataFrame([{c: tags[c] for c in columns}],columns=list(columns) + [query_column])
+    #sdf = sdf.append({c: tags[c] for c in columns}, ignore_index=True)
+    data = []
+    ql = decode(state.query)
+    for row in keys:
+        pairs = list(zip(columns, row))
+        d = dict(pairs)
+        query = encode(ql + [[&#34;teq&#34;] + [str(x) for p in pairs for x in p]])
+        d[query_column] = query
+        data.append(d)
+    sdf = pd.concat([sdf, pd.DataFrame(data)], ignore_index=True)
+    return state.with_data(sdf)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.split_df"><code class="name flex">
+<span>def <span class="ident">split_df</span></span>(<span>state, *columns)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Split of dataframe by columns
+Creates a dataframe with unique (combinations of) value from supplied columns and queries
+to obtain the corresponding filtered dataframes from the original dataframe.</p>
+<p>This behaves like qsplit_df, with two important differenced:
+- each generated query is evaluated (and thus eventually cached)
+- link is generated and put into link column (state variable link_column)
+The split_link_type state variable is used to determine the link type; url by default.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def split_df(state, *columns):
+    &#34;&#34;&#34;Split of dataframe by columns
+    Creates a dataframe with unique (combinations of) value from supplied columns and queries
+    to obtain the corresponding filtered dataframes from the original dataframe.
+
+    This behaves like qsplit_df, with two important differenced:
+    - each generated query is evaluated (and thus eventually cached)
+    - link is generated and put into link column (state variable link_column)
+    The split_link_type state variable is used to determine the link type; url by default.
+    &#34;&#34;&#34;
+    from liquer.parser import parse
+
+    state = qsplit_df(state, *columns)
+    df = state.get().copy()
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    link_column = state.vars.get(&#34;link_column&#34;)
+    if link_column is None:
+        link_column = &#34;link&#34;
+
+    split_link_type = state.vars.get(&#34;split_link_type&#34;)
+    if split_link_type is None:
+        split_link_type = &#34;url&#34;
+
+    #    df.loc[:,link_column] = [evaluate(encode(decode(q)+[[&#34;link&#34;,split_link_type]])).get() for q in df[query_column]]
+    df.loc[:, link_column] = [
+        evaluate(parse(q).with_action(&#34;link&#34;, split_link_type).encode()).get()
+        for q in df[query_column]
+    ]
+    return state.with_data(df)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.teq"><code class="name flex">
+<span>def <span class="ident">teq</span></span>(<span>state, *column_values)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Tag-Equals filter. Expects, that a first row contains tags and/or metadata
+Tag row is ignored in comparison, but prepended to the result (in order to maintain the first row in the results).
+Accepts one or more column-value pairs. Keep only rows where value in the column equals specified value.
+Example: teq-column1-1</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def teq(state, *column_values):
+    &#34;&#34;&#34;Tag-Equals filter. Expects, that a first row contains tags and/or metadata
+    Tag row is ignored in comparison, but prepended to the result (in order to maintain the first row in the results).
+    Accepts one or more column-value pairs. Keep only rows where value in the column equals specified value.
+    Example: teq-column1-1
+    &#34;&#34;&#34;
+    df = state.get()
+    tags = df.iloc[:1, :]
+    df = df.iloc[1:, :]
+    assert state.type_identifier == &#34;dataframe&#34;
+    for i in range(0, len(column_values), 2):
+        c = column_values[i]
+        v = column_values[i + 1]
+        state.log_info(f&#34;Equals: {c} == {v}&#34;)
+        index = np.array([x == v for x in df[c]], bool)
+        try:
+            if int(v) == float(v):
+                index = index | (df[c] == int(v))
+            else:
+                index = index | (df[c] == float(v))
+        except:
+            pass
+        df = df.loc[index, :]
+    #df = tags.append(df, ignore_index=True)
+    df = pd.concat([tags, df], ignore_index=True)
+    return state.with_data(df)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.to_df"><code class="name flex">
+<span>def <span class="ident">to_df</span></span>(<span>data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert data to DataFrame; data should be list of dicts or dict of lists.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def to_df(data):
+    &#34;Convert data to DataFrame; data should be list of dicts or dict of lists.&#34;
+    return pd.DataFrame(data)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.tsplit_df"><code class="name flex">
+<span>def <span class="ident">tsplit_df</span></span>(<span>state, *columns)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Split of dataframe by columns (version of split_df expecting a first row with tags)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def tsplit_df(state, *columns):
+    &#34;&#34;&#34;Split of dataframe by columns (version of split_df expecting a first row with tags)&#34;&#34;&#34;
+    from liquer.parser import parse
+
+    state = qtsplit_df(state, *columns)
+    df = state.get().copy()
+
+    query_column = state.vars.get(&#34;query_column&#34;)
+    if query_column is None:
+        query_column = &#34;query&#34;
+
+    link_column = state.vars.get(&#34;link_column&#34;)
+    if link_column is None:
+        link_column = &#34;link&#34;
+
+    split_link_type = state.vars.get(&#34;split_link_type&#34;)
+    if split_link_type is None:
+        split_link_type = &#34;url&#34;
+
+    #    df.loc[:,link_column] = [&#34;&#34;]+[evaluate(encode(decode(q)+[[&#34;link&#34;,split_link_type]])).get() for q in list(df[query_column])[1:]]
+    df.loc[:, link_column] = [&#34;&#34;] + [
+        evaluate(parse(q).with_action(&#34;link&#34;, split_link_type).encode()).get()
+        for q in list(df[query_column])[1:]
+    ]
+    return state.with_data(df)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.ext.lq_pandas.DataframeStateType"><code class="flex name class">
+<span>class <span class="ident">DataframeStateType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Abstract state type basis</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DataframeStateType(StateType):
+    def identifier(self):
+        return &#34;dataframe&#34;
+
+    def default_extension(self):
+        return &#34;pickle&#34;
+
+    def is_type_of(self, data):
+        return isinstance(data, pd.DataFrame)
+
+    def as_bytes(self, data, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        assert self.is_type_of(data)
+        mimetype = mimetype_from_extension(extension)
+        if extension == &#34;csv&#34;:
+            output = StringIO()
+            data.to_csv(output, index=False)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension == &#34;tsv&#34;:
+            output = StringIO()
+            data.to_csv(output, index=False, sep=&#34;\t&#34;)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension == &#34;json&#34;:
+            output = StringIO()
+            data.to_json(output, index=False, orient=&#34;table&#34;)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension in (&#34;html&#34;, &#34;htm&#34;):
+            output = StringIO()
+            data.to_html(output, index=False)
+            return output.getvalue().encode(&#34;utf-8&#34;), mimetype
+        elif extension in (&#34;pkl&#34;, &#34;pickle&#34;):
+            output = ResilientBytesIO()
+            data.to_pickle(output, compression=None)
+            b = output.getvalue()
+            output.really_close()
+            return b, mimetype
+        elif extension == &#34;parquet&#34;:
+            output = ResilientBytesIO()
+            data.to_parquet(output, engine=&#34;pyarrow&#34;)
+            b = output.getvalue()
+            output.really_close()
+            return b, mimetype
+        elif extension == &#34;feather&#34;:
+            output = ResilientBytesIO()
+            data.to_feather(output)
+            b = output.getvalue()
+            output.really_close()
+            return b, mimetype
+        elif extension == &#34;xlsx&#34;:
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine=&#34;xlsxwriter&#34;)
+            data.to_excel(writer)
+            writer.close()
+            return output.getvalue(), mimetype
+        elif extension == &#34;msgpack&#34;:
+            output = BytesIO()
+            data.to_msgpack(output)
+            return output.getvalue(), mimetype
+        else:
+            raise Exception(
+                f&#34;Serialization: file extension {extension} is not supported by dataframe type.&#34;
+            )
+
+    def from_bytes(self, b: bytes, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        f = BytesIO()
+        f.write(b)
+        f.seek(0)
+
+        if extension == &#34;csv&#34;:
+            return pd.read_csv(f)
+        elif extension == &#34;tsv&#34;:
+            return pd.read_csv(f, sep=&#34;\t&#34;)
+        elif extension == &#34;json&#34;:
+            return pd.read_json(f, orient=&#34;table&#34;)
+        elif extension == &#34;parquet&#34;:
+            return pd.read_parquet(f)
+        elif extension == &#34;feather&#34;:
+            return pd.read_feather(f)
+        elif extension in (&#34;pickle&#34;, &#34;pkl&#34;):
+            return pd.read_pickle(f, compression=None)
+        elif extension == &#34;xlsx&#34;:
+            return pd.read_excel(f, engine=&#34;openpyxl&#34;)
+        elif extension == &#34;msgpack&#34;:
+            return pd.read_msgpack(f)
+        raise Exception(
+            f&#34;Deserialization: file extension {extension} is not supported by dataframe type.&#34;
+        )
+
+    def copy(self, data):
+        return data.copy()
+
+    def data_characteristics(self, data):
+        return dict(
+            description=f&#34;Dataframe with {len(data.columns)} columns and {len(data)} rows.&#34;,
+            columns=[str(c) for c in data.columns],
+            number_of_columns=len(data.columns),
+            number_of_rows=len(data),
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.state_types.StateType" href="../state_types.html#liquer.state_types.StateType">StateType</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.state_types.StateType" href="../state_types.html#liquer.state_types.StateType">StateType</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.state_types.StateType.as_bytes" href="../state_types.html#liquer.state_types.StateType.as_bytes">as_bytes</a></code></li>
+<li><code><a title="liquer.state_types.StateType.copy" href="../state_types.html#liquer.state_types.StateType.copy">copy</a></code></li>
+<li><code><a title="liquer.state_types.StateType.data_characteristics" href="../state_types.html#liquer.state_types.StateType.data_characteristics">data_characteristics</a></code></li>
+<li><code><a title="liquer.state_types.StateType.default_extension" href="../state_types.html#liquer.state_types.StateType.default_extension">default_extension</a></code></li>
+<li><code><a title="liquer.state_types.StateType.default_filename" href="../state_types.html#liquer.state_types.StateType.default_filename">default_filename</a></code></li>
+<li><code><a title="liquer.state_types.StateType.default_mimetype" href="../state_types.html#liquer.state_types.StateType.default_mimetype">default_mimetype</a></code></li>
+<li><code><a title="liquer.state_types.StateType.from_bytes" href="../state_types.html#liquer.state_types.StateType.from_bytes">from_bytes</a></code></li>
+<li><code><a title="liquer.state_types.StateType.identifier" href="../state_types.html#liquer.state_types.StateType.identifier">identifier</a></code></li>
+<li><code><a title="liquer.state_types.StateType.is_type_of" href="../state_types.html#liquer.state_types.StateType.is_type_of">is_type_of</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.ext.lq_pandas.PandasConcatRecipe"><code class="flex name class">
+<span>class <span class="ident">PandasConcatRecipe</span></span>
+<span>(</span><span>d)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PandasConcatRecipe(Recipe):
+    @classmethod
+    def recipe_type(self):
+        return &#34;pandas_concat&#34;
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(d)
+
+    def provides(self):
+        if &#34;filename&#34; not in self.data:
+            raise Exception(
+                f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.&#34;
+            )
+        return self.data.get(&#34;provides&#34;, [self.data[&#34;filename&#34;]])
+
+    def make(self, key, store=None, context=None):
+        import liquer.store as ls
+        import liquer.state_types as st
+
+        context = get_context(context)
+        try:
+            if &#34;filename&#34; not in self.data:
+                raise Exception(
+                    f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.&#34;
+                )
+            if &#34;concat&#34; not in self.data:
+                raise Exception(
+                    f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a &#39;concat&#39; section with queries to concatenate.&#34;
+                )
+            if store is None:
+                store = context.store()
+
+            to_join = []
+            for i, x in enumerate(self.data[&#34;concat&#34;]):
+                if type(x) == str:
+                    context.info(f&#34;Evaluate query {i+1}: {x}&#34;)
+                    df = context.evaluate(x).get()
+                    if not isinstance(df, pd.DataFrame):
+                        raise Exception(
+                            f&#34;Query {i+1} ({x}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}&#34;
+                        )
+                    to_join.append(df)
+                elif type(x) == dict:
+                    q = x[&#34;query&#34;]
+                    column = x[&#34;column&#34;]
+                    value = x[&#34;value&#34;]
+                    context.info(f&#34;Evaluate query {i+1}: {q}&#34;)
+                    df = context.evaluate(q).get()
+                    if not isinstance(df, pd.DataFrame):
+                        raise Exception(
+                            f&#34;Query {i+1} ({q}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}&#34;
+                        )
+                    df[column] = value
+                    to_join.append(df)
+                else:
+                    raise Exception(f&#34;Unrecognized element {i+1} to concat: {x}&#34;)
+            df = pd.concat(to_join, sort=False)
+
+            extension = ls.key_extension(key)
+            b, mimetype, type_identifier = st.encode_state_data(df, extension=extension)
+            metadata = self.metadata(key)
+            metadata.update({type_identifier: type_identifier, mimetype: mimetype})
+            metadata[&#34;data_characteristics&#34;] = st.data_characteristics(df)
+            store.store(key, b, metadata=metadata)
+        except:
+            metadata = self.metadata(key)
+            m = Metadata(metadata)
+            m.exception(&#34;Pandas concat recipe failed&#34;, traceback=traceback.format_exc())
+            store.store_metadata(key, m.as_dict())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.recipes.Recipe" href="../recipes.html#liquer.recipes.Recipe">Recipe</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.ext.lq_pandas.PandasConcatRecipe.from_dict"><code class="name flex">
+<span>def <span class="ident">from_dict</span></span>(<span>d)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_dict(cls, d):
+    return cls(d)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.PandasConcatRecipe.recipe_type"><code class="name flex">
+<span>def <span class="ident">recipe_type</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def recipe_type(self):
+    return &#34;pandas_concat&#34;</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.ext.lq_pandas.PandasConcatRecipe.make"><code class="name flex">
+<span>def <span class="ident">make</span></span>(<span>self, key, store=None, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make(self, key, store=None, context=None):
+    import liquer.store as ls
+    import liquer.state_types as st
+
+    context = get_context(context)
+    try:
+        if &#34;filename&#34; not in self.data:
+            raise Exception(
+                f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.&#34;
+            )
+        if &#34;concat&#34; not in self.data:
+            raise Exception(
+                f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a &#39;concat&#39; section with queries to concatenate.&#34;
+            )
+        if store is None:
+            store = context.store()
+
+        to_join = []
+        for i, x in enumerate(self.data[&#34;concat&#34;]):
+            if type(x) == str:
+                context.info(f&#34;Evaluate query {i+1}: {x}&#34;)
+                df = context.evaluate(x).get()
+                if not isinstance(df, pd.DataFrame):
+                    raise Exception(
+                        f&#34;Query {i+1} ({x}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}&#34;
+                    )
+                to_join.append(df)
+            elif type(x) == dict:
+                q = x[&#34;query&#34;]
+                column = x[&#34;column&#34;]
+                value = x[&#34;value&#34;]
+                context.info(f&#34;Evaluate query {i+1}: {q}&#34;)
+                df = context.evaluate(q).get()
+                if not isinstance(df, pd.DataFrame):
+                    raise Exception(
+                        f&#34;Query {i+1} ({q}) in recipe {self.recipe_name()} is not a dataframe but {type(df)}&#34;
+                    )
+                df[column] = value
+                to_join.append(df)
+            else:
+                raise Exception(f&#34;Unrecognized element {i+1} to concat: {x}&#34;)
+        df = pd.concat(to_join, sort=False)
+
+        extension = ls.key_extension(key)
+        b, mimetype, type_identifier = st.encode_state_data(df, extension=extension)
+        metadata = self.metadata(key)
+        metadata.update({type_identifier: type_identifier, mimetype: mimetype})
+        metadata[&#34;data_characteristics&#34;] = st.data_characteristics(df)
+        store.store(key, b, metadata=metadata)
+    except:
+        metadata = self.metadata(key)
+        m = Metadata(metadata)
+        m.exception(&#34;Pandas concat recipe failed&#34;, traceback=traceback.format_exc())
+        store.store_metadata(key, m.as_dict())</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.PandasConcatRecipe.provides"><code class="name flex">
+<span>def <span class="ident">provides</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def provides(self):
+    if &#34;filename&#34; not in self.data:
+        raise Exception(
+            f&#34;Recipe {self.recipe_name()} of type {self.recipe_type()} does not have a filename.&#34;
+        )
+    return self.data.get(&#34;provides&#34;, [self.data[&#34;filename&#34;]])</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.ext.lq_pandas.ResilientBytesIO"><code class="flex name class">
+<span>class <span class="ident">ResilientBytesIO</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Workaround to prevent closing the stream</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ResilientBytesIO(BytesIO):
+    &#34;Workaround to prevent closing the stream&#34;
+
+    def close(self):
+        pass  # Refuse to close to avoid pandas bug
+
+    def really_close(self):
+        super().close()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_io.BytesIO</li>
+<li>_io._BufferedIOBase</li>
+<li>_io._IOBase</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.ext.lq_pandas.ResilientBytesIO.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Disable all I/O operations.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    pass  # Refuse to close to avoid pandas bug</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.lq_pandas.ResilientBytesIO.really_close"><code class="name flex">
+<span>def <span class="ident">really_close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def really_close(self):
+    super().close()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer.ext" href="index.html">liquer.ext</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="liquer.ext.lq_pandas.append_df" href="#liquer.ext.lq_pandas.append_df">append_df</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.columns_info" href="#liquer.ext.lq_pandas.columns_info">columns_info</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.describe_df" href="#liquer.ext.lq_pandas.describe_df">describe_df</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.df_columns" href="#liquer.ext.lq_pandas.df_columns">df_columns</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.df_from" href="#liquer.ext.lq_pandas.df_from">df_from</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.eq" href="#liquer.ext.lq_pandas.eq">eq</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.groupby_mean" href="#liquer.ext.lq_pandas.groupby_mean">groupby_mean</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.head_df" href="#liquer.ext.lq_pandas.head_df">head_df</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.qsplit_df" href="#liquer.ext.lq_pandas.qsplit_df">qsplit_df</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.qtsplit_df" href="#liquer.ext.lq_pandas.qtsplit_df">qtsplit_df</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.split_df" href="#liquer.ext.lq_pandas.split_df">split_df</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.teq" href="#liquer.ext.lq_pandas.teq">teq</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.to_df" href="#liquer.ext.lq_pandas.to_df">to_df</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.tsplit_df" href="#liquer.ext.lq_pandas.tsplit_df">tsplit_df</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.ext.lq_pandas.DataframeStateType" href="#liquer.ext.lq_pandas.DataframeStateType">DataframeStateType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.ext.lq_pandas.PandasConcatRecipe" href="#liquer.ext.lq_pandas.PandasConcatRecipe">PandasConcatRecipe</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.ext.lq_pandas.PandasConcatRecipe.from_dict" href="#liquer.ext.lq_pandas.PandasConcatRecipe.from_dict">from_dict</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.PandasConcatRecipe.make" href="#liquer.ext.lq_pandas.PandasConcatRecipe.make">make</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.PandasConcatRecipe.provides" href="#liquer.ext.lq_pandas.PandasConcatRecipe.provides">provides</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.PandasConcatRecipe.recipe_type" href="#liquer.ext.lq_pandas.PandasConcatRecipe.recipe_type">recipe_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.ext.lq_pandas.ResilientBytesIO" href="#liquer.ext.lq_pandas.ResilientBytesIO">ResilientBytesIO</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.ext.lq_pandas.ResilientBytesIO.close" href="#liquer.ext.lq_pandas.ResilientBytesIO.close">close</a></code></li>
+<li><code><a title="liquer.ext.lq_pandas.ResilientBytesIO.really_close" href="#liquer.ext.lq_pandas.ResilientBytesIO.really_close">really_close</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

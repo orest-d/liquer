@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.indexer API documentation</title>
+<meta name="description" content="Indexer is a callable or an Indexer object that can &#39;visit&#39; data and metadata (mainly) in the event of creation.
+Indexers can be used for multiple …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.indexer</code></h1>
+</header>
+<section id="section-intro">
+<p>Indexer is a callable or an Indexer object that can 'visit' data and metadata (mainly) in the event of creation.
+Indexers can be used for multiple purposes:</p>
+<ul>
+<li>To extend and/or customize the metadata generation. This is essential e.g to specify analytical tools usable for </li>
+<li>To index data and/or metadata e.g. in a search engine.</li>
+</ul>
+<p>It must return valid metadata. As a minimum, indexer should return the metadata that it gets as a parameter.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Indexer is a callable or an Indexer object that can &#39;visit&#39; data and metadata (mainly) in the event of creation.
+Indexers can be used for multiple purposes:
+
+- To extend and/or customize the metadata generation. This is essential e.g to specify analytical tools usable for 
+- To index data and/or metadata e.g. in a search engine.
+
+It must return valid metadata. As a minimum, indexer should return the metadata that it gets as a parameter.
+&#34;&#34;&#34;
+
+from enum import Enum
+from liquer.template import expand_simple
+from liquer.web import key_query_parameters
+
+
+class Indexer(object):
+    &#34;&#34;&#34;Indexer superclass&#34;&#34;&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        return metadata
+
+    def identifier(self):
+        &#34;&#34;&#34;This should return an identifier uniquely identifying the indexer among all the indexers&#34;&#34;&#34;
+        return self.__class__.__name__
+
+    def metadata_item_equalts(self, key, value):
+        return MetadataItemEquals(self, key, value)
+
+    def type_identifier_equals(self, value):
+        return self.metadata_item_equalts(&#34;type_identifier&#34;, value)
+
+
+class IndexerProxy(Indexer):
+    &#34;&#34;&#34;Proxy to another indexer&#34;&#34;&#34;
+
+    def __init__(self, indexer):
+        self.indexer = indexer
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        return self.indexer(key=key, query=query, data=data, metadata=metadata)
+
+    def identifier(self):
+        return &#34;%s(%s)&#34; % (self.__class__.__name__, self.indexer.identifier())
+
+
+class FilterIndexer(IndexerProxy):
+    &#34;&#34;&#34;Indexer filter superclass - calls the indexer only when the condition is met.&#34;&#34;&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        if self.condition(key=key, query=query, data=data, metadata=metadata):
+            return self.indexer(key=key, query=query, data=data, metadata=metadata)
+        else:
+            return metadata
+
+    def condition(self, key=None, query=None, data=None, metadata=None):
+        return True
+
+
+class MetadataItemEquals(FilterIndexer):
+    def __init__(self, indexer, key, value):
+        self.indexer = indexer
+        self.key = key
+        self.value = value
+
+    def condition(self, key=None, query=None, data=None, metadata=None):
+        return metadata.get(self.key) == self.value
+
+    def identifier(self):
+        return f&#34;[{self.key}=={self.value}]({self.indexer.identifier()})&#34;
+
+
+class NullIndexer(Indexer):
+    &#34;&#34;&#34;Empty indexer, does nothing.&#34;&#34;&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        return metadata
+
+
+class IndexerRegistry(Indexer):
+    &#34;&#34;&#34;Registry of indexers.
+    IndexerRegistry is an Indexer.
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.indexers = {}
+        self.identifiers = []
+
+    def register(self, indexer, identifier=None, priority=100):
+        &#34;&#34;&#34;Register an indexer&#34;&#34;&#34;
+        if identifier is None:
+            if isinstance(indexer, Indexer):
+                identifier = indexer.identifier()
+            else:
+                identifier = indexer.__name__
+        #print(&#34;REGISTER&#34;, indexer, identifier, priority)
+        self.indexers[identifier] = indexer
+        self.identifiers = [
+            (p, r, i)
+            for r, (p, i) in enumerate(
+                (p, i) for (p, r, i) in self.identifiers if i != identifier
+            )
+        ]
+        self.identifiers = sorted(
+            self.identifiers + [(priority, len(self.identifiers), identifier)]
+        )
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        for p, r, i in self.identifiers:
+#            print(f&#34;INDEX &#34;, p, r, i)
+            metadata = self.indexers[i](
+                key=key, query=query, data=data, metadata=metadata
+            )
+        return metadata
+
+
+_indexer_registry = None
+
+
+def indexer_registry():
+    &#34;&#34;&#34;Returns the global indexer registry (singleton)&#34;&#34;&#34;
+    global _indexer_registry
+    if _indexer_registry is None:
+        _indexer_registry = IndexerRegistry()
+        init_indexer_registry()
+    return _indexer_registry
+
+
+def reset_index_registry():
+    global _indexer_registry
+    _indexer_registry = IndexerRegistry()
+    return _indexer_registry
+
+
+def init_indexer_registry():
+    &#34;&#34;&#34;Provides basic initialization of the indexer registry.
+    This is a convenience function to set up some basic indexer functionality.
+    &#34;&#34;&#34;
+    r = indexer_registry()
+    r.register(AssureEmptyTools(), priority=50)
+
+
+def register_indexer(indexer, identifier=None, priority=100):
+    &#34;&#34;&#34;Function to register an indexer.&#34;&#34;&#34;
+    indexer_registry().register(indexer, identifier=identifier, priority=priority)
+
+
+def index(key=None, query=None, data=None, metadata=None):
+    return indexer_registry()(key=key, query=query, data=data, metadata=metadata)
+
+
+class ToolEmbedding(Enum):
+    DEFAULT = &#34;iframe&#34;
+    IFRAME = &#34;iframe&#34;  # Show inside an iframe
+    GUI = &#34;gui&#34;  # Let the GUI display it - i.e. supported directly by GUI. Should be identical to link
+    LINK = &#34;link&#34;  # Follow the link - replaces the content in the current tab
+    TAB = &#34;tab&#34;  # Open in a new tab
+    WINDOW = &#34;window&#34;  # Open in a new window
+
+
+class AssureEmptyTools(Indexer):
+    &#34;&#34;&#34;Assure existence of the tools section in the metadata&#34;&#34;&#34;
+
+    def identifier(self):
+        return &#34;assure_tools&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        if metadata is None:
+            metadata = dict(tools={})
+        metadata[&#34;tools&#34;] = []
+
+        return metadata
+
+
+class AddTool(Indexer):
+    HIGH_PRIORITY = 10
+    NORMAL_PRIORITY = 100
+    LOW_PRIORITY = 1000
+
+    def __init__(
+        self, link, name, menu=&#34;View&#34;, embedding=ToolEmbedding.DEFAULT, priority=None
+    ):
+        self.link = link
+        self.name = name
+        self.menu = menu
+        self.embedding = embedding
+        self.priority = priority or self.NORMAL_PRIORITY
+
+    def identifier(self):
+        return f&#34;AddTool({self.link},{self.name},{self.menu})&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        if metadata is None:
+            metadata = dict(tools={})
+        variables = key_query_parameters(key=key, query=query)
+        link = expand_simple(self.link, variables=variables)
+        tools = metadata.get(&#34;tools&#34;, [])
+        tools.append(
+            dict(
+                link=link,
+                name=self.name,
+                menu=self.menu,
+                embedding=self.embedding.value,
+                priority=self.priority,
+            )
+        )
+        sorted_tools = [
+            tools[i]
+            for p, i in sorted(
+                (x.get(&#34;priority&#34;, self.LOW_PRIORITY), i) for i, x in enumerate(tools)
+            )
+        ]
+        cleaned_tools = []
+        links = []
+        for x in sorted_tools:
+            if &#34;link&#34; in x and x[&#34;link&#34;] not in links:
+                links.append(x[&#34;link&#34;])
+                cleaned_tools.append(x)
+        metadata[&#34;tools&#34;] = cleaned_tools
+        
+        return metadata
+
+
+def register_tool_for_type(
+    type_identifier,
+    link,
+    name,
+    menu=&#34;View&#34;,
+    embedding=ToolEmbedding.DEFAULT,
+    priority=None,
+):
+    &#34;&#34;&#34;Simple tool registration based on type identifiers&#34;&#34;&#34;
+    register_indexer(
+        AddTool(
+            link, name=name, menu=menu, embedding=embedding, priority=priority
+        ).type_identifier_equals(type_identifier)
+    )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.indexer.index"><code class="name flex">
+<span>def <span class="ident">index</span></span>(<span>key=None, query=None, data=None, metadata=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def index(key=None, query=None, data=None, metadata=None):
+    return indexer_registry()(key=key, query=query, data=data, metadata=metadata)</code></pre>
+</details>
+</dd>
+<dt id="liquer.indexer.indexer_registry"><code class="name flex">
+<span>def <span class="ident">indexer_registry</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the global indexer registry (singleton)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def indexer_registry():
+    &#34;&#34;&#34;Returns the global indexer registry (singleton)&#34;&#34;&#34;
+    global _indexer_registry
+    if _indexer_registry is None:
+        _indexer_registry = IndexerRegistry()
+        init_indexer_registry()
+    return _indexer_registry</code></pre>
+</details>
+</dd>
+<dt id="liquer.indexer.init_indexer_registry"><code class="name flex">
+<span>def <span class="ident">init_indexer_registry</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Provides basic initialization of the indexer registry.
+This is a convenience function to set up some basic indexer functionality.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_indexer_registry():
+    &#34;&#34;&#34;Provides basic initialization of the indexer registry.
+    This is a convenience function to set up some basic indexer functionality.
+    &#34;&#34;&#34;
+    r = indexer_registry()
+    r.register(AssureEmptyTools(), priority=50)</code></pre>
+</details>
+</dd>
+<dt id="liquer.indexer.register_indexer"><code class="name flex">
+<span>def <span class="ident">register_indexer</span></span>(<span>indexer, identifier=None, priority=100)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function to register an indexer.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_indexer(indexer, identifier=None, priority=100):
+    &#34;&#34;&#34;Function to register an indexer.&#34;&#34;&#34;
+    indexer_registry().register(indexer, identifier=identifier, priority=priority)</code></pre>
+</details>
+</dd>
+<dt id="liquer.indexer.register_tool_for_type"><code class="name flex">
+<span>def <span class="ident">register_tool_for_type</span></span>(<span>type_identifier, link, name, menu='View', embedding=ToolEmbedding.DEFAULT, priority=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple tool registration based on type identifiers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_tool_for_type(
+    type_identifier,
+    link,
+    name,
+    menu=&#34;View&#34;,
+    embedding=ToolEmbedding.DEFAULT,
+    priority=None,
+):
+    &#34;&#34;&#34;Simple tool registration based on type identifiers&#34;&#34;&#34;
+    register_indexer(
+        AddTool(
+            link, name=name, menu=menu, embedding=embedding, priority=priority
+        ).type_identifier_equals(type_identifier)
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.indexer.reset_index_registry"><code class="name flex">
+<span>def <span class="ident">reset_index_registry</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_index_registry():
+    global _indexer_registry
+    _indexer_registry = IndexerRegistry()
+    return _indexer_registry</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.indexer.AddTool"><code class="flex name class">
+<span>class <span class="ident">AddTool</span></span>
+<span>(</span><span>link, name, menu='View', embedding=ToolEmbedding.DEFAULT, priority=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Indexer superclass</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AddTool(Indexer):
+    HIGH_PRIORITY = 10
+    NORMAL_PRIORITY = 100
+    LOW_PRIORITY = 1000
+
+    def __init__(
+        self, link, name, menu=&#34;View&#34;, embedding=ToolEmbedding.DEFAULT, priority=None
+    ):
+        self.link = link
+        self.name = name
+        self.menu = menu
+        self.embedding = embedding
+        self.priority = priority or self.NORMAL_PRIORITY
+
+    def identifier(self):
+        return f&#34;AddTool({self.link},{self.name},{self.menu})&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        if metadata is None:
+            metadata = dict(tools={})
+        variables = key_query_parameters(key=key, query=query)
+        link = expand_simple(self.link, variables=variables)
+        tools = metadata.get(&#34;tools&#34;, [])
+        tools.append(
+            dict(
+                link=link,
+                name=self.name,
+                menu=self.menu,
+                embedding=self.embedding.value,
+                priority=self.priority,
+            )
+        )
+        sorted_tools = [
+            tools[i]
+            for p, i in sorted(
+                (x.get(&#34;priority&#34;, self.LOW_PRIORITY), i) for i, x in enumerate(tools)
+            )
+        ]
+        cleaned_tools = []
+        links = []
+        for x in sorted_tools:
+            if &#34;link&#34; in x and x[&#34;link&#34;] not in links:
+                links.append(x[&#34;link&#34;])
+                cleaned_tools.append(x)
+        metadata[&#34;tools&#34;] = cleaned_tools
+        
+        return metadata</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="liquer.indexer.AddTool.HIGH_PRIORITY"><code class="name">var <span class="ident">HIGH_PRIORITY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="liquer.indexer.AddTool.LOW_PRIORITY"><code class="name">var <span class="ident">LOW_PRIORITY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="liquer.indexer.AddTool.NORMAL_PRIORITY"><code class="name">var <span class="ident">NORMAL_PRIORITY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.indexer.Indexer.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.indexer.AssureEmptyTools"><code class="flex name class">
+<span>class <span class="ident">AssureEmptyTools</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Assure existence of the tools section in the metadata</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AssureEmptyTools(Indexer):
+    &#34;&#34;&#34;Assure existence of the tools section in the metadata&#34;&#34;&#34;
+
+    def identifier(self):
+        return &#34;assure_tools&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        if metadata is None:
+            metadata = dict(tools={})
+        metadata[&#34;tools&#34;] = []
+
+        return metadata</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.indexer.Indexer.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.indexer.FilterIndexer"><code class="flex name class">
+<span>class <span class="ident">FilterIndexer</span></span>
+<span>(</span><span>indexer)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Indexer filter superclass - calls the indexer only when the condition is met.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FilterIndexer(IndexerProxy):
+    &#34;&#34;&#34;Indexer filter superclass - calls the indexer only when the condition is met.&#34;&#34;&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        if self.condition(key=key, query=query, data=data, metadata=metadata):
+            return self.indexer(key=key, query=query, data=data, metadata=metadata)
+        else:
+            return metadata
+
+    def condition(self, key=None, query=None, data=None, metadata=None):
+        return True</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.IndexerProxy" href="#liquer.indexer.IndexerProxy">IndexerProxy</a></li>
+<li><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.MetadataItemEquals" href="#liquer.indexer.MetadataItemEquals">MetadataItemEquals</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.indexer.FilterIndexer.condition"><code class="name flex">
+<span>def <span class="ident">condition</span></span>(<span>self, key=None, query=None, data=None, metadata=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def condition(self, key=None, query=None, data=None, metadata=None):
+    return True</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.indexer.IndexerProxy" href="#liquer.indexer.IndexerProxy">IndexerProxy</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.indexer.IndexerProxy.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.indexer.Indexer"><code class="flex name class">
+<span>class <span class="ident">Indexer</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Indexer superclass</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Indexer(object):
+    &#34;&#34;&#34;Indexer superclass&#34;&#34;&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        return metadata
+
+    def identifier(self):
+        &#34;&#34;&#34;This should return an identifier uniquely identifying the indexer among all the indexers&#34;&#34;&#34;
+        return self.__class__.__name__
+
+    def metadata_item_equalts(self, key, value):
+        return MetadataItemEquals(self, key, value)
+
+    def type_identifier_equals(self, value):
+        return self.metadata_item_equalts(&#34;type_identifier&#34;, value)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.ext.lq_whoosh.AddToWhooshIndex" href="ext/lq_whoosh.html#liquer.ext.lq_whoosh.AddToWhooshIndex">AddToWhooshIndex</a></li>
+<li><a title="liquer.indexer.AddTool" href="#liquer.indexer.AddTool">AddTool</a></li>
+<li><a title="liquer.indexer.AssureEmptyTools" href="#liquer.indexer.AssureEmptyTools">AssureEmptyTools</a></li>
+<li><a title="liquer.indexer.IndexerProxy" href="#liquer.indexer.IndexerProxy">IndexerProxy</a></li>
+<li><a title="liquer.indexer.IndexerRegistry" href="#liquer.indexer.IndexerRegistry">IndexerRegistry</a></li>
+<li><a title="liquer.indexer.NullIndexer" href="#liquer.indexer.NullIndexer">NullIndexer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.indexer.Indexer.identifier"><code class="name flex">
+<span>def <span class="ident">identifier</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This should return an identifier uniquely identifying the indexer among all the indexers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def identifier(self):
+    &#34;&#34;&#34;This should return an identifier uniquely identifying the indexer among all the indexers&#34;&#34;&#34;
+    return self.__class__.__name__</code></pre>
+</details>
+</dd>
+<dt id="liquer.indexer.Indexer.metadata_item_equalts"><code class="name flex">
+<span>def <span class="ident">metadata_item_equalts</span></span>(<span>self, key, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def metadata_item_equalts(self, key, value):
+    return MetadataItemEquals(self, key, value)</code></pre>
+</details>
+</dd>
+<dt id="liquer.indexer.Indexer.type_identifier_equals"><code class="name flex">
+<span>def <span class="ident">type_identifier_equals</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def type_identifier_equals(self, value):
+    return self.metadata_item_equalts(&#34;type_identifier&#34;, value)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.indexer.IndexerProxy"><code class="flex name class">
+<span>class <span class="ident">IndexerProxy</span></span>
+<span>(</span><span>indexer)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Proxy to another indexer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IndexerProxy(Indexer):
+    &#34;&#34;&#34;Proxy to another indexer&#34;&#34;&#34;
+
+    def __init__(self, indexer):
+        self.indexer = indexer
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        return self.indexer(key=key, query=query, data=data, metadata=metadata)
+
+    def identifier(self):
+        return &#34;%s(%s)&#34; % (self.__class__.__name__, self.indexer.identifier())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.FilterIndexer" href="#liquer.indexer.FilterIndexer">FilterIndexer</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.indexer.Indexer.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.indexer.IndexerRegistry"><code class="flex name class">
+<span>class <span class="ident">IndexerRegistry</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Registry of indexers.
+IndexerRegistry is an Indexer.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IndexerRegistry(Indexer):
+    &#34;&#34;&#34;Registry of indexers.
+    IndexerRegistry is an Indexer.
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.indexers = {}
+        self.identifiers = []
+
+    def register(self, indexer, identifier=None, priority=100):
+        &#34;&#34;&#34;Register an indexer&#34;&#34;&#34;
+        if identifier is None:
+            if isinstance(indexer, Indexer):
+                identifier = indexer.identifier()
+            else:
+                identifier = indexer.__name__
+        #print(&#34;REGISTER&#34;, indexer, identifier, priority)
+        self.indexers[identifier] = indexer
+        self.identifiers = [
+            (p, r, i)
+            for r, (p, i) in enumerate(
+                (p, i) for (p, r, i) in self.identifiers if i != identifier
+            )
+        ]
+        self.identifiers = sorted(
+            self.identifiers + [(priority, len(self.identifiers), identifier)]
+        )
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        for p, r, i in self.identifiers:
+#            print(f&#34;INDEX &#34;, p, r, i)
+            metadata = self.indexers[i](
+                key=key, query=query, data=data, metadata=metadata
+            )
+        return metadata</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.indexer.IndexerRegistry.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>self, indexer, identifier=None, priority=100)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register an indexer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register(self, indexer, identifier=None, priority=100):
+    &#34;&#34;&#34;Register an indexer&#34;&#34;&#34;
+    if identifier is None:
+        if isinstance(indexer, Indexer):
+            identifier = indexer.identifier()
+        else:
+            identifier = indexer.__name__
+    #print(&#34;REGISTER&#34;, indexer, identifier, priority)
+    self.indexers[identifier] = indexer
+    self.identifiers = [
+        (p, r, i)
+        for r, (p, i) in enumerate(
+            (p, i) for (p, r, i) in self.identifiers if i != identifier
+        )
+    ]
+    self.identifiers = sorted(
+        self.identifiers + [(priority, len(self.identifiers), identifier)]
+    )</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.indexer.Indexer.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.indexer.MetadataItemEquals"><code class="flex name class">
+<span>class <span class="ident">MetadataItemEquals</span></span>
+<span>(</span><span>indexer, key, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Indexer filter superclass - calls the indexer only when the condition is met.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MetadataItemEquals(FilterIndexer):
+    def __init__(self, indexer, key, value):
+        self.indexer = indexer
+        self.key = key
+        self.value = value
+
+    def condition(self, key=None, query=None, data=None, metadata=None):
+        return metadata.get(self.key) == self.value
+
+    def identifier(self):
+        return f&#34;[{self.key}=={self.value}]({self.indexer.identifier()})&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.FilterIndexer" href="#liquer.indexer.FilterIndexer">FilterIndexer</a></li>
+<li><a title="liquer.indexer.IndexerProxy" href="#liquer.indexer.IndexerProxy">IndexerProxy</a></li>
+<li><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.indexer.MetadataItemEquals.condition"><code class="name flex">
+<span>def <span class="ident">condition</span></span>(<span>self, key=None, query=None, data=None, metadata=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def condition(self, key=None, query=None, data=None, metadata=None):
+    return metadata.get(self.key) == self.value</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.indexer.FilterIndexer" href="#liquer.indexer.FilterIndexer">FilterIndexer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.indexer.FilterIndexer.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.indexer.NullIndexer"><code class="flex name class">
+<span>class <span class="ident">NullIndexer</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Empty indexer, does nothing.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NullIndexer(Indexer):
+    &#34;&#34;&#34;Empty indexer, does nothing.&#34;&#34;&#34;
+
+    def __call__(self, key=None, query=None, data=None, metadata=None):
+        return metadata</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.indexer.Indexer.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.indexer.ToolEmbedding"><code class="flex name class">
+<span>class <span class="ident">ToolEmbedding</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ToolEmbedding(Enum):
+    DEFAULT = &#34;iframe&#34;
+    IFRAME = &#34;iframe&#34;  # Show inside an iframe
+    GUI = &#34;gui&#34;  # Let the GUI display it - i.e. supported directly by GUI. Should be identical to link
+    LINK = &#34;link&#34;  # Follow the link - replaces the content in the current tab
+    TAB = &#34;tab&#34;  # Open in a new tab
+    WINDOW = &#34;window&#34;  # Open in a new window</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="liquer.indexer.ToolEmbedding.DEFAULT"><code class="name">var <span class="ident">DEFAULT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="liquer.indexer.ToolEmbedding.GUI"><code class="name">var <span class="ident">GUI</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="liquer.indexer.ToolEmbedding.IFRAME"><code class="name">var <span class="ident">IFRAME</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="liquer.indexer.ToolEmbedding.LINK"><code class="name">var <span class="ident">LINK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="liquer.indexer.ToolEmbedding.TAB"><code class="name">var <span class="ident">TAB</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="liquer.indexer.ToolEmbedding.WINDOW"><code class="name">var <span class="ident">WINDOW</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer" href="index.html">liquer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.indexer.index" href="#liquer.indexer.index">index</a></code></li>
+<li><code><a title="liquer.indexer.indexer_registry" href="#liquer.indexer.indexer_registry">indexer_registry</a></code></li>
+<li><code><a title="liquer.indexer.init_indexer_registry" href="#liquer.indexer.init_indexer_registry">init_indexer_registry</a></code></li>
+<li><code><a title="liquer.indexer.register_indexer" href="#liquer.indexer.register_indexer">register_indexer</a></code></li>
+<li><code><a title="liquer.indexer.register_tool_for_type" href="#liquer.indexer.register_tool_for_type">register_tool_for_type</a></code></li>
+<li><code><a title="liquer.indexer.reset_index_registry" href="#liquer.indexer.reset_index_registry">reset_index_registry</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.indexer.AddTool" href="#liquer.indexer.AddTool">AddTool</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.indexer.AddTool.HIGH_PRIORITY" href="#liquer.indexer.AddTool.HIGH_PRIORITY">HIGH_PRIORITY</a></code></li>
+<li><code><a title="liquer.indexer.AddTool.LOW_PRIORITY" href="#liquer.indexer.AddTool.LOW_PRIORITY">LOW_PRIORITY</a></code></li>
+<li><code><a title="liquer.indexer.AddTool.NORMAL_PRIORITY" href="#liquer.indexer.AddTool.NORMAL_PRIORITY">NORMAL_PRIORITY</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.AssureEmptyTools" href="#liquer.indexer.AssureEmptyTools">AssureEmptyTools</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.FilterIndexer" href="#liquer.indexer.FilterIndexer">FilterIndexer</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.indexer.FilterIndexer.condition" href="#liquer.indexer.FilterIndexer.condition">condition</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.Indexer" href="#liquer.indexer.Indexer">Indexer</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.indexer.Indexer.identifier" href="#liquer.indexer.Indexer.identifier">identifier</a></code></li>
+<li><code><a title="liquer.indexer.Indexer.metadata_item_equalts" href="#liquer.indexer.Indexer.metadata_item_equalts">metadata_item_equalts</a></code></li>
+<li><code><a title="liquer.indexer.Indexer.type_identifier_equals" href="#liquer.indexer.Indexer.type_identifier_equals">type_identifier_equals</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.IndexerProxy" href="#liquer.indexer.IndexerProxy">IndexerProxy</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.IndexerRegistry" href="#liquer.indexer.IndexerRegistry">IndexerRegistry</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.indexer.IndexerRegistry.register" href="#liquer.indexer.IndexerRegistry.register">register</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.MetadataItemEquals" href="#liquer.indexer.MetadataItemEquals">MetadataItemEquals</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.indexer.MetadataItemEquals.condition" href="#liquer.indexer.MetadataItemEquals.condition">condition</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.NullIndexer" href="#liquer.indexer.NullIndexer">NullIndexer</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.indexer.ToolEmbedding" href="#liquer.indexer.ToolEmbedding">ToolEmbedding</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.indexer.ToolEmbedding.DEFAULT" href="#liquer.indexer.ToolEmbedding.DEFAULT">DEFAULT</a></code></li>
+<li><code><a title="liquer.indexer.ToolEmbedding.GUI" href="#liquer.indexer.ToolEmbedding.GUI">GUI</a></code></li>
+<li><code><a title="liquer.indexer.ToolEmbedding.IFRAME" href="#liquer.indexer.ToolEmbedding.IFRAME">IFRAME</a></code></li>
+<li><code><a title="liquer.indexer.ToolEmbedding.LINK" href="#liquer.indexer.ToolEmbedding.LINK">LINK</a></code></li>
+<li><code><a title="liquer.indexer.ToolEmbedding.TAB" href="#liquer.indexer.ToolEmbedding.TAB">TAB</a></code></li>
+<li><code><a title="liquer.indexer.ToolEmbedding.WINDOW" href="#liquer.indexer.ToolEmbedding.WINDOW">WINDOW</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

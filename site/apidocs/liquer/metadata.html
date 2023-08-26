@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.metadata API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.metadata</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from liquer.constants import Status
+from liquer.util import timestamp
+from liquer.dependencies import Dependencies
+from copy import deepcopy
+import json
+
+
+class Metadata:
+    &#34;&#34;&#34;Metadata wrapper
+    Highlevel getters/setters and validation on top of a metadata dictionary object.
+    Metadata dictionary is a simple JSON-able python dictionary.
+    The Metadata class takes care that all required fields are filled in in the right format.
+    High-level logging functionality into the metadata is provided as well.
+    &#34;&#34;&#34;
+
+    def __init__(self, metadata=None):
+        if metadata is None:
+            metadata = {}
+        self.set_metadata(metadata)
+
+    @classmethod
+    def from_string(cls, string):
+        return cls(json.loads(string))
+
+    def set_metadata(self, metadata):
+        &#34;&#34;&#34;Fills the missing fields and sets the metadata from a dictionary&#34;&#34;&#34;
+        if &#34;log&#34; not in metadata:
+            metadata[&#34;log&#34;] = []
+        if &#34;child_log&#34; not in metadata:
+            metadata[&#34;child_log&#34;] = []
+        if &#34;query&#34; not in metadata:
+            metadata[&#34;query&#34;] = None
+        if &#34;status&#34; not in metadata:
+            metadata[&#34;status&#34;] = Status.NONE.value
+        if &#34;type_identifier&#34; not in metadata:
+            metadata[&#34;type_identifier&#34;] = None
+        if &#34;message&#34; not in metadata:
+            metadata[&#34;message&#34;] = &#34;&#34;
+        if &#34;is_error&#34; not in metadata:
+            metadata[&#34;is_error&#34;] = False
+        metadata[&#34;dependencies&#34;] = Dependencies(
+            metadata.get(&#34;dependencies&#34;, dict(query=metadata[&#34;query&#34;]))
+        ).as_dict()
+        self.metadata = metadata
+        return self
+
+    def get(self, key, default=None):
+        return self.metadata.get(key, default)
+
+    @property
+    def query(self):
+        return self.metadata[&#34;query&#34;]
+
+    @query.setter
+    def query(self, value):
+        self.metadata[&#34;query&#34;] = value
+        self.metadata[&#34;dependencies&#34;][&#34;query&#34;] = value
+        self.updated()
+
+    @property
+    def key(self):
+        return self.metadata.get(&#34;key&#34;)
+
+    @key.setter
+    def key(self, value):
+        self.metadata[&#34;key&#34;] = value
+        self.updated()
+
+    @property
+    def status(self):
+        return self.metadata[&#34;status&#34;]
+
+    @status.setter
+    def status(self, value):
+        if isinstance(value, Status):
+            value = value.value
+        self.metadata[&#34;status&#34;] = value
+        if value == Status.ERROR.value:
+            self.metadata[&#34;is_error&#34;] = True
+        self.updated()
+
+    @property
+    def type_identifier(self):
+        return self.metadata[&#34;type_identifier&#34;]
+
+    @type_identifier.setter
+    def type_identifier(self, value):
+        self.metadata[&#34;type_identifier&#34;] = value
+        self.updated()
+
+    @property
+    def message(self):
+        return self.metadata[&#34;message&#34;]
+
+    @message.setter
+    def message(self, value):
+        self.metadata[&#34;message&#34;] = value
+        self.updated()
+
+    @property
+    def is_error(self):
+        return self.metadata[&#34;is_error&#34;]
+
+    @query.setter
+    def is_error(self, value):
+        value = bool(value)
+        self.metadata[&#34;is_error&#34;] = value
+        if value:
+            self.metadata[&#34;status&#34;] = Status.ERROR.value
+        self.updated()
+
+    @property
+    def log(self):
+        return self.metadata[&#34;log&#34;]
+
+    def as_dict(self):
+        &#34;&#34;&#34;Represent metadata as a dictionary - suitable for json serialization
+        State data is NOT part of the returned dictionary.
+        &#34;&#34;&#34;
+        return deepcopy(self.metadata)
+
+    def add_command_dependency(self, ns, command_metadata, detect_collisions=True):
+        dependencies = Dependencies(self.metadata[&#34;dependencies&#34;])
+        dependencies.add_command_dependency(ns, command_metadata, detect_collisions)
+        self.metadata[&#34;dependencies&#34;] = dependencies.as_dict()
+        return self
+
+    def add_recipe_dependency(self, recipe, detect_collisions=True):
+        dependencies = Dependencies(self.metadata[&#34;dependencies&#34;])
+        dependencies.add_recipe_dependency(recipe, detect_collisions)
+        self.metadata[&#34;dependencies&#34;] = dependencies.as_dict()
+        return self
+
+    def clear_log(self):
+        &#34;Remove all the messages from the log.&#34;
+        self.metadata[&#34;log&#34;] = []
+        self.info(&#34;Log cleared&#34;)
+        self.updated()
+        return self
+
+    def log_dict(self, d):
+        &#34;Put dictionary with a log entry into the log&#34;
+        d[&#34;timestamp&#34;] = timestamp()
+        self.log.append(d)
+        if &#34;message&#34; in d:
+            self.message = d[&#34;message&#34;]
+        self.updated()
+        return self
+
+    def error(self, message, position=None, query=None):
+        &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+        self.status = Status.ERROR
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def warning(self, message, traceback=None):
+        &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+        return self.log_dict(dict(kind=&#34;warning&#34;, message=message, traceback=traceback))
+
+    def exception(self, message, traceback, position=None, query=None):
+        &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+        self.status = Status.ERROR
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                traceback=traceback,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def info(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        self.log_dict(dict(kind=&#34;info&#34;, message=message))
+        return self
+
+    def debug(self, message):
+        &#34;&#34;&#34;Log a message (debug)&#34;&#34;&#34;
+        self.log_dict(dict(kind=&#34;debug&#34;, message=message))
+        return self
+
+    def updated(self):
+        pass
+
+
+class StoreSyncMetadata(Metadata):
+    &#34;&#34;&#34;Metadata synchronizing with a store&#34;&#34;&#34;
+
+    def __init__(self, store, key, create_if_not_found=True):
+        &#34;&#34;&#34;Store and metadata to be synchronized with. Metadata will be initialized from a store.
+        If create_if_not_found is True (default), then in case of a failure to read (i.e. metadata does not exists, is None or it ends with an error),
+        the new metadata is created under the key.
+        &#34;&#34;&#34;
+        self.store = store
+        self.sync_key = key
+        makenew = False
+        try:
+            metadata = self.store.get_metadata(key)
+            makenew = True if metadata is None and create_if_not_found else False
+        except:
+            if create_if_not_found:
+                makenew = True
+            else:
+                raise
+        if makenew:
+            self.store.store_metadata(key, Metadata().as_dict())
+            metadata = self.store.get_metadata(key)
+
+        super().__init__(metadata)
+
+    def reload(self):
+        &#34;Reload metadata from store&#34;
+        metadata = self.store.get_metadata(self.sync_key)
+        self.set_metadata(metadata)
+
+    def updated(self):
+        self.store.store_metadata(self.sync_key, self.as_dict())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.metadata.Metadata"><code class="flex name class">
+<span>class <span class="ident">Metadata</span></span>
+<span>(</span><span>metadata=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Metadata wrapper
+Highlevel getters/setters and validation on top of a metadata dictionary object.
+Metadata dictionary is a simple JSON-able python dictionary.
+The Metadata class takes care that all required fields are filled in in the right format.
+High-level logging functionality into the metadata is provided as well.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Metadata:
+    &#34;&#34;&#34;Metadata wrapper
+    Highlevel getters/setters and validation on top of a metadata dictionary object.
+    Metadata dictionary is a simple JSON-able python dictionary.
+    The Metadata class takes care that all required fields are filled in in the right format.
+    High-level logging functionality into the metadata is provided as well.
+    &#34;&#34;&#34;
+
+    def __init__(self, metadata=None):
+        if metadata is None:
+            metadata = {}
+        self.set_metadata(metadata)
+
+    @classmethod
+    def from_string(cls, string):
+        return cls(json.loads(string))
+
+    def set_metadata(self, metadata):
+        &#34;&#34;&#34;Fills the missing fields and sets the metadata from a dictionary&#34;&#34;&#34;
+        if &#34;log&#34; not in metadata:
+            metadata[&#34;log&#34;] = []
+        if &#34;child_log&#34; not in metadata:
+            metadata[&#34;child_log&#34;] = []
+        if &#34;query&#34; not in metadata:
+            metadata[&#34;query&#34;] = None
+        if &#34;status&#34; not in metadata:
+            metadata[&#34;status&#34;] = Status.NONE.value
+        if &#34;type_identifier&#34; not in metadata:
+            metadata[&#34;type_identifier&#34;] = None
+        if &#34;message&#34; not in metadata:
+            metadata[&#34;message&#34;] = &#34;&#34;
+        if &#34;is_error&#34; not in metadata:
+            metadata[&#34;is_error&#34;] = False
+        metadata[&#34;dependencies&#34;] = Dependencies(
+            metadata.get(&#34;dependencies&#34;, dict(query=metadata[&#34;query&#34;]))
+        ).as_dict()
+        self.metadata = metadata
+        return self
+
+    def get(self, key, default=None):
+        return self.metadata.get(key, default)
+
+    @property
+    def query(self):
+        return self.metadata[&#34;query&#34;]
+
+    @query.setter
+    def query(self, value):
+        self.metadata[&#34;query&#34;] = value
+        self.metadata[&#34;dependencies&#34;][&#34;query&#34;] = value
+        self.updated()
+
+    @property
+    def key(self):
+        return self.metadata.get(&#34;key&#34;)
+
+    @key.setter
+    def key(self, value):
+        self.metadata[&#34;key&#34;] = value
+        self.updated()
+
+    @property
+    def status(self):
+        return self.metadata[&#34;status&#34;]
+
+    @status.setter
+    def status(self, value):
+        if isinstance(value, Status):
+            value = value.value
+        self.metadata[&#34;status&#34;] = value
+        if value == Status.ERROR.value:
+            self.metadata[&#34;is_error&#34;] = True
+        self.updated()
+
+    @property
+    def type_identifier(self):
+        return self.metadata[&#34;type_identifier&#34;]
+
+    @type_identifier.setter
+    def type_identifier(self, value):
+        self.metadata[&#34;type_identifier&#34;] = value
+        self.updated()
+
+    @property
+    def message(self):
+        return self.metadata[&#34;message&#34;]
+
+    @message.setter
+    def message(self, value):
+        self.metadata[&#34;message&#34;] = value
+        self.updated()
+
+    @property
+    def is_error(self):
+        return self.metadata[&#34;is_error&#34;]
+
+    @query.setter
+    def is_error(self, value):
+        value = bool(value)
+        self.metadata[&#34;is_error&#34;] = value
+        if value:
+            self.metadata[&#34;status&#34;] = Status.ERROR.value
+        self.updated()
+
+    @property
+    def log(self):
+        return self.metadata[&#34;log&#34;]
+
+    def as_dict(self):
+        &#34;&#34;&#34;Represent metadata as a dictionary - suitable for json serialization
+        State data is NOT part of the returned dictionary.
+        &#34;&#34;&#34;
+        return deepcopy(self.metadata)
+
+    def add_command_dependency(self, ns, command_metadata, detect_collisions=True):
+        dependencies = Dependencies(self.metadata[&#34;dependencies&#34;])
+        dependencies.add_command_dependency(ns, command_metadata, detect_collisions)
+        self.metadata[&#34;dependencies&#34;] = dependencies.as_dict()
+        return self
+
+    def add_recipe_dependency(self, recipe, detect_collisions=True):
+        dependencies = Dependencies(self.metadata[&#34;dependencies&#34;])
+        dependencies.add_recipe_dependency(recipe, detect_collisions)
+        self.metadata[&#34;dependencies&#34;] = dependencies.as_dict()
+        return self
+
+    def clear_log(self):
+        &#34;Remove all the messages from the log.&#34;
+        self.metadata[&#34;log&#34;] = []
+        self.info(&#34;Log cleared&#34;)
+        self.updated()
+        return self
+
+    def log_dict(self, d):
+        &#34;Put dictionary with a log entry into the log&#34;
+        d[&#34;timestamp&#34;] = timestamp()
+        self.log.append(d)
+        if &#34;message&#34; in d:
+            self.message = d[&#34;message&#34;]
+        self.updated()
+        return self
+
+    def error(self, message, position=None, query=None):
+        &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+        self.status = Status.ERROR
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def warning(self, message, traceback=None):
+        &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+        return self.log_dict(dict(kind=&#34;warning&#34;, message=message, traceback=traceback))
+
+    def exception(self, message, traceback, position=None, query=None):
+        &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+        self.status = Status.ERROR
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                traceback=traceback,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def info(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        self.log_dict(dict(kind=&#34;info&#34;, message=message))
+        return self
+
+    def debug(self, message):
+        &#34;&#34;&#34;Log a message (debug)&#34;&#34;&#34;
+        self.log_dict(dict(kind=&#34;debug&#34;, message=message))
+        return self
+
+    def updated(self):
+        pass</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.metadata.StoreSyncMetadata" href="#liquer.metadata.StoreSyncMetadata">StoreSyncMetadata</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.metadata.Metadata.from_string"><code class="name flex">
+<span>def <span class="ident">from_string</span></span>(<span>string)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_string(cls, string):
+    return cls(json.loads(string))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="liquer.metadata.Metadata.is_error"><code class="name">var <span class="ident">is_error</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def query(self):
+    return self.metadata[&#34;query&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.key"><code class="name">var <span class="ident">key</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def key(self):
+    return self.metadata.get(&#34;key&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.log"><code class="name">var <span class="ident">log</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def log(self):
+    return self.metadata[&#34;log&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.message"><code class="name">var <span class="ident">message</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def message(self):
+    return self.metadata[&#34;message&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.query"><code class="name">var <span class="ident">query</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def query(self):
+    return self.metadata[&#34;query&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.status"><code class="name">var <span class="ident">status</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def status(self):
+    return self.metadata[&#34;status&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.type_identifier"><code class="name">var <span class="ident">type_identifier</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def type_identifier(self):
+    return self.metadata[&#34;type_identifier&#34;]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.metadata.Metadata.add_command_dependency"><code class="name flex">
+<span>def <span class="ident">add_command_dependency</span></span>(<span>self, ns, command_metadata, detect_collisions=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_command_dependency(self, ns, command_metadata, detect_collisions=True):
+    dependencies = Dependencies(self.metadata[&#34;dependencies&#34;])
+    dependencies.add_command_dependency(ns, command_metadata, detect_collisions)
+    self.metadata[&#34;dependencies&#34;] = dependencies.as_dict()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.add_recipe_dependency"><code class="name flex">
+<span>def <span class="ident">add_recipe_dependency</span></span>(<span>self, recipe, detect_collisions=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_recipe_dependency(self, recipe, detect_collisions=True):
+    dependencies = Dependencies(self.metadata[&#34;dependencies&#34;])
+    dependencies.add_recipe_dependency(recipe, detect_collisions)
+    self.metadata[&#34;dependencies&#34;] = dependencies.as_dict()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.as_dict"><code class="name flex">
+<span>def <span class="ident">as_dict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represent metadata as a dictionary - suitable for json serialization
+State data is NOT part of the returned dictionary.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def as_dict(self):
+    &#34;&#34;&#34;Represent metadata as a dictionary - suitable for json serialization
+    State data is NOT part of the returned dictionary.
+    &#34;&#34;&#34;
+    return deepcopy(self.metadata)</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.clear_log"><code class="name flex">
+<span>def <span class="ident">clear_log</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove all the messages from the log.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear_log(self):
+    &#34;Remove all the messages from the log.&#34;
+    self.metadata[&#34;log&#34;] = []
+    self.info(&#34;Log cleared&#34;)
+    self.updated()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.debug"><code class="name flex">
+<span>def <span class="ident">debug</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a message (debug)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def debug(self, message):
+    &#34;&#34;&#34;Log a message (debug)&#34;&#34;&#34;
+    self.log_dict(dict(kind=&#34;debug&#34;, message=message))
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.error"><code class="name flex">
+<span>def <span class="ident">error</span></span>(<span>self, message, position=None, query=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log an error message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def error(self, message, position=None, query=None):
+    &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+    self.status = Status.ERROR
+    return self.log_dict(
+        dict(
+            kind=&#34;error&#34;,
+            message=message,
+            position=None if position is None else position.to_dict(),
+            query=query,
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.exception"><code class="name flex">
+<span>def <span class="ident">exception</span></span>(<span>self, message, traceback, position=None, query=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log an exception</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exception(self, message, traceback, position=None, query=None):
+    &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+    self.status = Status.ERROR
+    return self.log_dict(
+        dict(
+            kind=&#34;error&#34;,
+            message=message,
+            traceback=traceback,
+            position=None if position is None else position.to_dict(),
+            query=query,
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key, default=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key, default=None):
+    return self.metadata.get(key, default)</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.info"><code class="name flex">
+<span>def <span class="ident">info</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a message (info)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def info(self, message):
+    &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+    self.log_dict(dict(kind=&#34;info&#34;, message=message))
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.log_dict"><code class="name flex">
+<span>def <span class="ident">log_dict</span></span>(<span>self, d)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Put dictionary with a log entry into the log</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_dict(self, d):
+    &#34;Put dictionary with a log entry into the log&#34;
+    d[&#34;timestamp&#34;] = timestamp()
+    self.log.append(d)
+    if &#34;message&#34; in d:
+        self.message = d[&#34;message&#34;]
+    self.updated()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.set_metadata"><code class="name flex">
+<span>def <span class="ident">set_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fills the missing fields and sets the metadata from a dictionary</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_metadata(self, metadata):
+    &#34;&#34;&#34;Fills the missing fields and sets the metadata from a dictionary&#34;&#34;&#34;
+    if &#34;log&#34; not in metadata:
+        metadata[&#34;log&#34;] = []
+    if &#34;child_log&#34; not in metadata:
+        metadata[&#34;child_log&#34;] = []
+    if &#34;query&#34; not in metadata:
+        metadata[&#34;query&#34;] = None
+    if &#34;status&#34; not in metadata:
+        metadata[&#34;status&#34;] = Status.NONE.value
+    if &#34;type_identifier&#34; not in metadata:
+        metadata[&#34;type_identifier&#34;] = None
+    if &#34;message&#34; not in metadata:
+        metadata[&#34;message&#34;] = &#34;&#34;
+    if &#34;is_error&#34; not in metadata:
+        metadata[&#34;is_error&#34;] = False
+    metadata[&#34;dependencies&#34;] = Dependencies(
+        metadata.get(&#34;dependencies&#34;, dict(query=metadata[&#34;query&#34;]))
+    ).as_dict()
+    self.metadata = metadata
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.updated"><code class="name flex">
+<span>def <span class="ident">updated</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updated(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.Metadata.warning"><code class="name flex">
+<span>def <span class="ident">warning</span></span>(<span>self, message, traceback=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a warning message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def warning(self, message, traceback=None):
+    &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+    return self.log_dict(dict(kind=&#34;warning&#34;, message=message, traceback=traceback))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.metadata.StoreSyncMetadata"><code class="flex name class">
+<span>class <span class="ident">StoreSyncMetadata</span></span>
+<span>(</span><span>store, key, create_if_not_found=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Metadata synchronizing with a store</p>
+<p>Store and metadata to be synchronized with. Metadata will be initialized from a store.
+If create_if_not_found is True (default), then in case of a failure to read (i.e. metadata does not exists, is None or it ends with an error),
+the new metadata is created under the key.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreSyncMetadata(Metadata):
+    &#34;&#34;&#34;Metadata synchronizing with a store&#34;&#34;&#34;
+
+    def __init__(self, store, key, create_if_not_found=True):
+        &#34;&#34;&#34;Store and metadata to be synchronized with. Metadata will be initialized from a store.
+        If create_if_not_found is True (default), then in case of a failure to read (i.e. metadata does not exists, is None or it ends with an error),
+        the new metadata is created under the key.
+        &#34;&#34;&#34;
+        self.store = store
+        self.sync_key = key
+        makenew = False
+        try:
+            metadata = self.store.get_metadata(key)
+            makenew = True if metadata is None and create_if_not_found else False
+        except:
+            if create_if_not_found:
+                makenew = True
+            else:
+                raise
+        if makenew:
+            self.store.store_metadata(key, Metadata().as_dict())
+            metadata = self.store.get_metadata(key)
+
+        super().__init__(metadata)
+
+    def reload(self):
+        &#34;Reload metadata from store&#34;
+        metadata = self.store.get_metadata(self.sync_key)
+        self.set_metadata(metadata)
+
+    def updated(self):
+        self.store.store_metadata(self.sync_key, self.as_dict())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.metadata.Metadata" href="#liquer.metadata.Metadata">Metadata</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.metadata.StoreSyncMetadata.reload"><code class="name flex">
+<span>def <span class="ident">reload</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reload metadata from store</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reload(self):
+    &#34;Reload metadata from store&#34;
+    metadata = self.store.get_metadata(self.sync_key)
+    self.set_metadata(metadata)</code></pre>
+</details>
+</dd>
+<dt id="liquer.metadata.StoreSyncMetadata.updated"><code class="name flex">
+<span>def <span class="ident">updated</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updated(self):
+    self.store.store_metadata(self.sync_key, self.as_dict())</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.metadata.Metadata" href="#liquer.metadata.Metadata">Metadata</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.metadata.Metadata.as_dict" href="#liquer.metadata.Metadata.as_dict">as_dict</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.clear_log" href="#liquer.metadata.Metadata.clear_log">clear_log</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.debug" href="#liquer.metadata.Metadata.debug">debug</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.error" href="#liquer.metadata.Metadata.error">error</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.exception" href="#liquer.metadata.Metadata.exception">exception</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.info" href="#liquer.metadata.Metadata.info">info</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.log_dict" href="#liquer.metadata.Metadata.log_dict">log_dict</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.set_metadata" href="#liquer.metadata.Metadata.set_metadata">set_metadata</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.warning" href="#liquer.metadata.Metadata.warning">warning</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer" href="index.html">liquer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.metadata.Metadata" href="#liquer.metadata.Metadata">Metadata</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.metadata.Metadata.add_command_dependency" href="#liquer.metadata.Metadata.add_command_dependency">add_command_dependency</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.add_recipe_dependency" href="#liquer.metadata.Metadata.add_recipe_dependency">add_recipe_dependency</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.as_dict" href="#liquer.metadata.Metadata.as_dict">as_dict</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.clear_log" href="#liquer.metadata.Metadata.clear_log">clear_log</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.debug" href="#liquer.metadata.Metadata.debug">debug</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.error" href="#liquer.metadata.Metadata.error">error</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.exception" href="#liquer.metadata.Metadata.exception">exception</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.from_string" href="#liquer.metadata.Metadata.from_string">from_string</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.get" href="#liquer.metadata.Metadata.get">get</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.info" href="#liquer.metadata.Metadata.info">info</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.is_error" href="#liquer.metadata.Metadata.is_error">is_error</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.key" href="#liquer.metadata.Metadata.key">key</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.log" href="#liquer.metadata.Metadata.log">log</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.log_dict" href="#liquer.metadata.Metadata.log_dict">log_dict</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.message" href="#liquer.metadata.Metadata.message">message</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.query" href="#liquer.metadata.Metadata.query">query</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.set_metadata" href="#liquer.metadata.Metadata.set_metadata">set_metadata</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.status" href="#liquer.metadata.Metadata.status">status</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.type_identifier" href="#liquer.metadata.Metadata.type_identifier">type_identifier</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.updated" href="#liquer.metadata.Metadata.updated">updated</a></code></li>
+<li><code><a title="liquer.metadata.Metadata.warning" href="#liquer.metadata.Metadata.warning">warning</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.metadata.StoreSyncMetadata" href="#liquer.metadata.StoreSyncMetadata">StoreSyncMetadata</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.metadata.StoreSyncMetadata.reload" href="#liquer.metadata.StoreSyncMetadata.reload">reload</a></code></li>
+<li><code><a title="liquer.metadata.StoreSyncMetadata.updated" href="#liquer.metadata.StoreSyncMetadata.updated">updated</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

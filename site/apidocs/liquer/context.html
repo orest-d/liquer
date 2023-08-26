@@ -1,0 +1,3994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.context API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.context</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import traceback
+from liquer.state import State, EvaluationException, vars_clone
+from liquer.parser import (
+    encode,
+    decode,
+    parse,
+    QueryException,
+    TransformQuerySegment,
+    Query,
+    ActionRequest,
+    StringActionParameter,
+    ExpandedActionParameter,
+    LinkActionParameter,
+)
+from liquer.cache import cached_part, get_cache
+from liquer.commands import command_registry
+from liquer.state_types import (
+    encode_state_data,
+    state_types_registry,
+    data_characteristics,
+    type_identifier_of,
+)
+import os.path
+from datetime import datetime
+import json
+from liquer.constants import Status, mimetype_from_extension
+import liquer.util as util
+from liquer.util import timestamp
+from copy import deepcopy
+from liquer.metadata import Metadata
+from liquer.indexer import index, NullIndexer
+
+from liquer.store import (
+    get_store,
+    Store,
+    KeyNotFoundStoreException,
+    StoreException,
+    key_extension,
+    parent_key,
+)
+
+
+def find_queries_in_template(template: str, prefix: str, sufix: str):
+    try:
+        start = template.index(prefix)
+        end = template.index(sufix, start + len(prefix))
+        yield template[:start], template[start + len(prefix) : end]
+        for text, query in find_queries_in_template(
+            template[end + len(sufix) :], prefix, sufix
+        ):
+            yield text, query
+    except ValueError:
+        yield template, None
+
+
+class Vars(dict):
+    def __init__(self, *arg, **kwarg):
+        super().__init__(*arg, **kwarg)
+        self._modified_vars = set()
+
+    def __getattr__(self, name):
+        return self[name]
+
+    def __setattr__(self, name, value):
+        if name == &#34;_modified_vars&#34;:
+            super().__setattr__(name, value)
+        else:
+            self._modified_vars.add(name)
+            self[name] = value
+
+    def __getstate__(self):
+        return (self._modified_vars, dict(self))
+
+    def __setstate__(self, x):
+        mv, d = x
+        super().__setattr__(&#34;_modified_vars&#34;, mv)
+        self.clear()
+        self.update(d)
+
+    def get_modified(self):
+        return {key: self[key] for key in self._modified_vars}
+
+
+def log_time():
+    date = datetime.now()
+    return date.strftime(&#34;%H:%M:%S&#34;)
+
+
+CONTEXT_CREATOR = None
+
+
+def set_context_creator(context_creator):
+    global CONTEXT_CREATOR
+    CONTEXT_CREATOR = context_creator
+
+
+def get_context(context=None):
+    global CONTEXT_CREATOR
+    if context is None:
+        if CONTEXT_CREATOR is None:
+            return Context()
+        else:
+            return CONTEXT_CREATOR()
+    else:
+        return context
+
+
+class MetadataContextMixin:
+    def metadata(self):
+        metadata = self._metadata.as_dict()
+        title = self.title
+        description = self.description
+        if title is None:
+            if self.raw_query is None:
+                title = &#34;&#34;
+            else:
+                p = parse(self.raw_query)
+                if title in (&#34;&#34;, None):
+                    title = p.filename() or &#34;&#34;
+
+        mimetype = self.mimetype
+        if mimetype is None:
+            if self.query is not None:
+                if self.query.extension() is None:
+                    mimetype = &#34;application/octet-stream&#34;
+                else:
+                    mimetype = mimetype_from_extension(self.query.extension())
+
+        message = self._metadata.message
+        if message in (None, &#34;&#34;):
+            log = self._metadata.get(&#34;log&#34;, [])
+            if len(log):
+                message = log[-1][&#34;message&#34;]
+        if message in (None, &#34;&#34;):
+            log = self._metadata.get(&#34;child_log&#34;, [])
+            if len(log):
+                message = log[-1][&#34;message&#34;]
+
+        metadata.update(
+            dict(
+                status=self.status.value,
+                title=title,
+                description=description,
+                mimetype=mimetype,
+                query=self.raw_query,
+                parent_query=self.parent_query,
+                argument_queries=self.argument_queries,
+                #            log=self.log[:],
+                is_error=self.is_error,
+                direct_subqueries=self.direct_subqueries[:],
+                progress_indicators=self.progress_indicators[:],
+                child_progress_indicators=self.child_progress_indicators[:],
+                child_log=self.child_log,
+                message=message,
+                started=self.started,
+                updated=self.now(),
+                created=self.created,
+                caching=self.caching,
+                vars=dict(self.vars),
+                html_preview=self.html_preview,
+                side_effect=False,
+            )
+        )
+        return metadata
+
+    def log_dict(self, d):
+        &#34;Put dictionary with a log entry into the log&#34;
+        d[&#34;timestamp&#34;] = timestamp()
+        self._metadata.log_dict(d)
+        self.store_metadata(force=(d.get(&#34;kind&#34;) == &#34;error&#34;))
+        if self.parent_context is not None:
+            if d.get(&#34;origin&#34;) is None:
+                d = dict(origin=self.raw_query, **d)
+            self.parent_context.log_child_dict(d)
+        return self
+
+    def log_action(self, qv, number=0):
+        &#34;&#34;&#34;Log a command&#34;&#34;&#34;
+        if isinstance(qv, ActionRequest):
+            qv = qv.to_list()
+        return self.log_dict(dict(kind=&#34;command&#34;, qv=qv, command_number=number))
+
+    def error(self, message, position=None, query=None):
+        &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+        self.is_error = True
+        self.status = Status.ERROR
+        if position is None:
+            print(f&#34;{log_time()} ERROR:    &#34;, message)
+        else:
+            print(f&#34;{log_time()} ERROR:    &#34;, message, f&#34; at {position}&#34;)
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def warning(self, message, traceback=None):
+        &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+        print(f&#34;{log_time()} WARNING:  &#34;, message)
+        return self.log_dict(dict(kind=&#34;warning&#34;, message=message, traceback=traceback))
+
+    def exception(self, message, traceback, position=None, query=None):
+        &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+        self.is_error = True
+        self.status = Status.ERROR
+        if position is None:
+            print(f&#34;{log_time()} EXCEPTION:&#34;, message)
+        else:
+            print(f&#34;{log_time()} EXCEPTION:&#34;, message, f&#34; at {position}&#34;)
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                traceback=traceback,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def info(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        print(f&#34;{log_time()} INFO:     &#34;, message)
+        self.log_dict(dict(kind=&#34;info&#34;, message=message))
+        return self
+
+    def debug(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        if self.debug_messages:
+            print(f&#34;{log_time()} DEBUG:    &#34;, message)
+            self.log_dict(dict(kind=&#34;debug&#34;, message=message))
+        return self
+
+    @property
+    def raw_query(self):
+        return self._metadata.query
+
+    @raw_query.setter
+    def raw_query(self, value):
+        self._metadata.query = value
+
+
+class Context(MetadataContextMixin, object):
+    def __init__(self, parent_context=None, debug=False):
+        self.parent_context = parent_context  # parent context - when in child context
+
+        #        self.raw_query = None  # String with the evaluated query
+        self.query = None  # Query object of the evaluated query
+        self.status = Status.NONE  # Status: ready, error...
+        self.is_error = False  # True is evaluation failed
+
+        self.started = &#34;&#34;  # Evaluation start time
+        self.created = &#34;&#34;  # Created time (evaluation finished)
+
+        self.direct_subqueries = (
+            []
+        )  # list of subqueries specified as dictionaries with description and query
+        self.parent_query = None  # parent query or None
+        self.argument_queries = (
+            []
+        )  # list of argument subqueries specified as dictionaries with description and query
+
+        self.progress_indicators = []  # progress indicators as a list of dictionaries
+        # self.log = []  # log of messages as a list of dictionaries
+        self.child_progress_indicators = []  # progress indicator of a child
+        self.child_log = []  # log of messages from child queries
+        self.message = &#34;&#34;  # Last message from the log
+        self.debug_messages = debug  # Turn the debug messages on/off
+        self.caching = True  # caching of the results enabled
+        self.enable_store_metadata = True  # flag to controll storing of metadata
+
+        self.last_report_time = None  # internal time stamp of the last report
+        self._progress_indicator_identifier = (
+            1  # counter for creating unique progress identifiers
+        )
+        self.description = &#34;&#34;
+        self.title = None
+        self.mimetype = None
+
+        self.vars = Vars(vars_clone())
+        self.html_preview = &#34;&#34;
+        self.store_key = None
+        self.store_to = None
+
+        self._metadata = Metadata()
+        self.cwd_key=None
+        self.evaluated_key=None
+
+    def new_empty(self):
+        return Context(debug=self.debug_messages)
+
+    def store_data(self, key, data):
+        &#34;&#34;&#34;Convenience method to store data in the store including metadata.
+        Note that the metadata are taken from the context.metadata() and slightly updated.
+        They might not be 100% correct, since the store_data will probably be called as
+        a side-effect of a query, not a result of a query.
+        This is indicated by the side_effect flag in the metadata and status Status.SIDE_EFFECT.value.
+        &#34;&#34;&#34;
+        metadata = self.metadata()
+        store = self.store()
+        extension = key_extension(key)
+        metadata[&#34;data_characteristics&#34;] = data_characteristics(data)
+        metadata[&#34;side_effect&#34;] = True
+        metadata[&#34;status&#34;] = Status.SIDE_EFFECT.value
+        try:
+            b, mimetype, type_identifier = encode_state_data(data, extension=extension)
+            metadata[&#34;type_identifier&#34;] = type_identifier
+            metadata[&#34;mimetype&#34;] = mimetype
+            store.store(key, b, metadata)
+        except:
+            traceback.print_exc()
+            m = Metadata(metadata)
+            m.status = Status.ERROR
+            m.exception(
+                f&#34;Failed to encode data for key &#39;{key}&#39;&#34;,
+                traceback=traceback.format_exc(),
+            )
+            store.store_metadata(key, m.as_dict())
+
+    def indexer(self):
+        &#34;&#34;&#34;Return indexer object - by default it is the global indexer function&#34;&#34;&#34;
+        return index
+
+    def index_state(self, state):
+        &#34;&#34;&#34;Call indexer on the state object.&#34;&#34;&#34;
+        indexer = self.indexer()
+        if not state.is_error:
+            metadata = indexer(
+                query=state.query, data=state.data, metadata=state.metadata
+            )
+            if metadata is not None:
+                state.metadata = metadata
+        return state
+
+    def can_report(self):
+        if self.last_report_time is None:
+            self.last_report_time = datetime.now()
+        return True
+        return (datetime.now() - self.last_report_time).total_seconds() &gt; 0.1
+
+    def set_html_preview(self, html):
+        self.html_preview = html
+        self.store_metadata()
+        return self
+
+    def set_description(self, description):
+        self.description = description
+        self.store_metadata()
+        return self
+
+    def set_title(self, title):
+        self.title = title
+        self.store_metadata()
+        return self
+
+    def enable_cache(self, enable=True):
+        self.caching = enable
+        return self
+
+    def disable_cache(self):
+        self.enable_cache(False)
+        return self
+
+    def create_state(self):
+        return State(metadata=self.metadata(), context=self)
+
+    def store_metadata(self, force=False):
+        if self.raw_query is not None and self.enable_store_metadata:
+            if force or self.can_report():
+                metadata = self.metadata()
+                self.cache().store_metadata(self.metadata())
+                self.last_report_time = datetime.now()
+                if self.store_key is not None:
+                    store = self.store() if self.store_to is None else self.store_to
+                    store.store_metadata(self.store_key, metadata)
+
+    def new_progress_indicator(self):
+        self._progress_indicator_identifier += 1
+        self.progress_indicators.append(
+            dict(
+                id=self._progress_indicator_identifier,
+                step=0,
+                total_steps=None,
+                message=&#34;&#34;,
+                timestamp=timestamp(),
+            )
+        )
+        return self._progress_indicator_identifier
+
+    def remove_progress_indicator(self, identifier):
+        self.progress_indicators = [
+            x for x in self.progress_indicators if x[&#34;id&#34;] != identifier
+        ]
+        if self.parent_context is not None:
+            self.parent_context.remove_child_progress(self.raw_query)
+
+    def progress_indicator_index(self, identifier):
+        if identifier is None:
+            if len(self.progress_indicators):
+                return len(self.progress_indicators) - 1
+            self.new_progress_indicator()
+            return len(self.progress_indicators) - 1
+
+        for i, x in enumerate(self.progress_indicators):
+            if x[&#34;id&#34;] == identifier:
+                return i
+        return None
+
+    def now(self):
+        return util.now()
+
+    def progress(
+        self, step=0, total_steps=None, message=&#34;&#34;, identifier=None, autoremove=True
+    ):
+        index = self.progress_indicator_index(identifier)
+
+        progress = dict(
+            step=step, total_steps=total_steps, message=message, timestamp=timestamp()
+        )
+        self.progress_indicators[index].update(progress)
+
+        removed = False
+        if autoremove and total_steps is not None and step &gt;= total_steps:
+            self.remove_progress_indicator(index)
+            removed = True
+
+        self.store_metadata()
+
+        if self.parent_context is not None:
+            if removed:
+                self.parent_context.remove_child_progress(self.raw_query)
+            else:
+                d = dict(origin=self.raw_query, **progress)
+                self.parent_context.log_child_progress(d)
+
+    def progress_iter(self, iterator, show_value=False):
+        try:
+            total_steps = len(iterator)
+        except:
+            total_steps = None
+        identifier = self.new_progress_indicator()
+        for i, x in enumerate(iterator):
+            if total_steps is None:
+                message = f&#34;{x} ({i+1})&#34; if show_value else f&#34;{i+1}&#34;
+            else:
+                message = (
+                    f&#34;{x} ({i+1}/{total_steps})&#34;
+                    if show_value
+                    else f&#34;{i+1}/{total_steps}&#34;
+                )
+            self.progress(
+                i, total_steps=total_steps, message=message, identifier=identifier
+            )
+            yield x
+        self.remove_progress_indicator(identifier)
+
+    def remove_child_progress(self, origin):
+        &#34;Remove all child progress indicators from a given origin&#34;
+        self.child_progress_indicators = [
+            x for x in self.child_progress_indicators if x.get(&#34;origin&#34;) != origin
+        ]
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.remove_child_progress(origin)
+
+    def log_child_progress(self, d):
+        &#34;Put dictionary with a child progress entry into the child progress indicators and notify parent&#34;
+        self.child_progress_indicators = [
+            x
+            for x in self.child_progress_indicators
+            if x.get(&#34;origin&#34;) != d.get(&#34;origin&#34;)
+        ]
+        self.child_progress_indicators.append(d)
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.log_child_progress(d)
+        return self
+
+    def log_child_dict(self, d):
+        &#34;Put dictionary with a child log entry into the child log&#34;
+        d = dict(**d)
+        if d.get(&#34;origin&#34;) is None:
+            if self.parent_context is None:
+                d[&#34;origin&#34;] = None
+            else:
+                d[&#34;origin&#34;] = self.parent_context.raw_query
+        self.child_log.append(d)
+        self.child_log = self.child_log[:5]
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.log_child_dict(d)
+        return self
+
+    def child_context(self):
+        &#34;&#34;&#34;Create a new context that is a child of this context.
+        This is used to create a new context for a subquery.
+        &#34;&#34;&#34;
+        c = self.__class__(parent_context=self)
+        return c
+
+    def root_context(self):
+        return (
+            self if self.parent_context is None else self.parent_context.root_context()
+        )
+
+    def log_subquery(self, query: str, description=None):
+        assert type(query) == str
+        if query not in self.direct_subqueries:
+            if description is None:
+                description = query
+            self.direct_subqueries.append(dict(description=description, query=query))
+
+    def command_registry(self):
+        return command_registry()
+
+    def cache(self):
+        return get_cache()
+
+    def state_types_registry(self):
+        return state_types_registry()
+
+    def evaluate_parameter(self, p, action):
+        if isinstance(p, StringActionParameter):
+            return p
+        elif isinstance(p, LinkActionParameter):
+            if p.link.absolute:
+                self.argument_queries.append(
+                    dict(
+                        description=f&#34;{p.link.encode()} at {p.position}&#34;,
+                        query=p.link.encode(),
+                    )
+                )
+                self.debug(f&#34;Expand absolute link parameter {p.link.encode()}&#34;)
+                value = self.evaluate(p.link)
+                if value.is_error:
+                    self.error(
+                        f&#34;Error while evaluating absolute link parameter {p.link.encode()}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                    self.status = Status.ERROR
+                    self.store_metadata(force=True)
+
+                    raise EvaluationException(
+                        f&#34;Error while evaluating absolute link parameter {p.link.encode()} in action {action.name}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                return pp
+            else:
+                self.argument_queries.append(
+                    dict(
+                        description=f&#34;{p.link.encode()} at {p.position}&#34;,
+                        query=p.link.encode(),
+                    )
+                )
+                self.debug(
+                    f&#34;Expand relative link parameter {p.link.encode()} on {self.parent_query}&#34;
+                )
+                value = self.apply(p.link)
+                if value.is_error:
+                    self.error(
+                        f&#34;Error while evaluating relative link parameter {p.link.encode()} at {p.position}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                    self.status = Status.ERROR
+                    self.store_metadata(force=True)
+
+                    raise EvaluationException(
+                        f&#34;Error while evaluating relative link parameter {p.link.encode()} in action {action.name}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                return pp
+        else:
+            self.status = Status.ERROR
+            self.store_metadata(force=True)
+            raise EvaluationException(
+                f&#34;Unknown parameter type {type(p)} in {action.name}&#34;,
+                position=action.position,
+                query=self.raw_query,
+            )
+
+    def evaluate_action(self, state: State, action, extra_parameters=None, cache=None):
+        self.debug(f&#34;EVALUATE ACTION &#39;{action}&#39; on &#39;{state.query}&#39;&#34;)
+        self.status = Status.EVALUATION
+        self.store_metadata(force=True)
+        cache = cache or self.cache()
+        cr = self.command_registry()
+        extra_parameters_dict = {}
+
+        state.context = self
+
+        if isinstance(action, TransformQuerySegment):
+            if action.is_filename():
+                return state.with_filename(action.filename)
+            assert action.is_action_request()
+            action = action.query[0]
+
+        is_volatile = state.is_volatile()
+        old_state = state if is_volatile else state.clone()
+
+        state = state.next_state()
+        state.context = self
+
+        ns, command, cmd_metadata = cr.resolve_command(state, action.name)
+        if command is None:
+            self.error(
+                f&#34;Unknown action: &#39;{action.name}&#39;&#34;,
+                position=action.position,
+                query=self.raw_query,
+            )
+        else:
+            self._metadata.add_command_dependency(ns, cmd_metadata)
+            parameters = []
+            self.status = Status.EVALUATING_DEPENDENCIES
+            self.store_metadata(force=True)
+            for p in action.parameters:
+                parameters.append(self.evaluate_parameter(p, action))
+            if extra_parameters is not None and len(extra_parameters) &gt; 0:
+                if type(extra_parameters) == list:
+                    self.warning(f&#34;Using {len(extra_parameters)} extra parameters&#34;)
+                    parameters.extend(extra_parameters)
+                    is_volatile = True
+                elif type(extra_parameters) == dict:
+                    self.warning(
+                        f&#34;Using {len(extra_parameters)} extra parameters dictionary&#34;
+                    )
+                    extra_parameters_dict = extra_parameters
+                    is_volatile = True
+                else:
+                    self.error(
+                        f&#34;Unsupported type for extra parameters: {type(extra_parameters)}&#34;
+                    )
+
+            self.status = Status.EVALUATION
+            self.store_metadata(force=True)
+
+            try:
+
+                state = command(
+                    old_state, *parameters, context=self, **extra_parameters_dict
+                )
+                assert type(state.metadata) is dict
+            except EvaluationException as ee:
+                print(&#34;EE:&#34;, ee)
+                # traceback.print_exc()
+                state.is_error = True
+                state.exception = ee
+            except Exception as e:
+                traceback.print_exc()
+                state.is_error = True
+                self.exception(
+                    message=str(e),
+                    position=action.position,
+                    query=self.raw_query,
+                    traceback=traceback.format_exc(),
+                )
+                state.exception = EvaluationException(
+                    traceback.format_exc() + &#34;\n&#34; + str(e),
+                    position=action.position,
+                    query=self.raw_query,
+                )
+        arguments = getattr(state, &#34;arguments&#34;, None)
+        if arguments is not None:
+
+            def to_arg(arg):
+                x, meta = arg
+                try:
+                    s = json.dumps(x)
+                    if len(s) &gt; 100:
+                        return [s[:50], meta]
+                    return [x, meta]
+                except:
+                    return [None, meta]
+
+            arguments = [to_arg(a) for a in arguments]
+
+        metadata = self.metadata()
+        metadata[&#34;type_identifier&#34;] = state.type_identifier
+        metadata[&#34;commands&#34;] = metadata.get(&#34;commands&#34;, []) + [action.to_list()]
+        if (
+            metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+            == &#34;application/octet-stream&#34;
+        ):
+            metadata[&#34;mimetype&#34;] = state.mimetype()
+
+        try:
+            cmd_metadata_d = cmd_metadata._asdict()
+        except:
+            cmd_metadata_d = {}
+        metadata[&#34;extended_commands&#34;] = metadata.get(&#34;extended_commands&#34;, []) + [
+            dict(
+                command_name=action.name,
+                ns=ns,
+                qcommand=action.to_list(),
+                action=f&#34;{action.encode()} at {action.position}&#34;,
+                command_metadata=cmd_metadata_d,
+                arguments=arguments,
+            )
+        ]
+        metadata[&#34;query&#34;] = self.raw_query
+        metadata[&#34;attributes&#34;] = {
+            key: value
+            for key, value in state.metadata[&#34;attributes&#34;].items()
+            if key[0].isupper()
+        }
+
+        if cmd_metadata is not None:
+            metadata[&#34;attributes&#34;] = dict(
+                metadata.get(&#34;attributes&#34;, {}), **cmd_metadata.attributes
+            )
+
+        metadata[&#34;caching&#34;] = metadata.get(&#34;caching&#34;, True) and state.metadata.get(
+            &#34;caching&#34;, True
+        )
+        is_error = state.is_error or self.is_error
+
+        if is_error:
+            self.status = Status.ERROR
+            metadata[&#34;status&#34;] = self.status.value
+            self.info(f&#34;Action {action.encode()} at {action.position} failed&#34;)
+            state.metadata.update(metadata)
+            state.status = Status.ERROR.value
+            state.is_error = True
+        else:
+            self.status = Status.READY
+            metadata[&#34;status&#34;] = self.status.value
+            self.info(f&#34;Action {action.encode()} at {action.position} completed&#34;)
+            state_vars = dict(self.vars)
+            state_vars.update(state.vars)
+            state_vars.update(self.vars.get_modified())
+            self.vars = Vars(state_vars)
+            metadata[&#34;vars&#34;] = dict(state_vars)
+            state.metadata.update(metadata)
+
+        state.set_volatile(is_volatile or state.is_volatile())
+
+        cache.store_metadata(state.metadata)
+        return state
+
+    def store(self):
+        return get_store()
+
+    def evaluate_resource(self, resource_query):
+        self.info(f&#34;Evaluate resource: {resource_query}&#34;)
+        if resource_query.header is not None:
+            if resource_query.header.encode() not in (&#34;-R&#34;, &#34;-R-meta&#34;):
+                raise Exception(
+                    f&#34;Header &#39;{resource_query.header}&#39; not supported in resource query {resource_query}&#34;
+                )
+        key = resource_query.path()
+        store = self.store()
+        state = self.create_initial_state()
+        try:
+            metadata = store.get_metadata(key)
+        except:
+            state.log_exception(
+                f&#34;Failed getting metadata for key &#39;{key}&#39;&#34;,
+                traceback=traceback.format_exc(),
+            )
+            self.warning(
+                f&#34;Failed getting metadata for key &#39;{key}&#39;&#34;,
+                traceback=traceback.format_exc(),
+            )
+            return state
+
+        try:
+            if metadata is None:
+                if store.contains(key):
+                    state.error(
+                        f&#34;Key &#39;{key}&#39; was found in store, but the metadata is missing.&#34;
+                    )
+                else:
+                    state.error(f&#34;Metadata for key &#39;{key}&#39; not found in store&#34;)
+
+            if (
+                resource_query.header is not None
+                and len(resource_query.header.parameters) &gt; 0
+                and resource_query.header.parameters[-1].encode() == &#34;meta&#34;
+            ):
+                self.info(f&#34;Resource metadata query {resource_query}&#34;)
+                data = metadata
+                metadata = dict(
+                    description=f&#34;Metadata for {key}&#34;,
+                    key=key,
+                    query=resource_query.encode(),
+                )
+            else:
+                data = store.get_bytes(key)
+                if data is None:
+                    if store.contains(key):
+                        if store.is_dir(key):
+                            state.error(
+                                f&#34;Key &#39;{key}&#39; is a directory, hence there is no data.&#34;
+                            )
+                        else:
+                            state.error(
+                                f&#34;Key &#39;{key}&#39; was found in store, but the data is missing.&#34;
+                            )
+                    else:
+                        state.error(f&#34;Key &#39;{key}&#39; not found in store&#34;)
+
+            state = state.with_data(data)
+            state.metadata[&#34;resource_metadata&#34;] = metadata
+        except:
+            if &#34;log&#34; not in state.metadata:
+                state.metadata[&#34;log&#34;] = []
+            for x in metadata.get(&#34;log&#34;, []):
+                self.log_dict(deepcopy(x))
+                state.metadata[&#34;log&#34;].append(deepcopy(x))
+            self.exception(
+                message=f&#34;Error evaluating resource {resource_query}&#34;,
+                traceback=traceback.format_exc(),
+                position=resource_query.position,
+                query=resource_query.encode(),
+            )
+            traceback.print_exc()
+        return state
+
+    def create_initial_state(self):
+        state = State()
+        state.query = &#34;&#34;
+        return state
+
+    @classmethod
+    def to_query(cls, query):
+        if query is None:
+            return &#34;&#34;, Query()
+        if isinstance(query, str):
+            return query, parse(query)
+        elif isinstance(query, Query):
+            return query.encode(), query
+        else:
+            raise Exception(f&#34;Unsupported query type: {type(query)}&#34;)
+
+    def apply(self, query, description=None):
+        self.debug(f&#34;APPLY {query}&#34;)
+        if self.parent_query in (None, &#34;&#34;, &#34;/&#34;):
+            self.debug(f&#34;  no parent query in apply {query}&#34;)
+            return self.evaluate(query, description=description)
+        if isinstance(query, str):
+            query = parse(query)
+        if query.absolute:
+            self.debug(f&#34;  absolute link in apply {query}&#34;)
+            return self.evaluate(query, description=description)
+        tq = query.transform_query()
+        if tq is None:
+            raise Exception(
+                f&#34;Only transform query supported in apply ({query} on {self.parent_query})&#34;
+            )
+        q = (parse(self.parent_query) + tq).encode()
+        self.debug(f&#34;apply {query} on {self.parent_query} yields {q}&#34;)
+        return self.evaluate(q, description=description)
+
+    def _store_state(self, state):
+        if self.store_key is not None:
+            metadata = state.metadata
+            store = self.store() if self.store_to is None else self.store_to
+            if state.is_error:
+                store.store_metadata(self.store_key, metadata)
+            else:
+                data = state.get()
+                reg = self.state_types_registry()
+                t = reg.get(type(data))
+                try:
+                    if state.metadata.get(&#34;extension&#34;) is None:
+                        b, mime, typeid = encode_state_data(data)
+                    else:
+                        b, mime, typeid = encode_state_data(
+                            data, extension=state.metadata[&#34;extension&#34;]
+                        )
+                    store.store(self.store_key, b, metadata)
+                except:
+                    traceback.print_exc()
+                    m = Metadata(metadata)
+                    m.status = Status.ERROR
+                    m.exception(
+                        f&#34;Failed to encode data for key &#39;{self.store_key}&#39;&#34;,
+                        traceback=traceback.format_exc(),
+                    )
+                    store.store_metadata(self.store_key, m.as_dict())
+
+    def evaluate(
+        self,
+        query,
+        cache=None,
+        description=None,
+        store_key=None,
+        store_to=None,
+        extra_parameters=None,
+    ):
+        &#34;&#34;&#34;Evaluate query, returns a State.
+        This method can be used in a command to evaluate a subquery,
+        which will be recorded in metadata and can be inspected during the query execution.
+
+        When evaluating such a subquery, it is good to give it a description (via a description argument).
+        If this is not a sub-query, description parameter will set the description in the metadata (see set_description).
+        Note that this might be overridden by the subsequent calls to set_description.
+        Parameter cache can be used to set a cache object. In most cases default cache is the safest choice.
+
+        Evaluation can be (besides cache) stored in the store under the key specified by the store_key (if not None).
+        A store can be specified too via the store_to option. If None (default), the default store (from the store method) is used.
+
+        If extra_parameters are specified, these parameters are appended to the parameters of the last action.
+        This effectively renders the evaluation volatile. Note that the action needs correct amount of parameters.
+        &#34;&#34;&#34;
+        self.enable_store_metadata = False  # Prevents overwriting cache with metadata
+        self.status = Status.EVALUATION
+        self.debug(f&#34;EVALUATE {query} &#34;)
+
+        self.vars = Vars(vars_clone())
+
+        self.evaluated_key = self.evaluated_key if store_key is None else store_key
+        self.cwd_key = self.cwd_key if store_key is None else parent_key(store_key)
+
+        if self.query is not None:
+            self.enable_store_metadata = True
+            print(f&#34;Subquery {query} called from {self.query.encode()}&#34;)
+            state = self.child_context().evaluate(
+                query, store_key=store_key, store_to=store_to
+            )
+            if not isinstance(query, str):
+                query = query.encode()
+            self.log_subquery(query=query, description=description)
+            if state.is_error:
+                print(&#34;Subquery failed&#34;)
+                for d in state.metadata.get(&#34;log&#34;, []):
+                    self.log_dict(d)
+            #            self.enable_store_metadata = True
+            self.store_metadata(force=True)
+            self.enable_store_metadata = False
+            state = self.index_state(state)
+            return state
+
+        raw_query, query = self.to_query(query)
+        self.raw_query = raw_query
+        self.query = query
+        self.store_key = store_key
+        self.store_to = store_to
+        self.started = self.now()
+        if description is not None:
+            self.set_description(description)
+
+        if cache is None:
+            cache = self.cache()
+
+        self.debug(f&#34;Using cache {repr(cache)}&#34;)
+        self.debug(f&#34;Try cache {query}&#34;)
+        if extra_parameters is None or len(extra_parameters)==0:
+            state = cache.get(query.encode())
+            if state is not None:
+                self.debug(f&#34;Cache hit {query}&#34;)
+                self._store_state(state)
+                state = self.index_state(state)
+                return state
+        else:
+            state=None
+            print(&#34;Extra parameters specified, cache disabled&#34;, extra_parameters)
+            self.debug(&#34;Extra parameters specified, cache disabled&#34;)
+        self.enable_store_metadata = (
+            True  # Metadata can be only written after trying to read from cache,
+        )
+        # so that cache does not get overwritten
+        self.debug(f&#34;Cache miss {query}&#34;)
+
+        if query.is_resource_query():
+            state = self.evaluate_resource(query.resource_query())
+            state.query = query.encode()
+            state.metadata[&#34;created&#34;] = self.now()
+            self._store_state(state)
+            state = self.index_state(state)
+            return state
+        else:
+            p, r = query.predecessor()
+            self.debug(f&#34;PROCESS Predecessor:{p} Action: {r}&#34;)
+            if p is None or p.is_empty():
+                self.parent_query = &#34;&#34;
+                state = self.create_initial_state()
+                state.metadata[&#34;created&#34;] = self.now()
+                self.debug(f&#34;INITIAL STATE&#34;)
+            else:
+                self.parent_query = p.encode()
+                self.status = Status.EVALUATING_PARENT
+                self.store_metadata(force=True)
+                c=self.child_context()
+                c.evaluated_key = self.evaluated_key
+                c.cwd_key = self.cwd_key
+                state = c.evaluate(p, cache=cache)
+            if state.is_error:
+                self.status = Status.ERROR
+                self.store_metadata()
+                state = state.next_state()
+                state.query = query.encode()
+                state.metadata[&#34;created&#34;] = self.now()
+                self.debug(f&#34;ERROR in &#39;{state.query}&#39;&#34;)
+                self._store_state(state)
+                state = self.index_state(state)
+                return state
+        self.vars = Vars(state.vars)
+        if r is None:
+            self.debug(f&#34;RETURN &#39;{query}&#39; AFTER EMPTY ACTION ON &#39;{state.query}&#39;&#34;)
+            state.query = query.encode()
+            state.metadata[&#34;created&#34;] = self.now()
+            self._store_state(state)
+            state = self.index_state(state)
+            return state
+        elif r.is_filename():
+            state.metadata[&#34;filename&#34;] = r.filename
+            state.metadata[&#34;extension&#34;] = &#34;.&#34;.join(r.filename.split(&#34;.&#34;)[1:])
+
+        state = self.evaluate_action(state, r, extra_parameters=extra_parameters)
+        state.query = query.encode()
+        state.metadata[&#34;created&#34;] = self.now()
+
+        if (
+            state.metadata.get(&#34;caching&#34;, True)
+            and not state.is_error
+            and not state.is_volatile()
+        ):
+            print(&#34;CACHE&#34;, state.query)
+            #            self.status = &#34;cache&#34;
+            #            self.store_metadata()
+            try:
+                cache.store(state)
+            except:
+                traceback.print_exc()
+                self.warning(&#34;Cache failed&#34;, traceback=traceback.format_exc())
+        else:
+            if state.is_error:
+                cache.store_metadata(state.metadata)
+            else:
+                print(&#34;REMOVE CACHE&#34;, state.query)
+                if not cache.remove(state.query):
+                    self.status = Status.EXPIRED
+                    self.store_metadata()
+
+        self._store_state(state)
+        try:
+            state = self.index_state(state)
+        except:
+            traceback.print_exc()
+            self.warning(&#34;Indexer failed&#34;, traceback=traceback.format_exc())
+        return state
+
+    def evaluate_and_save(
+        self,
+        query,
+        target_directory=None,
+        target_file=None,
+        target_resource_directory=None,
+        store=None,
+    ):
+        &#34;&#34;&#34;Evaluate query and save result.
+        Output is saved either to
+        - a target directory (current working directory by default) to a file deduced from the query, or
+        - to target_file (if specified)
+        Returns a state.
+        &#34;&#34;&#34;
+
+        if (
+            target_directory == None
+            and target_file == None
+            and target_resource_directory == None
+            and store == None
+        ):
+            target_directory = &#34;.&#34;
+
+        print(f&#34;*** Evaluate and save {query} started&#34;)
+        state = self.evaluate(query)
+        if state.is_error:
+            print(f&#34;*** Evaluate and save {query} failed&#34;)
+            if target_resource_directory is not None and target_file is not None:
+                filename = target_file
+                key = (
+                    filename
+                    if target_resource_directory == &#34;&#34;
+                    else target_resource_directory + &#34;/&#34; + filename
+                )
+                if store is None:
+                    store = self.store()
+
+                store.store_metadata(key, state.metadata)
+
+        data = state.get()
+        reg = self.state_types_registry()
+        t = reg.get(type(data))
+
+        filename = target_file
+        if state.metadata.get(&#34;extension&#34;) is None:
+            b, mime, typeid = encode_state_data(data)
+            filename = t.default_filename() if target_file is None else target_file
+        else:
+            b, mime, typeid = encode_state_data(
+                data, extension=state.metadata[&#34;extension&#34;]
+            )
+            filename = (
+                (
+                    t.default_filename()
+                    if state.metadata.get(&#34;filename&#34;) is None
+                    else state.metadata[&#34;filename&#34;]
+                )
+                if target_file is None
+                else target_file
+            )
+        if target_directory is None:
+            path = filename
+        else:
+            path = os.path.join(target_directory, filename)
+
+        if target_directory is not None:
+            print(f&#34;*** Evaluate and save {query} to {path}&#34;)
+            with open(path, &#34;wb&#34;) as f:
+                f.write(b)
+
+        if target_resource_directory is not None:
+            filename = os.path.split(path)[1]
+            key = (
+                filename
+                if target_resource_directory == &#34;&#34;
+                else target_resource_directory + &#34;/&#34; + filename
+            )
+            print(f&#34;*** Store evaluated {query} to {key}&#34;)
+            if store is None:
+                store = self.store()
+
+            store.store(key, b, state.metadata)
+
+        return state
+
+    def evaluate_template(self, template: str, prefix=&#34;$&#34;, sufix=&#34;$&#34;, path=None, resource_segment_name=&#34;&#34;):
+        &#34;&#34;&#34;Evaluate a string template; replace all queries by their values
+        Queries in the template are delimited by prefix and sufix.
+        Queries should evaluate to strings and should not cause errors.
+        &#34;&#34;&#34;
+        local_cache = {}
+        result = &#34;&#34;
+        for text, q in find_queries_in_template(template, prefix, sufix):
+            result += text
+            if q is not None:
+                if path is not None:
+                    q = parse(q).to_absolute(path, resource_segment_name=resource_segment_name).encode()
+                if q in local_cache:
+                    result += local_cache[q]
+                else:
+                    state = self.evaluate(q, description=f&#34;template expansion of {q}&#34;)
+                    if state.is_error:
+                        self.error(f&#34;Template failed to expand {q}&#34;)
+                        qr = f&#34;ERROR({q})&#34;
+                    else:
+                        qr = str(state.get())
+                    local_cache[q] = qr
+                    result += qr
+        return result</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.context.find_queries_in_template"><code class="name flex">
+<span>def <span class="ident">find_queries_in_template</span></span>(<span>template: str, prefix: str, sufix: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_queries_in_template(template: str, prefix: str, sufix: str):
+    try:
+        start = template.index(prefix)
+        end = template.index(sufix, start + len(prefix))
+        yield template[:start], template[start + len(prefix) : end]
+        for text, query in find_queries_in_template(
+            template[end + len(sufix) :], prefix, sufix
+        ):
+            yield text, query
+    except ValueError:
+        yield template, None</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.get_context"><code class="name flex">
+<span>def <span class="ident">get_context</span></span>(<span>context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_context(context=None):
+    global CONTEXT_CREATOR
+    if context is None:
+        if CONTEXT_CREATOR is None:
+            return Context()
+        else:
+            return CONTEXT_CREATOR()
+    else:
+        return context</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.log_time"><code class="name flex">
+<span>def <span class="ident">log_time</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_time():
+    date = datetime.now()
+    return date.strftime(&#34;%H:%M:%S&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.set_context_creator"><code class="name flex">
+<span>def <span class="ident">set_context_creator</span></span>(<span>context_creator)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_context_creator(context_creator):
+    global CONTEXT_CREATOR
+    CONTEXT_CREATOR = context_creator</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.context.Context"><code class="flex name class">
+<span>class <span class="ident">Context</span></span>
+<span>(</span><span>parent_context=None, debug=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Context(MetadataContextMixin, object):
+    def __init__(self, parent_context=None, debug=False):
+        self.parent_context = parent_context  # parent context - when in child context
+
+        #        self.raw_query = None  # String with the evaluated query
+        self.query = None  # Query object of the evaluated query
+        self.status = Status.NONE  # Status: ready, error...
+        self.is_error = False  # True is evaluation failed
+
+        self.started = &#34;&#34;  # Evaluation start time
+        self.created = &#34;&#34;  # Created time (evaluation finished)
+
+        self.direct_subqueries = (
+            []
+        )  # list of subqueries specified as dictionaries with description and query
+        self.parent_query = None  # parent query or None
+        self.argument_queries = (
+            []
+        )  # list of argument subqueries specified as dictionaries with description and query
+
+        self.progress_indicators = []  # progress indicators as a list of dictionaries
+        # self.log = []  # log of messages as a list of dictionaries
+        self.child_progress_indicators = []  # progress indicator of a child
+        self.child_log = []  # log of messages from child queries
+        self.message = &#34;&#34;  # Last message from the log
+        self.debug_messages = debug  # Turn the debug messages on/off
+        self.caching = True  # caching of the results enabled
+        self.enable_store_metadata = True  # flag to controll storing of metadata
+
+        self.last_report_time = None  # internal time stamp of the last report
+        self._progress_indicator_identifier = (
+            1  # counter for creating unique progress identifiers
+        )
+        self.description = &#34;&#34;
+        self.title = None
+        self.mimetype = None
+
+        self.vars = Vars(vars_clone())
+        self.html_preview = &#34;&#34;
+        self.store_key = None
+        self.store_to = None
+
+        self._metadata = Metadata()
+        self.cwd_key=None
+        self.evaluated_key=None
+
+    def new_empty(self):
+        return Context(debug=self.debug_messages)
+
+    def store_data(self, key, data):
+        &#34;&#34;&#34;Convenience method to store data in the store including metadata.
+        Note that the metadata are taken from the context.metadata() and slightly updated.
+        They might not be 100% correct, since the store_data will probably be called as
+        a side-effect of a query, not a result of a query.
+        This is indicated by the side_effect flag in the metadata and status Status.SIDE_EFFECT.value.
+        &#34;&#34;&#34;
+        metadata = self.metadata()
+        store = self.store()
+        extension = key_extension(key)
+        metadata[&#34;data_characteristics&#34;] = data_characteristics(data)
+        metadata[&#34;side_effect&#34;] = True
+        metadata[&#34;status&#34;] = Status.SIDE_EFFECT.value
+        try:
+            b, mimetype, type_identifier = encode_state_data(data, extension=extension)
+            metadata[&#34;type_identifier&#34;] = type_identifier
+            metadata[&#34;mimetype&#34;] = mimetype
+            store.store(key, b, metadata)
+        except:
+            traceback.print_exc()
+            m = Metadata(metadata)
+            m.status = Status.ERROR
+            m.exception(
+                f&#34;Failed to encode data for key &#39;{key}&#39;&#34;,
+                traceback=traceback.format_exc(),
+            )
+            store.store_metadata(key, m.as_dict())
+
+    def indexer(self):
+        &#34;&#34;&#34;Return indexer object - by default it is the global indexer function&#34;&#34;&#34;
+        return index
+
+    def index_state(self, state):
+        &#34;&#34;&#34;Call indexer on the state object.&#34;&#34;&#34;
+        indexer = self.indexer()
+        if not state.is_error:
+            metadata = indexer(
+                query=state.query, data=state.data, metadata=state.metadata
+            )
+            if metadata is not None:
+                state.metadata = metadata
+        return state
+
+    def can_report(self):
+        if self.last_report_time is None:
+            self.last_report_time = datetime.now()
+        return True
+        return (datetime.now() - self.last_report_time).total_seconds() &gt; 0.1
+
+    def set_html_preview(self, html):
+        self.html_preview = html
+        self.store_metadata()
+        return self
+
+    def set_description(self, description):
+        self.description = description
+        self.store_metadata()
+        return self
+
+    def set_title(self, title):
+        self.title = title
+        self.store_metadata()
+        return self
+
+    def enable_cache(self, enable=True):
+        self.caching = enable
+        return self
+
+    def disable_cache(self):
+        self.enable_cache(False)
+        return self
+
+    def create_state(self):
+        return State(metadata=self.metadata(), context=self)
+
+    def store_metadata(self, force=False):
+        if self.raw_query is not None and self.enable_store_metadata:
+            if force or self.can_report():
+                metadata = self.metadata()
+                self.cache().store_metadata(self.metadata())
+                self.last_report_time = datetime.now()
+                if self.store_key is not None:
+                    store = self.store() if self.store_to is None else self.store_to
+                    store.store_metadata(self.store_key, metadata)
+
+    def new_progress_indicator(self):
+        self._progress_indicator_identifier += 1
+        self.progress_indicators.append(
+            dict(
+                id=self._progress_indicator_identifier,
+                step=0,
+                total_steps=None,
+                message=&#34;&#34;,
+                timestamp=timestamp(),
+            )
+        )
+        return self._progress_indicator_identifier
+
+    def remove_progress_indicator(self, identifier):
+        self.progress_indicators = [
+            x for x in self.progress_indicators if x[&#34;id&#34;] != identifier
+        ]
+        if self.parent_context is not None:
+            self.parent_context.remove_child_progress(self.raw_query)
+
+    def progress_indicator_index(self, identifier):
+        if identifier is None:
+            if len(self.progress_indicators):
+                return len(self.progress_indicators) - 1
+            self.new_progress_indicator()
+            return len(self.progress_indicators) - 1
+
+        for i, x in enumerate(self.progress_indicators):
+            if x[&#34;id&#34;] == identifier:
+                return i
+        return None
+
+    def now(self):
+        return util.now()
+
+    def progress(
+        self, step=0, total_steps=None, message=&#34;&#34;, identifier=None, autoremove=True
+    ):
+        index = self.progress_indicator_index(identifier)
+
+        progress = dict(
+            step=step, total_steps=total_steps, message=message, timestamp=timestamp()
+        )
+        self.progress_indicators[index].update(progress)
+
+        removed = False
+        if autoremove and total_steps is not None and step &gt;= total_steps:
+            self.remove_progress_indicator(index)
+            removed = True
+
+        self.store_metadata()
+
+        if self.parent_context is not None:
+            if removed:
+                self.parent_context.remove_child_progress(self.raw_query)
+            else:
+                d = dict(origin=self.raw_query, **progress)
+                self.parent_context.log_child_progress(d)
+
+    def progress_iter(self, iterator, show_value=False):
+        try:
+            total_steps = len(iterator)
+        except:
+            total_steps = None
+        identifier = self.new_progress_indicator()
+        for i, x in enumerate(iterator):
+            if total_steps is None:
+                message = f&#34;{x} ({i+1})&#34; if show_value else f&#34;{i+1}&#34;
+            else:
+                message = (
+                    f&#34;{x} ({i+1}/{total_steps})&#34;
+                    if show_value
+                    else f&#34;{i+1}/{total_steps}&#34;
+                )
+            self.progress(
+                i, total_steps=total_steps, message=message, identifier=identifier
+            )
+            yield x
+        self.remove_progress_indicator(identifier)
+
+    def remove_child_progress(self, origin):
+        &#34;Remove all child progress indicators from a given origin&#34;
+        self.child_progress_indicators = [
+            x for x in self.child_progress_indicators if x.get(&#34;origin&#34;) != origin
+        ]
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.remove_child_progress(origin)
+
+    def log_child_progress(self, d):
+        &#34;Put dictionary with a child progress entry into the child progress indicators and notify parent&#34;
+        self.child_progress_indicators = [
+            x
+            for x in self.child_progress_indicators
+            if x.get(&#34;origin&#34;) != d.get(&#34;origin&#34;)
+        ]
+        self.child_progress_indicators.append(d)
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.log_child_progress(d)
+        return self
+
+    def log_child_dict(self, d):
+        &#34;Put dictionary with a child log entry into the child log&#34;
+        d = dict(**d)
+        if d.get(&#34;origin&#34;) is None:
+            if self.parent_context is None:
+                d[&#34;origin&#34;] = None
+            else:
+                d[&#34;origin&#34;] = self.parent_context.raw_query
+        self.child_log.append(d)
+        self.child_log = self.child_log[:5]
+        self.store_metadata()
+        if self.parent_context is not None:
+            self.parent_context.log_child_dict(d)
+        return self
+
+    def child_context(self):
+        &#34;&#34;&#34;Create a new context that is a child of this context.
+        This is used to create a new context for a subquery.
+        &#34;&#34;&#34;
+        c = self.__class__(parent_context=self)
+        return c
+
+    def root_context(self):
+        return (
+            self if self.parent_context is None else self.parent_context.root_context()
+        )
+
+    def log_subquery(self, query: str, description=None):
+        assert type(query) == str
+        if query not in self.direct_subqueries:
+            if description is None:
+                description = query
+            self.direct_subqueries.append(dict(description=description, query=query))
+
+    def command_registry(self):
+        return command_registry()
+
+    def cache(self):
+        return get_cache()
+
+    def state_types_registry(self):
+        return state_types_registry()
+
+    def evaluate_parameter(self, p, action):
+        if isinstance(p, StringActionParameter):
+            return p
+        elif isinstance(p, LinkActionParameter):
+            if p.link.absolute:
+                self.argument_queries.append(
+                    dict(
+                        description=f&#34;{p.link.encode()} at {p.position}&#34;,
+                        query=p.link.encode(),
+                    )
+                )
+                self.debug(f&#34;Expand absolute link parameter {p.link.encode()}&#34;)
+                value = self.evaluate(p.link)
+                if value.is_error:
+                    self.error(
+                        f&#34;Error while evaluating absolute link parameter {p.link.encode()}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                    self.status = Status.ERROR
+                    self.store_metadata(force=True)
+
+                    raise EvaluationException(
+                        f&#34;Error while evaluating absolute link parameter {p.link.encode()} in action {action.name}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                return pp
+            else:
+                self.argument_queries.append(
+                    dict(
+                        description=f&#34;{p.link.encode()} at {p.position}&#34;,
+                        query=p.link.encode(),
+                    )
+                )
+                self.debug(
+                    f&#34;Expand relative link parameter {p.link.encode()} on {self.parent_query}&#34;
+                )
+                value = self.apply(p.link)
+                if value.is_error:
+                    self.error(
+                        f&#34;Error while evaluating relative link parameter {p.link.encode()} at {p.position}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                    self.status = Status.ERROR
+                    self.store_metadata(force=True)
+
+                    raise EvaluationException(
+                        f&#34;Error while evaluating relative link parameter {p.link.encode()} in action {action.name}&#34;,
+                        position=p.position,
+                        query=self.raw_query,
+                    )
+                pp = ExpandedActionParameter(value.get(), p.link, p.position)
+                return pp
+        else:
+            self.status = Status.ERROR
+            self.store_metadata(force=True)
+            raise EvaluationException(
+                f&#34;Unknown parameter type {type(p)} in {action.name}&#34;,
+                position=action.position,
+                query=self.raw_query,
+            )
+
+    def evaluate_action(self, state: State, action, extra_parameters=None, cache=None):
+        self.debug(f&#34;EVALUATE ACTION &#39;{action}&#39; on &#39;{state.query}&#39;&#34;)
+        self.status = Status.EVALUATION
+        self.store_metadata(force=True)
+        cache = cache or self.cache()
+        cr = self.command_registry()
+        extra_parameters_dict = {}
+
+        state.context = self
+
+        if isinstance(action, TransformQuerySegment):
+            if action.is_filename():
+                return state.with_filename(action.filename)
+            assert action.is_action_request()
+            action = action.query[0]
+
+        is_volatile = state.is_volatile()
+        old_state = state if is_volatile else state.clone()
+
+        state = state.next_state()
+        state.context = self
+
+        ns, command, cmd_metadata = cr.resolve_command(state, action.name)
+        if command is None:
+            self.error(
+                f&#34;Unknown action: &#39;{action.name}&#39;&#34;,
+                position=action.position,
+                query=self.raw_query,
+            )
+        else:
+            self._metadata.add_command_dependency(ns, cmd_metadata)
+            parameters = []
+            self.status = Status.EVALUATING_DEPENDENCIES
+            self.store_metadata(force=True)
+            for p in action.parameters:
+                parameters.append(self.evaluate_parameter(p, action))
+            if extra_parameters is not None and len(extra_parameters) &gt; 0:
+                if type(extra_parameters) == list:
+                    self.warning(f&#34;Using {len(extra_parameters)} extra parameters&#34;)
+                    parameters.extend(extra_parameters)
+                    is_volatile = True
+                elif type(extra_parameters) == dict:
+                    self.warning(
+                        f&#34;Using {len(extra_parameters)} extra parameters dictionary&#34;
+                    )
+                    extra_parameters_dict = extra_parameters
+                    is_volatile = True
+                else:
+                    self.error(
+                        f&#34;Unsupported type for extra parameters: {type(extra_parameters)}&#34;
+                    )
+
+            self.status = Status.EVALUATION
+            self.store_metadata(force=True)
+
+            try:
+
+                state = command(
+                    old_state, *parameters, context=self, **extra_parameters_dict
+                )
+                assert type(state.metadata) is dict
+            except EvaluationException as ee:
+                print(&#34;EE:&#34;, ee)
+                # traceback.print_exc()
+                state.is_error = True
+                state.exception = ee
+            except Exception as e:
+                traceback.print_exc()
+                state.is_error = True
+                self.exception(
+                    message=str(e),
+                    position=action.position,
+                    query=self.raw_query,
+                    traceback=traceback.format_exc(),
+                )
+                state.exception = EvaluationException(
+                    traceback.format_exc() + &#34;\n&#34; + str(e),
+                    position=action.position,
+                    query=self.raw_query,
+                )
+        arguments = getattr(state, &#34;arguments&#34;, None)
+        if arguments is not None:
+
+            def to_arg(arg):
+                x, meta = arg
+                try:
+                    s = json.dumps(x)
+                    if len(s) &gt; 100:
+                        return [s[:50], meta]
+                    return [x, meta]
+                except:
+                    return [None, meta]
+
+            arguments = [to_arg(a) for a in arguments]
+
+        metadata = self.metadata()
+        metadata[&#34;type_identifier&#34;] = state.type_identifier
+        metadata[&#34;commands&#34;] = metadata.get(&#34;commands&#34;, []) + [action.to_list()]
+        if (
+            metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+            == &#34;application/octet-stream&#34;
+        ):
+            metadata[&#34;mimetype&#34;] = state.mimetype()
+
+        try:
+            cmd_metadata_d = cmd_metadata._asdict()
+        except:
+            cmd_metadata_d = {}
+        metadata[&#34;extended_commands&#34;] = metadata.get(&#34;extended_commands&#34;, []) + [
+            dict(
+                command_name=action.name,
+                ns=ns,
+                qcommand=action.to_list(),
+                action=f&#34;{action.encode()} at {action.position}&#34;,
+                command_metadata=cmd_metadata_d,
+                arguments=arguments,
+            )
+        ]
+        metadata[&#34;query&#34;] = self.raw_query
+        metadata[&#34;attributes&#34;] = {
+            key: value
+            for key, value in state.metadata[&#34;attributes&#34;].items()
+            if key[0].isupper()
+        }
+
+        if cmd_metadata is not None:
+            metadata[&#34;attributes&#34;] = dict(
+                metadata.get(&#34;attributes&#34;, {}), **cmd_metadata.attributes
+            )
+
+        metadata[&#34;caching&#34;] = metadata.get(&#34;caching&#34;, True) and state.metadata.get(
+            &#34;caching&#34;, True
+        )
+        is_error = state.is_error or self.is_error
+
+        if is_error:
+            self.status = Status.ERROR
+            metadata[&#34;status&#34;] = self.status.value
+            self.info(f&#34;Action {action.encode()} at {action.position} failed&#34;)
+            state.metadata.update(metadata)
+            state.status = Status.ERROR.value
+            state.is_error = True
+        else:
+            self.status = Status.READY
+            metadata[&#34;status&#34;] = self.status.value
+            self.info(f&#34;Action {action.encode()} at {action.position} completed&#34;)
+            state_vars = dict(self.vars)
+            state_vars.update(state.vars)
+            state_vars.update(self.vars.get_modified())
+            self.vars = Vars(state_vars)
+            metadata[&#34;vars&#34;] = dict(state_vars)
+            state.metadata.update(metadata)
+
+        state.set_volatile(is_volatile or state.is_volatile())
+
+        cache.store_metadata(state.metadata)
+        return state
+
+    def store(self):
+        return get_store()
+
+    def evaluate_resource(self, resource_query):
+        self.info(f&#34;Evaluate resource: {resource_query}&#34;)
+        if resource_query.header is not None:
+            if resource_query.header.encode() not in (&#34;-R&#34;, &#34;-R-meta&#34;):
+                raise Exception(
+                    f&#34;Header &#39;{resource_query.header}&#39; not supported in resource query {resource_query}&#34;
+                )
+        key = resource_query.path()
+        store = self.store()
+        state = self.create_initial_state()
+        try:
+            metadata = store.get_metadata(key)
+        except:
+            state.log_exception(
+                f&#34;Failed getting metadata for key &#39;{key}&#39;&#34;,
+                traceback=traceback.format_exc(),
+            )
+            self.warning(
+                f&#34;Failed getting metadata for key &#39;{key}&#39;&#34;,
+                traceback=traceback.format_exc(),
+            )
+            return state
+
+        try:
+            if metadata is None:
+                if store.contains(key):
+                    state.error(
+                        f&#34;Key &#39;{key}&#39; was found in store, but the metadata is missing.&#34;
+                    )
+                else:
+                    state.error(f&#34;Metadata for key &#39;{key}&#39; not found in store&#34;)
+
+            if (
+                resource_query.header is not None
+                and len(resource_query.header.parameters) &gt; 0
+                and resource_query.header.parameters[-1].encode() == &#34;meta&#34;
+            ):
+                self.info(f&#34;Resource metadata query {resource_query}&#34;)
+                data = metadata
+                metadata = dict(
+                    description=f&#34;Metadata for {key}&#34;,
+                    key=key,
+                    query=resource_query.encode(),
+                )
+            else:
+                data = store.get_bytes(key)
+                if data is None:
+                    if store.contains(key):
+                        if store.is_dir(key):
+                            state.error(
+                                f&#34;Key &#39;{key}&#39; is a directory, hence there is no data.&#34;
+                            )
+                        else:
+                            state.error(
+                                f&#34;Key &#39;{key}&#39; was found in store, but the data is missing.&#34;
+                            )
+                    else:
+                        state.error(f&#34;Key &#39;{key}&#39; not found in store&#34;)
+
+            state = state.with_data(data)
+            state.metadata[&#34;resource_metadata&#34;] = metadata
+        except:
+            if &#34;log&#34; not in state.metadata:
+                state.metadata[&#34;log&#34;] = []
+            for x in metadata.get(&#34;log&#34;, []):
+                self.log_dict(deepcopy(x))
+                state.metadata[&#34;log&#34;].append(deepcopy(x))
+            self.exception(
+                message=f&#34;Error evaluating resource {resource_query}&#34;,
+                traceback=traceback.format_exc(),
+                position=resource_query.position,
+                query=resource_query.encode(),
+            )
+            traceback.print_exc()
+        return state
+
+    def create_initial_state(self):
+        state = State()
+        state.query = &#34;&#34;
+        return state
+
+    @classmethod
+    def to_query(cls, query):
+        if query is None:
+            return &#34;&#34;, Query()
+        if isinstance(query, str):
+            return query, parse(query)
+        elif isinstance(query, Query):
+            return query.encode(), query
+        else:
+            raise Exception(f&#34;Unsupported query type: {type(query)}&#34;)
+
+    def apply(self, query, description=None):
+        self.debug(f&#34;APPLY {query}&#34;)
+        if self.parent_query in (None, &#34;&#34;, &#34;/&#34;):
+            self.debug(f&#34;  no parent query in apply {query}&#34;)
+            return self.evaluate(query, description=description)
+        if isinstance(query, str):
+            query = parse(query)
+        if query.absolute:
+            self.debug(f&#34;  absolute link in apply {query}&#34;)
+            return self.evaluate(query, description=description)
+        tq = query.transform_query()
+        if tq is None:
+            raise Exception(
+                f&#34;Only transform query supported in apply ({query} on {self.parent_query})&#34;
+            )
+        q = (parse(self.parent_query) + tq).encode()
+        self.debug(f&#34;apply {query} on {self.parent_query} yields {q}&#34;)
+        return self.evaluate(q, description=description)
+
+    def _store_state(self, state):
+        if self.store_key is not None:
+            metadata = state.metadata
+            store = self.store() if self.store_to is None else self.store_to
+            if state.is_error:
+                store.store_metadata(self.store_key, metadata)
+            else:
+                data = state.get()
+                reg = self.state_types_registry()
+                t = reg.get(type(data))
+                try:
+                    if state.metadata.get(&#34;extension&#34;) is None:
+                        b, mime, typeid = encode_state_data(data)
+                    else:
+                        b, mime, typeid = encode_state_data(
+                            data, extension=state.metadata[&#34;extension&#34;]
+                        )
+                    store.store(self.store_key, b, metadata)
+                except:
+                    traceback.print_exc()
+                    m = Metadata(metadata)
+                    m.status = Status.ERROR
+                    m.exception(
+                        f&#34;Failed to encode data for key &#39;{self.store_key}&#39;&#34;,
+                        traceback=traceback.format_exc(),
+                    )
+                    store.store_metadata(self.store_key, m.as_dict())
+
+    def evaluate(
+        self,
+        query,
+        cache=None,
+        description=None,
+        store_key=None,
+        store_to=None,
+        extra_parameters=None,
+    ):
+        &#34;&#34;&#34;Evaluate query, returns a State.
+        This method can be used in a command to evaluate a subquery,
+        which will be recorded in metadata and can be inspected during the query execution.
+
+        When evaluating such a subquery, it is good to give it a description (via a description argument).
+        If this is not a sub-query, description parameter will set the description in the metadata (see set_description).
+        Note that this might be overridden by the subsequent calls to set_description.
+        Parameter cache can be used to set a cache object. In most cases default cache is the safest choice.
+
+        Evaluation can be (besides cache) stored in the store under the key specified by the store_key (if not None).
+        A store can be specified too via the store_to option. If None (default), the default store (from the store method) is used.
+
+        If extra_parameters are specified, these parameters are appended to the parameters of the last action.
+        This effectively renders the evaluation volatile. Note that the action needs correct amount of parameters.
+        &#34;&#34;&#34;
+        self.enable_store_metadata = False  # Prevents overwriting cache with metadata
+        self.status = Status.EVALUATION
+        self.debug(f&#34;EVALUATE {query} &#34;)
+
+        self.vars = Vars(vars_clone())
+
+        self.evaluated_key = self.evaluated_key if store_key is None else store_key
+        self.cwd_key = self.cwd_key if store_key is None else parent_key(store_key)
+
+        if self.query is not None:
+            self.enable_store_metadata = True
+            print(f&#34;Subquery {query} called from {self.query.encode()}&#34;)
+            state = self.child_context().evaluate(
+                query, store_key=store_key, store_to=store_to
+            )
+            if not isinstance(query, str):
+                query = query.encode()
+            self.log_subquery(query=query, description=description)
+            if state.is_error:
+                print(&#34;Subquery failed&#34;)
+                for d in state.metadata.get(&#34;log&#34;, []):
+                    self.log_dict(d)
+            #            self.enable_store_metadata = True
+            self.store_metadata(force=True)
+            self.enable_store_metadata = False
+            state = self.index_state(state)
+            return state
+
+        raw_query, query = self.to_query(query)
+        self.raw_query = raw_query
+        self.query = query
+        self.store_key = store_key
+        self.store_to = store_to
+        self.started = self.now()
+        if description is not None:
+            self.set_description(description)
+
+        if cache is None:
+            cache = self.cache()
+
+        self.debug(f&#34;Using cache {repr(cache)}&#34;)
+        self.debug(f&#34;Try cache {query}&#34;)
+        if extra_parameters is None or len(extra_parameters)==0:
+            state = cache.get(query.encode())
+            if state is not None:
+                self.debug(f&#34;Cache hit {query}&#34;)
+                self._store_state(state)
+                state = self.index_state(state)
+                return state
+        else:
+            state=None
+            print(&#34;Extra parameters specified, cache disabled&#34;, extra_parameters)
+            self.debug(&#34;Extra parameters specified, cache disabled&#34;)
+        self.enable_store_metadata = (
+            True  # Metadata can be only written after trying to read from cache,
+        )
+        # so that cache does not get overwritten
+        self.debug(f&#34;Cache miss {query}&#34;)
+
+        if query.is_resource_query():
+            state = self.evaluate_resource(query.resource_query())
+            state.query = query.encode()
+            state.metadata[&#34;created&#34;] = self.now()
+            self._store_state(state)
+            state = self.index_state(state)
+            return state
+        else:
+            p, r = query.predecessor()
+            self.debug(f&#34;PROCESS Predecessor:{p} Action: {r}&#34;)
+            if p is None or p.is_empty():
+                self.parent_query = &#34;&#34;
+                state = self.create_initial_state()
+                state.metadata[&#34;created&#34;] = self.now()
+                self.debug(f&#34;INITIAL STATE&#34;)
+            else:
+                self.parent_query = p.encode()
+                self.status = Status.EVALUATING_PARENT
+                self.store_metadata(force=True)
+                c=self.child_context()
+                c.evaluated_key = self.evaluated_key
+                c.cwd_key = self.cwd_key
+                state = c.evaluate(p, cache=cache)
+            if state.is_error:
+                self.status = Status.ERROR
+                self.store_metadata()
+                state = state.next_state()
+                state.query = query.encode()
+                state.metadata[&#34;created&#34;] = self.now()
+                self.debug(f&#34;ERROR in &#39;{state.query}&#39;&#34;)
+                self._store_state(state)
+                state = self.index_state(state)
+                return state
+        self.vars = Vars(state.vars)
+        if r is None:
+            self.debug(f&#34;RETURN &#39;{query}&#39; AFTER EMPTY ACTION ON &#39;{state.query}&#39;&#34;)
+            state.query = query.encode()
+            state.metadata[&#34;created&#34;] = self.now()
+            self._store_state(state)
+            state = self.index_state(state)
+            return state
+        elif r.is_filename():
+            state.metadata[&#34;filename&#34;] = r.filename
+            state.metadata[&#34;extension&#34;] = &#34;.&#34;.join(r.filename.split(&#34;.&#34;)[1:])
+
+        state = self.evaluate_action(state, r, extra_parameters=extra_parameters)
+        state.query = query.encode()
+        state.metadata[&#34;created&#34;] = self.now()
+
+        if (
+            state.metadata.get(&#34;caching&#34;, True)
+            and not state.is_error
+            and not state.is_volatile()
+        ):
+            print(&#34;CACHE&#34;, state.query)
+            #            self.status = &#34;cache&#34;
+            #            self.store_metadata()
+            try:
+                cache.store(state)
+            except:
+                traceback.print_exc()
+                self.warning(&#34;Cache failed&#34;, traceback=traceback.format_exc())
+        else:
+            if state.is_error:
+                cache.store_metadata(state.metadata)
+            else:
+                print(&#34;REMOVE CACHE&#34;, state.query)
+                if not cache.remove(state.query):
+                    self.status = Status.EXPIRED
+                    self.store_metadata()
+
+        self._store_state(state)
+        try:
+            state = self.index_state(state)
+        except:
+            traceback.print_exc()
+            self.warning(&#34;Indexer failed&#34;, traceback=traceback.format_exc())
+        return state
+
+    def evaluate_and_save(
+        self,
+        query,
+        target_directory=None,
+        target_file=None,
+        target_resource_directory=None,
+        store=None,
+    ):
+        &#34;&#34;&#34;Evaluate query and save result.
+        Output is saved either to
+        - a target directory (current working directory by default) to a file deduced from the query, or
+        - to target_file (if specified)
+        Returns a state.
+        &#34;&#34;&#34;
+
+        if (
+            target_directory == None
+            and target_file == None
+            and target_resource_directory == None
+            and store == None
+        ):
+            target_directory = &#34;.&#34;
+
+        print(f&#34;*** Evaluate and save {query} started&#34;)
+        state = self.evaluate(query)
+        if state.is_error:
+            print(f&#34;*** Evaluate and save {query} failed&#34;)
+            if target_resource_directory is not None and target_file is not None:
+                filename = target_file
+                key = (
+                    filename
+                    if target_resource_directory == &#34;&#34;
+                    else target_resource_directory + &#34;/&#34; + filename
+                )
+                if store is None:
+                    store = self.store()
+
+                store.store_metadata(key, state.metadata)
+
+        data = state.get()
+        reg = self.state_types_registry()
+        t = reg.get(type(data))
+
+        filename = target_file
+        if state.metadata.get(&#34;extension&#34;) is None:
+            b, mime, typeid = encode_state_data(data)
+            filename = t.default_filename() if target_file is None else target_file
+        else:
+            b, mime, typeid = encode_state_data(
+                data, extension=state.metadata[&#34;extension&#34;]
+            )
+            filename = (
+                (
+                    t.default_filename()
+                    if state.metadata.get(&#34;filename&#34;) is None
+                    else state.metadata[&#34;filename&#34;]
+                )
+                if target_file is None
+                else target_file
+            )
+        if target_directory is None:
+            path = filename
+        else:
+            path = os.path.join(target_directory, filename)
+
+        if target_directory is not None:
+            print(f&#34;*** Evaluate and save {query} to {path}&#34;)
+            with open(path, &#34;wb&#34;) as f:
+                f.write(b)
+
+        if target_resource_directory is not None:
+            filename = os.path.split(path)[1]
+            key = (
+                filename
+                if target_resource_directory == &#34;&#34;
+                else target_resource_directory + &#34;/&#34; + filename
+            )
+            print(f&#34;*** Store evaluated {query} to {key}&#34;)
+            if store is None:
+                store = self.store()
+
+            store.store(key, b, state.metadata)
+
+        return state
+
+    def evaluate_template(self, template: str, prefix=&#34;$&#34;, sufix=&#34;$&#34;, path=None, resource_segment_name=&#34;&#34;):
+        &#34;&#34;&#34;Evaluate a string template; replace all queries by their values
+        Queries in the template are delimited by prefix and sufix.
+        Queries should evaluate to strings and should not cause errors.
+        &#34;&#34;&#34;
+        local_cache = {}
+        result = &#34;&#34;
+        for text, q in find_queries_in_template(template, prefix, sufix):
+            result += text
+            if q is not None:
+                if path is not None:
+                    q = parse(q).to_absolute(path, resource_segment_name=resource_segment_name).encode()
+                if q in local_cache:
+                    result += local_cache[q]
+                else:
+                    state = self.evaluate(q, description=f&#34;template expansion of {q}&#34;)
+                    if state.is_error:
+                        self.error(f&#34;Template failed to expand {q}&#34;)
+                        qr = f&#34;ERROR({q})&#34;
+                    else:
+                        qr = str(state.get())
+                    local_cache[q] = qr
+                    result += qr
+        return result</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.context.MetadataContextMixin" href="#liquer.context.MetadataContextMixin">MetadataContextMixin</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.context.Context.to_query"><code class="name flex">
+<span>def <span class="ident">to_query</span></span>(<span>query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def to_query(cls, query):
+    if query is None:
+        return &#34;&#34;, Query()
+    if isinstance(query, str):
+        return query, parse(query)
+    elif isinstance(query, Query):
+        return query.encode(), query
+    else:
+        raise Exception(f&#34;Unsupported query type: {type(query)}&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.context.Context.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>self, query, description=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply(self, query, description=None):
+    self.debug(f&#34;APPLY {query}&#34;)
+    if self.parent_query in (None, &#34;&#34;, &#34;/&#34;):
+        self.debug(f&#34;  no parent query in apply {query}&#34;)
+        return self.evaluate(query, description=description)
+    if isinstance(query, str):
+        query = parse(query)
+    if query.absolute:
+        self.debug(f&#34;  absolute link in apply {query}&#34;)
+        return self.evaluate(query, description=description)
+    tq = query.transform_query()
+    if tq is None:
+        raise Exception(
+            f&#34;Only transform query supported in apply ({query} on {self.parent_query})&#34;
+        )
+    q = (parse(self.parent_query) + tq).encode()
+    self.debug(f&#34;apply {query} on {self.parent_query} yields {q}&#34;)
+    return self.evaluate(q, description=description)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.cache"><code class="name flex">
+<span>def <span class="ident">cache</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache(self):
+    return get_cache()</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.can_report"><code class="name flex">
+<span>def <span class="ident">can_report</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_report(self):
+    if self.last_report_time is None:
+        self.last_report_time = datetime.now()
+    return True
+    return (datetime.now() - self.last_report_time).total_seconds() &gt; 0.1</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.child_context"><code class="name flex">
+<span>def <span class="ident">child_context</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a new context that is a child of this context.
+This is used to create a new context for a subquery.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def child_context(self):
+    &#34;&#34;&#34;Create a new context that is a child of this context.
+    This is used to create a new context for a subquery.
+    &#34;&#34;&#34;
+    c = self.__class__(parent_context=self)
+    return c</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.command_registry"><code class="name flex">
+<span>def <span class="ident">command_registry</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def command_registry(self):
+    return command_registry()</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.create_initial_state"><code class="name flex">
+<span>def <span class="ident">create_initial_state</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_initial_state(self):
+    state = State()
+    state.query = &#34;&#34;
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.create_state"><code class="name flex">
+<span>def <span class="ident">create_state</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_state(self):
+    return State(metadata=self.metadata(), context=self)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.disable_cache"><code class="name flex">
+<span>def <span class="ident">disable_cache</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def disable_cache(self):
+    self.enable_cache(False)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.enable_cache"><code class="name flex">
+<span>def <span class="ident">enable_cache</span></span>(<span>self, enable=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable_cache(self, enable=True):
+    self.caching = enable
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, query, cache=None, description=None, store_key=None, store_to=None, extra_parameters=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluate query, returns a State.
+This method can be used in a command to evaluate a subquery,
+which will be recorded in metadata and can be inspected during the query execution.</p>
+<p>When evaluating such a subquery, it is good to give it a description (via a description argument).
+If this is not a sub-query, description parameter will set the description in the metadata (see set_description).
+Note that this might be overridden by the subsequent calls to set_description.
+Parameter cache can be used to set a cache object. In most cases default cache is the safest choice.</p>
+<p>Evaluation can be (besides cache) stored in the store under the key specified by the store_key (if not None).
+A store can be specified too via the store_to option. If None (default), the default store (from the store method) is used.</p>
+<p>If extra_parameters are specified, these parameters are appended to the parameters of the last action.
+This effectively renders the evaluation volatile. Note that the action needs correct amount of parameters.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(
+    self,
+    query,
+    cache=None,
+    description=None,
+    store_key=None,
+    store_to=None,
+    extra_parameters=None,
+):
+    &#34;&#34;&#34;Evaluate query, returns a State.
+    This method can be used in a command to evaluate a subquery,
+    which will be recorded in metadata and can be inspected during the query execution.
+
+    When evaluating such a subquery, it is good to give it a description (via a description argument).
+    If this is not a sub-query, description parameter will set the description in the metadata (see set_description).
+    Note that this might be overridden by the subsequent calls to set_description.
+    Parameter cache can be used to set a cache object. In most cases default cache is the safest choice.
+
+    Evaluation can be (besides cache) stored in the store under the key specified by the store_key (if not None).
+    A store can be specified too via the store_to option. If None (default), the default store (from the store method) is used.
+
+    If extra_parameters are specified, these parameters are appended to the parameters of the last action.
+    This effectively renders the evaluation volatile. Note that the action needs correct amount of parameters.
+    &#34;&#34;&#34;
+    self.enable_store_metadata = False  # Prevents overwriting cache with metadata
+    self.status = Status.EVALUATION
+    self.debug(f&#34;EVALUATE {query} &#34;)
+
+    self.vars = Vars(vars_clone())
+
+    self.evaluated_key = self.evaluated_key if store_key is None else store_key
+    self.cwd_key = self.cwd_key if store_key is None else parent_key(store_key)
+
+    if self.query is not None:
+        self.enable_store_metadata = True
+        print(f&#34;Subquery {query} called from {self.query.encode()}&#34;)
+        state = self.child_context().evaluate(
+            query, store_key=store_key, store_to=store_to
+        )
+        if not isinstance(query, str):
+            query = query.encode()
+        self.log_subquery(query=query, description=description)
+        if state.is_error:
+            print(&#34;Subquery failed&#34;)
+            for d in state.metadata.get(&#34;log&#34;, []):
+                self.log_dict(d)
+        #            self.enable_store_metadata = True
+        self.store_metadata(force=True)
+        self.enable_store_metadata = False
+        state = self.index_state(state)
+        return state
+
+    raw_query, query = self.to_query(query)
+    self.raw_query = raw_query
+    self.query = query
+    self.store_key = store_key
+    self.store_to = store_to
+    self.started = self.now()
+    if description is not None:
+        self.set_description(description)
+
+    if cache is None:
+        cache = self.cache()
+
+    self.debug(f&#34;Using cache {repr(cache)}&#34;)
+    self.debug(f&#34;Try cache {query}&#34;)
+    if extra_parameters is None or len(extra_parameters)==0:
+        state = cache.get(query.encode())
+        if state is not None:
+            self.debug(f&#34;Cache hit {query}&#34;)
+            self._store_state(state)
+            state = self.index_state(state)
+            return state
+    else:
+        state=None
+        print(&#34;Extra parameters specified, cache disabled&#34;, extra_parameters)
+        self.debug(&#34;Extra parameters specified, cache disabled&#34;)
+    self.enable_store_metadata = (
+        True  # Metadata can be only written after trying to read from cache,
+    )
+    # so that cache does not get overwritten
+    self.debug(f&#34;Cache miss {query}&#34;)
+
+    if query.is_resource_query():
+        state = self.evaluate_resource(query.resource_query())
+        state.query = query.encode()
+        state.metadata[&#34;created&#34;] = self.now()
+        self._store_state(state)
+        state = self.index_state(state)
+        return state
+    else:
+        p, r = query.predecessor()
+        self.debug(f&#34;PROCESS Predecessor:{p} Action: {r}&#34;)
+        if p is None or p.is_empty():
+            self.parent_query = &#34;&#34;
+            state = self.create_initial_state()
+            state.metadata[&#34;created&#34;] = self.now()
+            self.debug(f&#34;INITIAL STATE&#34;)
+        else:
+            self.parent_query = p.encode()
+            self.status = Status.EVALUATING_PARENT
+            self.store_metadata(force=True)
+            c=self.child_context()
+            c.evaluated_key = self.evaluated_key
+            c.cwd_key = self.cwd_key
+            state = c.evaluate(p, cache=cache)
+        if state.is_error:
+            self.status = Status.ERROR
+            self.store_metadata()
+            state = state.next_state()
+            state.query = query.encode()
+            state.metadata[&#34;created&#34;] = self.now()
+            self.debug(f&#34;ERROR in &#39;{state.query}&#39;&#34;)
+            self._store_state(state)
+            state = self.index_state(state)
+            return state
+    self.vars = Vars(state.vars)
+    if r is None:
+        self.debug(f&#34;RETURN &#39;{query}&#39; AFTER EMPTY ACTION ON &#39;{state.query}&#39;&#34;)
+        state.query = query.encode()
+        state.metadata[&#34;created&#34;] = self.now()
+        self._store_state(state)
+        state = self.index_state(state)
+        return state
+    elif r.is_filename():
+        state.metadata[&#34;filename&#34;] = r.filename
+        state.metadata[&#34;extension&#34;] = &#34;.&#34;.join(r.filename.split(&#34;.&#34;)[1:])
+
+    state = self.evaluate_action(state, r, extra_parameters=extra_parameters)
+    state.query = query.encode()
+    state.metadata[&#34;created&#34;] = self.now()
+
+    if (
+        state.metadata.get(&#34;caching&#34;, True)
+        and not state.is_error
+        and not state.is_volatile()
+    ):
+        print(&#34;CACHE&#34;, state.query)
+        #            self.status = &#34;cache&#34;
+        #            self.store_metadata()
+        try:
+            cache.store(state)
+        except:
+            traceback.print_exc()
+            self.warning(&#34;Cache failed&#34;, traceback=traceback.format_exc())
+    else:
+        if state.is_error:
+            cache.store_metadata(state.metadata)
+        else:
+            print(&#34;REMOVE CACHE&#34;, state.query)
+            if not cache.remove(state.query):
+                self.status = Status.EXPIRED
+                self.store_metadata()
+
+    self._store_state(state)
+    try:
+        state = self.index_state(state)
+    except:
+        traceback.print_exc()
+        self.warning(&#34;Indexer failed&#34;, traceback=traceback.format_exc())
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.evaluate_action"><code class="name flex">
+<span>def <span class="ident">evaluate_action</span></span>(<span>self, state: <a title="liquer.state.State" href="state.html#liquer.state.State">State</a>, action, extra_parameters=None, cache=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_action(self, state: State, action, extra_parameters=None, cache=None):
+    self.debug(f&#34;EVALUATE ACTION &#39;{action}&#39; on &#39;{state.query}&#39;&#34;)
+    self.status = Status.EVALUATION
+    self.store_metadata(force=True)
+    cache = cache or self.cache()
+    cr = self.command_registry()
+    extra_parameters_dict = {}
+
+    state.context = self
+
+    if isinstance(action, TransformQuerySegment):
+        if action.is_filename():
+            return state.with_filename(action.filename)
+        assert action.is_action_request()
+        action = action.query[0]
+
+    is_volatile = state.is_volatile()
+    old_state = state if is_volatile else state.clone()
+
+    state = state.next_state()
+    state.context = self
+
+    ns, command, cmd_metadata = cr.resolve_command(state, action.name)
+    if command is None:
+        self.error(
+            f&#34;Unknown action: &#39;{action.name}&#39;&#34;,
+            position=action.position,
+            query=self.raw_query,
+        )
+    else:
+        self._metadata.add_command_dependency(ns, cmd_metadata)
+        parameters = []
+        self.status = Status.EVALUATING_DEPENDENCIES
+        self.store_metadata(force=True)
+        for p in action.parameters:
+            parameters.append(self.evaluate_parameter(p, action))
+        if extra_parameters is not None and len(extra_parameters) &gt; 0:
+            if type(extra_parameters) == list:
+                self.warning(f&#34;Using {len(extra_parameters)} extra parameters&#34;)
+                parameters.extend(extra_parameters)
+                is_volatile = True
+            elif type(extra_parameters) == dict:
+                self.warning(
+                    f&#34;Using {len(extra_parameters)} extra parameters dictionary&#34;
+                )
+                extra_parameters_dict = extra_parameters
+                is_volatile = True
+            else:
+                self.error(
+                    f&#34;Unsupported type for extra parameters: {type(extra_parameters)}&#34;
+                )
+
+        self.status = Status.EVALUATION
+        self.store_metadata(force=True)
+
+        try:
+
+            state = command(
+                old_state, *parameters, context=self, **extra_parameters_dict
+            )
+            assert type(state.metadata) is dict
+        except EvaluationException as ee:
+            print(&#34;EE:&#34;, ee)
+            # traceback.print_exc()
+            state.is_error = True
+            state.exception = ee
+        except Exception as e:
+            traceback.print_exc()
+            state.is_error = True
+            self.exception(
+                message=str(e),
+                position=action.position,
+                query=self.raw_query,
+                traceback=traceback.format_exc(),
+            )
+            state.exception = EvaluationException(
+                traceback.format_exc() + &#34;\n&#34; + str(e),
+                position=action.position,
+                query=self.raw_query,
+            )
+    arguments = getattr(state, &#34;arguments&#34;, None)
+    if arguments is not None:
+
+        def to_arg(arg):
+            x, meta = arg
+            try:
+                s = json.dumps(x)
+                if len(s) &gt; 100:
+                    return [s[:50], meta]
+                return [x, meta]
+            except:
+                return [None, meta]
+
+        arguments = [to_arg(a) for a in arguments]
+
+    metadata = self.metadata()
+    metadata[&#34;type_identifier&#34;] = state.type_identifier
+    metadata[&#34;commands&#34;] = metadata.get(&#34;commands&#34;, []) + [action.to_list()]
+    if (
+        metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+        == &#34;application/octet-stream&#34;
+    ):
+        metadata[&#34;mimetype&#34;] = state.mimetype()
+
+    try:
+        cmd_metadata_d = cmd_metadata._asdict()
+    except:
+        cmd_metadata_d = {}
+    metadata[&#34;extended_commands&#34;] = metadata.get(&#34;extended_commands&#34;, []) + [
+        dict(
+            command_name=action.name,
+            ns=ns,
+            qcommand=action.to_list(),
+            action=f&#34;{action.encode()} at {action.position}&#34;,
+            command_metadata=cmd_metadata_d,
+            arguments=arguments,
+        )
+    ]
+    metadata[&#34;query&#34;] = self.raw_query
+    metadata[&#34;attributes&#34;] = {
+        key: value
+        for key, value in state.metadata[&#34;attributes&#34;].items()
+        if key[0].isupper()
+    }
+
+    if cmd_metadata is not None:
+        metadata[&#34;attributes&#34;] = dict(
+            metadata.get(&#34;attributes&#34;, {}), **cmd_metadata.attributes
+        )
+
+    metadata[&#34;caching&#34;] = metadata.get(&#34;caching&#34;, True) and state.metadata.get(
+        &#34;caching&#34;, True
+    )
+    is_error = state.is_error or self.is_error
+
+    if is_error:
+        self.status = Status.ERROR
+        metadata[&#34;status&#34;] = self.status.value
+        self.info(f&#34;Action {action.encode()} at {action.position} failed&#34;)
+        state.metadata.update(metadata)
+        state.status = Status.ERROR.value
+        state.is_error = True
+    else:
+        self.status = Status.READY
+        metadata[&#34;status&#34;] = self.status.value
+        self.info(f&#34;Action {action.encode()} at {action.position} completed&#34;)
+        state_vars = dict(self.vars)
+        state_vars.update(state.vars)
+        state_vars.update(self.vars.get_modified())
+        self.vars = Vars(state_vars)
+        metadata[&#34;vars&#34;] = dict(state_vars)
+        state.metadata.update(metadata)
+
+    state.set_volatile(is_volatile or state.is_volatile())
+
+    cache.store_metadata(state.metadata)
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.evaluate_and_save"><code class="name flex">
+<span>def <span class="ident">evaluate_and_save</span></span>(<span>self, query, target_directory=None, target_file=None, target_resource_directory=None, store=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluate query and save result.
+Output is saved either to
+- a target directory (current working directory by default) to a file deduced from the query, or
+- to target_file (if specified)
+Returns a state.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_and_save(
+    self,
+    query,
+    target_directory=None,
+    target_file=None,
+    target_resource_directory=None,
+    store=None,
+):
+    &#34;&#34;&#34;Evaluate query and save result.
+    Output is saved either to
+    - a target directory (current working directory by default) to a file deduced from the query, or
+    - to target_file (if specified)
+    Returns a state.
+    &#34;&#34;&#34;
+
+    if (
+        target_directory == None
+        and target_file == None
+        and target_resource_directory == None
+        and store == None
+    ):
+        target_directory = &#34;.&#34;
+
+    print(f&#34;*** Evaluate and save {query} started&#34;)
+    state = self.evaluate(query)
+    if state.is_error:
+        print(f&#34;*** Evaluate and save {query} failed&#34;)
+        if target_resource_directory is not None and target_file is not None:
+            filename = target_file
+            key = (
+                filename
+                if target_resource_directory == &#34;&#34;
+                else target_resource_directory + &#34;/&#34; + filename
+            )
+            if store is None:
+                store = self.store()
+
+            store.store_metadata(key, state.metadata)
+
+    data = state.get()
+    reg = self.state_types_registry()
+    t = reg.get(type(data))
+
+    filename = target_file
+    if state.metadata.get(&#34;extension&#34;) is None:
+        b, mime, typeid = encode_state_data(data)
+        filename = t.default_filename() if target_file is None else target_file
+    else:
+        b, mime, typeid = encode_state_data(
+            data, extension=state.metadata[&#34;extension&#34;]
+        )
+        filename = (
+            (
+                t.default_filename()
+                if state.metadata.get(&#34;filename&#34;) is None
+                else state.metadata[&#34;filename&#34;]
+            )
+            if target_file is None
+            else target_file
+        )
+    if target_directory is None:
+        path = filename
+    else:
+        path = os.path.join(target_directory, filename)
+
+    if target_directory is not None:
+        print(f&#34;*** Evaluate and save {query} to {path}&#34;)
+        with open(path, &#34;wb&#34;) as f:
+            f.write(b)
+
+    if target_resource_directory is not None:
+        filename = os.path.split(path)[1]
+        key = (
+            filename
+            if target_resource_directory == &#34;&#34;
+            else target_resource_directory + &#34;/&#34; + filename
+        )
+        print(f&#34;*** Store evaluated {query} to {key}&#34;)
+        if store is None:
+            store = self.store()
+
+        store.store(key, b, state.metadata)
+
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.evaluate_parameter"><code class="name flex">
+<span>def <span class="ident">evaluate_parameter</span></span>(<span>self, p, action)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_parameter(self, p, action):
+    if isinstance(p, StringActionParameter):
+        return p
+    elif isinstance(p, LinkActionParameter):
+        if p.link.absolute:
+            self.argument_queries.append(
+                dict(
+                    description=f&#34;{p.link.encode()} at {p.position}&#34;,
+                    query=p.link.encode(),
+                )
+            )
+            self.debug(f&#34;Expand absolute link parameter {p.link.encode()}&#34;)
+            value = self.evaluate(p.link)
+            if value.is_error:
+                self.error(
+                    f&#34;Error while evaluating absolute link parameter {p.link.encode()}&#34;,
+                    position=p.position,
+                    query=self.raw_query,
+                )
+                self.status = Status.ERROR
+                self.store_metadata(force=True)
+
+                raise EvaluationException(
+                    f&#34;Error while evaluating absolute link parameter {p.link.encode()} in action {action.name}&#34;,
+                    position=p.position,
+                    query=self.raw_query,
+                )
+            pp = ExpandedActionParameter(value.get(), p.link, p.position)
+            return pp
+        else:
+            self.argument_queries.append(
+                dict(
+                    description=f&#34;{p.link.encode()} at {p.position}&#34;,
+                    query=p.link.encode(),
+                )
+            )
+            self.debug(
+                f&#34;Expand relative link parameter {p.link.encode()} on {self.parent_query}&#34;
+            )
+            value = self.apply(p.link)
+            if value.is_error:
+                self.error(
+                    f&#34;Error while evaluating relative link parameter {p.link.encode()} at {p.position}&#34;,
+                    position=p.position,
+                    query=self.raw_query,
+                )
+                self.status = Status.ERROR
+                self.store_metadata(force=True)
+
+                raise EvaluationException(
+                    f&#34;Error while evaluating relative link parameter {p.link.encode()} in action {action.name}&#34;,
+                    position=p.position,
+                    query=self.raw_query,
+                )
+            pp = ExpandedActionParameter(value.get(), p.link, p.position)
+            return pp
+    else:
+        self.status = Status.ERROR
+        self.store_metadata(force=True)
+        raise EvaluationException(
+            f&#34;Unknown parameter type {type(p)} in {action.name}&#34;,
+            position=action.position,
+            query=self.raw_query,
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.evaluate_resource"><code class="name flex">
+<span>def <span class="ident">evaluate_resource</span></span>(<span>self, resource_query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_resource(self, resource_query):
+    self.info(f&#34;Evaluate resource: {resource_query}&#34;)
+    if resource_query.header is not None:
+        if resource_query.header.encode() not in (&#34;-R&#34;, &#34;-R-meta&#34;):
+            raise Exception(
+                f&#34;Header &#39;{resource_query.header}&#39; not supported in resource query {resource_query}&#34;
+            )
+    key = resource_query.path()
+    store = self.store()
+    state = self.create_initial_state()
+    try:
+        metadata = store.get_metadata(key)
+    except:
+        state.log_exception(
+            f&#34;Failed getting metadata for key &#39;{key}&#39;&#34;,
+            traceback=traceback.format_exc(),
+        )
+        self.warning(
+            f&#34;Failed getting metadata for key &#39;{key}&#39;&#34;,
+            traceback=traceback.format_exc(),
+        )
+        return state
+
+    try:
+        if metadata is None:
+            if store.contains(key):
+                state.error(
+                    f&#34;Key &#39;{key}&#39; was found in store, but the metadata is missing.&#34;
+                )
+            else:
+                state.error(f&#34;Metadata for key &#39;{key}&#39; not found in store&#34;)
+
+        if (
+            resource_query.header is not None
+            and len(resource_query.header.parameters) &gt; 0
+            and resource_query.header.parameters[-1].encode() == &#34;meta&#34;
+        ):
+            self.info(f&#34;Resource metadata query {resource_query}&#34;)
+            data = metadata
+            metadata = dict(
+                description=f&#34;Metadata for {key}&#34;,
+                key=key,
+                query=resource_query.encode(),
+            )
+        else:
+            data = store.get_bytes(key)
+            if data is None:
+                if store.contains(key):
+                    if store.is_dir(key):
+                        state.error(
+                            f&#34;Key &#39;{key}&#39; is a directory, hence there is no data.&#34;
+                        )
+                    else:
+                        state.error(
+                            f&#34;Key &#39;{key}&#39; was found in store, but the data is missing.&#34;
+                        )
+                else:
+                    state.error(f&#34;Key &#39;{key}&#39; not found in store&#34;)
+
+        state = state.with_data(data)
+        state.metadata[&#34;resource_metadata&#34;] = metadata
+    except:
+        if &#34;log&#34; not in state.metadata:
+            state.metadata[&#34;log&#34;] = []
+        for x in metadata.get(&#34;log&#34;, []):
+            self.log_dict(deepcopy(x))
+            state.metadata[&#34;log&#34;].append(deepcopy(x))
+        self.exception(
+            message=f&#34;Error evaluating resource {resource_query}&#34;,
+            traceback=traceback.format_exc(),
+            position=resource_query.position,
+            query=resource_query.encode(),
+        )
+        traceback.print_exc()
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.evaluate_template"><code class="name flex">
+<span>def <span class="ident">evaluate_template</span></span>(<span>self, template: str, prefix='$', sufix='$', path=None, resource_segment_name='')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluate a string template; replace all queries by their values
+Queries in the template are delimited by prefix and sufix.
+Queries should evaluate to strings and should not cause errors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_template(self, template: str, prefix=&#34;$&#34;, sufix=&#34;$&#34;, path=None, resource_segment_name=&#34;&#34;):
+    &#34;&#34;&#34;Evaluate a string template; replace all queries by their values
+    Queries in the template are delimited by prefix and sufix.
+    Queries should evaluate to strings and should not cause errors.
+    &#34;&#34;&#34;
+    local_cache = {}
+    result = &#34;&#34;
+    for text, q in find_queries_in_template(template, prefix, sufix):
+        result += text
+        if q is not None:
+            if path is not None:
+                q = parse(q).to_absolute(path, resource_segment_name=resource_segment_name).encode()
+            if q in local_cache:
+                result += local_cache[q]
+            else:
+                state = self.evaluate(q, description=f&#34;template expansion of {q}&#34;)
+                if state.is_error:
+                    self.error(f&#34;Template failed to expand {q}&#34;)
+                    qr = f&#34;ERROR({q})&#34;
+                else:
+                    qr = str(state.get())
+                local_cache[q] = qr
+                result += qr
+    return result</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.index_state"><code class="name flex">
+<span>def <span class="ident">index_state</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Call indexer on the state object.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def index_state(self, state):
+    &#34;&#34;&#34;Call indexer on the state object.&#34;&#34;&#34;
+    indexer = self.indexer()
+    if not state.is_error:
+        metadata = indexer(
+            query=state.query, data=state.data, metadata=state.metadata
+        )
+        if metadata is not None:
+            state.metadata = metadata
+    return state</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.indexer"><code class="name flex">
+<span>def <span class="ident">indexer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return indexer object - by default it is the global indexer function</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def indexer(self):
+    &#34;&#34;&#34;Return indexer object - by default it is the global indexer function&#34;&#34;&#34;
+    return index</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.log_child_dict"><code class="name flex">
+<span>def <span class="ident">log_child_dict</span></span>(<span>self, d)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Put dictionary with a child log entry into the child log</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_child_dict(self, d):
+    &#34;Put dictionary with a child log entry into the child log&#34;
+    d = dict(**d)
+    if d.get(&#34;origin&#34;) is None:
+        if self.parent_context is None:
+            d[&#34;origin&#34;] = None
+        else:
+            d[&#34;origin&#34;] = self.parent_context.raw_query
+    self.child_log.append(d)
+    self.child_log = self.child_log[:5]
+    self.store_metadata()
+    if self.parent_context is not None:
+        self.parent_context.log_child_dict(d)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.log_child_progress"><code class="name flex">
+<span>def <span class="ident">log_child_progress</span></span>(<span>self, d)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Put dictionary with a child progress entry into the child progress indicators and notify parent</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_child_progress(self, d):
+    &#34;Put dictionary with a child progress entry into the child progress indicators and notify parent&#34;
+    self.child_progress_indicators = [
+        x
+        for x in self.child_progress_indicators
+        if x.get(&#34;origin&#34;) != d.get(&#34;origin&#34;)
+    ]
+    self.child_progress_indicators.append(d)
+    self.store_metadata()
+    if self.parent_context is not None:
+        self.parent_context.log_child_progress(d)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.log_subquery"><code class="name flex">
+<span>def <span class="ident">log_subquery</span></span>(<span>self, query: str, description=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_subquery(self, query: str, description=None):
+    assert type(query) == str
+    if query not in self.direct_subqueries:
+        if description is None:
+            description = query
+        self.direct_subqueries.append(dict(description=description, query=query))</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.new_empty"><code class="name flex">
+<span>def <span class="ident">new_empty</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_empty(self):
+    return Context(debug=self.debug_messages)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.new_progress_indicator"><code class="name flex">
+<span>def <span class="ident">new_progress_indicator</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_progress_indicator(self):
+    self._progress_indicator_identifier += 1
+    self.progress_indicators.append(
+        dict(
+            id=self._progress_indicator_identifier,
+            step=0,
+            total_steps=None,
+            message=&#34;&#34;,
+            timestamp=timestamp(),
+        )
+    )
+    return self._progress_indicator_identifier</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.now"><code class="name flex">
+<span>def <span class="ident">now</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def now(self):
+    return util.now()</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.progress"><code class="name flex">
+<span>def <span class="ident">progress</span></span>(<span>self, step=0, total_steps=None, message='', identifier=None, autoremove=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def progress(
+    self, step=0, total_steps=None, message=&#34;&#34;, identifier=None, autoremove=True
+):
+    index = self.progress_indicator_index(identifier)
+
+    progress = dict(
+        step=step, total_steps=total_steps, message=message, timestamp=timestamp()
+    )
+    self.progress_indicators[index].update(progress)
+
+    removed = False
+    if autoremove and total_steps is not None and step &gt;= total_steps:
+        self.remove_progress_indicator(index)
+        removed = True
+
+    self.store_metadata()
+
+    if self.parent_context is not None:
+        if removed:
+            self.parent_context.remove_child_progress(self.raw_query)
+        else:
+            d = dict(origin=self.raw_query, **progress)
+            self.parent_context.log_child_progress(d)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.progress_indicator_index"><code class="name flex">
+<span>def <span class="ident">progress_indicator_index</span></span>(<span>self, identifier)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def progress_indicator_index(self, identifier):
+    if identifier is None:
+        if len(self.progress_indicators):
+            return len(self.progress_indicators) - 1
+        self.new_progress_indicator()
+        return len(self.progress_indicators) - 1
+
+    for i, x in enumerate(self.progress_indicators):
+        if x[&#34;id&#34;] == identifier:
+            return i
+    return None</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.progress_iter"><code class="name flex">
+<span>def <span class="ident">progress_iter</span></span>(<span>self, iterator, show_value=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def progress_iter(self, iterator, show_value=False):
+    try:
+        total_steps = len(iterator)
+    except:
+        total_steps = None
+    identifier = self.new_progress_indicator()
+    for i, x in enumerate(iterator):
+        if total_steps is None:
+            message = f&#34;{x} ({i+1})&#34; if show_value else f&#34;{i+1}&#34;
+        else:
+            message = (
+                f&#34;{x} ({i+1}/{total_steps})&#34;
+                if show_value
+                else f&#34;{i+1}/{total_steps}&#34;
+            )
+        self.progress(
+            i, total_steps=total_steps, message=message, identifier=identifier
+        )
+        yield x
+    self.remove_progress_indicator(identifier)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.remove_child_progress"><code class="name flex">
+<span>def <span class="ident">remove_child_progress</span></span>(<span>self, origin)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove all child progress indicators from a given origin</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_child_progress(self, origin):
+    &#34;Remove all child progress indicators from a given origin&#34;
+    self.child_progress_indicators = [
+        x for x in self.child_progress_indicators if x.get(&#34;origin&#34;) != origin
+    ]
+    self.store_metadata()
+    if self.parent_context is not None:
+        self.parent_context.remove_child_progress(origin)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.remove_progress_indicator"><code class="name flex">
+<span>def <span class="ident">remove_progress_indicator</span></span>(<span>self, identifier)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_progress_indicator(self, identifier):
+    self.progress_indicators = [
+        x for x in self.progress_indicators if x[&#34;id&#34;] != identifier
+    ]
+    if self.parent_context is not None:
+        self.parent_context.remove_child_progress(self.raw_query)</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.root_context"><code class="name flex">
+<span>def <span class="ident">root_context</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def root_context(self):
+    return (
+        self if self.parent_context is None else self.parent_context.root_context()
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.set_description"><code class="name flex">
+<span>def <span class="ident">set_description</span></span>(<span>self, description)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_description(self, description):
+    self.description = description
+    self.store_metadata()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.set_html_preview"><code class="name flex">
+<span>def <span class="ident">set_html_preview</span></span>(<span>self, html)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_html_preview(self, html):
+    self.html_preview = html
+    self.store_metadata()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.set_title"><code class="name flex">
+<span>def <span class="ident">set_title</span></span>(<span>self, title)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_title(self, title):
+    self.title = title
+    self.store_metadata()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.state_types_registry"><code class="name flex">
+<span>def <span class="ident">state_types_registry</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def state_types_registry(self):
+    return state_types_registry()</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self):
+    return get_store()</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.store_data"><code class="name flex">
+<span>def <span class="ident">store_data</span></span>(<span>self, key, data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convenience method to store data in the store including metadata.
+Note that the metadata are taken from the context.metadata() and slightly updated.
+They might not be 100% correct, since the store_data will probably be called as
+a side-effect of a query, not a result of a query.
+This is indicated by the side_effect flag in the metadata and status Status.SIDE_EFFECT.value.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_data(self, key, data):
+    &#34;&#34;&#34;Convenience method to store data in the store including metadata.
+    Note that the metadata are taken from the context.metadata() and slightly updated.
+    They might not be 100% correct, since the store_data will probably be called as
+    a side-effect of a query, not a result of a query.
+    This is indicated by the side_effect flag in the metadata and status Status.SIDE_EFFECT.value.
+    &#34;&#34;&#34;
+    metadata = self.metadata()
+    store = self.store()
+    extension = key_extension(key)
+    metadata[&#34;data_characteristics&#34;] = data_characteristics(data)
+    metadata[&#34;side_effect&#34;] = True
+    metadata[&#34;status&#34;] = Status.SIDE_EFFECT.value
+    try:
+        b, mimetype, type_identifier = encode_state_data(data, extension=extension)
+        metadata[&#34;type_identifier&#34;] = type_identifier
+        metadata[&#34;mimetype&#34;] = mimetype
+        store.store(key, b, metadata)
+    except:
+        traceback.print_exc()
+        m = Metadata(metadata)
+        m.status = Status.ERROR
+        m.exception(
+            f&#34;Failed to encode data for key &#39;{key}&#39;&#34;,
+            traceback=traceback.format_exc(),
+        )
+        store.store_metadata(key, m.as_dict())</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.Context.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, force=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, force=False):
+    if self.raw_query is not None and self.enable_store_metadata:
+        if force or self.can_report():
+            metadata = self.metadata()
+            self.cache().store_metadata(self.metadata())
+            self.last_report_time = datetime.now()
+            if self.store_key is not None:
+                store = self.store() if self.store_to is None else self.store_to
+                store.store_metadata(self.store_key, metadata)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.context.MetadataContextMixin" href="#liquer.context.MetadataContextMixin">MetadataContextMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.context.MetadataContextMixin.debug" href="#liquer.context.MetadataContextMixin.debug">debug</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.error" href="#liquer.context.MetadataContextMixin.error">error</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.exception" href="#liquer.context.MetadataContextMixin.exception">exception</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.info" href="#liquer.context.MetadataContextMixin.info">info</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.log_action" href="#liquer.context.MetadataContextMixin.log_action">log_action</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.log_dict" href="#liquer.context.MetadataContextMixin.log_dict">log_dict</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.warning" href="#liquer.context.MetadataContextMixin.warning">warning</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.context.MetadataContextMixin"><code class="flex name class">
+<span>class <span class="ident">MetadataContextMixin</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MetadataContextMixin:
+    def metadata(self):
+        metadata = self._metadata.as_dict()
+        title = self.title
+        description = self.description
+        if title is None:
+            if self.raw_query is None:
+                title = &#34;&#34;
+            else:
+                p = parse(self.raw_query)
+                if title in (&#34;&#34;, None):
+                    title = p.filename() or &#34;&#34;
+
+        mimetype = self.mimetype
+        if mimetype is None:
+            if self.query is not None:
+                if self.query.extension() is None:
+                    mimetype = &#34;application/octet-stream&#34;
+                else:
+                    mimetype = mimetype_from_extension(self.query.extension())
+
+        message = self._metadata.message
+        if message in (None, &#34;&#34;):
+            log = self._metadata.get(&#34;log&#34;, [])
+            if len(log):
+                message = log[-1][&#34;message&#34;]
+        if message in (None, &#34;&#34;):
+            log = self._metadata.get(&#34;child_log&#34;, [])
+            if len(log):
+                message = log[-1][&#34;message&#34;]
+
+        metadata.update(
+            dict(
+                status=self.status.value,
+                title=title,
+                description=description,
+                mimetype=mimetype,
+                query=self.raw_query,
+                parent_query=self.parent_query,
+                argument_queries=self.argument_queries,
+                #            log=self.log[:],
+                is_error=self.is_error,
+                direct_subqueries=self.direct_subqueries[:],
+                progress_indicators=self.progress_indicators[:],
+                child_progress_indicators=self.child_progress_indicators[:],
+                child_log=self.child_log,
+                message=message,
+                started=self.started,
+                updated=self.now(),
+                created=self.created,
+                caching=self.caching,
+                vars=dict(self.vars),
+                html_preview=self.html_preview,
+                side_effect=False,
+            )
+        )
+        return metadata
+
+    def log_dict(self, d):
+        &#34;Put dictionary with a log entry into the log&#34;
+        d[&#34;timestamp&#34;] = timestamp()
+        self._metadata.log_dict(d)
+        self.store_metadata(force=(d.get(&#34;kind&#34;) == &#34;error&#34;))
+        if self.parent_context is not None:
+            if d.get(&#34;origin&#34;) is None:
+                d = dict(origin=self.raw_query, **d)
+            self.parent_context.log_child_dict(d)
+        return self
+
+    def log_action(self, qv, number=0):
+        &#34;&#34;&#34;Log a command&#34;&#34;&#34;
+        if isinstance(qv, ActionRequest):
+            qv = qv.to_list()
+        return self.log_dict(dict(kind=&#34;command&#34;, qv=qv, command_number=number))
+
+    def error(self, message, position=None, query=None):
+        &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+        self.is_error = True
+        self.status = Status.ERROR
+        if position is None:
+            print(f&#34;{log_time()} ERROR:    &#34;, message)
+        else:
+            print(f&#34;{log_time()} ERROR:    &#34;, message, f&#34; at {position}&#34;)
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def warning(self, message, traceback=None):
+        &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+        print(f&#34;{log_time()} WARNING:  &#34;, message)
+        return self.log_dict(dict(kind=&#34;warning&#34;, message=message, traceback=traceback))
+
+    def exception(self, message, traceback, position=None, query=None):
+        &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+        self.is_error = True
+        self.status = Status.ERROR
+        if position is None:
+            print(f&#34;{log_time()} EXCEPTION:&#34;, message)
+        else:
+            print(f&#34;{log_time()} EXCEPTION:&#34;, message, f&#34; at {position}&#34;)
+        return self.log_dict(
+            dict(
+                kind=&#34;error&#34;,
+                message=message,
+                traceback=traceback,
+                position=None if position is None else position.to_dict(),
+                query=query,
+            )
+        )
+
+    def info(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        print(f&#34;{log_time()} INFO:     &#34;, message)
+        self.log_dict(dict(kind=&#34;info&#34;, message=message))
+        return self
+
+    def debug(self, message):
+        &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+        if self.debug_messages:
+            print(f&#34;{log_time()} DEBUG:    &#34;, message)
+            self.log_dict(dict(kind=&#34;debug&#34;, message=message))
+        return self
+
+    @property
+    def raw_query(self):
+        return self._metadata.query
+
+    @raw_query.setter
+    def raw_query(self, value):
+        self._metadata.query = value</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.context.Context" href="#liquer.context.Context">Context</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="liquer.context.MetadataContextMixin.raw_query"><code class="name">var <span class="ident">raw_query</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def raw_query(self):
+    return self._metadata.query</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.context.MetadataContextMixin.debug"><code class="name flex">
+<span>def <span class="ident">debug</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a message (info)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def debug(self, message):
+    &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+    if self.debug_messages:
+        print(f&#34;{log_time()} DEBUG:    &#34;, message)
+        self.log_dict(dict(kind=&#34;debug&#34;, message=message))
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.MetadataContextMixin.error"><code class="name flex">
+<span>def <span class="ident">error</span></span>(<span>self, message, position=None, query=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log an error message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def error(self, message, position=None, query=None):
+    &#34;&#34;&#34;Log an error message&#34;&#34;&#34;
+    self.is_error = True
+    self.status = Status.ERROR
+    if position is None:
+        print(f&#34;{log_time()} ERROR:    &#34;, message)
+    else:
+        print(f&#34;{log_time()} ERROR:    &#34;, message, f&#34; at {position}&#34;)
+    return self.log_dict(
+        dict(
+            kind=&#34;error&#34;,
+            message=message,
+            position=None if position is None else position.to_dict(),
+            query=query,
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.MetadataContextMixin.exception"><code class="name flex">
+<span>def <span class="ident">exception</span></span>(<span>self, message, traceback, position=None, query=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log an exception</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exception(self, message, traceback, position=None, query=None):
+    &#34;&#34;&#34;Log an exception&#34;&#34;&#34;
+    self.is_error = True
+    self.status = Status.ERROR
+    if position is None:
+        print(f&#34;{log_time()} EXCEPTION:&#34;, message)
+    else:
+        print(f&#34;{log_time()} EXCEPTION:&#34;, message, f&#34; at {position}&#34;)
+    return self.log_dict(
+        dict(
+            kind=&#34;error&#34;,
+            message=message,
+            traceback=traceback,
+            position=None if position is None else position.to_dict(),
+            query=query,
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.MetadataContextMixin.info"><code class="name flex">
+<span>def <span class="ident">info</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a message (info)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def info(self, message):
+    &#34;&#34;&#34;Log a message (info)&#34;&#34;&#34;
+    print(f&#34;{log_time()} INFO:     &#34;, message)
+    self.log_dict(dict(kind=&#34;info&#34;, message=message))
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.MetadataContextMixin.log_action"><code class="name flex">
+<span>def <span class="ident">log_action</span></span>(<span>self, qv, number=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a command</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_action(self, qv, number=0):
+    &#34;&#34;&#34;Log a command&#34;&#34;&#34;
+    if isinstance(qv, ActionRequest):
+        qv = qv.to_list()
+    return self.log_dict(dict(kind=&#34;command&#34;, qv=qv, command_number=number))</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.MetadataContextMixin.log_dict"><code class="name flex">
+<span>def <span class="ident">log_dict</span></span>(<span>self, d)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Put dictionary with a log entry into the log</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_dict(self, d):
+    &#34;Put dictionary with a log entry into the log&#34;
+    d[&#34;timestamp&#34;] = timestamp()
+    self._metadata.log_dict(d)
+    self.store_metadata(force=(d.get(&#34;kind&#34;) == &#34;error&#34;))
+    if self.parent_context is not None:
+        if d.get(&#34;origin&#34;) is None:
+            d = dict(origin=self.raw_query, **d)
+        self.parent_context.log_child_dict(d)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.MetadataContextMixin.metadata"><code class="name flex">
+<span>def <span class="ident">metadata</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def metadata(self):
+    metadata = self._metadata.as_dict()
+    title = self.title
+    description = self.description
+    if title is None:
+        if self.raw_query is None:
+            title = &#34;&#34;
+        else:
+            p = parse(self.raw_query)
+            if title in (&#34;&#34;, None):
+                title = p.filename() or &#34;&#34;
+
+    mimetype = self.mimetype
+    if mimetype is None:
+        if self.query is not None:
+            if self.query.extension() is None:
+                mimetype = &#34;application/octet-stream&#34;
+            else:
+                mimetype = mimetype_from_extension(self.query.extension())
+
+    message = self._metadata.message
+    if message in (None, &#34;&#34;):
+        log = self._metadata.get(&#34;log&#34;, [])
+        if len(log):
+            message = log[-1][&#34;message&#34;]
+    if message in (None, &#34;&#34;):
+        log = self._metadata.get(&#34;child_log&#34;, [])
+        if len(log):
+            message = log[-1][&#34;message&#34;]
+
+    metadata.update(
+        dict(
+            status=self.status.value,
+            title=title,
+            description=description,
+            mimetype=mimetype,
+            query=self.raw_query,
+            parent_query=self.parent_query,
+            argument_queries=self.argument_queries,
+            #            log=self.log[:],
+            is_error=self.is_error,
+            direct_subqueries=self.direct_subqueries[:],
+            progress_indicators=self.progress_indicators[:],
+            child_progress_indicators=self.child_progress_indicators[:],
+            child_log=self.child_log,
+            message=message,
+            started=self.started,
+            updated=self.now(),
+            created=self.created,
+            caching=self.caching,
+            vars=dict(self.vars),
+            html_preview=self.html_preview,
+            side_effect=False,
+        )
+    )
+    return metadata</code></pre>
+</details>
+</dd>
+<dt id="liquer.context.MetadataContextMixin.warning"><code class="name flex">
+<span>def <span class="ident">warning</span></span>(<span>self, message, traceback=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Log a warning message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def warning(self, message, traceback=None):
+    &#34;&#34;&#34;Log a warning message&#34;&#34;&#34;
+    print(f&#34;{log_time()} WARNING:  &#34;, message)
+    return self.log_dict(dict(kind=&#34;warning&#34;, message=message, traceback=traceback))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.context.Vars"><code class="flex name class">
+<span>class <span class="ident">Vars</span></span>
+<span>(</span><span>*arg, **kwarg)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Vars(dict):
+    def __init__(self, *arg, **kwarg):
+        super().__init__(*arg, **kwarg)
+        self._modified_vars = set()
+
+    def __getattr__(self, name):
+        return self[name]
+
+    def __setattr__(self, name, value):
+        if name == &#34;_modified_vars&#34;:
+            super().__setattr__(name, value)
+        else:
+            self._modified_vars.add(name)
+            self[name] = value
+
+    def __getstate__(self):
+        return (self._modified_vars, dict(self))
+
+    def __setstate__(self, x):
+        mv, d = x
+        super().__setattr__(&#34;_modified_vars&#34;, mv)
+        self.clear()
+        self.update(d)
+
+    def get_modified(self):
+        return {key: self[key] for key in self._modified_vars}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.context.Vars.get_modified"><code class="name flex">
+<span>def <span class="ident">get_modified</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_modified(self):
+    return {key: self[key] for key in self._modified_vars}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer" href="index.html">liquer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.context.find_queries_in_template" href="#liquer.context.find_queries_in_template">find_queries_in_template</a></code></li>
+<li><code><a title="liquer.context.get_context" href="#liquer.context.get_context">get_context</a></code></li>
+<li><code><a title="liquer.context.log_time" href="#liquer.context.log_time">log_time</a></code></li>
+<li><code><a title="liquer.context.set_context_creator" href="#liquer.context.set_context_creator">set_context_creator</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.context.Context" href="#liquer.context.Context">Context</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.context.Context.apply" href="#liquer.context.Context.apply">apply</a></code></li>
+<li><code><a title="liquer.context.Context.cache" href="#liquer.context.Context.cache">cache</a></code></li>
+<li><code><a title="liquer.context.Context.can_report" href="#liquer.context.Context.can_report">can_report</a></code></li>
+<li><code><a title="liquer.context.Context.child_context" href="#liquer.context.Context.child_context">child_context</a></code></li>
+<li><code><a title="liquer.context.Context.command_registry" href="#liquer.context.Context.command_registry">command_registry</a></code></li>
+<li><code><a title="liquer.context.Context.create_initial_state" href="#liquer.context.Context.create_initial_state">create_initial_state</a></code></li>
+<li><code><a title="liquer.context.Context.create_state" href="#liquer.context.Context.create_state">create_state</a></code></li>
+<li><code><a title="liquer.context.Context.disable_cache" href="#liquer.context.Context.disable_cache">disable_cache</a></code></li>
+<li><code><a title="liquer.context.Context.enable_cache" href="#liquer.context.Context.enable_cache">enable_cache</a></code></li>
+<li><code><a title="liquer.context.Context.evaluate" href="#liquer.context.Context.evaluate">evaluate</a></code></li>
+<li><code><a title="liquer.context.Context.evaluate_action" href="#liquer.context.Context.evaluate_action">evaluate_action</a></code></li>
+<li><code><a title="liquer.context.Context.evaluate_and_save" href="#liquer.context.Context.evaluate_and_save">evaluate_and_save</a></code></li>
+<li><code><a title="liquer.context.Context.evaluate_parameter" href="#liquer.context.Context.evaluate_parameter">evaluate_parameter</a></code></li>
+<li><code><a title="liquer.context.Context.evaluate_resource" href="#liquer.context.Context.evaluate_resource">evaluate_resource</a></code></li>
+<li><code><a title="liquer.context.Context.evaluate_template" href="#liquer.context.Context.evaluate_template">evaluate_template</a></code></li>
+<li><code><a title="liquer.context.Context.index_state" href="#liquer.context.Context.index_state">index_state</a></code></li>
+<li><code><a title="liquer.context.Context.indexer" href="#liquer.context.Context.indexer">indexer</a></code></li>
+<li><code><a title="liquer.context.Context.log_child_dict" href="#liquer.context.Context.log_child_dict">log_child_dict</a></code></li>
+<li><code><a title="liquer.context.Context.log_child_progress" href="#liquer.context.Context.log_child_progress">log_child_progress</a></code></li>
+<li><code><a title="liquer.context.Context.log_subquery" href="#liquer.context.Context.log_subquery">log_subquery</a></code></li>
+<li><code><a title="liquer.context.Context.new_empty" href="#liquer.context.Context.new_empty">new_empty</a></code></li>
+<li><code><a title="liquer.context.Context.new_progress_indicator" href="#liquer.context.Context.new_progress_indicator">new_progress_indicator</a></code></li>
+<li><code><a title="liquer.context.Context.now" href="#liquer.context.Context.now">now</a></code></li>
+<li><code><a title="liquer.context.Context.progress" href="#liquer.context.Context.progress">progress</a></code></li>
+<li><code><a title="liquer.context.Context.progress_indicator_index" href="#liquer.context.Context.progress_indicator_index">progress_indicator_index</a></code></li>
+<li><code><a title="liquer.context.Context.progress_iter" href="#liquer.context.Context.progress_iter">progress_iter</a></code></li>
+<li><code><a title="liquer.context.Context.remove_child_progress" href="#liquer.context.Context.remove_child_progress">remove_child_progress</a></code></li>
+<li><code><a title="liquer.context.Context.remove_progress_indicator" href="#liquer.context.Context.remove_progress_indicator">remove_progress_indicator</a></code></li>
+<li><code><a title="liquer.context.Context.root_context" href="#liquer.context.Context.root_context">root_context</a></code></li>
+<li><code><a title="liquer.context.Context.set_description" href="#liquer.context.Context.set_description">set_description</a></code></li>
+<li><code><a title="liquer.context.Context.set_html_preview" href="#liquer.context.Context.set_html_preview">set_html_preview</a></code></li>
+<li><code><a title="liquer.context.Context.set_title" href="#liquer.context.Context.set_title">set_title</a></code></li>
+<li><code><a title="liquer.context.Context.state_types_registry" href="#liquer.context.Context.state_types_registry">state_types_registry</a></code></li>
+<li><code><a title="liquer.context.Context.store" href="#liquer.context.Context.store">store</a></code></li>
+<li><code><a title="liquer.context.Context.store_data" href="#liquer.context.Context.store_data">store_data</a></code></li>
+<li><code><a title="liquer.context.Context.store_metadata" href="#liquer.context.Context.store_metadata">store_metadata</a></code></li>
+<li><code><a title="liquer.context.Context.to_query" href="#liquer.context.Context.to_query">to_query</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.context.MetadataContextMixin" href="#liquer.context.MetadataContextMixin">MetadataContextMixin</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.context.MetadataContextMixin.debug" href="#liquer.context.MetadataContextMixin.debug">debug</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.error" href="#liquer.context.MetadataContextMixin.error">error</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.exception" href="#liquer.context.MetadataContextMixin.exception">exception</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.info" href="#liquer.context.MetadataContextMixin.info">info</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.log_action" href="#liquer.context.MetadataContextMixin.log_action">log_action</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.log_dict" href="#liquer.context.MetadataContextMixin.log_dict">log_dict</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.metadata" href="#liquer.context.MetadataContextMixin.metadata">metadata</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.raw_query" href="#liquer.context.MetadataContextMixin.raw_query">raw_query</a></code></li>
+<li><code><a title="liquer.context.MetadataContextMixin.warning" href="#liquer.context.MetadataContextMixin.warning">warning</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.context.Vars" href="#liquer.context.Vars">Vars</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.context.Vars.get_modified" href="#liquer.context.Vars.get_modified">get_modified</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

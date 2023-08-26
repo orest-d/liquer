@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.ext.dataframe_batches API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.ext.dataframe_batches</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from liquer import *
+import pandas as pd
+from liquer.store import get_store
+from liquer.state_types import (
+    data_characteristics,
+    state_types_registry,
+    StateType,
+    register_state_type,
+)
+from liquer.constants import mimetype_from_extension
+import json
+
+
+@command
+def concat_batches(idf, max_batches=None, context=None):
+    &#34;&#34;&#34;Concatenates an iterator of dataframes (batches) into a single dataframe
+    A maximum limit of batches to be processed can be specified with max_batches.
+    By default all the batches will be concatenated.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    context.info(f&#34;Concatenate batches&#34;)
+    if isinstance(idf, pd.DataFrame):
+        context.info(f&#34;Single dataframe received&#34;)
+        idf = [idf]
+    batch_number = 0
+    if max_batches in (&#34;0&#34;, &#34;&#34;, None):
+        max_batches = 0
+    else:
+        max_batches = int(max_batches)
+    buffer = pd.DataFrame()
+    for df in context.progress_iter(idf):
+        if not len(df):
+            continue
+        context.info(
+            f&#34;Receiving dataframe with {len(df)} rows and {len(df.columns)} columns&#34;
+        )
+        if len(buffer) &gt; 0:
+            if len(df.columns) != len(buffer.columns):
+                context.warning(
+                    f&#34;Number of columns in the batches differs - before:{len(buffer.columns)}, now:{len(df.columns)}&#34;
+                )
+        batch_number += 1
+        if max_batches:
+            context.info(f&#34;Concatenate batch {batch_number}/{max_batches}&#34;)
+        else:
+            context.info(f&#34;Concatenate batch {batch_number}&#34;)
+        buffer = buffer.append(df, ignore_index=True)
+        if max_batches and batch_number &gt;= max_batches:
+            context.info(f&#34;Maximum number of batches reached&#34;)
+            break
+    return buffer
+
+
+@command(volatile=True, cache=False)
+def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
+    &#34;&#34;&#34;Repackages an iterator of dataframes (batches) into fixed-length batches.
+    Results in an iterator of dataframes where each dataframe (with the exception of the last one)
+    has a the batch_size number of rows.
+    Note: Since the result is an iterator, it is volatile and can&#39;t be cached.
+    A maximum limit of batches to be processed can be specified with max_batches.
+    By default all the batches will be repackaged.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    context.info(f&#34;Repackage batches&#34;)
+    if isinstance(idf, pd.DataFrame):
+        context.info(f&#34;Single dataframe received&#34;)
+        idf = [idf]
+    buffer = pd.DataFrame()
+    if max_batches in (&#34;0&#34;, &#34;&#34;, None):
+        max_batches = 0
+    else:
+        max_batches = int(max_batches)
+    batch_number = 0
+    for df in context.progress_iter(idf):
+        if not len(df):
+            continue
+        context.info(
+            f&#34;Receiving dataframe with {len(df)} rows and {len(df.columns)} columns&#34;
+        )
+        if len(buffer) &gt; 0:
+            if len(df.columns) != len(buffer.columns):
+                context.warning(
+                    f&#34;Number of columns in the batches differs - before:{len(buffer.columns)}, now:{len(df.columns)}&#34;
+                )
+        buffer = buffer.append(df, ignore_index=True)
+        while len(buffer) &gt;= batch_size:
+            batch_number += 1
+            if max_batches:
+                context.info(f&#34;Yield batch {batch_number}/{max_batches}&#34;)
+            else:
+                context.info(f&#34;Yield batch {batch_number}&#34;)
+            result = buffer.iloc[:batch_size, :]
+            buffer = buffer.iloc[batch_size:, :]
+            yield result
+            if max_batches and batch_number &gt;= max_batches:
+                context.info(f&#34;Maximum number of batches reached&#34;)
+                return
+    while len(buffer) &gt;= batch_size:
+        batch_number += 1
+        if max_batches:
+            context.info(f&#34;Yield batch {batch_number}/{max_batches} (finishing)&#34;)
+        else:
+            context.info(f&#34;Yield batch {batch_number} (finishing)&#34;)
+        result = buffer.iloc[:batch_size, :]
+        buffer = buffer.iloc[batch_size:, :]
+        yield result
+        if max_batches and batch_number &gt;= max_batches:
+            context.info(f&#34;Maximum number of batches reached&#34;)
+            return
+    if len(buffer):
+        batch_number += 1
+        if max_batches:
+            context.info(f&#34;Yield batch {batch_number}/{max_batches} (last)&#34;)
+        else:
+            context.info(f&#34;Yield batch {batch_number} (last)&#34;)
+        yield buffer
+
+
+class StoredDataframeIterator(object):
+    def __init__(
+        self,
+        key,
+        item_keys=None,
+        extension=&#34;parquet&#34;,
+        number_format=&#34;%04d&#34;,
+        batch_number=0,
+        store=None,
+    ):
+        self.key = key
+        self.item_keys = item_keys or []
+        self.extension = extension
+        self.number_format = number_format
+        self.batch_number = batch_number
+        self.state_type = state_types_registry().get(&#34;dataframe&#34;)
+
+        if store is None:
+            store = get_store()
+        self.store = store
+
+    def to_dict(self, with_batch_number=False):
+        d = dict(
+            key=self.key,
+            item_keys=self.item_keys[:],
+            extension=self.extension,
+            number_format=self.number_format,
+        )
+        if with_batch_number:
+            d[&#34;batch_number&#34;] = self.batch_number
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            d[&#34;key&#34;],
+            item_keys=d.get(&#34;item_keys&#34;, []),
+            extension=d.get(&#34;extension&#34;),
+            number_format=d.get(&#34;number_format&#34;),
+            batch_number=d.get(&#34;batch_number&#34;, 0),
+        )
+
+    def copy(self):
+        return StoredDataframeIterator(
+            self.key,
+            item_keys=self.item_keys,
+            extension=self.extension,
+            number_format=self.number_format,
+            batch_number=self.batch_number,
+            store=self.store,
+        )
+
+    def _key_to_value(self, key):
+        if not self.store.contains(key):
+            raise Exception(f&#34;Batch {self.batch_number} failure: &#39;{key}&#39; not in store&#34;)
+        if self.store.is_dir(key):
+            raise Exception(
+                f&#34;Batch {self.batch_number} failure: &#39;{key}&#39; is a directory&#34;
+            )
+        metadata = self.store.get_metadata(key)
+        if metadata is None:
+            print(f&#34;WARNING: Batch {self.batch_number}, key &#39;{key}&#39; missing metadata&#34;)
+        b = self.store.get_bytes(key)
+        if b is None:
+            raise Exception(f&#34;Batch {self.batch_number} failure: &#39;{key}&#39; has no data&#34;)
+        assert type(b) == bytes
+
+        v = key.split(&#34;.&#34;)
+        extension = self.extension if len(v) &lt;= 1 else v[-1]
+
+        df = self.state_type.from_bytes(b, extension=extension)
+
+        return df
+
+    def new_key(self):
+        batch_number = len(self.item_keys) + 1
+        if self.number_format is None:
+            name = str(batch_number)
+        else:
+            name = self.number_format % batch_number
+        if self.extension in (None, &#34;&#34;):
+            key = f&#34;{self.key}/{name}&#34;
+        else:
+            key = f&#34;{self.key}/{name}.{self.extension}&#34;
+        if key in self.item_keys:
+            raise Exception(f&#34;New key &#39;{key}&#39; already exists&#34;)
+        return key
+
+    def append(self, df):
+        key = self.new_key()
+        store = self.store
+        b, mimetype = self.state_type.as_bytes(df, self.extension)
+        dc = data_characteristics(df)
+        assert dc[&#34;type_identifier&#34;] == &#34;dataframe&#34;
+        metadata = dict(
+            type_identifier=dc.get(&#34;type_identifier&#34;),
+            data_characteristics=data_characteristics(df),
+        )
+        store.store(key, b, metadata)
+        self.item_keys.append(key)
+
+    def rewind(self):
+        self.batch_number = 0
+        return self
+
+    def __len__(self):
+        return len(self.item_keys)
+
+    def __iter__(self):
+        return self.copy().rewind()
+
+    def __next__(self):
+        if len(self.item_keys) &gt; self.batch_number:
+            key = self.item_keys[self.batch_number]
+            self.batch_number += 1
+            return self._key_to_value(key)
+        raise StopIteration
+
+    def __str__(self):
+        return f&#34;Dataframe iterator stored in {self.key}&#34;
+
+    def __repr__(self):
+        return f&#34;StoredDataframeIterator(&#39;{self.key}&#39;)&#34;
+
+
+class StoredDataframeIteratorStateType(StateType):
+    def identifier(self):
+        return &#34;dataframe_iterator&#34;
+
+    def default_extension(self):
+        return &#34;idf&#34;
+
+    def is_type_of(self, data):
+        return isinstance(data, StoredDataframeIterator)
+
+    def as_bytes(self, data, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        assert self.is_type_of(data)
+        if extension in [&#34;idf&#34;, &#34;json&#34;]:
+            mimetype = mimetype_from_extension(&#34;json&#34;)
+            d = data.to_dict()
+            return json.dumps(d).encode(&#34;utf-8&#34;), mimetype
+        else:
+            raise Exception(
+                f&#34;Serialization: file extension {extension} is not supported by stored dataframe iterator type.&#34;
+            )
+
+    def from_bytes(self, b: bytes, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+
+        if extension in [&#34;idf&#34;, &#34;json&#34;]:
+            return StoredDataframeIterator.from_dict(json.loads(b.decode(&#34;utf-8&#34;)))
+        raise Exception(
+            f&#34;Deserialization: file extension {extension} is not supported by dataframe type.&#34;
+        )
+
+    def copy(self, data):
+        return data.copy()
+
+    def data_characteristics(self, data):
+        return dict(
+            description=f&#34;Dataframe iterator with {len(data.item_keys)} batches.&#34;
+        )
+
+
+STORED_DATAFRAME_ITERATOR_STATE_TYPE = StoredDataframeIteratorStateType()
+register_state_type(StoredDataframeIterator, STORED_DATAFRAME_ITERATOR_STATE_TYPE)
+
+
+def _store_batches(idf, key, max_batches=None, context=None):
+    &#34;&#34;&#34;Store iterator of dataframes (batches) in a store.
+    The key specifies a directory in the store where the items will be stored.
+    Helper function yielding StoredDataframeIterator object and dataframes.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    context.info(f&#34;Store iterator&#34;)
+    batch_number = 0
+    if max_batches in (&#34;0&#34;, &#34;&#34;, None):
+        max_batches = 0
+    else:
+        max_batches = int(max_batches)
+    store = context.store()
+    if store.contains(key):
+        if store.is_dir(key):
+            context.info(f&#34;Cleaning {key}&#34;)
+            for x in store.listdir_keys(key):
+                context.info(f&#34;Remove {x}&#34;)
+                store.remove(x)
+        else:
+            raise Exception(
+                f&#34;Can&#39;t store the iterator in &#39;{key}&#39;. The key exists and it is not a directory.&#34;
+            )
+    sdfi_key = store.join_key(key, &#34;dataframe_iterator.json&#34;)
+
+    sdfi = StoredDataframeIterator(key)
+    for df in context.progress_iter(idf):
+        if not len(df):
+            continue
+        batch_number += 1
+        if max_batches:
+            context.info(f&#34;Storing batch {batch_number}/{max_batches}&#34;)
+        else:
+            context.info(f&#34;Storing batch {batch_number}&#34;)
+        sdfi.append(df)
+        context.store_data(sdfi_key, sdfi)
+        yield sdfi, df
+        #        sdfi_bytes, mimetype = STORED_DATAFRAME_ITERATOR_STATE_TYPE.as_bytes(sdfi)
+        #        dc = data_characteristics(sdfi)
+        #        sdfi_metadata = context.metadata()
+        #        sdfi_metadata.update(
+        #            dict(type_identifier=dc[&#34;type_identifier&#34;], data_characteristics=dc)
+        #        )
+        #        store.store(sdfi_key, sdfi_bytes, sdfi_metadata)
+        if max_batches and batch_number &gt; max_batches:
+            context.info(f&#34;Maximum number of batches reached&#34;)
+            break
+
+
+@command
+def store_batches(idf, key, max_batches=None, context=None):
+    &#34;&#34;&#34;Store iterator of dataframes (batches) in a store.
+    The key specifies a directory in the store where the items will be stored.
+    Results in a StoredDataframeIterator object after all batches have been processed.
+    This object can be serialized or stored in the object.
+    After each iteration step, the StoredDataframeIterator is stored as well in key/dataframe_iterator.json as a side-effect.
+    Thus for long-running iterations, the partial data is stored even if the evaluation does not finish.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    sdfi = StoredDataframeIterator(key)
+    for sdfi, df in _store_batches(idf, key, max_batches=max_batches, context=context):
+        pass
+    return sdfi
+
+
+@command(cache=False, volatile=True)
+def store_batches_pass_through(idf, key, max_batches=None, context=None):
+    &#34;&#34;&#34;Store iterator of dataframes (batches) in a store.
+    The key specifies a directory in the store where the items will be stored.
+    Unlike store_batches, this immediately yields the dataframes,
+    thus the result is a volatile iterator which can not be stored in cache.
+    The StoredDataframeIterator is, however, stored in key/dataframe_iterator.json as a side-effect after each iteration step.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    for sdfi, df in _store_batches(idf, key, max_batches=max_batches, context=context):
+        yield df</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.ext.dataframe_batches.concat_batches"><code class="name flex">
+<span>def <span class="ident">concat_batches</span></span>(<span>idf, max_batches=None, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Concatenates an iterator of dataframes (batches) into a single dataframe
+A maximum limit of batches to be processed can be specified with max_batches.
+By default all the batches will be concatenated.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def concat_batches(idf, max_batches=None, context=None):
+    &#34;&#34;&#34;Concatenates an iterator of dataframes (batches) into a single dataframe
+    A maximum limit of batches to be processed can be specified with max_batches.
+    By default all the batches will be concatenated.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    context.info(f&#34;Concatenate batches&#34;)
+    if isinstance(idf, pd.DataFrame):
+        context.info(f&#34;Single dataframe received&#34;)
+        idf = [idf]
+    batch_number = 0
+    if max_batches in (&#34;0&#34;, &#34;&#34;, None):
+        max_batches = 0
+    else:
+        max_batches = int(max_batches)
+    buffer = pd.DataFrame()
+    for df in context.progress_iter(idf):
+        if not len(df):
+            continue
+        context.info(
+            f&#34;Receiving dataframe with {len(df)} rows and {len(df.columns)} columns&#34;
+        )
+        if len(buffer) &gt; 0:
+            if len(df.columns) != len(buffer.columns):
+                context.warning(
+                    f&#34;Number of columns in the batches differs - before:{len(buffer.columns)}, now:{len(df.columns)}&#34;
+                )
+        batch_number += 1
+        if max_batches:
+            context.info(f&#34;Concatenate batch {batch_number}/{max_batches}&#34;)
+        else:
+            context.info(f&#34;Concatenate batch {batch_number}&#34;)
+        buffer = buffer.append(df, ignore_index=True)
+        if max_batches and batch_number &gt;= max_batches:
+            context.info(f&#34;Maximum number of batches reached&#34;)
+            break
+    return buffer</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.dataframe_batches.repackage_batches"><code class="name flex">
+<span>def <span class="ident">repackage_batches</span></span>(<span>idf, batch_size=1024, max_batches=0, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Repackages an iterator of dataframes (batches) into fixed-length batches.
+Results in an iterator of dataframes where each dataframe (with the exception of the last one)
+has a the batch_size number of rows.
+Note: Since the result is an iterator, it is volatile and can't be cached.
+A maximum limit of batches to be processed can be specified with max_batches.
+By default all the batches will be repackaged.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command(volatile=True, cache=False)
+def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
+    &#34;&#34;&#34;Repackages an iterator of dataframes (batches) into fixed-length batches.
+    Results in an iterator of dataframes where each dataframe (with the exception of the last one)
+    has a the batch_size number of rows.
+    Note: Since the result is an iterator, it is volatile and can&#39;t be cached.
+    A maximum limit of batches to be processed can be specified with max_batches.
+    By default all the batches will be repackaged.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    context.info(f&#34;Repackage batches&#34;)
+    if isinstance(idf, pd.DataFrame):
+        context.info(f&#34;Single dataframe received&#34;)
+        idf = [idf]
+    buffer = pd.DataFrame()
+    if max_batches in (&#34;0&#34;, &#34;&#34;, None):
+        max_batches = 0
+    else:
+        max_batches = int(max_batches)
+    batch_number = 0
+    for df in context.progress_iter(idf):
+        if not len(df):
+            continue
+        context.info(
+            f&#34;Receiving dataframe with {len(df)} rows and {len(df.columns)} columns&#34;
+        )
+        if len(buffer) &gt; 0:
+            if len(df.columns) != len(buffer.columns):
+                context.warning(
+                    f&#34;Number of columns in the batches differs - before:{len(buffer.columns)}, now:{len(df.columns)}&#34;
+                )
+        buffer = buffer.append(df, ignore_index=True)
+        while len(buffer) &gt;= batch_size:
+            batch_number += 1
+            if max_batches:
+                context.info(f&#34;Yield batch {batch_number}/{max_batches}&#34;)
+            else:
+                context.info(f&#34;Yield batch {batch_number}&#34;)
+            result = buffer.iloc[:batch_size, :]
+            buffer = buffer.iloc[batch_size:, :]
+            yield result
+            if max_batches and batch_number &gt;= max_batches:
+                context.info(f&#34;Maximum number of batches reached&#34;)
+                return
+    while len(buffer) &gt;= batch_size:
+        batch_number += 1
+        if max_batches:
+            context.info(f&#34;Yield batch {batch_number}/{max_batches} (finishing)&#34;)
+        else:
+            context.info(f&#34;Yield batch {batch_number} (finishing)&#34;)
+        result = buffer.iloc[:batch_size, :]
+        buffer = buffer.iloc[batch_size:, :]
+        yield result
+        if max_batches and batch_number &gt;= max_batches:
+            context.info(f&#34;Maximum number of batches reached&#34;)
+            return
+    if len(buffer):
+        batch_number += 1
+        if max_batches:
+            context.info(f&#34;Yield batch {batch_number}/{max_batches} (last)&#34;)
+        else:
+            context.info(f&#34;Yield batch {batch_number} (last)&#34;)
+        yield buffer</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.dataframe_batches.store_batches"><code class="name flex">
+<span>def <span class="ident">store_batches</span></span>(<span>idf, key, max_batches=None, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Store iterator of dataframes (batches) in a store.
+The key specifies a directory in the store where the items will be stored.
+Results in a StoredDataframeIterator object after all batches have been processed.
+This object can be serialized or stored in the object.
+After each iteration step, the StoredDataframeIterator is stored as well in key/dataframe_iterator.json as a side-effect.
+Thus for long-running iterations, the partial data is stored even if the evaluation does not finish.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command
+def store_batches(idf, key, max_batches=None, context=None):
+    &#34;&#34;&#34;Store iterator of dataframes (batches) in a store.
+    The key specifies a directory in the store where the items will be stored.
+    Results in a StoredDataframeIterator object after all batches have been processed.
+    This object can be serialized or stored in the object.
+    After each iteration step, the StoredDataframeIterator is stored as well in key/dataframe_iterator.json as a side-effect.
+    Thus for long-running iterations, the partial data is stored even if the evaluation does not finish.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    sdfi = StoredDataframeIterator(key)
+    for sdfi, df in _store_batches(idf, key, max_batches=max_batches, context=context):
+        pass
+    return sdfi</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.dataframe_batches.store_batches_pass_through"><code class="name flex">
+<span>def <span class="ident">store_batches_pass_through</span></span>(<span>idf, key, max_batches=None, context=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Store iterator of dataframes (batches) in a store.
+The key specifies a directory in the store where the items will be stored.
+Unlike store_batches, this immediately yields the dataframes,
+thus the result is a volatile iterator which can not be stored in cache.
+The StoredDataframeIterator is, however, stored in key/dataframe_iterator.json as a side-effect after each iteration step.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@command(cache=False, volatile=True)
+def store_batches_pass_through(idf, key, max_batches=None, context=None):
+    &#34;&#34;&#34;Store iterator of dataframes (batches) in a store.
+    The key specifies a directory in the store where the items will be stored.
+    Unlike store_batches, this immediately yields the dataframes,
+    thus the result is a volatile iterator which can not be stored in cache.
+    The StoredDataframeIterator is, however, stored in key/dataframe_iterator.json as a side-effect after each iteration step.
+    &#34;&#34;&#34;
+    context = get_context(context)
+    for sdfi, df in _store_batches(idf, key, max_batches=max_batches, context=context):
+        yield df</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIterator"><code class="flex name class">
+<span>class <span class="ident">StoredDataframeIterator</span></span>
+<span>(</span><span>key, item_keys=None, extension='parquet', number_format='%04d', batch_number=0, store=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoredDataframeIterator(object):
+    def __init__(
+        self,
+        key,
+        item_keys=None,
+        extension=&#34;parquet&#34;,
+        number_format=&#34;%04d&#34;,
+        batch_number=0,
+        store=None,
+    ):
+        self.key = key
+        self.item_keys = item_keys or []
+        self.extension = extension
+        self.number_format = number_format
+        self.batch_number = batch_number
+        self.state_type = state_types_registry().get(&#34;dataframe&#34;)
+
+        if store is None:
+            store = get_store()
+        self.store = store
+
+    def to_dict(self, with_batch_number=False):
+        d = dict(
+            key=self.key,
+            item_keys=self.item_keys[:],
+            extension=self.extension,
+            number_format=self.number_format,
+        )
+        if with_batch_number:
+            d[&#34;batch_number&#34;] = self.batch_number
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            d[&#34;key&#34;],
+            item_keys=d.get(&#34;item_keys&#34;, []),
+            extension=d.get(&#34;extension&#34;),
+            number_format=d.get(&#34;number_format&#34;),
+            batch_number=d.get(&#34;batch_number&#34;, 0),
+        )
+
+    def copy(self):
+        return StoredDataframeIterator(
+            self.key,
+            item_keys=self.item_keys,
+            extension=self.extension,
+            number_format=self.number_format,
+            batch_number=self.batch_number,
+            store=self.store,
+        )
+
+    def _key_to_value(self, key):
+        if not self.store.contains(key):
+            raise Exception(f&#34;Batch {self.batch_number} failure: &#39;{key}&#39; not in store&#34;)
+        if self.store.is_dir(key):
+            raise Exception(
+                f&#34;Batch {self.batch_number} failure: &#39;{key}&#39; is a directory&#34;
+            )
+        metadata = self.store.get_metadata(key)
+        if metadata is None:
+            print(f&#34;WARNING: Batch {self.batch_number}, key &#39;{key}&#39; missing metadata&#34;)
+        b = self.store.get_bytes(key)
+        if b is None:
+            raise Exception(f&#34;Batch {self.batch_number} failure: &#39;{key}&#39; has no data&#34;)
+        assert type(b) == bytes
+
+        v = key.split(&#34;.&#34;)
+        extension = self.extension if len(v) &lt;= 1 else v[-1]
+
+        df = self.state_type.from_bytes(b, extension=extension)
+
+        return df
+
+    def new_key(self):
+        batch_number = len(self.item_keys) + 1
+        if self.number_format is None:
+            name = str(batch_number)
+        else:
+            name = self.number_format % batch_number
+        if self.extension in (None, &#34;&#34;):
+            key = f&#34;{self.key}/{name}&#34;
+        else:
+            key = f&#34;{self.key}/{name}.{self.extension}&#34;
+        if key in self.item_keys:
+            raise Exception(f&#34;New key &#39;{key}&#39; already exists&#34;)
+        return key
+
+    def append(self, df):
+        key = self.new_key()
+        store = self.store
+        b, mimetype = self.state_type.as_bytes(df, self.extension)
+        dc = data_characteristics(df)
+        assert dc[&#34;type_identifier&#34;] == &#34;dataframe&#34;
+        metadata = dict(
+            type_identifier=dc.get(&#34;type_identifier&#34;),
+            data_characteristics=data_characteristics(df),
+        )
+        store.store(key, b, metadata)
+        self.item_keys.append(key)
+
+    def rewind(self):
+        self.batch_number = 0
+        return self
+
+    def __len__(self):
+        return len(self.item_keys)
+
+    def __iter__(self):
+        return self.copy().rewind()
+
+    def __next__(self):
+        if len(self.item_keys) &gt; self.batch_number:
+            key = self.item_keys[self.batch_number]
+            self.batch_number += 1
+            return self._key_to_value(key)
+        raise StopIteration
+
+    def __str__(self):
+        return f&#34;Dataframe iterator stored in {self.key}&#34;
+
+    def __repr__(self):
+        return f&#34;StoredDataframeIterator(&#39;{self.key}&#39;)&#34;</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIterator.from_dict"><code class="name flex">
+<span>def <span class="ident">from_dict</span></span>(<span>d)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_dict(cls, d):
+    return cls(
+        d[&#34;key&#34;],
+        item_keys=d.get(&#34;item_keys&#34;, []),
+        extension=d.get(&#34;extension&#34;),
+        number_format=d.get(&#34;number_format&#34;),
+        batch_number=d.get(&#34;batch_number&#34;, 0),
+    )</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIterator.append"><code class="name flex">
+<span>def <span class="ident">append</span></span>(<span>self, df)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append(self, df):
+    key = self.new_key()
+    store = self.store
+    b, mimetype = self.state_type.as_bytes(df, self.extension)
+    dc = data_characteristics(df)
+    assert dc[&#34;type_identifier&#34;] == &#34;dataframe&#34;
+    metadata = dict(
+        type_identifier=dc.get(&#34;type_identifier&#34;),
+        data_characteristics=data_characteristics(df),
+    )
+    store.store(key, b, metadata)
+    self.item_keys.append(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIterator.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return StoredDataframeIterator(
+        self.key,
+        item_keys=self.item_keys,
+        extension=self.extension,
+        number_format=self.number_format,
+        batch_number=self.batch_number,
+        store=self.store,
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIterator.new_key"><code class="name flex">
+<span>def <span class="ident">new_key</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_key(self):
+    batch_number = len(self.item_keys) + 1
+    if self.number_format is None:
+        name = str(batch_number)
+    else:
+        name = self.number_format % batch_number
+    if self.extension in (None, &#34;&#34;):
+        key = f&#34;{self.key}/{name}&#34;
+    else:
+        key = f&#34;{self.key}/{name}.{self.extension}&#34;
+    if key in self.item_keys:
+        raise Exception(f&#34;New key &#39;{key}&#39; already exists&#34;)
+    return key</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIterator.rewind"><code class="name flex">
+<span>def <span class="ident">rewind</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rewind(self):
+    self.batch_number = 0
+    return self</code></pre>
+</details>
+</dd>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIterator.to_dict"><code class="name flex">
+<span>def <span class="ident">to_dict</span></span>(<span>self, with_batch_number=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_dict(self, with_batch_number=False):
+    d = dict(
+        key=self.key,
+        item_keys=self.item_keys[:],
+        extension=self.extension,
+        number_format=self.number_format,
+    )
+    if with_batch_number:
+        d[&#34;batch_number&#34;] = self.batch_number
+    return d</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.ext.dataframe_batches.StoredDataframeIteratorStateType"><code class="flex name class">
+<span>class <span class="ident">StoredDataframeIteratorStateType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Abstract state type basis</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoredDataframeIteratorStateType(StateType):
+    def identifier(self):
+        return &#34;dataframe_iterator&#34;
+
+    def default_extension(self):
+        return &#34;idf&#34;
+
+    def is_type_of(self, data):
+        return isinstance(data, StoredDataframeIterator)
+
+    def as_bytes(self, data, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+        assert self.is_type_of(data)
+        if extension in [&#34;idf&#34;, &#34;json&#34;]:
+            mimetype = mimetype_from_extension(&#34;json&#34;)
+            d = data.to_dict()
+            return json.dumps(d).encode(&#34;utf-8&#34;), mimetype
+        else:
+            raise Exception(
+                f&#34;Serialization: file extension {extension} is not supported by stored dataframe iterator type.&#34;
+            )
+
+    def from_bytes(self, b: bytes, extension=None):
+        if extension is None:
+            extension = self.default_extension()
+
+        if extension in [&#34;idf&#34;, &#34;json&#34;]:
+            return StoredDataframeIterator.from_dict(json.loads(b.decode(&#34;utf-8&#34;)))
+        raise Exception(
+            f&#34;Deserialization: file extension {extension} is not supported by dataframe type.&#34;
+        )
+
+    def copy(self, data):
+        return data.copy()
+
+    def data_characteristics(self, data):
+        return dict(
+            description=f&#34;Dataframe iterator with {len(data.item_keys)} batches.&#34;
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.state_types.StateType" href="../state_types.html#liquer.state_types.StateType">StateType</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.state_types.StateType" href="../state_types.html#liquer.state_types.StateType">StateType</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.state_types.StateType.as_bytes" href="../state_types.html#liquer.state_types.StateType.as_bytes">as_bytes</a></code></li>
+<li><code><a title="liquer.state_types.StateType.copy" href="../state_types.html#liquer.state_types.StateType.copy">copy</a></code></li>
+<li><code><a title="liquer.state_types.StateType.data_characteristics" href="../state_types.html#liquer.state_types.StateType.data_characteristics">data_characteristics</a></code></li>
+<li><code><a title="liquer.state_types.StateType.default_extension" href="../state_types.html#liquer.state_types.StateType.default_extension">default_extension</a></code></li>
+<li><code><a title="liquer.state_types.StateType.default_filename" href="../state_types.html#liquer.state_types.StateType.default_filename">default_filename</a></code></li>
+<li><code><a title="liquer.state_types.StateType.default_mimetype" href="../state_types.html#liquer.state_types.StateType.default_mimetype">default_mimetype</a></code></li>
+<li><code><a title="liquer.state_types.StateType.from_bytes" href="../state_types.html#liquer.state_types.StateType.from_bytes">from_bytes</a></code></li>
+<li><code><a title="liquer.state_types.StateType.identifier" href="../state_types.html#liquer.state_types.StateType.identifier">identifier</a></code></li>
+<li><code><a title="liquer.state_types.StateType.is_type_of" href="../state_types.html#liquer.state_types.StateType.is_type_of">is_type_of</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer.ext" href="index.html">liquer.ext</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.ext.dataframe_batches.concat_batches" href="#liquer.ext.dataframe_batches.concat_batches">concat_batches</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.repackage_batches" href="#liquer.ext.dataframe_batches.repackage_batches">repackage_batches</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.store_batches" href="#liquer.ext.dataframe_batches.store_batches">store_batches</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.store_batches_pass_through" href="#liquer.ext.dataframe_batches.store_batches_pass_through">store_batches_pass_through</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.ext.dataframe_batches.StoredDataframeIterator" href="#liquer.ext.dataframe_batches.StoredDataframeIterator">StoredDataframeIterator</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.ext.dataframe_batches.StoredDataframeIterator.append" href="#liquer.ext.dataframe_batches.StoredDataframeIterator.append">append</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.StoredDataframeIterator.copy" href="#liquer.ext.dataframe_batches.StoredDataframeIterator.copy">copy</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.StoredDataframeIterator.from_dict" href="#liquer.ext.dataframe_batches.StoredDataframeIterator.from_dict">from_dict</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.StoredDataframeIterator.new_key" href="#liquer.ext.dataframe_batches.StoredDataframeIterator.new_key">new_key</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.StoredDataframeIterator.rewind" href="#liquer.ext.dataframe_batches.StoredDataframeIterator.rewind">rewind</a></code></li>
+<li><code><a title="liquer.ext.dataframe_batches.StoredDataframeIterator.to_dict" href="#liquer.ext.dataframe_batches.StoredDataframeIterator.to_dict">to_dict</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.ext.dataframe_batches.StoredDataframeIteratorStateType" href="#liquer.ext.dataframe_batches.StoredDataframeIteratorStateType">StoredDataframeIteratorStateType</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

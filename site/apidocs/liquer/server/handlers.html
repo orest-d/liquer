@@ -1,0 +1,2994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.server.handlers API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.server.handlers</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from liquer import *
+import json
+from liquer.commands import command_registry
+from liquer.state_types import encode_state_data, state_types_registry
+import traceback
+import requests
+from liquer.query import evaluate
+from liquer.state import get_vars
+from liquer.cache import get_cache
+from liquer.store import get_store, KeyNotFoundStoreException
+import io
+import traceback
+
+
+def liquer_static_path():
+    import liquer.server
+    import os.path
+
+    return os.path.join(os.path.dirname(liquer.server.__file__), &#34;static&#34;)
+
+
+class LiquerIndexHandler:
+    def get(self):
+        self.redirect(&#34;/static/index.html&#34;)
+
+
+class LiquerJsHandler:
+    def get(self):
+        self.redirect(&#34;/static/liquer.js&#34;)
+
+
+# /api/commands.json
+class CommandsHandler:
+    def get(self):
+        &#34;&#34;&#34;Returns a list of commands in json format&#34;&#34;&#34;
+        self.write(json.dumps(command_registry().as_dict()))
+
+
+def response(state):
+    &#34;&#34;&#34;Create flask response from a State&#34;&#34;&#34;
+    filename = state.metadata.get(&#34;filename&#34;)
+    b, mimetype, type_identifier = encode_state_data(
+        state.get(), extension=state.extension
+    )
+    if filename is None:
+        filename = state_types_registry().get(type_identifier).default_filename()
+    return b, mimetype, filename
+
+
+#&#39;/submit/&lt;query&gt;
+class SubmitHandler:
+    &#34;&#34;&#34;Submit query.
+    Starts query in the background.
+    &#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        from liquer.pool import evaluate_in_background
+
+        evaluate_in_background(query)
+        self.write(json.dumps(dict(status=&#34;OK&#34;, message=&#34;Submitted&#34;, query=query)))
+
+
+# /q/&lt;path:query&gt;
+class QueryHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Main service for evaluating queries&#34;&#34;&#34;
+        try:
+            kwargs = json.loads(self.request.body)
+        except:
+            kwargs = {}
+        keys = self.request.arguments.keys()
+        kwargs.update({key: self.get_argument(key) for key in keys})
+        try:
+            b, mimetype, filename = response(evaluate(query, extra_parameters=kwargs))
+        except:
+            traceback.print_exc()
+            self.set_status(500)
+            self.finish(f&#34;500 - Failed to create a response to {query}&#34;)
+            return
+
+        header = &#34;Content-Type&#34;
+        body = mimetype if mimetype is not None else &#34;application/octet-stream&#34;
+        self.set_header(header, body)
+
+        self.write(b)
+
+    def post(self, query):
+        self.get(query)
+
+
+# /api/cache/get/&lt;path:query&gt;
+class CacheGetDataHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Main service for evaluating queries&#34;&#34;&#34;
+        try:
+            kwargs = json.loads(self.request.body)
+        except:
+            kwargs = {}
+        keys = self.request.arguments.keys()
+        kwargs.update({key: self.get_argument(key) for key in keys})
+        if len(kwargs):
+            self.set_status(404)
+            self.finish(f&#34;404 - {query} parameters not allowed&#34;)
+            return
+
+        state = get_cache().get(query)
+        if state is None:
+            self.set_status(404)
+            self.finish(f&#34;404 - {query} not found in cache&#34;)
+            return
+
+        b, mimetype, filename = response(state)
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+
+        self.write(b)
+
+
+# /api/cache/meta/&lt;path:query&gt;
+class CacheMetadataHandler:
+    def get(self, query):
+        metadata = get_cache().get_metadata(query)
+        if metadata == False:
+            metadata = dict(query=query, status=&#34;not available&#34;, cached=False)
+            self.write(metadata)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(metadata))
+
+    def post(self, param):
+        try:
+            metadata = json.loads(self.request.body)
+            query = metadata.get(&#34;query&#34;)
+            result_code = get_cache().store_metadata(metadata)
+            result = dict(
+                query=query, result=result_code, status=&#34;OK&#34;, message=&#34;OK&#34;, traceback=&#34;&#34;
+            )
+        except Exception as e:
+            result = dict(
+                query=query,
+                result=False,
+                status=&#34;ERROR&#34;,
+                message=str(e),
+                traceback=traceback.format_exc(),
+            )
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(result))
+
+
+# /api/cache/remove/&lt;path:query&gt;
+class CacheRemoveHandler:
+    def get(self, query):
+        r = get_cache().remove(query)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(dict(query=query, removed=r)))
+
+
+# /api/cache/contains/&lt;path:query&gt;
+class CacheContainsHandler:
+    def get(self, query):
+        contains = get_cache().contains(query)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(dict(query=query, cached=contains)))
+
+
+# /api/cache/keys.json
+class CacheKeysHandler:
+    def get(self, query):
+        keys = dict(keys=list(get_cache().keys()))
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(keys))
+
+
+# /api/cache/clean
+class CacheCleanHandler:
+    def get(self):
+        get_cache().clean()
+        n = len(list(get_cache().keys()))
+        keys = dict(status=&#34;OK&#34;, message=f&#34;Cache cleaned, {n} keys left&#34;)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(keys))
+
+
+# /api/commands.json
+class CommandsHandler:
+    def get(self):
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(command_registry().as_dict()))
+
+
+# /api/debug-json/&lt;path:query&gt;
+class GetMetadataHandler:
+    &#34;&#34;&#34;Debug query - returns metadata from a state after a query is evaluated&#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        state = evaluate(query)
+        state_json = state.as_dict()
+        self.write(json.dumps(state_json))
+
+
+# /api/stored_metadata/&lt;path:query&gt;
+class GetStoredMetadataHandler:
+    &#34;&#34;&#34;Get metadata stored in a store or cache&#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        import liquer.tools
+
+        metadata = liquer.tools.get_stored_metadata(query)
+        self.write(json.dumps(metadata))
+
+
+# /api/build
+class BuildHandler:
+    &#34;&#34;&#34;Build a query from a posted decoded query (list of lists of strings).
+    Result is a dictionary with encoded query and link.
+    &#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def post(self):
+        from liquer.parser import encode
+
+        query = encode(json.loads(self.request.body)[&#34;ql&#34;])
+        link = (
+            get_vars().get(&#34;server&#34;, &#34;http://localhost&#34;)
+            + get_vars().get(&#34;api_path&#34;, &#34;/q/&#34;)
+            + query
+        )
+        self.write(json.dumps(dict(query=query, link=link, message=&#34;OK&#34;, status=&#34;OK&#34;)))
+
+
+#&#39;/api/register_command/
+class RegisterCommandHandler:
+    &#34;&#34;&#34;Remote command registration service.
+    This has to be enabled by liquer.commands.enable_remote_registration()
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.
+    &#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, param):
+        self.write(
+            json.dumps(
+                command_registry().register_remote_serialized(param.encode(&#34;ascii&#34;))
+            )
+        )
+
+    def post(self, param):
+        self.write(
+            json.dumps(command_registry().register_remote_serialized(self.request.body))
+        )
+
+
+# /api/store/data/&lt;path:query&gt;
+class GetStoreDataHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Get data from store. Equivalent to Store.get_bytes.
+        Content type (MIME) is obtained from the metadata.
+        &#34;&#34;&#34;
+        store = get_store()
+        metadata = store.get_metadata(query)
+
+        try:
+            mimetype = metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+            b = store.get_bytes(query)
+        except:
+            mimetype = &#34;application/json&#34;
+            b = json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(b)
+
+# /api/store/data/&lt;path:query&gt;
+class StoreDataHandler(GetStoreDataHandler):
+    def post(self, query):
+        &#34;&#34;&#34;Set data in store. Equivalent to Store.store.
+        Unlike store method, which stores both data and metadata in one call,
+        the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+        either before or after the api/store/data POST.
+        &#34;&#34;&#34;
+        store = get_store()
+        try:
+            metadata = store.get_metadata(query)
+        except KeyNotFoundStoreException:
+            metadata = {}
+        try:
+            data = self.request.body
+            store.store(query, data, metadata)
+            response = dict(query=query, message=&#34;Data stored&#34;, status=&#34;OK&#34;)
+        except:
+            response = dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(response))
+
+
+# /api/store/upload/&lt;path:query&gt;
+class StoreUploadHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Returns an upload form&#34;&#34;&#34;
+
+        self.set_header(&#34;Content-Type&#34;, &#34;text/html&#34;)
+        self.write(
+            f&#34;&#34;&#34;
+        &lt;!doctype html&gt;
+        &lt;title&gt;Upload File&lt;/title&gt;
+        &lt;h1&gt;Upload to {query}&lt;/h1&gt;
+        &lt;form method=&#34;post&#34; enctype=&#34;multipart/form-data&#34;&gt;
+        &lt;input type=&#34;file&#34; name=&#34;file&#34;/&gt;
+        &lt;input type=&#34;submit&#34; value=&#34;Upload&#34;/&gt;
+        &lt;/form&gt;
+        &#34;&#34;&#34;
+        )
+
+    def post(self, query):
+        &#34;&#34;&#34;Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
+        Unlike store method, which stores both data and metadata in one call,
+        the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+        either before or after the api/store/data POST.
+        &#34;&#34;&#34;
+        if &#34;file&#34; not in self.request.files:
+            response = dict(
+                query=query, message=&#34;Request does not contain &#39;file&#39;&#34;, status=&#34;ERROR&#34;
+            )
+        else:
+            fileinfo = self.request.files[&#34;file&#34;][0]
+
+            if fileinfo.filename == &#34;&#34;:
+                response = dict(
+                    query=query,
+                    message=&#34;Request contains &#39;file&#39; with an empty filename&#34;,
+                    status=&#34;ERROR&#34;,
+                )
+            else:
+                store = get_store()
+                try:
+                    metadata = store.get_metadata(query)
+                except KeyNotFoundStoreException:
+                    metadata = {}
+                try:
+                    data = fileinfo[&#34;body&#34;]
+                    store.store(query, data, metadata)
+                    response = dict(
+                        query=query, message=&#34;Data stored&#34;, size=len(data), status=&#34;OK&#34;
+                    )
+                except:
+                    response = dict(
+                        query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;
+                    )
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(response))
+
+
+# /api/store/metadata/&lt;path:query&gt;
+class GetStoreMetadataHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Get data from store. Equivalent to Store.get_bytes.
+        Content type (MIME) is obtained from the metadata.
+        &#34;&#34;&#34;
+        store = get_store()
+        metadata = store.get_metadata(query)
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(metadata))
+
+class StoreMetadataHandler(GetStoreMetadataHandler):
+    def post(self, query):
+        &#34;&#34;&#34;Set data from store. Equivalent to Store.store.
+        Unlike store method, which stores both data and metadata in one call,
+        the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+        either before or after the api/store/data POST.
+        &#34;&#34;&#34;
+        store = get_store()
+        try:
+            metadata = json.loads(self.request.body)
+            store.store_metadata(query, metadata)
+            response = dict(query=query, message=&#34;Metadata stored&#34;, status=&#34;OK&#34;)
+        except:
+            response = dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(response))
+
+
+# /web/&lt;path:query&gt;
+class WebStoreHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Shortcut to the &#39;web&#39; directory in the store.
+        Similar to /store/data/web, except the index.html is automatically added if query is a directory.
+        The &#39;web&#39; directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui.
+        &#34;&#34;&#34;
+        store = get_store()
+
+        try:
+            query = &#34;web/&#34; + query
+            if query.endswith(&#34;/&#34;):
+                query += &#34;index.html&#34;
+            if store.is_dir(query):
+                query += &#34;/index.html&#34;
+            metadata = store.get_metadata(query)
+            mimetype = metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+            b = store.get_bytes(query)
+        except:
+            mimetype = &#34;application/json&#34;
+            b = json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(b)
+
+
+# /api/store/remove/&lt;path:query&gt;
+class StoreRemoveHandler:
+    &#34;&#34;&#34;Handler to remove data from store&#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            store.remove(query)
+            self.write(
+                json.dumps(dict(query=query, message=f&#34;Removed {query}&#34;, status=&#34;OK&#34;))
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )
+
+
+# /api/store/removedir/&lt;path:query&gt;
+class StoreRemovedirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            store.removedir(query)
+            self.write(
+                json.dumps(
+                    dict(query=query, message=f&#34;Removed directory {query}&#34;, status=&#34;OK&#34;)
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )
+
+
+# /api/store/contains/&lt;path:query&gt;
+class StoreContainsHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            contains = store.contains(query)
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f&#34;Contains {query}&#34;,
+                        contains=contains,
+                        status=&#34;OK&#34;,
+                    )
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )
+
+
+# /api/store/is_dir/&lt;path:query&gt;
+class StoreIsDirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            is_dir = store.is_dir(query)
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f&#34;Is directory {query}&#34;,
+                        is_dir=is_dir,
+                        status=&#34;OK&#34;,
+                    )
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )
+
+
+# /api/store/keys&#34;)
+class StoreKeysHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            keys = store.keys()
+            self.write(
+                json.dumps(
+                    dict(query=None, message=f&#34;Keys obtained&#34;, keys=keys, status=&#34;OK&#34;)
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )
+
+
+# /api/store/listdir/&lt;path:query&gt;
+class StoreListdirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            listdir = store.listdir(query)
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f&#34;Keys obtained&#34;,
+                        listdir=listdir,
+                        status=&#34;OK&#34;,
+                    )
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )
+
+
+# /api/store/makedir/&lt;path:query&gt;
+class StoreMakedirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            store.makedir(query)
+            self.write(
+                json.dumps(dict(query=query, message=f&#34;Makedir succeeded&#34;, status=&#34;OK&#34;))
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.server.handlers.liquer_static_path"><code class="name flex">
+<span>def <span class="ident">liquer_static_path</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def liquer_static_path():
+    import liquer.server
+    import os.path
+
+    return os.path.join(os.path.dirname(liquer.server.__file__), &#34;static&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.response"><code class="name flex">
+<span>def <span class="ident">response</span></span>(<span>state)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create flask response from a State</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def response(state):
+    &#34;&#34;&#34;Create flask response from a State&#34;&#34;&#34;
+    filename = state.metadata.get(&#34;filename&#34;)
+    b, mimetype, type_identifier = encode_state_data(
+        state.get(), extension=state.extension
+    )
+    if filename is None:
+        filename = state_types_registry().get(type_identifier).default_filename()
+    return b, mimetype, filename</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.server.handlers.BuildHandler"><code class="flex name class">
+<span>class <span class="ident">BuildHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build a query from a posted decoded query (list of lists of strings).
+Result is a dictionary with encoded query and link.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BuildHandler:
+    &#34;&#34;&#34;Build a query from a posted decoded query (list of lists of strings).
+    Result is a dictionary with encoded query and link.
+    &#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def post(self):
+        from liquer.parser import encode
+
+        query = encode(json.loads(self.request.body)[&#34;ql&#34;])
+        link = (
+            get_vars().get(&#34;server&#34;, &#34;http://localhost&#34;)
+            + get_vars().get(&#34;api_path&#34;, &#34;/q/&#34;)
+            + query
+        )
+        self.write(json.dumps(dict(query=query, link=link, message=&#34;OK&#34;, status=&#34;OK&#34;)))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.BuildHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.BuildHandler">BuildHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.BuildHandler.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self):
+    from liquer.parser import encode
+
+    query = encode(json.loads(self.request.body)[&#34;ql&#34;])
+    link = (
+        get_vars().get(&#34;server&#34;, &#34;http://localhost&#34;)
+        + get_vars().get(&#34;api_path&#34;, &#34;/q/&#34;)
+        + query
+    )
+    self.write(json.dumps(dict(query=query, link=link, message=&#34;OK&#34;, status=&#34;OK&#34;)))</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.BuildHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.CacheCleanHandler"><code class="flex name class">
+<span>class <span class="ident">CacheCleanHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheCleanHandler:
+    def get(self):
+        get_cache().clean()
+        n = len(list(get_cache().keys()))
+        keys = dict(status=&#34;OK&#34;, message=f&#34;Cache cleaned, {n} keys left&#34;)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(keys))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.CacheCleanHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.CacheCleanHandler">CacheCleanHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.CacheCleanHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self):
+    get_cache().clean()
+    n = len(list(get_cache().keys()))
+    keys = dict(status=&#34;OK&#34;, message=f&#34;Cache cleaned, {n} keys left&#34;)
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(keys))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.CacheContainsHandler"><code class="flex name class">
+<span>class <span class="ident">CacheContainsHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheContainsHandler:
+    def get(self, query):
+        contains = get_cache().contains(query)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(dict(query=query, cached=contains)))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.CacheContainsHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.CacheContainsHandler">CacheContainsHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.CacheContainsHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    contains = get_cache().contains(query)
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(dict(query=query, cached=contains)))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.CacheGetDataHandler"><code class="flex name class">
+<span>class <span class="ident">CacheGetDataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheGetDataHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Main service for evaluating queries&#34;&#34;&#34;
+        try:
+            kwargs = json.loads(self.request.body)
+        except:
+            kwargs = {}
+        keys = self.request.arguments.keys()
+        kwargs.update({key: self.get_argument(key) for key in keys})
+        if len(kwargs):
+            self.set_status(404)
+            self.finish(f&#34;404 - {query} parameters not allowed&#34;)
+            return
+
+        state = get_cache().get(query)
+        if state is None:
+            self.set_status(404)
+            self.finish(f&#34;404 - {query} not found in cache&#34;)
+            return
+
+        b, mimetype, filename = response(state)
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+
+        self.write(b)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.CacheGetDataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.CacheGetDataHandler">CacheGetDataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.CacheGetDataHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Main service for evaluating queries</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    &#34;&#34;&#34;Main service for evaluating queries&#34;&#34;&#34;
+    try:
+        kwargs = json.loads(self.request.body)
+    except:
+        kwargs = {}
+    keys = self.request.arguments.keys()
+    kwargs.update({key: self.get_argument(key) for key in keys})
+    if len(kwargs):
+        self.set_status(404)
+        self.finish(f&#34;404 - {query} parameters not allowed&#34;)
+        return
+
+    state = get_cache().get(query)
+    if state is None:
+        self.set_status(404)
+        self.finish(f&#34;404 - {query} not found in cache&#34;)
+        return
+
+    b, mimetype, filename = response(state)
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+
+    self.write(b)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.CacheKeysHandler"><code class="flex name class">
+<span>class <span class="ident">CacheKeysHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheKeysHandler:
+    def get(self, query):
+        keys = dict(keys=list(get_cache().keys()))
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(keys))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.CacheKeysHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.CacheKeysHandler">CacheKeysHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.CacheKeysHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    keys = dict(keys=list(get_cache().keys()))
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(keys))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.CacheMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">CacheMetadataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheMetadataHandler:
+    def get(self, query):
+        metadata = get_cache().get_metadata(query)
+        if metadata == False:
+            metadata = dict(query=query, status=&#34;not available&#34;, cached=False)
+            self.write(metadata)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(metadata))
+
+    def post(self, param):
+        try:
+            metadata = json.loads(self.request.body)
+            query = metadata.get(&#34;query&#34;)
+            result_code = get_cache().store_metadata(metadata)
+            result = dict(
+                query=query, result=result_code, status=&#34;OK&#34;, message=&#34;OK&#34;, traceback=&#34;&#34;
+            )
+        except Exception as e:
+            result = dict(
+                query=query,
+                result=False,
+                status=&#34;ERROR&#34;,
+                message=str(e),
+                traceback=traceback.format_exc(),
+            )
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(result))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.CacheMetadataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.CacheMetadataHandler">CacheMetadataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.CacheMetadataHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    metadata = get_cache().get_metadata(query)
+    if metadata == False:
+        metadata = dict(query=query, status=&#34;not available&#34;, cached=False)
+        self.write(metadata)
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(metadata))</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.CacheMetadataHandler.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self, param)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self, param):
+    try:
+        metadata = json.loads(self.request.body)
+        query = metadata.get(&#34;query&#34;)
+        result_code = get_cache().store_metadata(metadata)
+        result = dict(
+            query=query, result=result_code, status=&#34;OK&#34;, message=&#34;OK&#34;, traceback=&#34;&#34;
+        )
+    except Exception as e:
+        result = dict(
+            query=query,
+            result=False,
+            status=&#34;ERROR&#34;,
+            message=str(e),
+            traceback=traceback.format_exc(),
+        )
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(result))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.CacheRemoveHandler"><code class="flex name class">
+<span>class <span class="ident">CacheRemoveHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheRemoveHandler:
+    def get(self, query):
+        r = get_cache().remove(query)
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(dict(query=query, removed=r)))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.CacheRemoveHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.CacheRemoveHandler">CacheRemoveHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.CacheRemoveHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    r = get_cache().remove(query)
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(dict(query=query, removed=r)))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.CommandsHandler"><code class="flex name class">
+<span>class <span class="ident">CommandsHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CommandsHandler:
+    def get(self):
+        &#34;&#34;&#34;Returns a list of commands in json format&#34;&#34;&#34;
+        self.write(json.dumps(command_registry().as_dict()))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.CommandsHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.CommandsHandler">CommandsHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.CommandsHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self):
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(command_registry().as_dict()))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.GetMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">GetMetadataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Debug query - returns metadata from a state after a query is evaluated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetMetadataHandler:
+    &#34;&#34;&#34;Debug query - returns metadata from a state after a query is evaluated&#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        state = evaluate(query)
+        state_json = state.as_dict()
+        self.write(json.dumps(state_json))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.GetMetadataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.GetMetadataHandler">GetMetadataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.GetMetadataHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    state = evaluate(query)
+    state_json = state.as_dict()
+    self.write(json.dumps(state_json))</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.GetMetadataHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.GetStoreDataHandler"><code class="flex name class">
+<span>class <span class="ident">GetStoreDataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetStoreDataHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Get data from store. Equivalent to Store.get_bytes.
+        Content type (MIME) is obtained from the metadata.
+        &#34;&#34;&#34;
+        store = get_store()
+        metadata = store.get_metadata(query)
+
+        try:
+            mimetype = metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+            b = store.get_bytes(query)
+        except:
+            mimetype = &#34;application/json&#34;
+            b = json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(b)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreDataHandler" href="#liquer.server.handlers.StoreDataHandler">StoreDataHandler</a></li>
+<li><a title="liquer.server.tornado_handlers.GetStoreDataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.GetStoreDataHandler">GetStoreDataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.GetStoreDataHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get data from store. Equivalent to Store.get_bytes.
+Content type (MIME) is obtained from the metadata.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    &#34;&#34;&#34;Get data from store. Equivalent to Store.get_bytes.
+    Content type (MIME) is obtained from the metadata.
+    &#34;&#34;&#34;
+    store = get_store()
+    metadata = store.get_metadata(query)
+
+    try:
+        mimetype = metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+        b = store.get_bytes(query)
+    except:
+        mimetype = &#34;application/json&#34;
+        b = json.dumps(
+            dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+        )
+
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(b)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.GetStoreMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">GetStoreMetadataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetStoreMetadataHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Get data from store. Equivalent to Store.get_bytes.
+        Content type (MIME) is obtained from the metadata.
+        &#34;&#34;&#34;
+        store = get_store()
+        metadata = store.get_metadata(query)
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(metadata))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreMetadataHandler" href="#liquer.server.handlers.StoreMetadataHandler">StoreMetadataHandler</a></li>
+<li><a title="liquer.server.tornado_handlers.GetStoreMetadataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.GetStoreMetadataHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get data from store. Equivalent to Store.get_bytes.
+Content type (MIME) is obtained from the metadata.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    &#34;&#34;&#34;Get data from store. Equivalent to Store.get_bytes.
+    Content type (MIME) is obtained from the metadata.
+    &#34;&#34;&#34;
+    store = get_store()
+    metadata = store.get_metadata(query)
+
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(metadata))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.GetStoredMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">GetStoredMetadataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get metadata stored in a store or cache</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetStoredMetadataHandler:
+    &#34;&#34;&#34;Get metadata stored in a store or cache&#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        import liquer.tools
+
+        metadata = liquer.tools.get_stored_metadata(query)
+        self.write(json.dumps(metadata))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.GetStoredMetadataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.GetStoredMetadataHandler">GetStoredMetadataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.GetStoredMetadataHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    import liquer.tools
+
+    metadata = liquer.tools.get_stored_metadata(query)
+    self.write(json.dumps(metadata))</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.GetStoredMetadataHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.LiquerIndexHandler"><code class="flex name class">
+<span>class <span class="ident">LiquerIndexHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LiquerIndexHandler:
+    def get(self):
+        self.redirect(&#34;/static/index.html&#34;)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.LiquerIndexHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.LiquerIndexHandler">LiquerIndexHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.LiquerIndexHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self):
+    self.redirect(&#34;/static/index.html&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.LiquerJsHandler"><code class="flex name class">
+<span>class <span class="ident">LiquerJsHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LiquerJsHandler:
+    def get(self):
+        self.redirect(&#34;/static/liquer.js&#34;)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.LiquerJsHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.LiquerJsHandler">LiquerJsHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.LiquerJsHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self):
+    self.redirect(&#34;/static/liquer.js&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.QueryHandler"><code class="flex name class">
+<span>class <span class="ident">QueryHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QueryHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Main service for evaluating queries&#34;&#34;&#34;
+        try:
+            kwargs = json.loads(self.request.body)
+        except:
+            kwargs = {}
+        keys = self.request.arguments.keys()
+        kwargs.update({key: self.get_argument(key) for key in keys})
+        try:
+            b, mimetype, filename = response(evaluate(query, extra_parameters=kwargs))
+        except:
+            traceback.print_exc()
+            self.set_status(500)
+            self.finish(f&#34;500 - Failed to create a response to {query}&#34;)
+            return
+
+        header = &#34;Content-Type&#34;
+        body = mimetype if mimetype is not None else &#34;application/octet-stream&#34;
+        self.set_header(header, body)
+
+        self.write(b)
+
+    def post(self, query):
+        self.get(query)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.QueryHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.QueryHandler">QueryHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.QueryHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Main service for evaluating queries</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    &#34;&#34;&#34;Main service for evaluating queries&#34;&#34;&#34;
+    try:
+        kwargs = json.loads(self.request.body)
+    except:
+        kwargs = {}
+    keys = self.request.arguments.keys()
+    kwargs.update({key: self.get_argument(key) for key in keys})
+    try:
+        b, mimetype, filename = response(evaluate(query, extra_parameters=kwargs))
+    except:
+        traceback.print_exc()
+        self.set_status(500)
+        self.finish(f&#34;500 - Failed to create a response to {query}&#34;)
+        return
+
+    header = &#34;Content-Type&#34;
+    body = mimetype if mimetype is not None else &#34;application/octet-stream&#34;
+    self.set_header(header, body)
+
+    self.write(b)</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.QueryHandler.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self, query):
+    self.get(query)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.RegisterCommandHandler"><code class="flex name class">
+<span>class <span class="ident">RegisterCommandHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remote command registration service.
+This has to be enabled by liquer.commands.enable_remote_registration()</p>
+<p>WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+(e.g. on localhost or intranet where only trusted users have access).
+This is on by default on Jupyter server extension.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegisterCommandHandler:
+    &#34;&#34;&#34;Remote command registration service.
+    This has to be enabled by liquer.commands.enable_remote_registration()
+
+    WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+    therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+    (e.g. on localhost or intranet where only trusted users have access).
+    This is on by default on Jupyter server extension.
+    &#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, param):
+        self.write(
+            json.dumps(
+                command_registry().register_remote_serialized(param.encode(&#34;ascii&#34;))
+            )
+        )
+
+    def post(self, param):
+        self.write(
+            json.dumps(command_registry().register_remote_serialized(self.request.body))
+        )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.RegisterCommandHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.RegisterCommandHandler">RegisterCommandHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.RegisterCommandHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, param)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, param):
+    self.write(
+        json.dumps(
+            command_registry().register_remote_serialized(param.encode(&#34;ascii&#34;))
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.RegisterCommandHandler.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self, param)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self, param):
+    self.write(
+        json.dumps(command_registry().register_remote_serialized(self.request.body))
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.RegisterCommandHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreContainsHandler"><code class="flex name class">
+<span>class <span class="ident">StoreContainsHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreContainsHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            contains = store.contains(query)
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f&#34;Contains {query}&#34;,
+                        contains=contains,
+                        status=&#34;OK&#34;,
+                    )
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreContainsHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreContainsHandler">StoreContainsHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreContainsHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    store = get_store()
+    try:
+        contains = store.contains(query)
+        self.write(
+            json.dumps(
+                dict(
+                    query=query,
+                    message=f&#34;Contains {query}&#34;,
+                    contains=contains,
+                    status=&#34;OK&#34;,
+                )
+            )
+        )
+    except:
+        self.write(
+            json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreContainsHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreDataHandler"><code class="flex name class">
+<span>class <span class="ident">StoreDataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreDataHandler(GetStoreDataHandler):
+    def post(self, query):
+        &#34;&#34;&#34;Set data in store. Equivalent to Store.store.
+        Unlike store method, which stores both data and metadata in one call,
+        the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+        either before or after the api/store/data POST.
+        &#34;&#34;&#34;
+        store = get_store()
+        try:
+            metadata = store.get_metadata(query)
+        except KeyNotFoundStoreException:
+            metadata = {}
+        try:
+            data = self.request.body
+            store.store(query, data, metadata)
+            response = dict(query=query, message=&#34;Data stored&#34;, status=&#34;OK&#34;)
+        except:
+            response = dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(response))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.GetStoreDataHandler" href="#liquer.server.handlers.GetStoreDataHandler">GetStoreDataHandler</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreDataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreDataHandler">StoreDataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreDataHandler.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set data in store. Equivalent to Store.store.
+Unlike store method, which stores both data and metadata in one call,
+the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+either before or after the api/store/data POST.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self, query):
+    &#34;&#34;&#34;Set data in store. Equivalent to Store.store.
+    Unlike store method, which stores both data and metadata in one call,
+    the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+    either before or after the api/store/data POST.
+    &#34;&#34;&#34;
+    store = get_store()
+    try:
+        metadata = store.get_metadata(query)
+    except KeyNotFoundStoreException:
+        metadata = {}
+    try:
+        data = self.request.body
+        store.store(query, data, metadata)
+        response = dict(query=query, message=&#34;Data stored&#34;, status=&#34;OK&#34;)
+    except:
+        response = dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(response))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.GetStoreDataHandler" href="#liquer.server.handlers.GetStoreDataHandler">GetStoreDataHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.GetStoreDataHandler.get" href="#liquer.server.handlers.GetStoreDataHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.handlers.StoreIsDirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreIsDirHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreIsDirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            is_dir = store.is_dir(query)
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f&#34;Is directory {query}&#34;,
+                        is_dir=is_dir,
+                        status=&#34;OK&#34;,
+                    )
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreIsDirHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreIsDirHandler">StoreIsDirHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreIsDirHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    store = get_store()
+    try:
+        is_dir = store.is_dir(query)
+        self.write(
+            json.dumps(
+                dict(
+                    query=query,
+                    message=f&#34;Is directory {query}&#34;,
+                    is_dir=is_dir,
+                    status=&#34;OK&#34;,
+                )
+            )
+        )
+    except:
+        self.write(
+            json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreIsDirHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreKeysHandler"><code class="flex name class">
+<span>class <span class="ident">StoreKeysHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreKeysHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            keys = store.keys()
+            self.write(
+                json.dumps(
+                    dict(query=None, message=f&#34;Keys obtained&#34;, keys=keys, status=&#34;OK&#34;)
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreKeysHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreKeysHandler">StoreKeysHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreKeysHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    store = get_store()
+    try:
+        keys = store.keys()
+        self.write(
+            json.dumps(
+                dict(query=None, message=f&#34;Keys obtained&#34;, keys=keys, status=&#34;OK&#34;)
+            )
+        )
+    except:
+        self.write(
+            json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreKeysHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreListdirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreListdirHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreListdirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            listdir = store.listdir(query)
+            self.write(
+                json.dumps(
+                    dict(
+                        query=query,
+                        message=f&#34;Keys obtained&#34;,
+                        listdir=listdir,
+                        status=&#34;OK&#34;,
+                    )
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreListdirHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreListdirHandler">StoreListdirHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreListdirHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    store = get_store()
+    try:
+        listdir = store.listdir(query)
+        self.write(
+            json.dumps(
+                dict(
+                    query=query,
+                    message=f&#34;Keys obtained&#34;,
+                    listdir=listdir,
+                    status=&#34;OK&#34;,
+                )
+            )
+        )
+    except:
+        self.write(
+            json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreListdirHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreMakedirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreMakedirHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreMakedirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            store.makedir(query)
+            self.write(
+                json.dumps(dict(query=query, message=f&#34;Makedir succeeded&#34;, status=&#34;OK&#34;))
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreMakedirHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreMakedirHandler">StoreMakedirHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreMakedirHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    store = get_store()
+    try:
+        store.makedir(query)
+        self.write(
+            json.dumps(dict(query=query, message=f&#34;Makedir succeeded&#34;, status=&#34;OK&#34;))
+        )
+    except:
+        self.write(
+            json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreMakedirHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">StoreMetadataHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreMetadataHandler(GetStoreMetadataHandler):
+    def post(self, query):
+        &#34;&#34;&#34;Set data from store. Equivalent to Store.store.
+        Unlike store method, which stores both data and metadata in one call,
+        the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+        either before or after the api/store/data POST.
+        &#34;&#34;&#34;
+        store = get_store()
+        try:
+            metadata = json.loads(self.request.body)
+            store.store_metadata(query, metadata)
+            response = dict(query=query, message=&#34;Metadata stored&#34;, status=&#34;OK&#34;)
+        except:
+            response = dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(response))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.GetStoreMetadataHandler" href="#liquer.server.handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreMetadataHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreMetadataHandler">StoreMetadataHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreMetadataHandler.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set data from store. Equivalent to Store.store.
+Unlike store method, which stores both data and metadata in one call,
+the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+either before or after the api/store/data POST.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self, query):
+    &#34;&#34;&#34;Set data from store. Equivalent to Store.store.
+    Unlike store method, which stores both data and metadata in one call,
+    the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+    either before or after the api/store/data POST.
+    &#34;&#34;&#34;
+    store = get_store()
+    try:
+        metadata = json.loads(self.request.body)
+        store.store_metadata(query, metadata)
+        response = dict(query=query, message=&#34;Metadata stored&#34;, status=&#34;OK&#34;)
+    except:
+        response = dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(response))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.GetStoreMetadataHandler" href="#liquer.server.handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.GetStoreMetadataHandler.get" href="#liquer.server.handlers.GetStoreMetadataHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.handlers.StoreRemoveHandler"><code class="flex name class">
+<span>class <span class="ident">StoreRemoveHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Handler to remove data from store</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreRemoveHandler:
+    &#34;&#34;&#34;Handler to remove data from store&#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            store.remove(query)
+            self.write(
+                json.dumps(dict(query=query, message=f&#34;Removed {query}&#34;, status=&#34;OK&#34;))
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreRemoveHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreRemoveHandler">StoreRemoveHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreRemoveHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    store = get_store()
+    try:
+        store.remove(query)
+        self.write(
+            json.dumps(dict(query=query, message=f&#34;Removed {query}&#34;, status=&#34;OK&#34;))
+        )
+    except:
+        self.write(
+            json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreRemoveHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreRemovedirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreRemovedirHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreRemovedirHandler:
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        store = get_store()
+        try:
+            store.removedir(query)
+            self.write(
+                json.dumps(
+                    dict(query=query, message=f&#34;Removed directory {query}&#34;, status=&#34;OK&#34;)
+                )
+            )
+        except:
+            self.write(
+                json.dumps(
+                    dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+                )
+            )</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreRemovedirHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreRemovedirHandler">StoreRemovedirHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreRemovedirHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    store = get_store()
+    try:
+        store.removedir(query)
+        self.write(
+            json.dumps(
+                dict(query=query, message=f&#34;Removed directory {query}&#34;, status=&#34;OK&#34;)
+            )
+        )
+    except:
+        self.write(
+            json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+        )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreRemovedirHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.StoreUploadHandler"><code class="flex name class">
+<span>class <span class="ident">StoreUploadHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreUploadHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Returns an upload form&#34;&#34;&#34;
+
+        self.set_header(&#34;Content-Type&#34;, &#34;text/html&#34;)
+        self.write(
+            f&#34;&#34;&#34;
+        &lt;!doctype html&gt;
+        &lt;title&gt;Upload File&lt;/title&gt;
+        &lt;h1&gt;Upload to {query}&lt;/h1&gt;
+        &lt;form method=&#34;post&#34; enctype=&#34;multipart/form-data&#34;&gt;
+        &lt;input type=&#34;file&#34; name=&#34;file&#34;/&gt;
+        &lt;input type=&#34;submit&#34; value=&#34;Upload&#34;/&gt;
+        &lt;/form&gt;
+        &#34;&#34;&#34;
+        )
+
+    def post(self, query):
+        &#34;&#34;&#34;Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
+        Unlike store method, which stores both data and metadata in one call,
+        the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+        either before or after the api/store/data POST.
+        &#34;&#34;&#34;
+        if &#34;file&#34; not in self.request.files:
+            response = dict(
+                query=query, message=&#34;Request does not contain &#39;file&#39;&#34;, status=&#34;ERROR&#34;
+            )
+        else:
+            fileinfo = self.request.files[&#34;file&#34;][0]
+
+            if fileinfo.filename == &#34;&#34;:
+                response = dict(
+                    query=query,
+                    message=&#34;Request contains &#39;file&#39; with an empty filename&#34;,
+                    status=&#34;ERROR&#34;,
+                )
+            else:
+                store = get_store()
+                try:
+                    metadata = store.get_metadata(query)
+                except KeyNotFoundStoreException:
+                    metadata = {}
+                try:
+                    data = fileinfo[&#34;body&#34;]
+                    store.store(query, data, metadata)
+                    response = dict(
+                        query=query, message=&#34;Data stored&#34;, size=len(data), status=&#34;OK&#34;
+                    )
+                except:
+                    response = dict(
+                        query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;
+                    )
+
+        mimetype = &#34;application/json&#34;
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(json.dumps(response))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.StoreUploadHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.StoreUploadHandler">StoreUploadHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.StoreUploadHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns an upload form</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    &#34;&#34;&#34;Returns an upload form&#34;&#34;&#34;
+
+    self.set_header(&#34;Content-Type&#34;, &#34;text/html&#34;)
+    self.write(
+        f&#34;&#34;&#34;
+    &lt;!doctype html&gt;
+    &lt;title&gt;Upload File&lt;/title&gt;
+    &lt;h1&gt;Upload to {query}&lt;/h1&gt;
+    &lt;form method=&#34;post&#34; enctype=&#34;multipart/form-data&#34;&gt;
+    &lt;input type=&#34;file&#34; name=&#34;file&#34;/&gt;
+    &lt;input type=&#34;submit&#34; value=&#34;Upload&#34;/&gt;
+    &lt;/form&gt;
+    &#34;&#34;&#34;
+    )</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.StoreUploadHandler.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
+Unlike store method, which stores both data and metadata in one call,
+the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+either before or after the api/store/data POST.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self, query):
+    &#34;&#34;&#34;Upload data to store - similar to /api/store/data, but using upload. Equivalent to Store.store.
+    Unlike store method, which stores both data and metadata in one call,
+    the api/store/data POST only stores the data. The metadata needs to be set in a separate POST of api/store/metadata
+    either before or after the api/store/data POST.
+    &#34;&#34;&#34;
+    if &#34;file&#34; not in self.request.files:
+        response = dict(
+            query=query, message=&#34;Request does not contain &#39;file&#39;&#34;, status=&#34;ERROR&#34;
+        )
+    else:
+        fileinfo = self.request.files[&#34;file&#34;][0]
+
+        if fileinfo.filename == &#34;&#34;:
+            response = dict(
+                query=query,
+                message=&#34;Request contains &#39;file&#39; with an empty filename&#34;,
+                status=&#34;ERROR&#34;,
+            )
+        else:
+            store = get_store()
+            try:
+                metadata = store.get_metadata(query)
+            except KeyNotFoundStoreException:
+                metadata = {}
+            try:
+                data = fileinfo[&#34;body&#34;]
+                store.store(query, data, metadata)
+                response = dict(
+                    query=query, message=&#34;Data stored&#34;, size=len(data), status=&#34;OK&#34;
+                )
+            except:
+                response = dict(
+                    query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;
+                )
+
+    mimetype = &#34;application/json&#34;
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(json.dumps(response))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.SubmitHandler"><code class="flex name class">
+<span>class <span class="ident">SubmitHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Submit query.
+Starts query in the background.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SubmitHandler:
+    &#34;&#34;&#34;Submit query.
+    Starts query in the background.
+    &#34;&#34;&#34;
+
+    def prepare(self):
+        header = &#34;Content-Type&#34;
+        body = &#34;application/json&#34;
+        self.set_header(header, body)
+
+    def get(self, query):
+        from liquer.pool import evaluate_in_background
+
+        evaluate_in_background(query)
+        self.write(json.dumps(dict(status=&#34;OK&#34;, message=&#34;Submitted&#34;, query=query)))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.SubmitHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.SubmitHandler">SubmitHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.SubmitHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    from liquer.pool import evaluate_in_background
+
+    evaluate_in_background(query)
+    self.write(json.dumps(dict(status=&#34;OK&#34;, message=&#34;Submitted&#34;, query=query)))</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.handlers.SubmitHandler.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self):
+    header = &#34;Content-Type&#34;
+    body = &#34;application/json&#34;
+    self.set_header(header, body)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.server.handlers.WebStoreHandler"><code class="flex name class">
+<span>class <span class="ident">WebStoreHandler</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WebStoreHandler:
+    def get(self, query):
+        &#34;&#34;&#34;Shortcut to the &#39;web&#39; directory in the store.
+        Similar to /store/data/web, except the index.html is automatically added if query is a directory.
+        The &#39;web&#39; directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui.
+        &#34;&#34;&#34;
+        store = get_store()
+
+        try:
+            query = &#34;web/&#34; + query
+            if query.endswith(&#34;/&#34;):
+                query += &#34;index.html&#34;
+            if store.is_dir(query):
+                query += &#34;/index.html&#34;
+            metadata = store.get_metadata(query)
+            mimetype = metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+            b = store.get_bytes(query)
+        except:
+            mimetype = &#34;application/json&#34;
+            b = json.dumps(
+                dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+            )
+
+        header = &#34;Content-Type&#34;
+        body = mimetype
+        self.set_header(header, body)
+        self.write(b)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.server.tornado_handlers.WebStoreHandler" href="tornado_handlers.html#liquer.server.tornado_handlers.WebStoreHandler">WebStoreHandler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.server.handlers.WebStoreHandler.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Shortcut to the 'web' directory in the store.
+Similar to /store/data/web, except the index.html is automatically added if query is a directory.
+The 'web' directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, query):
+    &#34;&#34;&#34;Shortcut to the &#39;web&#39; directory in the store.
+    Similar to /store/data/web, except the index.html is automatically added if query is a directory.
+    The &#39;web&#39; directory hosts web applications and visualization tools, e.g. liquer-pcv or liquer-gui.
+    &#34;&#34;&#34;
+    store = get_store()
+
+    try:
+        query = &#34;web/&#34; + query
+        if query.endswith(&#34;/&#34;):
+            query += &#34;index.html&#34;
+        if store.is_dir(query):
+            query += &#34;/index.html&#34;
+        metadata = store.get_metadata(query)
+        mimetype = metadata.get(&#34;mimetype&#34;, &#34;application/octet-stream&#34;)
+        b = store.get_bytes(query)
+    except:
+        mimetype = &#34;application/json&#34;
+        b = json.dumps(
+            dict(query=query, message=traceback.format_exc(), status=&#34;ERROR&#34;)
+        )
+
+    header = &#34;Content-Type&#34;
+    body = mimetype
+    self.set_header(header, body)
+    self.write(b)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer.server" href="index.html">liquer.server</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.server.handlers.liquer_static_path" href="#liquer.server.handlers.liquer_static_path">liquer_static_path</a></code></li>
+<li><code><a title="liquer.server.handlers.response" href="#liquer.server.handlers.response">response</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.server.handlers.BuildHandler" href="#liquer.server.handlers.BuildHandler">BuildHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.BuildHandler.post" href="#liquer.server.handlers.BuildHandler.post">post</a></code></li>
+<li><code><a title="liquer.server.handlers.BuildHandler.prepare" href="#liquer.server.handlers.BuildHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.CacheCleanHandler" href="#liquer.server.handlers.CacheCleanHandler">CacheCleanHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.CacheCleanHandler.get" href="#liquer.server.handlers.CacheCleanHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.CacheContainsHandler" href="#liquer.server.handlers.CacheContainsHandler">CacheContainsHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.CacheContainsHandler.get" href="#liquer.server.handlers.CacheContainsHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.CacheGetDataHandler" href="#liquer.server.handlers.CacheGetDataHandler">CacheGetDataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.CacheGetDataHandler.get" href="#liquer.server.handlers.CacheGetDataHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.CacheKeysHandler" href="#liquer.server.handlers.CacheKeysHandler">CacheKeysHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.CacheKeysHandler.get" href="#liquer.server.handlers.CacheKeysHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.CacheMetadataHandler" href="#liquer.server.handlers.CacheMetadataHandler">CacheMetadataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.CacheMetadataHandler.get" href="#liquer.server.handlers.CacheMetadataHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.CacheMetadataHandler.post" href="#liquer.server.handlers.CacheMetadataHandler.post">post</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.CacheRemoveHandler" href="#liquer.server.handlers.CacheRemoveHandler">CacheRemoveHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.CacheRemoveHandler.get" href="#liquer.server.handlers.CacheRemoveHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.CommandsHandler" href="#liquer.server.handlers.CommandsHandler">CommandsHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.CommandsHandler.get" href="#liquer.server.handlers.CommandsHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.GetMetadataHandler" href="#liquer.server.handlers.GetMetadataHandler">GetMetadataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.GetMetadataHandler.get" href="#liquer.server.handlers.GetMetadataHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.GetMetadataHandler.prepare" href="#liquer.server.handlers.GetMetadataHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.GetStoreDataHandler" href="#liquer.server.handlers.GetStoreDataHandler">GetStoreDataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.GetStoreDataHandler.get" href="#liquer.server.handlers.GetStoreDataHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.GetStoreMetadataHandler" href="#liquer.server.handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.GetStoreMetadataHandler.get" href="#liquer.server.handlers.GetStoreMetadataHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.GetStoredMetadataHandler" href="#liquer.server.handlers.GetStoredMetadataHandler">GetStoredMetadataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.GetStoredMetadataHandler.get" href="#liquer.server.handlers.GetStoredMetadataHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.GetStoredMetadataHandler.prepare" href="#liquer.server.handlers.GetStoredMetadataHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.LiquerIndexHandler" href="#liquer.server.handlers.LiquerIndexHandler">LiquerIndexHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.LiquerIndexHandler.get" href="#liquer.server.handlers.LiquerIndexHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.LiquerJsHandler" href="#liquer.server.handlers.LiquerJsHandler">LiquerJsHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.LiquerJsHandler.get" href="#liquer.server.handlers.LiquerJsHandler.get">get</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.QueryHandler" href="#liquer.server.handlers.QueryHandler">QueryHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.QueryHandler.get" href="#liquer.server.handlers.QueryHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.QueryHandler.post" href="#liquer.server.handlers.QueryHandler.post">post</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.RegisterCommandHandler" href="#liquer.server.handlers.RegisterCommandHandler">RegisterCommandHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.RegisterCommandHandler.get" href="#liquer.server.handlers.RegisterCommandHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.RegisterCommandHandler.post" href="#liquer.server.handlers.RegisterCommandHandler.post">post</a></code></li>
+<li><code><a title="liquer.server.handlers.RegisterCommandHandler.prepare" href="#liquer.server.handlers.RegisterCommandHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreContainsHandler" href="#liquer.server.handlers.StoreContainsHandler">StoreContainsHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreContainsHandler.get" href="#liquer.server.handlers.StoreContainsHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreContainsHandler.prepare" href="#liquer.server.handlers.StoreContainsHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreDataHandler" href="#liquer.server.handlers.StoreDataHandler">StoreDataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreDataHandler.post" href="#liquer.server.handlers.StoreDataHandler.post">post</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreIsDirHandler" href="#liquer.server.handlers.StoreIsDirHandler">StoreIsDirHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreIsDirHandler.get" href="#liquer.server.handlers.StoreIsDirHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreIsDirHandler.prepare" href="#liquer.server.handlers.StoreIsDirHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreKeysHandler" href="#liquer.server.handlers.StoreKeysHandler">StoreKeysHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreKeysHandler.get" href="#liquer.server.handlers.StoreKeysHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreKeysHandler.prepare" href="#liquer.server.handlers.StoreKeysHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreListdirHandler" href="#liquer.server.handlers.StoreListdirHandler">StoreListdirHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreListdirHandler.get" href="#liquer.server.handlers.StoreListdirHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreListdirHandler.prepare" href="#liquer.server.handlers.StoreListdirHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreMakedirHandler" href="#liquer.server.handlers.StoreMakedirHandler">StoreMakedirHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreMakedirHandler.get" href="#liquer.server.handlers.StoreMakedirHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreMakedirHandler.prepare" href="#liquer.server.handlers.StoreMakedirHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreMetadataHandler" href="#liquer.server.handlers.StoreMetadataHandler">StoreMetadataHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreMetadataHandler.post" href="#liquer.server.handlers.StoreMetadataHandler.post">post</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreRemoveHandler" href="#liquer.server.handlers.StoreRemoveHandler">StoreRemoveHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreRemoveHandler.get" href="#liquer.server.handlers.StoreRemoveHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreRemoveHandler.prepare" href="#liquer.server.handlers.StoreRemoveHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreRemovedirHandler" href="#liquer.server.handlers.StoreRemovedirHandler">StoreRemovedirHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreRemovedirHandler.get" href="#liquer.server.handlers.StoreRemovedirHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreRemovedirHandler.prepare" href="#liquer.server.handlers.StoreRemovedirHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.StoreUploadHandler" href="#liquer.server.handlers.StoreUploadHandler">StoreUploadHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.StoreUploadHandler.get" href="#liquer.server.handlers.StoreUploadHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreUploadHandler.post" href="#liquer.server.handlers.StoreUploadHandler.post">post</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.SubmitHandler" href="#liquer.server.handlers.SubmitHandler">SubmitHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.SubmitHandler.get" href="#liquer.server.handlers.SubmitHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.SubmitHandler.prepare" href="#liquer.server.handlers.SubmitHandler.prepare">prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.server.handlers.WebStoreHandler" href="#liquer.server.handlers.WebStoreHandler">WebStoreHandler</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.server.handlers.WebStoreHandler.get" href="#liquer.server.handlers.WebStoreHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

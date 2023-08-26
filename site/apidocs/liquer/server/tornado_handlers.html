@@ -1,0 +1,1207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.server.tornado_handlers API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.server.tornado_handlers</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import tornado.ioloop
+import tornado.web
+import liquer.server.handlers as h
+
+
+def liquer_static_path():
+    import liquer.server
+    import os.path
+
+    return os.path.join(os.path.dirname(liquer.server.__file__), &#34;static&#34;)
+
+
+class LiquerIndexHandler(h.LiquerIndexHandler, tornado.web.RequestHandler):
+    pass
+
+
+class LiquerJsHandler(h.LiquerJsHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/commands.json
+class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
+    pass
+
+
+#&#39;/submit/&lt;query&gt;
+class SubmitHandler(h.SubmitHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /q/&lt;path:query&gt;
+class QueryHandler(h.QueryHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/cache/get/&lt;path:query&gt;
+class CacheGetDataHandler(h.CacheGetDataHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/cache/meta/&lt;path:query&gt;
+class CacheMetadataHandler(h.CacheMetadataHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/cache/remove/&lt;path:query&gt;
+class CacheRemoveHandler(h.CacheRemoveHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/cache/contains/&lt;path:query&gt;
+class CacheContainsHandler(h.CacheContainsHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/cache/keys.json
+class CacheKeysHandler(h.CacheKeysHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/cache/clean
+class CacheCleanHandler(h.CacheCleanHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/commands.json
+class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/debug-json/&lt;path:query&gt;
+class GetMetadataHandler(h.GetMetadataHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/stored_metadata/&lt;path:query&gt;
+class GetStoredMetadataHandler(h.GetStoredMetadataHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/build
+class BuildHandler(h.BuildHandler, tornado.web.RequestHandler):
+    pass
+
+
+#&#39;/api/register_command/
+class RegisterCommandHandler(h.RegisterCommandHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/data/&lt;path:query&gt;
+class GetStoreDataHandler(h.GetStoreDataHandler, tornado.web.RequestHandler):
+    pass
+
+# /api/store/data/&lt;path:query&gt;
+class StoreDataHandler(h.StoreDataHandler, tornado.web.RequestHandler):
+    pass
+
+# /api/store/upload/&lt;path:query&gt;
+class StoreUploadHandler(h.StoreUploadHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/metadata/&lt;path:query&gt;
+class GetStoreMetadataHandler(h.GetStoreMetadataHandler, tornado.web.RequestHandler):
+    pass
+
+# /api/store/metadata/&lt;path:query&gt;
+class StoreMetadataHandler(h.StoreMetadataHandler, tornado.web.RequestHandler):
+    pass
+
+# /web/&lt;path:query&gt;
+class WebStoreHandler(h.WebStoreHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/remove/&lt;path:query&gt;
+class StoreRemoveHandler(h.StoreRemoveHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/removedir/&lt;path:query&gt;
+class StoreRemovedirHandler(h.StoreRemovedirHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/contains/&lt;path:query&gt;
+class StoreContainsHandler(h.StoreContainsHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/is_dir/&lt;path:query&gt;
+class StoreIsDirHandler(h.StoreIsDirHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/keys&#34;)
+class StoreKeysHandler(h.StoreKeysHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/listdir/&lt;path:query&gt;
+class StoreListdirHandler(h.StoreListdirHandler, tornado.web.RequestHandler):
+    pass
+
+
+# /api/store/makedir/&lt;path:query&gt;
+class StoreMakedirHandler(h.StoreMakedirHandler, tornado.web.RequestHandler):
+    pass
+
+
+# class DebugQueryHandler(h.DebugQueryHandler, tornado.web.RequestHandler):
+#    pass
+
+
+def url_mapping():
+    return [
+        (r&#34;/liquer/api/commands.json&#34;, CommandsHandler),
+        (r&#34;/liquer/submit/(.*)&#34;, SubmitHandler),
+        (r&#34;/liquer/q/(.*)&#34;, QueryHandler),
+        (r&#34;/liquer/api/cache/get/(.*)&#34;, CacheGetDataHandler),
+        (r&#34;/liquer/api/cache/meta/(.*)&#34;, CacheMetadataHandler),
+        (r&#34;/liquer/api/cache/remove/(.*)&#34;, CacheRemoveHandler),
+        (r&#34;/liquer/api/cache/contains/(.*)&#34;, CacheContainsHandler),
+        (r&#34;/liquer/api/cache/keys.json&#34;, CacheKeysHandler),
+        (r&#34;/liquer/api/cache/clean&#34;, CacheCleanHandler),
+        (r&#34;/liquer/api/debug-json/(.*)&#34;, GetMetadataHandler),
+        (r&#34;/liquer/api/metadata/(.*)&#34;, GetMetadataHandler),
+        (r&#34;/liquer/api/stored_metadata/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/build&#34;, BuildHandler),
+        (r&#34;/liquer/api/register_command&#34;, RegisterCommandHandler),
+        (r&#34;/liquer/api/store/data/(.*)&#34;, StoreDataHandler),
+        (r&#34;/liquer/api/store/upload/(.*)&#34;, StoreUploadHandler),
+        (r&#34;/liquer/api/store/metadata/(.*)&#34;, StoreMetadataHandler),
+        (r&#34;/liquer/web/(.*)&#34;, WebStoreHandler),
+        (r&#34;/liquer/api/store/remove/(.*)&#34;, StoreRemoveHandler),
+        (r&#34;/liquer/api/store/removedir/(.*)&#34;, StoreRemovedirHandler),
+        (r&#34;/liquer/api/store/contains/(.*)&#34;, StoreContainsHandler),
+        (r&#34;/liquer/api/store/is_dir/(.*)&#34;, StoreIsDirHandler),
+        (r&#34;/liquer/api/store/keys&#34;, StoreKeysHandler),
+        (r&#34;/liquer/api/store/listdir/(.*)&#34;, StoreListdirHandler),
+        (r&#34;/liquer/api/store/makedir/(.*)&#34;, StoreMakedirHandler),
+    ]
+
+def url_mapping_ro():
+    return [
+        (r&#34;/liquer/api/commands.json&#34;, CommandsHandler),
+        (r&#34;/liquer/api/cache/get/(.*)&#34;, CacheGetDataHandler),
+        (r&#34;/liquer/api/cache/meta/(.*)&#34;, CacheMetadataHandler),
+        #(r&#34;/liquer/api/cache/remove/(.*)&#34;, CacheRemoveHandler),
+        (r&#34;/liquer/api/cache/contains/(.*)&#34;, CacheContainsHandler),
+        (r&#34;/liquer/api/cache/keys.json&#34;, CacheKeysHandler),
+        (r&#34;/liquer/q/(.*)&#34;, CacheGetDataHandler),
+        (r&#34;/liquer/api/debug-json/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/metadata/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/stored_metadata/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/store/data/(.*)&#34;, GetStoreDataHandler),
+        (r&#34;/liquer/api/store/metadata/(.*)&#34;, GetStoreMetadataHandler),
+        (r&#34;/liquer/web/(.*)&#34;, WebStoreHandler),
+        (r&#34;/liquer/api/store/contains/(.*)&#34;, StoreContainsHandler),
+        (r&#34;/liquer/api/store/is_dir/(.*)&#34;, StoreIsDirHandler),
+        (r&#34;/liquer/api/store/keys&#34;, StoreKeysHandler),
+        (r&#34;/liquer/api/store/listdir/(.*)&#34;, StoreListdirHandler),
+    ]
+
+
+if __name__ == &#34;__main__&#34;:
+    import liquer.ext.basic
+    import liquer.ext.meta
+    import liquer.ext.lq_pandas
+
+    #    import liquer.ext.lq_hxl
+    import liquer.ext.lq_python
+    import liquer.ext.lq_pygments
+    from liquer.state import set_var, get_vars
+
+    #    import liquer.commands
+    #    liquer.commands.enable_remote_registration()
+
+    url_prefix = &#34;/liquer&#34;
+    port = 8080
+    set_var(&#34;api_path&#34;, url_prefix + &#34;/q/&#34;)
+    set_var(&#34;server&#34;, f&#34;http://localhost:{port}&#34;)
+
+    application = tornado.web.Application(
+        url_mapping()
+        + [
+            (
+                r&#34;/static/(.*)&#34;,
+                tornado.web.StaticFileHandler,
+                {&#34;path&#34;: h.liquer_static_path()},
+            ),
+            (
+                r&#34;/liquer/static/(.*)&#34;,
+                tornado.web.StaticFileHandler,
+                {&#34;path&#34;: h.liquer_static_path()},
+            ),
+            (r&#34;/&#34;, LiquerIndexHandler),
+            (r&#34;/index.html&#34;, LiquerIndexHandler),
+            (r&#34;/liquer.js&#34;, LiquerJsHandler),
+        ]
+    )
+    application.listen(port)
+    tornado.ioloop.IOLoop.current().start()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.server.tornado_handlers.liquer_static_path"><code class="name flex">
+<span>def <span class="ident">liquer_static_path</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def liquer_static_path():
+    import liquer.server
+    import os.path
+
+    return os.path.join(os.path.dirname(liquer.server.__file__), &#34;static&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.tornado_handlers.url_mapping"><code class="name flex">
+<span>def <span class="ident">url_mapping</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def url_mapping():
+    return [
+        (r&#34;/liquer/api/commands.json&#34;, CommandsHandler),
+        (r&#34;/liquer/submit/(.*)&#34;, SubmitHandler),
+        (r&#34;/liquer/q/(.*)&#34;, QueryHandler),
+        (r&#34;/liquer/api/cache/get/(.*)&#34;, CacheGetDataHandler),
+        (r&#34;/liquer/api/cache/meta/(.*)&#34;, CacheMetadataHandler),
+        (r&#34;/liquer/api/cache/remove/(.*)&#34;, CacheRemoveHandler),
+        (r&#34;/liquer/api/cache/contains/(.*)&#34;, CacheContainsHandler),
+        (r&#34;/liquer/api/cache/keys.json&#34;, CacheKeysHandler),
+        (r&#34;/liquer/api/cache/clean&#34;, CacheCleanHandler),
+        (r&#34;/liquer/api/debug-json/(.*)&#34;, GetMetadataHandler),
+        (r&#34;/liquer/api/metadata/(.*)&#34;, GetMetadataHandler),
+        (r&#34;/liquer/api/stored_metadata/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/build&#34;, BuildHandler),
+        (r&#34;/liquer/api/register_command&#34;, RegisterCommandHandler),
+        (r&#34;/liquer/api/store/data/(.*)&#34;, StoreDataHandler),
+        (r&#34;/liquer/api/store/upload/(.*)&#34;, StoreUploadHandler),
+        (r&#34;/liquer/api/store/metadata/(.*)&#34;, StoreMetadataHandler),
+        (r&#34;/liquer/web/(.*)&#34;, WebStoreHandler),
+        (r&#34;/liquer/api/store/remove/(.*)&#34;, StoreRemoveHandler),
+        (r&#34;/liquer/api/store/removedir/(.*)&#34;, StoreRemovedirHandler),
+        (r&#34;/liquer/api/store/contains/(.*)&#34;, StoreContainsHandler),
+        (r&#34;/liquer/api/store/is_dir/(.*)&#34;, StoreIsDirHandler),
+        (r&#34;/liquer/api/store/keys&#34;, StoreKeysHandler),
+        (r&#34;/liquer/api/store/listdir/(.*)&#34;, StoreListdirHandler),
+        (r&#34;/liquer/api/store/makedir/(.*)&#34;, StoreMakedirHandler),
+    ]</code></pre>
+</details>
+</dd>
+<dt id="liquer.server.tornado_handlers.url_mapping_ro"><code class="name flex">
+<span>def <span class="ident">url_mapping_ro</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def url_mapping_ro():
+    return [
+        (r&#34;/liquer/api/commands.json&#34;, CommandsHandler),
+        (r&#34;/liquer/api/cache/get/(.*)&#34;, CacheGetDataHandler),
+        (r&#34;/liquer/api/cache/meta/(.*)&#34;, CacheMetadataHandler),
+        #(r&#34;/liquer/api/cache/remove/(.*)&#34;, CacheRemoveHandler),
+        (r&#34;/liquer/api/cache/contains/(.*)&#34;, CacheContainsHandler),
+        (r&#34;/liquer/api/cache/keys.json&#34;, CacheKeysHandler),
+        (r&#34;/liquer/q/(.*)&#34;, CacheGetDataHandler),
+        (r&#34;/liquer/api/debug-json/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/metadata/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/stored_metadata/(.*)&#34;, GetStoredMetadataHandler),
+        (r&#34;/liquer/api/store/data/(.*)&#34;, GetStoreDataHandler),
+        (r&#34;/liquer/api/store/metadata/(.*)&#34;, GetStoreMetadataHandler),
+        (r&#34;/liquer/web/(.*)&#34;, WebStoreHandler),
+        (r&#34;/liquer/api/store/contains/(.*)&#34;, StoreContainsHandler),
+        (r&#34;/liquer/api/store/is_dir/(.*)&#34;, StoreIsDirHandler),
+        (r&#34;/liquer/api/store/keys&#34;, StoreKeysHandler),
+        (r&#34;/liquer/api/store/listdir/(.*)&#34;, StoreListdirHandler),
+    ]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.server.tornado_handlers.BuildHandler"><code class="flex name class">
+<span>class <span class="ident">BuildHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build a query from a posted decoded query (list of lists of strings).
+Result is a dictionary with encoded query and link.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BuildHandler(h.BuildHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.BuildHandler" href="handlers.html#liquer.server.handlers.BuildHandler">BuildHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.CacheCleanHandler"><code class="flex name class">
+<span>class <span class="ident">CacheCleanHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheCleanHandler(h.CacheCleanHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.CacheCleanHandler" href="handlers.html#liquer.server.handlers.CacheCleanHandler">CacheCleanHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.CacheContainsHandler"><code class="flex name class">
+<span>class <span class="ident">CacheContainsHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheContainsHandler(h.CacheContainsHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.CacheContainsHandler" href="handlers.html#liquer.server.handlers.CacheContainsHandler">CacheContainsHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.CacheGetDataHandler"><code class="flex name class">
+<span>class <span class="ident">CacheGetDataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheGetDataHandler(h.CacheGetDataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.CacheGetDataHandler" href="handlers.html#liquer.server.handlers.CacheGetDataHandler">CacheGetDataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.CacheGetDataHandler" href="handlers.html#liquer.server.handlers.CacheGetDataHandler">CacheGetDataHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.CacheGetDataHandler.get" href="handlers.html#liquer.server.handlers.CacheGetDataHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.CacheKeysHandler"><code class="flex name class">
+<span>class <span class="ident">CacheKeysHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheKeysHandler(h.CacheKeysHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.CacheKeysHandler" href="handlers.html#liquer.server.handlers.CacheKeysHandler">CacheKeysHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.CacheMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">CacheMetadataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheMetadataHandler(h.CacheMetadataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.CacheMetadataHandler" href="handlers.html#liquer.server.handlers.CacheMetadataHandler">CacheMetadataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.CacheRemoveHandler"><code class="flex name class">
+<span>class <span class="ident">CacheRemoveHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheRemoveHandler(h.CacheRemoveHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.CacheRemoveHandler" href="handlers.html#liquer.server.handlers.CacheRemoveHandler">CacheRemoveHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.CommandsHandler"><code class="flex name class">
+<span>class <span class="ident">CommandsHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.CommandsHandler" href="handlers.html#liquer.server.handlers.CommandsHandler">CommandsHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.GetMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">GetMetadataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Debug query - returns metadata from a state after a query is evaluated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetMetadataHandler(h.GetMetadataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.GetMetadataHandler" href="handlers.html#liquer.server.handlers.GetMetadataHandler">GetMetadataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.GetStoreDataHandler"><code class="flex name class">
+<span>class <span class="ident">GetStoreDataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetStoreDataHandler(h.GetStoreDataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.GetStoreDataHandler" href="handlers.html#liquer.server.handlers.GetStoreDataHandler">GetStoreDataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.GetStoreDataHandler" href="handlers.html#liquer.server.handlers.GetStoreDataHandler">GetStoreDataHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.GetStoreDataHandler.get" href="handlers.html#liquer.server.handlers.GetStoreDataHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.GetStoreMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">GetStoreMetadataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetStoreMetadataHandler(h.GetStoreMetadataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.GetStoreMetadataHandler" href="handlers.html#liquer.server.handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.GetStoreMetadataHandler" href="handlers.html#liquer.server.handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.GetStoreMetadataHandler.get" href="handlers.html#liquer.server.handlers.GetStoreMetadataHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.GetStoredMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">GetStoredMetadataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get metadata stored in a store or cache</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetStoredMetadataHandler(h.GetStoredMetadataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.GetStoredMetadataHandler" href="handlers.html#liquer.server.handlers.GetStoredMetadataHandler">GetStoredMetadataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.LiquerIndexHandler"><code class="flex name class">
+<span>class <span class="ident">LiquerIndexHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LiquerIndexHandler(h.LiquerIndexHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.LiquerIndexHandler" href="handlers.html#liquer.server.handlers.LiquerIndexHandler">LiquerIndexHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.LiquerJsHandler"><code class="flex name class">
+<span>class <span class="ident">LiquerJsHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LiquerJsHandler(h.LiquerJsHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.LiquerJsHandler" href="handlers.html#liquer.server.handlers.LiquerJsHandler">LiquerJsHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.QueryHandler"><code class="flex name class">
+<span>class <span class="ident">QueryHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QueryHandler(h.QueryHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.QueryHandler" href="handlers.html#liquer.server.handlers.QueryHandler">QueryHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.QueryHandler" href="handlers.html#liquer.server.handlers.QueryHandler">QueryHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.QueryHandler.get" href="handlers.html#liquer.server.handlers.QueryHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.RegisterCommandHandler"><code class="flex name class">
+<span>class <span class="ident">RegisterCommandHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remote command registration service.
+This has to be enabled by liquer.commands.enable_remote_registration()</p>
+<p>WARNING: Remote command registration allows to deploy arbitrary python code on LiQuer server,
+therefore it is a HUGE SECURITY RISK and it only should be used if other security measures are taken
+(e.g. on localhost or intranet where only trusted users have access).
+This is on by default on Jupyter server extension.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegisterCommandHandler(h.RegisterCommandHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.RegisterCommandHandler" href="handlers.html#liquer.server.handlers.RegisterCommandHandler">RegisterCommandHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreContainsHandler"><code class="flex name class">
+<span>class <span class="ident">StoreContainsHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreContainsHandler(h.StoreContainsHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreContainsHandler" href="handlers.html#liquer.server.handlers.StoreContainsHandler">StoreContainsHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreDataHandler"><code class="flex name class">
+<span>class <span class="ident">StoreDataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreDataHandler(h.StoreDataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreDataHandler" href="handlers.html#liquer.server.handlers.StoreDataHandler">StoreDataHandler</a></li>
+<li><a title="liquer.server.handlers.GetStoreDataHandler" href="handlers.html#liquer.server.handlers.GetStoreDataHandler">GetStoreDataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.StoreDataHandler" href="handlers.html#liquer.server.handlers.StoreDataHandler">StoreDataHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.StoreDataHandler.get" href="handlers.html#liquer.server.handlers.GetStoreDataHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreDataHandler.post" href="handlers.html#liquer.server.handlers.StoreDataHandler.post">post</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreIsDirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreIsDirHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreIsDirHandler(h.StoreIsDirHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreIsDirHandler" href="handlers.html#liquer.server.handlers.StoreIsDirHandler">StoreIsDirHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreKeysHandler"><code class="flex name class">
+<span>class <span class="ident">StoreKeysHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreKeysHandler(h.StoreKeysHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreKeysHandler" href="handlers.html#liquer.server.handlers.StoreKeysHandler">StoreKeysHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreListdirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreListdirHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreListdirHandler(h.StoreListdirHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreListdirHandler" href="handlers.html#liquer.server.handlers.StoreListdirHandler">StoreListdirHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreMakedirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreMakedirHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreMakedirHandler(h.StoreMakedirHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreMakedirHandler" href="handlers.html#liquer.server.handlers.StoreMakedirHandler">StoreMakedirHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreMetadataHandler"><code class="flex name class">
+<span>class <span class="ident">StoreMetadataHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreMetadataHandler(h.StoreMetadataHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreMetadataHandler" href="handlers.html#liquer.server.handlers.StoreMetadataHandler">StoreMetadataHandler</a></li>
+<li><a title="liquer.server.handlers.GetStoreMetadataHandler" href="handlers.html#liquer.server.handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.StoreMetadataHandler" href="handlers.html#liquer.server.handlers.StoreMetadataHandler">StoreMetadataHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.StoreMetadataHandler.get" href="handlers.html#liquer.server.handlers.GetStoreMetadataHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreMetadataHandler.post" href="handlers.html#liquer.server.handlers.StoreMetadataHandler.post">post</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreRemoveHandler"><code class="flex name class">
+<span>class <span class="ident">StoreRemoveHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Handler to remove data from store</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreRemoveHandler(h.StoreRemoveHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreRemoveHandler" href="handlers.html#liquer.server.handlers.StoreRemoveHandler">StoreRemoveHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreRemovedirHandler"><code class="flex name class">
+<span>class <span class="ident">StoreRemovedirHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreRemovedirHandler(h.StoreRemovedirHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreRemovedirHandler" href="handlers.html#liquer.server.handlers.StoreRemovedirHandler">StoreRemovedirHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.StoreUploadHandler"><code class="flex name class">
+<span>class <span class="ident">StoreUploadHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreUploadHandler(h.StoreUploadHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.StoreUploadHandler" href="handlers.html#liquer.server.handlers.StoreUploadHandler">StoreUploadHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.StoreUploadHandler" href="handlers.html#liquer.server.handlers.StoreUploadHandler">StoreUploadHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.StoreUploadHandler.get" href="handlers.html#liquer.server.handlers.StoreUploadHandler.get">get</a></code></li>
+<li><code><a title="liquer.server.handlers.StoreUploadHandler.post" href="handlers.html#liquer.server.handlers.StoreUploadHandler.post">post</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.SubmitHandler"><code class="flex name class">
+<span>class <span class="ident">SubmitHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Submit query.
+Starts query in the background.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SubmitHandler(h.SubmitHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.SubmitHandler" href="handlers.html#liquer.server.handlers.SubmitHandler">SubmitHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+</dd>
+<dt id="liquer.server.tornado_handlers.WebStoreHandler"><code class="flex name class">
+<span>class <span class="ident">WebStoreHandler</span></span>
+<span>(</span><span>application: Application, request: tornado.httputil.HTTPServerRequest, **kwargs: Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for HTTP request handlers.</p>
+<p>Subclasses must define at least one of the methods defined in the
+"Entry points" section below.</p>
+<p>Applications should not construct <code>RequestHandler</code> objects
+directly and subclasses should not override <code>__init__</code> (override
+<code>~RequestHandler.initialize</code> instead).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WebStoreHandler(h.WebStoreHandler, tornado.web.RequestHandler):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.server.handlers.WebStoreHandler" href="handlers.html#liquer.server.handlers.WebStoreHandler">WebStoreHandler</a></li>
+<li>tornado.web.RequestHandler</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.server.handlers.WebStoreHandler" href="handlers.html#liquer.server.handlers.WebStoreHandler">WebStoreHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.server.handlers.WebStoreHandler.get" href="handlers.html#liquer.server.handlers.WebStoreHandler.get">get</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer.server" href="index.html">liquer.server</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.server.tornado_handlers.liquer_static_path" href="#liquer.server.tornado_handlers.liquer_static_path">liquer_static_path</a></code></li>
+<li><code><a title="liquer.server.tornado_handlers.url_mapping" href="#liquer.server.tornado_handlers.url_mapping">url_mapping</a></code></li>
+<li><code><a title="liquer.server.tornado_handlers.url_mapping_ro" href="#liquer.server.tornado_handlers.url_mapping_ro">url_mapping_ro</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.BuildHandler" href="#liquer.server.tornado_handlers.BuildHandler">BuildHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.CacheCleanHandler" href="#liquer.server.tornado_handlers.CacheCleanHandler">CacheCleanHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.CacheContainsHandler" href="#liquer.server.tornado_handlers.CacheContainsHandler">CacheContainsHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.CacheGetDataHandler" href="#liquer.server.tornado_handlers.CacheGetDataHandler">CacheGetDataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.CacheKeysHandler" href="#liquer.server.tornado_handlers.CacheKeysHandler">CacheKeysHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.CacheMetadataHandler" href="#liquer.server.tornado_handlers.CacheMetadataHandler">CacheMetadataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.CacheRemoveHandler" href="#liquer.server.tornado_handlers.CacheRemoveHandler">CacheRemoveHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.CommandsHandler" href="#liquer.server.tornado_handlers.CommandsHandler">CommandsHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.GetMetadataHandler" href="#liquer.server.tornado_handlers.GetMetadataHandler">GetMetadataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.GetStoreDataHandler" href="#liquer.server.tornado_handlers.GetStoreDataHandler">GetStoreDataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.GetStoreMetadataHandler" href="#liquer.server.tornado_handlers.GetStoreMetadataHandler">GetStoreMetadataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.GetStoredMetadataHandler" href="#liquer.server.tornado_handlers.GetStoredMetadataHandler">GetStoredMetadataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.LiquerIndexHandler" href="#liquer.server.tornado_handlers.LiquerIndexHandler">LiquerIndexHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.LiquerJsHandler" href="#liquer.server.tornado_handlers.LiquerJsHandler">LiquerJsHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.QueryHandler" href="#liquer.server.tornado_handlers.QueryHandler">QueryHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.RegisterCommandHandler" href="#liquer.server.tornado_handlers.RegisterCommandHandler">RegisterCommandHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreContainsHandler" href="#liquer.server.tornado_handlers.StoreContainsHandler">StoreContainsHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreDataHandler" href="#liquer.server.tornado_handlers.StoreDataHandler">StoreDataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreIsDirHandler" href="#liquer.server.tornado_handlers.StoreIsDirHandler">StoreIsDirHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreKeysHandler" href="#liquer.server.tornado_handlers.StoreKeysHandler">StoreKeysHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreListdirHandler" href="#liquer.server.tornado_handlers.StoreListdirHandler">StoreListdirHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreMakedirHandler" href="#liquer.server.tornado_handlers.StoreMakedirHandler">StoreMakedirHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreMetadataHandler" href="#liquer.server.tornado_handlers.StoreMetadataHandler">StoreMetadataHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreRemoveHandler" href="#liquer.server.tornado_handlers.StoreRemoveHandler">StoreRemoveHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreRemovedirHandler" href="#liquer.server.tornado_handlers.StoreRemovedirHandler">StoreRemovedirHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.StoreUploadHandler" href="#liquer.server.tornado_handlers.StoreUploadHandler">StoreUploadHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.SubmitHandler" href="#liquer.server.tornado_handlers.SubmitHandler">SubmitHandler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="liquer.server.tornado_handlers.WebStoreHandler" href="#liquer.server.tornado_handlers.WebStoreHandler">WebStoreHandler</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

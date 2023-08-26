@@ -1,0 +1,4613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>liquer.cache API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>liquer.cache</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from os import makedirs
+import os.path
+import hashlib
+import json
+from liquer.state_types import state_types_registry
+from liquer.state import State
+from liquer.parser import all_splits, encode, decode
+import logging
+import traceback
+import base64
+import numpy as np
+
+&#34;&#34;&#34;
+Cache defines a mechanism for caching state for a query (or a subquery).
+Since there is a one-to-one correspondence between a query and a state (more precisely state data),
+cache can work as a simple key-value store, using state.query as a key.
+Cache object must define three methods:
+- get - for retrieving state from a key (query); get returns None if the state cannot be recovered
+- store - for storing the state; should return True if the cache handled the storing 
+- contains - for checking the availability of a state associated with a key (query)
+
+A global cache is configured by set_cache and available via get_cache.
+From a given query, cached_part function tries to recover as much as possible from cache,
+while returning (besides the recovered state) the query remainder that needs to be evaluated. 
+&#34;&#34;&#34;
+_cache = None
+
+
+def get_cache():
+    &#34;&#34;&#34;Get global cache object&#34;&#34;&#34;
+    global _cache
+    if _cache is None:
+        _cache = NoCache()
+    return _cache
+
+
+def set_cache(cache):
+    &#34;&#34;&#34;Set global cache object&#34;&#34;&#34;
+    global _cache
+    _cache = cache
+
+
+def cached_part(query, cache=None):
+    &#34;&#34;&#34;Get cached part of the query.
+    Use either supplied cache object or global cache object (default).
+    In the process, query is into two parts: the beginning of the query
+    and the remainder. Function tries to find longest possible beginning of the query
+    which is cached, then returns the cached state and the remainder of the query.
+    (query == state.query + &#34;/&#34; + remainder)
+    &#34;&#34;&#34;
+    if cache is None:
+        cache = get_cache()
+
+    if isinstance(
+        cache, NoCache
+    ):  # Just an optimization - to avoid looping over all query splits
+        return State(), encode(decode(query))
+
+    for key, remainder in all_splits(query):
+        if key == &#34;&#34;:
+            return State(), remainder
+        if cache.contains(key):
+            state = cache.get(key)
+            if state is None:
+                continue
+            return state, remainder
+
+    # Should never get here, but this is a sensible default:
+    return State(), encode(decode(query))
+
+
+class CacheMixin:
+    &#34;&#34;&#34;Adds various cache combinator helpers&#34;&#34;&#34;
+
+    def __add__(self, cache):
+        return CacheCombine(self, cache)
+
+    def if_contains(self, *attributes):
+        &#34;Cache if state contains all attributes&#34;
+        return CacheIfHasAttributes(self, *attributes)
+
+    def if_not_contains(self, *attributes):
+        &#34;Cache if state contains none of the attributes&#34;
+        return CacheIfHasNotAttributes(self, *attributes)
+
+    def if_attribute_equal(self, attribute, value):
+        &#34;Cache if state attribute is equal to value&#34;
+        return CacheAttributeCondition(self, attribute, value, True)
+
+    def if_attribute_not_equal(self, attribute, value):
+        &#34;Cache if state attribute is not equal to value&#34;
+        return CacheAttributeCondition(self, attribute, value, False)
+
+
+class CacheCombine(CacheMixin):
+    def __init__(self, cache1, cache2):
+        self.cache1 = cache1
+        self.cache2 = cache2
+
+    def clean(self):
+        self.cache1.clean()
+        self.cache2.clean()
+
+    def get(self, key):
+        value = self.cache1.get(key)
+        if value is not None:
+            return value
+        else:
+            return self.cache2.get(key)
+
+    def get_metadata(self, key):
+        value = self.cache1.get_metadata(key)
+        if value is not None:
+            return value
+        else:
+            return self.cache2.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        if self.cache1.store(state):
+            return True
+        else:
+            return self.cache2.store(state)
+
+    def store_metadata(self, metadata):
+        if self.cache1.store_metadata(metadata):
+            return True
+        else:
+            return self.cache2.store_metadata(metadata)
+
+    def remove(self, key):
+        return self.cache1.remove(key) and self.cache2.remove(key)
+
+    def contains(self, key):
+        if self.cache1.contains(key):
+            return True
+        else:
+            return self.cache2.contains(key)
+
+    def keys(self):
+        for key in self.cache1.keys():
+            yield key
+        for key in self.cache2.keys():
+            yield key
+
+    def __str__(self):
+        return f&#34;{str(self.cache1)} + {str(self.cache2)}&#34;
+
+    def __repr__(self):
+        return f&#34;{repr(self.cache1)} + {repr(self.cache2)}&#34;
+
+
+class CacheIfHasAttributes(CacheMixin):
+    def __init__(self, cache, *attributes):
+        self.cache = cache
+        self.attributes = attributes
+
+    def clean(self):
+        self.cache.clean()
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        if all(
+            state.metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes
+        ):
+            return self.cache.store(state)
+        else:
+            return False
+
+    def store_metadata(self, metadata):
+        if all(metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes):
+            return self.cache.store_metadata(metadata)
+        else:
+            return False
+
+    def remove(self, key):
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
+
+    def __str__(self):
+        return f&#34;({str(self.cache)} containing {&#39;, &#39;.join(self.attributes)})&#34;
+
+    def __repr__(self):
+        return f&#34;CacheIfHasAttributes({repr(self.cache)}, {&#39;, &#39;.join(map(repr,self.attributes))})&#34;
+
+
+class CacheIfHasNotAttributes(CacheMixin):
+    def __init__(self, cache, *attributes):
+        self.cache = cache
+        self.attributes = attributes
+
+    def clean(self):
+        self.cache.clean()
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        if any(
+            state.metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes
+        ):
+            return False
+        else:
+            return self.cache.store(state)
+
+    def store_metadata(self, metadata):
+        if any(metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes):
+            return False
+        else:
+            return self.cache.store_metadata(metadata)
+
+    def remove(self, key):
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
+
+    def __str__(self):
+        return f&#34;({str(self.cache)} not containing {&#39;, &#39;.join(self.attributes)})&#34;
+
+    def __repr__(self):
+        return f&#34;CacheIfHasNotAttributes({repr(self.cache)}, {&#39;, &#39;.join(map(repr,self.attributes))})&#34;
+
+
+class CacheAttributeCondition(CacheMixin):
+    def __init__(self, cache, attribute, value, equals=True):
+        self.cache = cache
+        self.attribute = attribute
+        self.value = value
+        self.equals = equals
+
+    def clean(self):
+        self.cache.clean()
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        state_attribute_value = state.metadata.get(&#34;attributes&#34;, {}).get(self.attribute)
+        if self.equals:
+            if state_attribute_value == self.value:
+                return self.cache.store(state)
+        else:
+            if state_attribute_value != self.value:
+                return self.cache.store(state)
+        return False
+
+    def store_metadata(self, metadata):
+        state_attribute_value = metadata.get(&#34;attributes&#34;, {}).get(self.attribute)
+        if self.equals:
+            if state_attribute_value == self.value:
+                return self.cache.store_metadata(metadata)
+        else:
+            if state_attribute_value != self.value:
+                return self.cache.store_metadata(metadata)
+        return False
+
+    def remove(self, key):
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
+
+    def __str__(self):
+        if self.equals:
+            return f&#34;({str(self.cache)} when {self.attribute}=={self.value})&#34;
+        else:
+            return f&#34;({str(self.cache)} when {self.attribute}!={self.value})&#34;
+
+    def __repr__(self):
+        return f&#34;CacheAttributeCondition({repr(self.cache)}, {repr(self.attribute)}, {repr(self.value)}, {self.equals})&#34;
+
+
+class CacheProxy:
+    def __init__(self, cache, verbose=False):
+        self.cache = cache
+        self.verbose = verbose
+
+    def clean(self):
+        if self.verbose:
+            print(&#34;(CacheProxy) clean()&#34;)
+        self.cache.clean()
+
+    def get(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) get({key})&#34;)
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) get_metadata({key})&#34;)
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        if self.verbose:
+            print(f&#34;(CacheProxy) store()&#34;)
+        return self.cache.store(state)
+
+    def store_metadata(self, metadata):
+        if self.verbose:
+            print(f&#34;(CacheProxy) store_metadata()&#34;)
+        return self.cache.store_metadata(metadata)
+
+    def remove(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) remove({key})&#34;)
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) contains({key})&#34;)
+        return self.cache.contains(key)
+
+    def keys(self):
+        if self.verbose:
+            print(f&#34;(CacheProxy) keys()&#34;)
+        return list(self.cache.keys())
+
+    def __str__(self):
+        return f&#34;CacheProxy of {str(self.cache)}&#34;
+
+    def __repr__(self):
+        return f&#34;CacheProxy({repr(self.cache)})&#34;
+
+
+class NoCache(CacheMixin):
+    &#34;&#34;&#34;Trivial cache object which does not cache any state&#34;&#34;&#34;
+    @classmethod
+    def from_config(cls, config):
+        return cls()
+
+    def clean(self):
+        pass
+
+    def get(self, key):
+        return None
+
+    def get_metadata(self, key):
+        return None
+
+    def store(self, state):
+        return False
+
+    def store_metadata(self, state):
+        return False
+
+    def remove(self, key):
+        return False
+
+    def contains(self, key):
+        return False
+
+    def keys(self):
+        return []
+
+    def __str__(self):
+        return &#34;No cache&#34;
+
+    def __repr__(self):
+        return &#34;NoCache()&#34;
+
+
+class MemoryCache(CacheMixin):
+    &#34;&#34;&#34;Simple cache which stores all the states in a dictionary.
+    Note that continuous heavy use of the system with MemoryCache
+    may lead to filling the memory, therefore this is not ideal
+    for long running services.
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.storage = {}
+
+    @classmethod
+    def from_config(cls, config):
+        return cls()
+
+    def clean(self):
+        self.storage = {}
+
+    def get(self, key):
+        state = self.storage.get(key)
+
+        if state is None:
+            return None
+        else:
+            if state.metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+                return None
+            return state.clone()
+
+    def get_metadata(self, key):
+        state = self.storage.get(key)
+        if state is None:
+            return None
+        else:
+            return dict(**state.metadata)
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+        self.storage[state.query] = state.clone()
+        return True
+
+    def store_metadata(self, metadata):
+        key = metadata[&#34;query&#34;]
+        self.storage[key] = self.storage.get(key, State())
+        self.storage[key].metadata = metadata
+
+        return True
+
+    def remove(self, key):
+        if key in self.storage:
+            del self.storage[key]
+        return True
+
+    def contains(self, key):
+        return key in self.storage
+
+    def keys(self):
+        return self.storage.keys()
+
+    def __str__(self):
+        return &#34;Memory cache&#34;
+
+    def __repr__(self):
+        return &#34;MemoryCache()&#34;
+
+
+class FileCache(CacheMixin):
+    &#34;&#34;&#34;Simple file cache which stores all the states in files
+    in a specified directory of a local filesystem.
+    Two files are created: one for the state metadata and the other one with
+    serialized version of the state data.
+
+    Note that no mechanism for maintaining freshness or constraining file size
+    is provided. This may lead to filling the space on the filesystem,
+    therefore this is not ideal for long running public web-services.
+    &#34;&#34;&#34;
+
+    def __init__(self, path):
+        self.path = path
+        try:
+            makedirs(path)
+        except FileExistsError:
+            pass
+    @classmethod
+    def from_config(cls, config):
+        return cls(config[&#34;path&#34;])
+
+    def clean(self):
+        import glob
+
+        print(f&#34;Clean {self}&#34;)
+        for f in glob.glob(os.path.join(self.path, &#34;*&#34;)):
+            logging.debug(f&#34;Removing cache file {f}&#34;)
+            os.remove(f)
+
+    def to_path(self, key, prefix=&#34;state_&#34;, extension=&#34;json&#34;):
+        &#34;Construct file path from a key and optionally prefix and file extension.&#34;
+        m = hashlib.md5()
+        m.update(key.encode(&#34;utf-8&#34;))
+        digest = m.hexdigest()
+        return os.path.join(self.path, f&#34;{prefix}{digest}.{extension}&#34;)
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
+    def encode_metadata(self, b):
+        return self.encode(b.encode(&#34;utf-8&#34;))
+
+    def decode_metadata(self, s):
+        s = self.decode(s)
+        if isinstance(s, str):
+            return s
+        elif isinstance(s, bytes):
+            return s.decode(&#34;utf-8&#34;)
+        else:
+            raise Exception(f&#34;Unsupported type: {type(s)}&#34;)
+
+    def get(self, key):
+        metadata = self.get_metadata(key)
+        if metadata is None:
+            print(f&#34;(FileCache) Metadata missing: {key}&#34;)
+            return None
+        if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+            print(f&#34;(FileCache) Not ready {key}; &#34;, metadata.get(&#34;status&#34;))
+            return None
+        state = State()
+        state.metadata = metadata
+
+        t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+        path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+        if os.path.exists(path):
+            try:
+                state.data = t.from_bytes(self.decode(open(path, &#34;rb&#34;).read()))
+                return state
+            except:
+                traceback.print_exc()
+                logging.exception(f&#34;Cache failed to recover {key}&#34;)
+                return None
+
+    def _load_metadata(self, state_path):
+        if os.path.exists(state_path):
+            try:
+                return json.loads(self.decode_metadata(open(state_path, &#34;rb&#34;).read()))
+            except:
+                traceback.print_exc()
+                return None
+        else:
+            return None
+
+    def get_metadata(self, key):
+        return self._load_metadata(self.to_path(key))
+
+    def remove(self, key):
+        metadata = self.get_metadata(key)
+        if metadata is None:
+            return True
+        if &#34;type_identifier&#34; in metadata:
+            t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+            path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+            if os.path.exists(path):
+                os.remove(path)
+
+        state_path = self.to_path(key)
+        if os.path.exists(state_path):
+            os.remove(state_path)
+
+        return True
+
+    def contains(self, key):
+        state_path = self.to_path(key)
+        if os.path.exists(state_path):
+            state = State()
+            metadata = self._load_metadata(state_path)
+            if metadata is None:
+                return False
+            else:
+                return metadata.get(&#34;query&#34;) == key
+        else:
+            return False
+        return True
+
+    #        t = state_types_registry().get(state.type_identifier)
+    #        path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+    #        if os.path.exists(path):
+    #            return True
+    #        else:
+    #            return False
+
+    def keys(self):
+        import glob
+
+        for f in glob.glob(os.path.join(self.path, &#34;state_*.json&#34;)):
+            metadata = self._load_metadata(f)
+            if metadata is not None:
+                yield metadata[&#34;query&#34;]
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+        if not self.store_metadata(state.metadata):
+            return False
+
+        t = state_types_registry().get(state.type_identifier)
+        path = self.to_path(
+            state.query, prefix=&#34;data_&#34;, extension=t.default_extension()
+        )
+        with open(path, &#34;wb&#34;) as f:
+            try:
+                b, mime = t.as_bytes(state.data)
+                f.write(self.encode(b))
+            except NotImplementedError:
+                return False
+        return True
+
+    def store_metadata(self, metadata):
+        try:
+            with open(self.to_path(metadata[&#34;query&#34;]), &#34;wb&#34;) as f:
+                f.write(self.encode_metadata(json.dumps(metadata)))
+        except:
+            logging.exception(f&#34;Cache writing error: {metadata[&#39;query&#39;]}&#34;)
+            return False
+        return True
+
+    def __str__(self):
+        return f&#34;File cache at {self.path}&#34;
+
+    def __repr__(self):
+        return f&#34;FileCache(&#39;{self.path}&#39;)&#34;
+
+
+class StoreCache(CacheMixin):
+    &#34;&#34;&#34;Simple cache similar to FileCache, but using a store module instead of a local filesystem.&#34;&#34;&#34;
+
+    def __init__(self, store, path, flat=False):
+        self.storage = store
+        self.path = path
+        if not self.storage.is_dir(path):
+            self.storage.makedir(path)
+        self.flat = flat
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(path=config[&#34;path&#34;])
+
+    def clean(self):
+        import glob
+
+        print(f&#34;Clean {self}&#34;)
+        path = &#34;&#34; if self.path in (None, &#34;&#34;) else self.path + &#34;/&#34;
+        for key in self.storage.keys():
+            if not self.storage.is_dir(key) and key.startswith(path):
+                logging.debug(f&#34;Removing cache file {key}&#34;)
+                self.storage.remove(key)
+        for _, key in sorted((-len(k.split(&#34;/&#34;)), k) for k in self.storage.keys()):
+            if self.storage.is_dir(key) and key.startswith(path):
+                try:
+                    logging.debug(f&#34;Removing cache dir {key}&#34;)
+                    self.storage.removedir(key)
+                except:
+                    logging.debug(f&#34;Failed to remove cache dir {key}&#34;)
+
+    def to_path(self, key, prefix=&#34;0state_&#34;):
+        &#34;Construct file path from a key and optionally prefix and file extension.&#34;
+        if self.flat:
+            m = hashlib.md5()
+            m.update(key.encode(&#34;utf-8&#34;))
+            digest = m.hexdigest()
+            path = f&#34;{self.path}/{prefix}{digest}.data&#34;
+        else:
+            path = f&#34;{self.path}/{key}/{prefix}.data&#34;
+        if path.startswith(&#34;/&#34;):
+            path = path[1:]
+        return path
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
+    def encode_metadata(self, b):
+        return self.encode(b.encode(&#34;utf-8&#34;))
+
+    def decode_metadata(self, s):
+        s = self.decode(s)
+        if isinstance(s, str):
+            return s
+        elif isinstance(s, bytes):
+            return s.decode(&#34;utf-8&#34;)
+        else:
+            raise Exception(f&#34;Unsupported type: {type(s)}&#34;)
+
+    def get(self, key):
+        print(f&#34;GET {key}&#34;)
+        metadata = self.get_metadata(key)
+        print(f&#34;  METADATA {metadata}&#34;)
+        if metadata is None:
+            print(f&#34;(StoreCache) Metadata missing: {key}&#34;)
+            return None
+        if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+            print(f&#34;(StoreCache) Not ready {key}; &#34;, metadata.get(&#34;status&#34;))
+            return None
+        state = State()
+        state.metadata = metadata
+
+        t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+        path = self.to_path(key)
+        if self.storage.contains(path):
+            try:
+                state.data = t.from_bytes(self.decode(self.storage.get_bytes(path)))
+                return state
+            except:
+                traceback.print_exc()
+                logging.exception(f&#34;Cache failed to recover {key}&#34;)
+                return None
+
+    def _load_metadata(self, state_path):
+        if self.storage.contains(state_path) and not self.storage.is_dir(state_path):
+            return self.storage.get_metadata(state_path)
+
+    def get_metadata(self, key):
+        return self._load_metadata(self.to_path(key))
+
+    def remove(self, key):
+        try:
+            self.storage.remove(self.to_path(key))
+            return True
+        except:
+            traceback.print_exc()
+            return False
+
+    def contains(self, key):
+        state_path = self.to_path(key)
+        return self.storage.contains(state_path)
+
+    def keys(self):
+        path = self.path + &#34;/&#34;
+        for key in self.storage.keys():
+            if self.path in (&#34;&#34;, None) or key.startswith(path):
+                if not self.storage.is_dir(key):
+                    metadata = self.storage.get_metadata(key)
+                    if &#34;query&#34; in metadata:
+                        yield metadata[&#34;query&#34;]
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+        t = state_types_registry().get(state.type_identifier)
+        path = self.to_path(state.query)
+        if self.storage.is_supported(path):
+            try:
+                b, mime = t.as_bytes(state.data)
+                metadata = dict(**state.metadata)
+                metadata[&#34;mimetype&#34;] = mime
+                self.storage.store(path, b, metadata)
+                return True
+            except:
+                return False
+        return False
+
+    def store_metadata(self, metadata):
+        try:
+            key = self.to_path(metadata[&#34;query&#34;])
+            if self.storage.is_supported(key):
+                self.storage.store_metadata(key, metadata)
+                return True
+        except:
+            logging.exception(f&#34;Cache metadata storing error: {metadata[&#39;query&#39;]}&#34;)
+            return False
+        return False
+
+    def __str__(self):
+        return f&#34;Store cache at {self.path} based on {self.storage}&#34;
+
+    def __repr__(self):
+        return f&#34;FileCache({repr(self.storage)}, {repr(self.path)}, flat={self.flat})&#34;
+
+
+class XORFileCache(FileCache):
+    def __init__(self, path, code):
+        super().__init__(path)
+        self.code = np.frombuffer(code, dtype=np.uint8)
+
+    def code_of_length(self, n):
+        if n &lt;= len(self.code):
+            return self.code[:n]
+        else:
+            return np.tile(self.code, int(n / len(self.code)) + 1)[:n]
+
+    def encode(self, b):
+        ba = np.frombuffer(b, dtype=np.uint8)
+        return (ba ^ self.code_of_length(len(b))).tobytes()
+
+    def decode(self, s):
+        return self.encode(s)
+
+
+class FernetFileCache(FileCache):
+    def __init__(self, path, fernet_key):
+        from cryptography.fernet import Fernet
+
+        super().__init__(path)
+        self.fernet = Fernet(fernet_key)
+
+    def encode(self, b):
+        return self.fernet.encrypt(b)
+
+    def decode(self, s):
+        return self.fernet.decrypt(s)
+
+
+class SQLCache(CacheMixin):
+    &#34;&#34;&#34;Store cache in a SQL database.
+    Tested with sqlite3.
+    For databases without BLOB support (e.g. Hive) use SQLStringCache.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        connection=None,
+        table=&#34;liquer_cache&#34;,
+        metadata_type=&#34;TEXT&#34;,
+        state_data_type=&#34;BLOB&#34;,
+        delete_before_insert=False,
+        store_metadata_enabled=True,
+    ):
+        self.connection = connection
+        self.table = table
+        self.metadata_type = metadata_type
+        self.state_data_type = state_data_type
+        self.delete_before_insert = delete_before_insert
+        self._available_keys = None
+        self.store_metadata_enabled = store_metadata_enabled
+        self.init()
+
+    def init(self):
+        try:
+            query = f&#34;&#34;&#34;CREATE TABLE {self.table} (
+                query         VARCHAR(2000),
+                metadata      {self.metadata_type},
+                state_data    {self.state_data_type}
+            )
+            &#34;&#34;&#34;
+            print(query)
+            logging.debug(f&#34;CACHE TABLE: {query}&#34;)
+            c = self.connection.cursor()
+            c.execute(query)
+        except:
+            traceback.print_exc()
+
+    @classmethod
+    def from_sqlite(cls, path=&#34;:memory:&#34;, table=&#34;liquer_cache&#34;):
+        import sqlite3
+
+        connection = sqlite3.connect(path)
+        return cls(connection=connection, table=table, delete_before_insert=True)
+
+    @property
+    def available_keys(self):
+        if self._available_keys is None:
+            c = self.connection.cursor()
+            c.execute(
+                f&#34;&#34;&#34;
+            SELECT
+              query
+            FROM {self.table}
+            &#34;&#34;&#34;
+            )
+
+            try:
+                self._available_keys = [x[0] for x in c.fetchall()]
+            except:
+                traceback.print_exc()
+                print(&#34;SQL available_keys failed&#34;)
+                return None
+        return self._available_keys
+
+    def clean(self):
+        c = self.connection.cursor()
+        c.execute(f&#34;&#34;&#34;DROP TABLE {self.table}&#34;&#34;&#34;)
+        self._available_keys = []
+        self.init()
+        self.connection.commit()
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
+    def get(self, key):
+        c = self.connection.cursor()
+        c.execute(
+            f&#34;&#34;&#34;
+        SELECT
+          metadata,
+          state_data
+        FROM {self.table}
+        WHERE query=?
+        &#34;&#34;&#34;,
+            [key],
+        )
+
+        try:
+            metadata, data = c.fetchone()
+            metadata = json.loads(metadata)
+            if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+                return None
+        except:
+            return None
+        try:
+            state = State()
+            state = state.from_dict(metadata)
+
+            t = state_types_registry().get(state.type_identifier)
+            state.data = t.from_bytes(self.decode(data))
+            return state
+        except:
+            logging.exception(f&#34;Cache failed to recover {key}&#34;)
+            return None
+
+    def get_metadata(self, key):
+        c = self.connection.cursor()
+        c.execute(
+            f&#34;&#34;&#34;
+        SELECT
+          metadata
+        FROM {self.table}
+        WHERE query=?
+        &#34;&#34;&#34;,
+            [key],
+        )
+
+        try:
+            (metadata,) = c.fetchone()
+        except:
+            return None
+        try:
+            return json.loads(metadata)
+        except:
+            logging.exception(f&#34;Cache failed to recover metadata {key}&#34;)
+            return None
+
+    def contains(self, key):
+        return key in self.available_keys
+
+    def keys(self):
+        return self.available_keys
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+        key = state.query
+        metadata = json.dumps(state.as_dict())
+
+        t = state_types_registry().get(state.type_identifier)
+        try:
+            b, mime = t.as_bytes(state.data)
+        except NotImplementedError:
+            return False
+        self._available_keys = None
+        if self.delete_before_insert:
+            self.connection.execute(f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key])
+        self.connection.execute(
+            f&#34;INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)&#34;,
+            [key, metadata, self.encode(b)],
+        )
+        self.connection.commit()
+        return True
+
+    def store_metadata(self, metadata):
+        if self.store_metadata_enabled:
+            key = metadata[&#34;query&#34;]
+            metadata = json.dumps(metadata)
+
+            self._available_keys = None
+            if self.delete_before_insert:
+                self.connection.execute(
+                    f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key]
+                )
+            self.connection.execute(
+                f&#34;INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)&#34;,
+                [key, metadata, None],
+            )
+            self.connection.commit()
+            return True
+        else:
+            return False
+
+    def remove(self, key):
+        self.connection.execute(f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key])
+        self.connection.commit()
+        return True
+
+    def __str__(self):
+        return f&#34;SQL cache {self.table}&#34;
+
+    def __repr__(self):
+        return f&#34;SQLCache(table=&#39;{self.table}&#39;)&#34;
+
+
+class SQLStringCache(SQLCache):
+    &#34;&#34;&#34;Store cache in a SQL database.
+    Data are encoded into string before storing in the database.
+    This is suitable for databases without BLOB support (e.g. Hive).
+    By default base64 encoding is used.
+    To change the encoding override encode and decode methods.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        connection=None,
+        table=&#34;liquer_cache&#34;,
+        text_type=&#34;STRING&#34;,
+        delete_before_insert=False,
+    ):
+        super().__init__(
+            connection=connection,
+            table=table,
+            metadata_type=text_type,
+            state_data_type=text_type,
+            delete_before_insert=delete_before_insert,
+        )
+
+    @classmethod
+    def from_sqlite(cls, path=&#34;:memory:&#34;, table=&#34;liquer_cache&#34;):
+        import sqlite3
+
+        connection = sqlite3.connect(path)
+        return cls(connection=connection, table=table, text_type=&#34;TEXT&#34;)
+
+    def encode(self, b):
+        return base64.b64encode(b)
+
+    def decode(self, s):
+        return base64.b64decode(s)
+
+    def __str__(self):
+        return f&#34;SQL string cache {self.table}&#34;
+
+    def __repr__(self):
+        return f&#34;SQLStringCache(table=&#39;{self.table}&#39;)&#34;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.cache.cached_part"><code class="name flex">
+<span>def <span class="ident">cached_part</span></span>(<span>query, cache=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get cached part of the query.
+Use either supplied cache object or global cache object (default).
+In the process, query is into two parts: the beginning of the query
+and the remainder. Function tries to find longest possible beginning of the query
+which is cached, then returns the cached state and the remainder of the query.
+(query == state.query + "/" + remainder)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cached_part(query, cache=None):
+    &#34;&#34;&#34;Get cached part of the query.
+    Use either supplied cache object or global cache object (default).
+    In the process, query is into two parts: the beginning of the query
+    and the remainder. Function tries to find longest possible beginning of the query
+    which is cached, then returns the cached state and the remainder of the query.
+    (query == state.query + &#34;/&#34; + remainder)
+    &#34;&#34;&#34;
+    if cache is None:
+        cache = get_cache()
+
+    if isinstance(
+        cache, NoCache
+    ):  # Just an optimization - to avoid looping over all query splits
+        return State(), encode(decode(query))
+
+    for key, remainder in all_splits(query):
+        if key == &#34;&#34;:
+            return State(), remainder
+        if cache.contains(key):
+            state = cache.get(key)
+            if state is None:
+                continue
+            return state, remainder
+
+    # Should never get here, but this is a sensible default:
+    return State(), encode(decode(query))</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.get_cache"><code class="name flex">
+<span>def <span class="ident">get_cache</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get global cache object</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cache():
+    &#34;&#34;&#34;Get global cache object&#34;&#34;&#34;
+    global _cache
+    if _cache is None:
+        _cache = NoCache()
+    return _cache</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.set_cache"><code class="name flex">
+<span>def <span class="ident">set_cache</span></span>(<span>cache)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set global cache object</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_cache(cache):
+    &#34;&#34;&#34;Set global cache object&#34;&#34;&#34;
+    global _cache
+    _cache = cache</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="liquer.cache.CacheAttributeCondition"><code class="flex name class">
+<span>class <span class="ident">CacheAttributeCondition</span></span>
+<span>(</span><span>cache, attribute, value, equals=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds various cache combinator helpers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheAttributeCondition(CacheMixin):
+    def __init__(self, cache, attribute, value, equals=True):
+        self.cache = cache
+        self.attribute = attribute
+        self.value = value
+        self.equals = equals
+
+    def clean(self):
+        self.cache.clean()
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        state_attribute_value = state.metadata.get(&#34;attributes&#34;, {}).get(self.attribute)
+        if self.equals:
+            if state_attribute_value == self.value:
+                return self.cache.store(state)
+        else:
+            if state_attribute_value != self.value:
+                return self.cache.store(state)
+        return False
+
+    def store_metadata(self, metadata):
+        state_attribute_value = metadata.get(&#34;attributes&#34;, {}).get(self.attribute)
+        if self.equals:
+            if state_attribute_value == self.value:
+                return self.cache.store_metadata(metadata)
+        else:
+            if state_attribute_value != self.value:
+                return self.cache.store_metadata(metadata)
+        return False
+
+    def remove(self, key):
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
+
+    def __str__(self):
+        if self.equals:
+            return f&#34;({str(self.cache)} when {self.attribute}=={self.value})&#34;
+        else:
+            return f&#34;({str(self.cache)} when {self.attribute}!={self.value})&#34;
+
+    def __repr__(self):
+        return f&#34;CacheAttributeCondition({repr(self.cache)}, {repr(self.attribute)}, {repr(self.value)}, {self.equals})&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.CacheAttributeCondition.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    self.cache.clean()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheAttributeCondition.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    return self.cache.contains(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheAttributeCondition.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    return self.cache.get(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheAttributeCondition.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    return self.cache.get_metadata(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheAttributeCondition.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return self.cache.keys()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheAttributeCondition.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    return self.cache.remove(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheAttributeCondition.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    self.remove(state.query)
+    state_attribute_value = state.metadata.get(&#34;attributes&#34;, {}).get(self.attribute)
+    if self.equals:
+        if state_attribute_value == self.value:
+            return self.cache.store(state)
+    else:
+        if state_attribute_value != self.value:
+            return self.cache.store(state)
+    return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheAttributeCondition.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    state_attribute_value = metadata.get(&#34;attributes&#34;, {}).get(self.attribute)
+    if self.equals:
+        if state_attribute_value == self.value:
+            return self.cache.store_metadata(metadata)
+    else:
+        if state_attribute_value != self.value:
+            return self.cache.store_metadata(metadata)
+    return False</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.CacheCombine"><code class="flex name class">
+<span>class <span class="ident">CacheCombine</span></span>
+<span>(</span><span>cache1, cache2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds various cache combinator helpers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheCombine(CacheMixin):
+    def __init__(self, cache1, cache2):
+        self.cache1 = cache1
+        self.cache2 = cache2
+
+    def clean(self):
+        self.cache1.clean()
+        self.cache2.clean()
+
+    def get(self, key):
+        value = self.cache1.get(key)
+        if value is not None:
+            return value
+        else:
+            return self.cache2.get(key)
+
+    def get_metadata(self, key):
+        value = self.cache1.get_metadata(key)
+        if value is not None:
+            return value
+        else:
+            return self.cache2.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        if self.cache1.store(state):
+            return True
+        else:
+            return self.cache2.store(state)
+
+    def store_metadata(self, metadata):
+        if self.cache1.store_metadata(metadata):
+            return True
+        else:
+            return self.cache2.store_metadata(metadata)
+
+    def remove(self, key):
+        return self.cache1.remove(key) and self.cache2.remove(key)
+
+    def contains(self, key):
+        if self.cache1.contains(key):
+            return True
+        else:
+            return self.cache2.contains(key)
+
+    def keys(self):
+        for key in self.cache1.keys():
+            yield key
+        for key in self.cache2.keys():
+            yield key
+
+    def __str__(self):
+        return f&#34;{str(self.cache1)} + {str(self.cache2)}&#34;
+
+    def __repr__(self):
+        return f&#34;{repr(self.cache1)} + {repr(self.cache2)}&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.CacheCombine.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    self.cache1.clean()
+    self.cache2.clean()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheCombine.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    if self.cache1.contains(key):
+        return True
+    else:
+        return self.cache2.contains(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheCombine.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    value = self.cache1.get(key)
+    if value is not None:
+        return value
+    else:
+        return self.cache2.get(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheCombine.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    value = self.cache1.get_metadata(key)
+    if value is not None:
+        return value
+    else:
+        return self.cache2.get_metadata(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheCombine.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    for key in self.cache1.keys():
+        yield key
+    for key in self.cache2.keys():
+        yield key</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheCombine.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    return self.cache1.remove(key) and self.cache2.remove(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheCombine.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    self.remove(state.query)
+    if self.cache1.store(state):
+        return True
+    else:
+        return self.cache2.store(state)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheCombine.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    if self.cache1.store_metadata(metadata):
+        return True
+    else:
+        return self.cache2.store_metadata(metadata)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes"><code class="flex name class">
+<span>class <span class="ident">CacheIfHasAttributes</span></span>
+<span>(</span><span>cache, *attributes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds various cache combinator helpers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheIfHasAttributes(CacheMixin):
+    def __init__(self, cache, *attributes):
+        self.cache = cache
+        self.attributes = attributes
+
+    def clean(self):
+        self.cache.clean()
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        if all(
+            state.metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes
+        ):
+            return self.cache.store(state)
+        else:
+            return False
+
+    def store_metadata(self, metadata):
+        if all(metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes):
+            return self.cache.store_metadata(metadata)
+        else:
+            return False
+
+    def remove(self, key):
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
+
+    def __str__(self):
+        return f&#34;({str(self.cache)} containing {&#39;, &#39;.join(self.attributes)})&#34;
+
+    def __repr__(self):
+        return f&#34;CacheIfHasAttributes({repr(self.cache)}, {&#39;, &#39;.join(map(repr,self.attributes))})&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.CacheIfHasAttributes.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    self.cache.clean()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    return self.cache.contains(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    return self.cache.get(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    return self.cache.get_metadata(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return self.cache.keys()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    return self.cache.remove(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    self.remove(state.query)
+    if all(
+        state.metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes
+    ):
+        return self.cache.store(state)
+    else:
+        return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasAttributes.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    if all(metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes):
+        return self.cache.store_metadata(metadata)
+    else:
+        return False</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes"><code class="flex name class">
+<span>class <span class="ident">CacheIfHasNotAttributes</span></span>
+<span>(</span><span>cache, *attributes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds various cache combinator helpers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheIfHasNotAttributes(CacheMixin):
+    def __init__(self, cache, *attributes):
+        self.cache = cache
+        self.attributes = attributes
+
+    def clean(self):
+        self.cache.clean()
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        self.remove(state.query)
+        if any(
+            state.metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes
+        ):
+            return False
+        else:
+            return self.cache.store(state)
+
+    def store_metadata(self, metadata):
+        if any(metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes):
+            return False
+        else:
+            return self.cache.store_metadata(metadata)
+
+    def remove(self, key):
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        return self.cache.contains(key)
+
+    def keys(self):
+        return self.cache.keys()
+
+    def __str__(self):
+        return f&#34;({str(self.cache)} not containing {&#39;, &#39;.join(self.attributes)})&#34;
+
+    def __repr__(self):
+        return f&#34;CacheIfHasNotAttributes({repr(self.cache)}, {&#39;, &#39;.join(map(repr,self.attributes))})&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.CacheIfHasNotAttributes.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    self.cache.clean()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    return self.cache.contains(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    return self.cache.get(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    return self.cache.get_metadata(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return self.cache.keys()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    return self.cache.remove(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    self.remove(state.query)
+    if any(
+        state.metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes
+    ):
+        return False
+    else:
+        return self.cache.store(state)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheIfHasNotAttributes.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    if any(metadata.get(&#34;attributes&#34;, {}).get(a, False) for a in self.attributes):
+        return False
+    else:
+        return self.cache.store_metadata(metadata)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.CacheMixin"><code class="flex name class">
+<span>class <span class="ident">CacheMixin</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds various cache combinator helpers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheMixin:
+    &#34;&#34;&#34;Adds various cache combinator helpers&#34;&#34;&#34;
+
+    def __add__(self, cache):
+        return CacheCombine(self, cache)
+
+    def if_contains(self, *attributes):
+        &#34;Cache if state contains all attributes&#34;
+        return CacheIfHasAttributes(self, *attributes)
+
+    def if_not_contains(self, *attributes):
+        &#34;Cache if state contains none of the attributes&#34;
+        return CacheIfHasNotAttributes(self, *attributes)
+
+    def if_attribute_equal(self, attribute, value):
+        &#34;Cache if state attribute is equal to value&#34;
+        return CacheAttributeCondition(self, attribute, value, True)
+
+    def if_attribute_not_equal(self, attribute, value):
+        &#34;Cache if state attribute is not equal to value&#34;
+        return CacheAttributeCondition(self, attribute, value, False)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheAttributeCondition" href="#liquer.cache.CacheAttributeCondition">CacheAttributeCondition</a></li>
+<li><a title="liquer.cache.CacheCombine" href="#liquer.cache.CacheCombine">CacheCombine</a></li>
+<li><a title="liquer.cache.CacheIfHasAttributes" href="#liquer.cache.CacheIfHasAttributes">CacheIfHasAttributes</a></li>
+<li><a title="liquer.cache.CacheIfHasNotAttributes" href="#liquer.cache.CacheIfHasNotAttributes">CacheIfHasNotAttributes</a></li>
+<li><a title="liquer.cache.FileCache" href="#liquer.cache.FileCache">FileCache</a></li>
+<li><a title="liquer.cache.MemoryCache" href="#liquer.cache.MemoryCache">MemoryCache</a></li>
+<li><a title="liquer.cache.NoCache" href="#liquer.cache.NoCache">NoCache</a></li>
+<li><a title="liquer.cache.SQLCache" href="#liquer.cache.SQLCache">SQLCache</a></li>
+<li><a title="liquer.cache.StoreCache" href="#liquer.cache.StoreCache">StoreCache</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.CacheMixin.if_attribute_equal"><code class="name flex">
+<span>def <span class="ident">if_attribute_equal</span></span>(<span>self, attribute, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cache if state attribute is equal to value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def if_attribute_equal(self, attribute, value):
+    &#34;Cache if state attribute is equal to value&#34;
+    return CacheAttributeCondition(self, attribute, value, True)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheMixin.if_attribute_not_equal"><code class="name flex">
+<span>def <span class="ident">if_attribute_not_equal</span></span>(<span>self, attribute, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cache if state attribute is not equal to value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def if_attribute_not_equal(self, attribute, value):
+    &#34;Cache if state attribute is not equal to value&#34;
+    return CacheAttributeCondition(self, attribute, value, False)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheMixin.if_contains"><code class="name flex">
+<span>def <span class="ident">if_contains</span></span>(<span>self, *attributes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cache if state contains all attributes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def if_contains(self, *attributes):
+    &#34;Cache if state contains all attributes&#34;
+    return CacheIfHasAttributes(self, *attributes)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheMixin.if_not_contains"><code class="name flex">
+<span>def <span class="ident">if_not_contains</span></span>(<span>self, *attributes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cache if state contains none of the attributes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def if_not_contains(self, *attributes):
+    &#34;Cache if state contains none of the attributes&#34;
+    return CacheIfHasNotAttributes(self, *attributes)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.cache.CacheProxy"><code class="flex name class">
+<span>class <span class="ident">CacheProxy</span></span>
+<span>(</span><span>cache, verbose=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CacheProxy:
+    def __init__(self, cache, verbose=False):
+        self.cache = cache
+        self.verbose = verbose
+
+    def clean(self):
+        if self.verbose:
+            print(&#34;(CacheProxy) clean()&#34;)
+        self.cache.clean()
+
+    def get(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) get({key})&#34;)
+        return self.cache.get(key)
+
+    def get_metadata(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) get_metadata({key})&#34;)
+        return self.cache.get_metadata(key)
+
+    def store(self, state):
+        if self.verbose:
+            print(f&#34;(CacheProxy) store()&#34;)
+        return self.cache.store(state)
+
+    def store_metadata(self, metadata):
+        if self.verbose:
+            print(f&#34;(CacheProxy) store_metadata()&#34;)
+        return self.cache.store_metadata(metadata)
+
+    def remove(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) remove({key})&#34;)
+        return self.cache.remove(key)
+
+    def contains(self, key):
+        if self.verbose:
+            print(f&#34;(CacheProxy) contains({key})&#34;)
+        return self.cache.contains(key)
+
+    def keys(self):
+        if self.verbose:
+            print(f&#34;(CacheProxy) keys()&#34;)
+        return list(self.cache.keys())
+
+    def __str__(self):
+        return f&#34;CacheProxy of {str(self.cache)}&#34;
+
+    def __repr__(self):
+        return f&#34;CacheProxy({repr(self.cache)})&#34;</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.CacheProxy.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    if self.verbose:
+        print(&#34;(CacheProxy) clean()&#34;)
+    self.cache.clean()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheProxy.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    if self.verbose:
+        print(f&#34;(CacheProxy) contains({key})&#34;)
+    return self.cache.contains(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheProxy.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    if self.verbose:
+        print(f&#34;(CacheProxy) get({key})&#34;)
+    return self.cache.get(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheProxy.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    if self.verbose:
+        print(f&#34;(CacheProxy) get_metadata({key})&#34;)
+    return self.cache.get_metadata(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheProxy.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    if self.verbose:
+        print(f&#34;(CacheProxy) keys()&#34;)
+    return list(self.cache.keys())</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheProxy.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    if self.verbose:
+        print(f&#34;(CacheProxy) remove({key})&#34;)
+    return self.cache.remove(key)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheProxy.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    if self.verbose:
+        print(f&#34;(CacheProxy) store()&#34;)
+    return self.cache.store(state)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.CacheProxy.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    if self.verbose:
+        print(f&#34;(CacheProxy) store_metadata()&#34;)
+    return self.cache.store_metadata(metadata)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="liquer.cache.FernetFileCache"><code class="flex name class">
+<span>class <span class="ident">FernetFileCache</span></span>
+<span>(</span><span>path, fernet_key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple file cache which stores all the states in files
+in a specified directory of a local filesystem.
+Two files are created: one for the state metadata and the other one with
+serialized version of the state data.</p>
+<p>Note that no mechanism for maintaining freshness or constraining file size
+is provided. This may lead to filling the space on the filesystem,
+therefore this is not ideal for long running public web-services.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FernetFileCache(FileCache):
+    def __init__(self, path, fernet_key):
+        from cryptography.fernet import Fernet
+
+        super().__init__(path)
+        self.fernet = Fernet(fernet_key)
+
+    def encode(self, b):
+        return self.fernet.encrypt(b)
+
+    def decode(self, s):
+        return self.fernet.decrypt(s)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.FileCache" href="#liquer.cache.FileCache">FileCache</a></li>
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.FernetFileCache.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, s):
+    return self.fernet.decrypt(s)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FernetFileCache.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, b):
+    return self.fernet.encrypt(b)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.FileCache" href="#liquer.cache.FileCache">FileCache</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.FileCache.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.FileCache.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.FileCache.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.FileCache.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+<li><code><a title="liquer.cache.FileCache.to_path" href="#liquer.cache.FileCache.to_path">to_path</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.FileCache"><code class="flex name class">
+<span>class <span class="ident">FileCache</span></span>
+<span>(</span><span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple file cache which stores all the states in files
+in a specified directory of a local filesystem.
+Two files are created: one for the state metadata and the other one with
+serialized version of the state data.</p>
+<p>Note that no mechanism for maintaining freshness or constraining file size
+is provided. This may lead to filling the space on the filesystem,
+therefore this is not ideal for long running public web-services.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FileCache(CacheMixin):
+    &#34;&#34;&#34;Simple file cache which stores all the states in files
+    in a specified directory of a local filesystem.
+    Two files are created: one for the state metadata and the other one with
+    serialized version of the state data.
+
+    Note that no mechanism for maintaining freshness or constraining file size
+    is provided. This may lead to filling the space on the filesystem,
+    therefore this is not ideal for long running public web-services.
+    &#34;&#34;&#34;
+
+    def __init__(self, path):
+        self.path = path
+        try:
+            makedirs(path)
+        except FileExistsError:
+            pass
+    @classmethod
+    def from_config(cls, config):
+        return cls(config[&#34;path&#34;])
+
+    def clean(self):
+        import glob
+
+        print(f&#34;Clean {self}&#34;)
+        for f in glob.glob(os.path.join(self.path, &#34;*&#34;)):
+            logging.debug(f&#34;Removing cache file {f}&#34;)
+            os.remove(f)
+
+    def to_path(self, key, prefix=&#34;state_&#34;, extension=&#34;json&#34;):
+        &#34;Construct file path from a key and optionally prefix and file extension.&#34;
+        m = hashlib.md5()
+        m.update(key.encode(&#34;utf-8&#34;))
+        digest = m.hexdigest()
+        return os.path.join(self.path, f&#34;{prefix}{digest}.{extension}&#34;)
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
+    def encode_metadata(self, b):
+        return self.encode(b.encode(&#34;utf-8&#34;))
+
+    def decode_metadata(self, s):
+        s = self.decode(s)
+        if isinstance(s, str):
+            return s
+        elif isinstance(s, bytes):
+            return s.decode(&#34;utf-8&#34;)
+        else:
+            raise Exception(f&#34;Unsupported type: {type(s)}&#34;)
+
+    def get(self, key):
+        metadata = self.get_metadata(key)
+        if metadata is None:
+            print(f&#34;(FileCache) Metadata missing: {key}&#34;)
+            return None
+        if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+            print(f&#34;(FileCache) Not ready {key}; &#34;, metadata.get(&#34;status&#34;))
+            return None
+        state = State()
+        state.metadata = metadata
+
+        t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+        path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+        if os.path.exists(path):
+            try:
+                state.data = t.from_bytes(self.decode(open(path, &#34;rb&#34;).read()))
+                return state
+            except:
+                traceback.print_exc()
+                logging.exception(f&#34;Cache failed to recover {key}&#34;)
+                return None
+
+    def _load_metadata(self, state_path):
+        if os.path.exists(state_path):
+            try:
+                return json.loads(self.decode_metadata(open(state_path, &#34;rb&#34;).read()))
+            except:
+                traceback.print_exc()
+                return None
+        else:
+            return None
+
+    def get_metadata(self, key):
+        return self._load_metadata(self.to_path(key))
+
+    def remove(self, key):
+        metadata = self.get_metadata(key)
+        if metadata is None:
+            return True
+        if &#34;type_identifier&#34; in metadata:
+            t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+            path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+            if os.path.exists(path):
+                os.remove(path)
+
+        state_path = self.to_path(key)
+        if os.path.exists(state_path):
+            os.remove(state_path)
+
+        return True
+
+    def contains(self, key):
+        state_path = self.to_path(key)
+        if os.path.exists(state_path):
+            state = State()
+            metadata = self._load_metadata(state_path)
+            if metadata is None:
+                return False
+            else:
+                return metadata.get(&#34;query&#34;) == key
+        else:
+            return False
+        return True
+
+    #        t = state_types_registry().get(state.type_identifier)
+    #        path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+    #        if os.path.exists(path):
+    #            return True
+    #        else:
+    #            return False
+
+    def keys(self):
+        import glob
+
+        for f in glob.glob(os.path.join(self.path, &#34;state_*.json&#34;)):
+            metadata = self._load_metadata(f)
+            if metadata is not None:
+                yield metadata[&#34;query&#34;]
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+        if not self.store_metadata(state.metadata):
+            return False
+
+        t = state_types_registry().get(state.type_identifier)
+        path = self.to_path(
+            state.query, prefix=&#34;data_&#34;, extension=t.default_extension()
+        )
+        with open(path, &#34;wb&#34;) as f:
+            try:
+                b, mime = t.as_bytes(state.data)
+                f.write(self.encode(b))
+            except NotImplementedError:
+                return False
+        return True
+
+    def store_metadata(self, metadata):
+        try:
+            with open(self.to_path(metadata[&#34;query&#34;]), &#34;wb&#34;) as f:
+                f.write(self.encode_metadata(json.dumps(metadata)))
+        except:
+            logging.exception(f&#34;Cache writing error: {metadata[&#39;query&#39;]}&#34;)
+            return False
+        return True
+
+    def __str__(self):
+        return f&#34;File cache at {self.path}&#34;
+
+    def __repr__(self):
+        return f&#34;FileCache(&#39;{self.path}&#39;)&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.FernetFileCache" href="#liquer.cache.FernetFileCache">FernetFileCache</a></li>
+<li><a title="liquer.cache.XORFileCache" href="#liquer.cache.XORFileCache">XORFileCache</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.cache.FileCache.from_config"><code class="name flex">
+<span>def <span class="ident">from_config</span></span>(<span>config)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_config(cls, config):
+    return cls(config[&#34;path&#34;])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.FileCache.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    import glob
+
+    print(f&#34;Clean {self}&#34;)
+    for f in glob.glob(os.path.join(self.path, &#34;*&#34;)):
+        logging.debug(f&#34;Removing cache file {f}&#34;)
+        os.remove(f)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    state_path = self.to_path(key)
+    if os.path.exists(state_path):
+        state = State()
+        metadata = self._load_metadata(state_path)
+        if metadata is None:
+            return False
+        else:
+            return metadata.get(&#34;query&#34;) == key
+    else:
+        return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, s):
+    return s</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.decode_metadata"><code class="name flex">
+<span>def <span class="ident">decode_metadata</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_metadata(self, s):
+    s = self.decode(s)
+    if isinstance(s, str):
+        return s
+    elif isinstance(s, bytes):
+        return s.decode(&#34;utf-8&#34;)
+    else:
+        raise Exception(f&#34;Unsupported type: {type(s)}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, b):
+    return b</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.encode_metadata"><code class="name flex">
+<span>def <span class="ident">encode_metadata</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_metadata(self, b):
+    return self.encode(b.encode(&#34;utf-8&#34;))</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    metadata = self.get_metadata(key)
+    if metadata is None:
+        print(f&#34;(FileCache) Metadata missing: {key}&#34;)
+        return None
+    if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+        print(f&#34;(FileCache) Not ready {key}; &#34;, metadata.get(&#34;status&#34;))
+        return None
+    state = State()
+    state.metadata = metadata
+
+    t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+    path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+    if os.path.exists(path):
+        try:
+            state.data = t.from_bytes(self.decode(open(path, &#34;rb&#34;).read()))
+            return state
+        except:
+            traceback.print_exc()
+            logging.exception(f&#34;Cache failed to recover {key}&#34;)
+            return None</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    return self._load_metadata(self.to_path(key))</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    import glob
+
+    for f in glob.glob(os.path.join(self.path, &#34;state_*.json&#34;)):
+        metadata = self._load_metadata(f)
+        if metadata is not None:
+            yield metadata[&#34;query&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    metadata = self.get_metadata(key)
+    if metadata is None:
+        return True
+    if &#34;type_identifier&#34; in metadata:
+        t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+        path = self.to_path(key, prefix=&#34;data_&#34;, extension=t.default_extension())
+        if os.path.exists(path):
+            os.remove(path)
+
+    state_path = self.to_path(key)
+    if os.path.exists(state_path):
+        os.remove(state_path)
+
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    if state.is_error:
+        return None
+    state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+    if not self.store_metadata(state.metadata):
+        return False
+
+    t = state_types_registry().get(state.type_identifier)
+    path = self.to_path(
+        state.query, prefix=&#34;data_&#34;, extension=t.default_extension()
+    )
+    with open(path, &#34;wb&#34;) as f:
+        try:
+            b, mime = t.as_bytes(state.data)
+            f.write(self.encode(b))
+        except NotImplementedError:
+            return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    try:
+        with open(self.to_path(metadata[&#34;query&#34;]), &#34;wb&#34;) as f:
+            f.write(self.encode_metadata(json.dumps(metadata)))
+    except:
+        logging.exception(f&#34;Cache writing error: {metadata[&#39;query&#39;]}&#34;)
+        return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.FileCache.to_path"><code class="name flex">
+<span>def <span class="ident">to_path</span></span>(<span>self, key, prefix='state_', extension='json')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Construct file path from a key and optionally prefix and file extension.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_path(self, key, prefix=&#34;state_&#34;, extension=&#34;json&#34;):
+    &#34;Construct file path from a key and optionally prefix and file extension.&#34;
+    m = hashlib.md5()
+    m.update(key.encode(&#34;utf-8&#34;))
+    digest = m.hexdigest()
+    return os.path.join(self.path, f&#34;{prefix}{digest}.{extension}&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.MemoryCache"><code class="flex name class">
+<span>class <span class="ident">MemoryCache</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple cache which stores all the states in a dictionary.
+Note that continuous heavy use of the system with MemoryCache
+may lead to filling the memory, therefore this is not ideal
+for long running services.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MemoryCache(CacheMixin):
+    &#34;&#34;&#34;Simple cache which stores all the states in a dictionary.
+    Note that continuous heavy use of the system with MemoryCache
+    may lead to filling the memory, therefore this is not ideal
+    for long running services.
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.storage = {}
+
+    @classmethod
+    def from_config(cls, config):
+        return cls()
+
+    def clean(self):
+        self.storage = {}
+
+    def get(self, key):
+        state = self.storage.get(key)
+
+        if state is None:
+            return None
+        else:
+            if state.metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+                return None
+            return state.clone()
+
+    def get_metadata(self, key):
+        state = self.storage.get(key)
+        if state is None:
+            return None
+        else:
+            return dict(**state.metadata)
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+        self.storage[state.query] = state.clone()
+        return True
+
+    def store_metadata(self, metadata):
+        key = metadata[&#34;query&#34;]
+        self.storage[key] = self.storage.get(key, State())
+        self.storage[key].metadata = metadata
+
+        return True
+
+    def remove(self, key):
+        if key in self.storage:
+            del self.storage[key]
+        return True
+
+    def contains(self, key):
+        return key in self.storage
+
+    def keys(self):
+        return self.storage.keys()
+
+    def __str__(self):
+        return &#34;Memory cache&#34;
+
+    def __repr__(self):
+        return &#34;MemoryCache()&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.cache.MemoryCache.from_config"><code class="name flex">
+<span>def <span class="ident">from_config</span></span>(<span>config)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_config(cls, config):
+    return cls()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.MemoryCache.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    self.storage = {}</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.MemoryCache.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    return key in self.storage</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.MemoryCache.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    state = self.storage.get(key)
+
+    if state is None:
+        return None
+    else:
+        if state.metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+            return None
+        return state.clone()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.MemoryCache.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    state = self.storage.get(key)
+    if state is None:
+        return None
+    else:
+        return dict(**state.metadata)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.MemoryCache.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return self.storage.keys()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.MemoryCache.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    if key in self.storage:
+        del self.storage[key]
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.MemoryCache.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    if state.is_error:
+        return None
+    state.metadata[&#34;status&#34;] = &#34;ready&#34;
+    self.storage[state.query] = state.clone()
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.MemoryCache.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    key = metadata[&#34;query&#34;]
+    self.storage[key] = self.storage.get(key, State())
+    self.storage[key].metadata = metadata
+
+    return True</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.NoCache"><code class="flex name class">
+<span>class <span class="ident">NoCache</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Trivial cache object which does not cache any state</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NoCache(CacheMixin):
+    &#34;&#34;&#34;Trivial cache object which does not cache any state&#34;&#34;&#34;
+    @classmethod
+    def from_config(cls, config):
+        return cls()
+
+    def clean(self):
+        pass
+
+    def get(self, key):
+        return None
+
+    def get_metadata(self, key):
+        return None
+
+    def store(self, state):
+        return False
+
+    def store_metadata(self, state):
+        return False
+
+    def remove(self, key):
+        return False
+
+    def contains(self, key):
+        return False
+
+    def keys(self):
+        return []
+
+    def __str__(self):
+        return &#34;No cache&#34;
+
+    def __repr__(self):
+        return &#34;NoCache()&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.cache.NoCache.from_config"><code class="name flex">
+<span>def <span class="ident">from_config</span></span>(<span>config)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_config(cls, config):
+    return cls()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.NoCache.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.NoCache.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.NoCache.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    return None</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.NoCache.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    return None</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.NoCache.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return []</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.NoCache.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.NoCache.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.NoCache.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, state):
+    return False</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.SQLCache"><code class="flex name class">
+<span>class <span class="ident">SQLCache</span></span>
+<span>(</span><span>connection=None, table='liquer_cache', metadata_type='TEXT', state_data_type='BLOB', delete_before_insert=False, store_metadata_enabled=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Store cache in a SQL database.
+Tested with sqlite3.
+For databases without BLOB support (e.g. Hive) use SQLStringCache.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SQLCache(CacheMixin):
+    &#34;&#34;&#34;Store cache in a SQL database.
+    Tested with sqlite3.
+    For databases without BLOB support (e.g. Hive) use SQLStringCache.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        connection=None,
+        table=&#34;liquer_cache&#34;,
+        metadata_type=&#34;TEXT&#34;,
+        state_data_type=&#34;BLOB&#34;,
+        delete_before_insert=False,
+        store_metadata_enabled=True,
+    ):
+        self.connection = connection
+        self.table = table
+        self.metadata_type = metadata_type
+        self.state_data_type = state_data_type
+        self.delete_before_insert = delete_before_insert
+        self._available_keys = None
+        self.store_metadata_enabled = store_metadata_enabled
+        self.init()
+
+    def init(self):
+        try:
+            query = f&#34;&#34;&#34;CREATE TABLE {self.table} (
+                query         VARCHAR(2000),
+                metadata      {self.metadata_type},
+                state_data    {self.state_data_type}
+            )
+            &#34;&#34;&#34;
+            print(query)
+            logging.debug(f&#34;CACHE TABLE: {query}&#34;)
+            c = self.connection.cursor()
+            c.execute(query)
+        except:
+            traceback.print_exc()
+
+    @classmethod
+    def from_sqlite(cls, path=&#34;:memory:&#34;, table=&#34;liquer_cache&#34;):
+        import sqlite3
+
+        connection = sqlite3.connect(path)
+        return cls(connection=connection, table=table, delete_before_insert=True)
+
+    @property
+    def available_keys(self):
+        if self._available_keys is None:
+            c = self.connection.cursor()
+            c.execute(
+                f&#34;&#34;&#34;
+            SELECT
+              query
+            FROM {self.table}
+            &#34;&#34;&#34;
+            )
+
+            try:
+                self._available_keys = [x[0] for x in c.fetchall()]
+            except:
+                traceback.print_exc()
+                print(&#34;SQL available_keys failed&#34;)
+                return None
+        return self._available_keys
+
+    def clean(self):
+        c = self.connection.cursor()
+        c.execute(f&#34;&#34;&#34;DROP TABLE {self.table}&#34;&#34;&#34;)
+        self._available_keys = []
+        self.init()
+        self.connection.commit()
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
+    def get(self, key):
+        c = self.connection.cursor()
+        c.execute(
+            f&#34;&#34;&#34;
+        SELECT
+          metadata,
+          state_data
+        FROM {self.table}
+        WHERE query=?
+        &#34;&#34;&#34;,
+            [key],
+        )
+
+        try:
+            metadata, data = c.fetchone()
+            metadata = json.loads(metadata)
+            if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+                return None
+        except:
+            return None
+        try:
+            state = State()
+            state = state.from_dict(metadata)
+
+            t = state_types_registry().get(state.type_identifier)
+            state.data = t.from_bytes(self.decode(data))
+            return state
+        except:
+            logging.exception(f&#34;Cache failed to recover {key}&#34;)
+            return None
+
+    def get_metadata(self, key):
+        c = self.connection.cursor()
+        c.execute(
+            f&#34;&#34;&#34;
+        SELECT
+          metadata
+        FROM {self.table}
+        WHERE query=?
+        &#34;&#34;&#34;,
+            [key],
+        )
+
+        try:
+            (metadata,) = c.fetchone()
+        except:
+            return None
+        try:
+            return json.loads(metadata)
+        except:
+            logging.exception(f&#34;Cache failed to recover metadata {key}&#34;)
+            return None
+
+    def contains(self, key):
+        return key in self.available_keys
+
+    def keys(self):
+        return self.available_keys
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+        key = state.query
+        metadata = json.dumps(state.as_dict())
+
+        t = state_types_registry().get(state.type_identifier)
+        try:
+            b, mime = t.as_bytes(state.data)
+        except NotImplementedError:
+            return False
+        self._available_keys = None
+        if self.delete_before_insert:
+            self.connection.execute(f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key])
+        self.connection.execute(
+            f&#34;INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)&#34;,
+            [key, metadata, self.encode(b)],
+        )
+        self.connection.commit()
+        return True
+
+    def store_metadata(self, metadata):
+        if self.store_metadata_enabled:
+            key = metadata[&#34;query&#34;]
+            metadata = json.dumps(metadata)
+
+            self._available_keys = None
+            if self.delete_before_insert:
+                self.connection.execute(
+                    f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key]
+                )
+            self.connection.execute(
+                f&#34;INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)&#34;,
+                [key, metadata, None],
+            )
+            self.connection.commit()
+            return True
+        else:
+            return False
+
+    def remove(self, key):
+        self.connection.execute(f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key])
+        self.connection.commit()
+        return True
+
+    def __str__(self):
+        return f&#34;SQL cache {self.table}&#34;
+
+    def __repr__(self):
+        return f&#34;SQLCache(table=&#39;{self.table}&#39;)&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.SQLStringCache" href="#liquer.cache.SQLStringCache">SQLStringCache</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.cache.SQLCache.from_sqlite"><code class="name flex">
+<span>def <span class="ident">from_sqlite</span></span>(<span>path=':memory:', table='liquer_cache')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_sqlite(cls, path=&#34;:memory:&#34;, table=&#34;liquer_cache&#34;):
+    import sqlite3
+
+    connection = sqlite3.connect(path)
+    return cls(connection=connection, table=table, delete_before_insert=True)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="liquer.cache.SQLCache.available_keys"><code class="name">var <span class="ident">available_keys</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def available_keys(self):
+    if self._available_keys is None:
+        c = self.connection.cursor()
+        c.execute(
+            f&#34;&#34;&#34;
+        SELECT
+          query
+        FROM {self.table}
+        &#34;&#34;&#34;
+        )
+
+        try:
+            self._available_keys = [x[0] for x in c.fetchall()]
+        except:
+            traceback.print_exc()
+            print(&#34;SQL available_keys failed&#34;)
+            return None
+    return self._available_keys</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.SQLCache.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    c = self.connection.cursor()
+    c.execute(f&#34;&#34;&#34;DROP TABLE {self.table}&#34;&#34;&#34;)
+    self._available_keys = []
+    self.init()
+    self.connection.commit()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    return key in self.available_keys</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, s):
+    return s</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, b):
+    return b</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    c = self.connection.cursor()
+    c.execute(
+        f&#34;&#34;&#34;
+    SELECT
+      metadata,
+      state_data
+    FROM {self.table}
+    WHERE query=?
+    &#34;&#34;&#34;,
+        [key],
+    )
+
+    try:
+        metadata, data = c.fetchone()
+        metadata = json.loads(metadata)
+        if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+            return None
+    except:
+        return None
+    try:
+        state = State()
+        state = state.from_dict(metadata)
+
+        t = state_types_registry().get(state.type_identifier)
+        state.data = t.from_bytes(self.decode(data))
+        return state
+    except:
+        logging.exception(f&#34;Cache failed to recover {key}&#34;)
+        return None</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    c = self.connection.cursor()
+    c.execute(
+        f&#34;&#34;&#34;
+    SELECT
+      metadata
+    FROM {self.table}
+    WHERE query=?
+    &#34;&#34;&#34;,
+        [key],
+    )
+
+    try:
+        (metadata,) = c.fetchone()
+    except:
+        return None
+    try:
+        return json.loads(metadata)
+    except:
+        logging.exception(f&#34;Cache failed to recover metadata {key}&#34;)
+        return None</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.init"><code class="name flex">
+<span>def <span class="ident">init</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init(self):
+    try:
+        query = f&#34;&#34;&#34;CREATE TABLE {self.table} (
+            query         VARCHAR(2000),
+            metadata      {self.metadata_type},
+            state_data    {self.state_data_type}
+        )
+        &#34;&#34;&#34;
+        print(query)
+        logging.debug(f&#34;CACHE TABLE: {query}&#34;)
+        c = self.connection.cursor()
+        c.execute(query)
+    except:
+        traceback.print_exc()</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return self.available_keys</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    self.connection.execute(f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key])
+    self.connection.commit()
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    if state.is_error:
+        return None
+    state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+    key = state.query
+    metadata = json.dumps(state.as_dict())
+
+    t = state_types_registry().get(state.type_identifier)
+    try:
+        b, mime = t.as_bytes(state.data)
+    except NotImplementedError:
+        return False
+    self._available_keys = None
+    if self.delete_before_insert:
+        self.connection.execute(f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key])
+    self.connection.execute(
+        f&#34;INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)&#34;,
+        [key, metadata, self.encode(b)],
+    )
+    self.connection.commit()
+    return True</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLCache.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    if self.store_metadata_enabled:
+        key = metadata[&#34;query&#34;]
+        metadata = json.dumps(metadata)
+
+        self._available_keys = None
+        if self.delete_before_insert:
+            self.connection.execute(
+                f&#34;DELETE FROM {self.table} WHERE query=?&#34;, [key]
+            )
+        self.connection.execute(
+            f&#34;INSERT INTO {self.table} (query, metadata, state_data) VALUES (?, ?, ?)&#34;,
+            [key, metadata, None],
+        )
+        self.connection.commit()
+        return True
+    else:
+        return False</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.SQLStringCache"><code class="flex name class">
+<span>class <span class="ident">SQLStringCache</span></span>
+<span>(</span><span>connection=None, table='liquer_cache', text_type='STRING', delete_before_insert=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Store cache in a SQL database.
+Data are encoded into string before storing in the database.
+This is suitable for databases without BLOB support (e.g. Hive).
+By default base64 encoding is used.
+To change the encoding override encode and decode methods.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SQLStringCache(SQLCache):
+    &#34;&#34;&#34;Store cache in a SQL database.
+    Data are encoded into string before storing in the database.
+    This is suitable for databases without BLOB support (e.g. Hive).
+    By default base64 encoding is used.
+    To change the encoding override encode and decode methods.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        connection=None,
+        table=&#34;liquer_cache&#34;,
+        text_type=&#34;STRING&#34;,
+        delete_before_insert=False,
+    ):
+        super().__init__(
+            connection=connection,
+            table=table,
+            metadata_type=text_type,
+            state_data_type=text_type,
+            delete_before_insert=delete_before_insert,
+        )
+
+    @classmethod
+    def from_sqlite(cls, path=&#34;:memory:&#34;, table=&#34;liquer_cache&#34;):
+        import sqlite3
+
+        connection = sqlite3.connect(path)
+        return cls(connection=connection, table=table, text_type=&#34;TEXT&#34;)
+
+    def encode(self, b):
+        return base64.b64encode(b)
+
+    def decode(self, s):
+        return base64.b64decode(s)
+
+    def __str__(self):
+        return f&#34;SQL string cache {self.table}&#34;
+
+    def __repr__(self):
+        return f&#34;SQLStringCache(table=&#39;{self.table}&#39;)&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.SQLCache" href="#liquer.cache.SQLCache">SQLCache</a></li>
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.cache.SQLStringCache.from_sqlite"><code class="name flex">
+<span>def <span class="ident">from_sqlite</span></span>(<span>path=':memory:', table='liquer_cache')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_sqlite(cls, path=&#34;:memory:&#34;, table=&#34;liquer_cache&#34;):
+    import sqlite3
+
+    connection = sqlite3.connect(path)
+    return cls(connection=connection, table=table, text_type=&#34;TEXT&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.SQLStringCache.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, s):
+    return base64.b64decode(s)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.SQLStringCache.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, b):
+    return base64.b64encode(b)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.SQLCache" href="#liquer.cache.SQLCache">SQLCache</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.SQLCache.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.StoreCache"><code class="flex name class">
+<span>class <span class="ident">StoreCache</span></span>
+<span>(</span><span>store, path, flat=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple cache similar to FileCache, but using a store module instead of a local filesystem.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StoreCache(CacheMixin):
+    &#34;&#34;&#34;Simple cache similar to FileCache, but using a store module instead of a local filesystem.&#34;&#34;&#34;
+
+    def __init__(self, store, path, flat=False):
+        self.storage = store
+        self.path = path
+        if not self.storage.is_dir(path):
+            self.storage.makedir(path)
+        self.flat = flat
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(path=config[&#34;path&#34;])
+
+    def clean(self):
+        import glob
+
+        print(f&#34;Clean {self}&#34;)
+        path = &#34;&#34; if self.path in (None, &#34;&#34;) else self.path + &#34;/&#34;
+        for key in self.storage.keys():
+            if not self.storage.is_dir(key) and key.startswith(path):
+                logging.debug(f&#34;Removing cache file {key}&#34;)
+                self.storage.remove(key)
+        for _, key in sorted((-len(k.split(&#34;/&#34;)), k) for k in self.storage.keys()):
+            if self.storage.is_dir(key) and key.startswith(path):
+                try:
+                    logging.debug(f&#34;Removing cache dir {key}&#34;)
+                    self.storage.removedir(key)
+                except:
+                    logging.debug(f&#34;Failed to remove cache dir {key}&#34;)
+
+    def to_path(self, key, prefix=&#34;0state_&#34;):
+        &#34;Construct file path from a key and optionally prefix and file extension.&#34;
+        if self.flat:
+            m = hashlib.md5()
+            m.update(key.encode(&#34;utf-8&#34;))
+            digest = m.hexdigest()
+            path = f&#34;{self.path}/{prefix}{digest}.data&#34;
+        else:
+            path = f&#34;{self.path}/{key}/{prefix}.data&#34;
+        if path.startswith(&#34;/&#34;):
+            path = path[1:]
+        return path
+
+    def encode(self, b):
+        return b
+
+    def decode(self, s):
+        return s
+
+    def encode_metadata(self, b):
+        return self.encode(b.encode(&#34;utf-8&#34;))
+
+    def decode_metadata(self, s):
+        s = self.decode(s)
+        if isinstance(s, str):
+            return s
+        elif isinstance(s, bytes):
+            return s.decode(&#34;utf-8&#34;)
+        else:
+            raise Exception(f&#34;Unsupported type: {type(s)}&#34;)
+
+    def get(self, key):
+        print(f&#34;GET {key}&#34;)
+        metadata = self.get_metadata(key)
+        print(f&#34;  METADATA {metadata}&#34;)
+        if metadata is None:
+            print(f&#34;(StoreCache) Metadata missing: {key}&#34;)
+            return None
+        if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+            print(f&#34;(StoreCache) Not ready {key}; &#34;, metadata.get(&#34;status&#34;))
+            return None
+        state = State()
+        state.metadata = metadata
+
+        t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+        path = self.to_path(key)
+        if self.storage.contains(path):
+            try:
+                state.data = t.from_bytes(self.decode(self.storage.get_bytes(path)))
+                return state
+            except:
+                traceback.print_exc()
+                logging.exception(f&#34;Cache failed to recover {key}&#34;)
+                return None
+
+    def _load_metadata(self, state_path):
+        if self.storage.contains(state_path) and not self.storage.is_dir(state_path):
+            return self.storage.get_metadata(state_path)
+
+    def get_metadata(self, key):
+        return self._load_metadata(self.to_path(key))
+
+    def remove(self, key):
+        try:
+            self.storage.remove(self.to_path(key))
+            return True
+        except:
+            traceback.print_exc()
+            return False
+
+    def contains(self, key):
+        state_path = self.to_path(key)
+        return self.storage.contains(state_path)
+
+    def keys(self):
+        path = self.path + &#34;/&#34;
+        for key in self.storage.keys():
+            if self.path in (&#34;&#34;, None) or key.startswith(path):
+                if not self.storage.is_dir(key):
+                    metadata = self.storage.get_metadata(key)
+                    if &#34;query&#34; in metadata:
+                        yield metadata[&#34;query&#34;]
+
+    def store(self, state):
+        if state.is_error:
+            return None
+        state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+        t = state_types_registry().get(state.type_identifier)
+        path = self.to_path(state.query)
+        if self.storage.is_supported(path):
+            try:
+                b, mime = t.as_bytes(state.data)
+                metadata = dict(**state.metadata)
+                metadata[&#34;mimetype&#34;] = mime
+                self.storage.store(path, b, metadata)
+                return True
+            except:
+                return False
+        return False
+
+    def store_metadata(self, metadata):
+        try:
+            key = self.to_path(metadata[&#34;query&#34;])
+            if self.storage.is_supported(key):
+                self.storage.store_metadata(key, metadata)
+                return True
+        except:
+            logging.exception(f&#34;Cache metadata storing error: {metadata[&#39;query&#39;]}&#34;)
+            return False
+        return False
+
+    def __str__(self):
+        return f&#34;Store cache at {self.path} based on {self.storage}&#34;
+
+    def __repr__(self):
+        return f&#34;FileCache({repr(self.storage)}, {repr(self.path)}, flat={self.flat})&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="liquer.cache.StoreCache.from_config"><code class="name flex">
+<span>def <span class="ident">from_config</span></span>(<span>config)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_config(cls, config):
+    return cls(path=config[&#34;path&#34;])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.StoreCache.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(self):
+    import glob
+
+    print(f&#34;Clean {self}&#34;)
+    path = &#34;&#34; if self.path in (None, &#34;&#34;) else self.path + &#34;/&#34;
+    for key in self.storage.keys():
+        if not self.storage.is_dir(key) and key.startswith(path):
+            logging.debug(f&#34;Removing cache file {key}&#34;)
+            self.storage.remove(key)
+    for _, key in sorted((-len(k.split(&#34;/&#34;)), k) for k in self.storage.keys()):
+        if self.storage.is_dir(key) and key.startswith(path):
+            try:
+                logging.debug(f&#34;Removing cache dir {key}&#34;)
+                self.storage.removedir(key)
+            except:
+                logging.debug(f&#34;Failed to remove cache dir {key}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, key):
+    state_path = self.to_path(key)
+    return self.storage.contains(state_path)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, s):
+    return s</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.decode_metadata"><code class="name flex">
+<span>def <span class="ident">decode_metadata</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_metadata(self, s):
+    s = self.decode(s)
+    if isinstance(s, str):
+        return s
+    elif isinstance(s, bytes):
+        return s.decode(&#34;utf-8&#34;)
+    else:
+        raise Exception(f&#34;Unsupported type: {type(s)}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, b):
+    return b</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.encode_metadata"><code class="name flex">
+<span>def <span class="ident">encode_metadata</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_metadata(self, b):
+    return self.encode(b.encode(&#34;utf-8&#34;))</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key):
+    print(f&#34;GET {key}&#34;)
+    metadata = self.get_metadata(key)
+    print(f&#34;  METADATA {metadata}&#34;)
+    if metadata is None:
+        print(f&#34;(StoreCache) Metadata missing: {key}&#34;)
+        return None
+    if metadata.get(&#34;status&#34;) != &#34;ready&#34;:
+        print(f&#34;(StoreCache) Not ready {key}; &#34;, metadata.get(&#34;status&#34;))
+        return None
+    state = State()
+    state.metadata = metadata
+
+    t = state_types_registry().get(metadata[&#34;type_identifier&#34;])
+    path = self.to_path(key)
+    if self.storage.contains(path):
+        try:
+            state.data = t.from_bytes(self.decode(self.storage.get_bytes(path)))
+            return state
+        except:
+            traceback.print_exc()
+            logging.exception(f&#34;Cache failed to recover {key}&#34;)
+            return None</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.get_metadata"><code class="name flex">
+<span>def <span class="ident">get_metadata</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_metadata(self, key):
+    return self._load_metadata(self.to_path(key))</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    path = self.path + &#34;/&#34;
+    for key in self.storage.keys():
+        if self.path in (&#34;&#34;, None) or key.startswith(path):
+            if not self.storage.is_dir(key):
+                metadata = self.storage.get_metadata(key)
+                if &#34;query&#34; in metadata:
+                    yield metadata[&#34;query&#34;]</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, key):
+    try:
+        self.storage.remove(self.to_path(key))
+        return True
+    except:
+        traceback.print_exc()
+        return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.store"><code class="name flex">
+<span>def <span class="ident">store</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store(self, state):
+    if state.is_error:
+        return None
+    state.metadata[&#34;status&#34;] = &#34;ready&#34;
+
+    t = state_types_registry().get(state.type_identifier)
+    path = self.to_path(state.query)
+    if self.storage.is_supported(path):
+        try:
+            b, mime = t.as_bytes(state.data)
+            metadata = dict(**state.metadata)
+            metadata[&#34;mimetype&#34;] = mime
+            self.storage.store(path, b, metadata)
+            return True
+        except:
+            return False
+    return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.store_metadata"><code class="name flex">
+<span>def <span class="ident">store_metadata</span></span>(<span>self, metadata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def store_metadata(self, metadata):
+    try:
+        key = self.to_path(metadata[&#34;query&#34;])
+        if self.storage.is_supported(key):
+            self.storage.store_metadata(key, metadata)
+            return True
+    except:
+        logging.exception(f&#34;Cache metadata storing error: {metadata[&#39;query&#39;]}&#34;)
+        return False
+    return False</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.StoreCache.to_path"><code class="name flex">
+<span>def <span class="ident">to_path</span></span>(<span>self, key, prefix='0state_')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Construct file path from a key and optionally prefix and file extension.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_path(self, key, prefix=&#34;0state_&#34;):
+    &#34;Construct file path from a key and optionally prefix and file extension.&#34;
+    if self.flat:
+        m = hashlib.md5()
+        m.update(key.encode(&#34;utf-8&#34;))
+        digest = m.hexdigest()
+        path = f&#34;{self.path}/{prefix}{digest}.data&#34;
+    else:
+        path = f&#34;{self.path}/{key}/{prefix}.data&#34;
+    if path.startswith(&#34;/&#34;):
+        path = path[1:]
+    return path</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="liquer.cache.XORFileCache"><code class="flex name class">
+<span>class <span class="ident">XORFileCache</span></span>
+<span>(</span><span>path, code)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple file cache which stores all the states in files
+in a specified directory of a local filesystem.
+Two files are created: one for the state metadata and the other one with
+serialized version of the state data.</p>
+<p>Note that no mechanism for maintaining freshness or constraining file size
+is provided. This may lead to filling the space on the filesystem,
+therefore this is not ideal for long running public web-services.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class XORFileCache(FileCache):
+    def __init__(self, path, code):
+        super().__init__(path)
+        self.code = np.frombuffer(code, dtype=np.uint8)
+
+    def code_of_length(self, n):
+        if n &lt;= len(self.code):
+            return self.code[:n]
+        else:
+            return np.tile(self.code, int(n / len(self.code)) + 1)[:n]
+
+    def encode(self, b):
+        ba = np.frombuffer(b, dtype=np.uint8)
+        return (ba ^ self.code_of_length(len(b))).tobytes()
+
+    def decode(self, s):
+        return self.encode(s)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="liquer.cache.FileCache" href="#liquer.cache.FileCache">FileCache</a></li>
+<li><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="liquer.cache.XORFileCache.code_of_length"><code class="name flex">
+<span>def <span class="ident">code_of_length</span></span>(<span>self, n)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def code_of_length(self, n):
+    if n &lt;= len(self.code):
+        return self.code[:n]
+    else:
+        return np.tile(self.code, int(n / len(self.code)) + 1)[:n]</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.XORFileCache.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, s):
+    return self.encode(s)</code></pre>
+</details>
+</dd>
+<dt id="liquer.cache.XORFileCache.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, b):
+    ba = np.frombuffer(b, dtype=np.uint8)
+    return (ba ^ self.code_of_length(len(b))).tobytes()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="liquer.cache.FileCache" href="#liquer.cache.FileCache">FileCache</a></b></code>:
+<ul class="hlist">
+<li><code><a title="liquer.cache.FileCache.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.FileCache.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.FileCache.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.FileCache.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+<li><code><a title="liquer.cache.FileCache.to_path" href="#liquer.cache.FileCache.to_path">to_path</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="liquer" href="index.html">liquer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.cache.cached_part" href="#liquer.cache.cached_part">cached_part</a></code></li>
+<li><code><a title="liquer.cache.get_cache" href="#liquer.cache.get_cache">get_cache</a></code></li>
+<li><code><a title="liquer.cache.set_cache" href="#liquer.cache.set_cache">set_cache</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="liquer.cache.CacheAttributeCondition" href="#liquer.cache.CacheAttributeCondition">CacheAttributeCondition</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.CacheAttributeCondition.clean" href="#liquer.cache.CacheAttributeCondition.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.CacheAttributeCondition.contains" href="#liquer.cache.CacheAttributeCondition.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.CacheAttributeCondition.get" href="#liquer.cache.CacheAttributeCondition.get">get</a></code></li>
+<li><code><a title="liquer.cache.CacheAttributeCondition.get_metadata" href="#liquer.cache.CacheAttributeCondition.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.CacheAttributeCondition.keys" href="#liquer.cache.CacheAttributeCondition.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.CacheAttributeCondition.remove" href="#liquer.cache.CacheAttributeCondition.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.CacheAttributeCondition.store" href="#liquer.cache.CacheAttributeCondition.store">store</a></code></li>
+<li><code><a title="liquer.cache.CacheAttributeCondition.store_metadata" href="#liquer.cache.CacheAttributeCondition.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.CacheCombine" href="#liquer.cache.CacheCombine">CacheCombine</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.CacheCombine.clean" href="#liquer.cache.CacheCombine.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.CacheCombine.contains" href="#liquer.cache.CacheCombine.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.CacheCombine.get" href="#liquer.cache.CacheCombine.get">get</a></code></li>
+<li><code><a title="liquer.cache.CacheCombine.get_metadata" href="#liquer.cache.CacheCombine.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.CacheCombine.keys" href="#liquer.cache.CacheCombine.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.CacheCombine.remove" href="#liquer.cache.CacheCombine.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.CacheCombine.store" href="#liquer.cache.CacheCombine.store">store</a></code></li>
+<li><code><a title="liquer.cache.CacheCombine.store_metadata" href="#liquer.cache.CacheCombine.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.CacheIfHasAttributes" href="#liquer.cache.CacheIfHasAttributes">CacheIfHasAttributes</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.CacheIfHasAttributes.clean" href="#liquer.cache.CacheIfHasAttributes.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasAttributes.contains" href="#liquer.cache.CacheIfHasAttributes.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasAttributes.get" href="#liquer.cache.CacheIfHasAttributes.get">get</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasAttributes.get_metadata" href="#liquer.cache.CacheIfHasAttributes.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasAttributes.keys" href="#liquer.cache.CacheIfHasAttributes.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasAttributes.remove" href="#liquer.cache.CacheIfHasAttributes.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasAttributes.store" href="#liquer.cache.CacheIfHasAttributes.store">store</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasAttributes.store_metadata" href="#liquer.cache.CacheIfHasAttributes.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.CacheIfHasNotAttributes" href="#liquer.cache.CacheIfHasNotAttributes">CacheIfHasNotAttributes</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.clean" href="#liquer.cache.CacheIfHasNotAttributes.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.contains" href="#liquer.cache.CacheIfHasNotAttributes.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.get" href="#liquer.cache.CacheIfHasNotAttributes.get">get</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.get_metadata" href="#liquer.cache.CacheIfHasNotAttributes.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.keys" href="#liquer.cache.CacheIfHasNotAttributes.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.remove" href="#liquer.cache.CacheIfHasNotAttributes.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.store" href="#liquer.cache.CacheIfHasNotAttributes.store">store</a></code></li>
+<li><code><a title="liquer.cache.CacheIfHasNotAttributes.store_metadata" href="#liquer.cache.CacheIfHasNotAttributes.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.CacheMixin" href="#liquer.cache.CacheMixin">CacheMixin</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_equal" href="#liquer.cache.CacheMixin.if_attribute_equal">if_attribute_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_attribute_not_equal" href="#liquer.cache.CacheMixin.if_attribute_not_equal">if_attribute_not_equal</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_contains" href="#liquer.cache.CacheMixin.if_contains">if_contains</a></code></li>
+<li><code><a title="liquer.cache.CacheMixin.if_not_contains" href="#liquer.cache.CacheMixin.if_not_contains">if_not_contains</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.CacheProxy" href="#liquer.cache.CacheProxy">CacheProxy</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.CacheProxy.clean" href="#liquer.cache.CacheProxy.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.CacheProxy.contains" href="#liquer.cache.CacheProxy.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.CacheProxy.get" href="#liquer.cache.CacheProxy.get">get</a></code></li>
+<li><code><a title="liquer.cache.CacheProxy.get_metadata" href="#liquer.cache.CacheProxy.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.CacheProxy.keys" href="#liquer.cache.CacheProxy.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.CacheProxy.remove" href="#liquer.cache.CacheProxy.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.CacheProxy.store" href="#liquer.cache.CacheProxy.store">store</a></code></li>
+<li><code><a title="liquer.cache.CacheProxy.store_metadata" href="#liquer.cache.CacheProxy.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.FernetFileCache" href="#liquer.cache.FernetFileCache">FernetFileCache</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.cache.FernetFileCache.decode" href="#liquer.cache.FernetFileCache.decode">decode</a></code></li>
+<li><code><a title="liquer.cache.FernetFileCache.encode" href="#liquer.cache.FernetFileCache.encode">encode</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.FileCache" href="#liquer.cache.FileCache">FileCache</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.FileCache.clean" href="#liquer.cache.FileCache.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.FileCache.contains" href="#liquer.cache.FileCache.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.FileCache.decode" href="#liquer.cache.FileCache.decode">decode</a></code></li>
+<li><code><a title="liquer.cache.FileCache.decode_metadata" href="#liquer.cache.FileCache.decode_metadata">decode_metadata</a></code></li>
+<li><code><a title="liquer.cache.FileCache.encode" href="#liquer.cache.FileCache.encode">encode</a></code></li>
+<li><code><a title="liquer.cache.FileCache.encode_metadata" href="#liquer.cache.FileCache.encode_metadata">encode_metadata</a></code></li>
+<li><code><a title="liquer.cache.FileCache.from_config" href="#liquer.cache.FileCache.from_config">from_config</a></code></li>
+<li><code><a title="liquer.cache.FileCache.get" href="#liquer.cache.FileCache.get">get</a></code></li>
+<li><code><a title="liquer.cache.FileCache.get_metadata" href="#liquer.cache.FileCache.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.FileCache.keys" href="#liquer.cache.FileCache.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.FileCache.remove" href="#liquer.cache.FileCache.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.FileCache.store" href="#liquer.cache.FileCache.store">store</a></code></li>
+<li><code><a title="liquer.cache.FileCache.store_metadata" href="#liquer.cache.FileCache.store_metadata">store_metadata</a></code></li>
+<li><code><a title="liquer.cache.FileCache.to_path" href="#liquer.cache.FileCache.to_path">to_path</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.MemoryCache" href="#liquer.cache.MemoryCache">MemoryCache</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.MemoryCache.clean" href="#liquer.cache.MemoryCache.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.contains" href="#liquer.cache.MemoryCache.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.from_config" href="#liquer.cache.MemoryCache.from_config">from_config</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.get" href="#liquer.cache.MemoryCache.get">get</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.get_metadata" href="#liquer.cache.MemoryCache.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.keys" href="#liquer.cache.MemoryCache.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.remove" href="#liquer.cache.MemoryCache.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.store" href="#liquer.cache.MemoryCache.store">store</a></code></li>
+<li><code><a title="liquer.cache.MemoryCache.store_metadata" href="#liquer.cache.MemoryCache.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.NoCache" href="#liquer.cache.NoCache">NoCache</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.NoCache.clean" href="#liquer.cache.NoCache.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.NoCache.contains" href="#liquer.cache.NoCache.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.NoCache.from_config" href="#liquer.cache.NoCache.from_config">from_config</a></code></li>
+<li><code><a title="liquer.cache.NoCache.get" href="#liquer.cache.NoCache.get">get</a></code></li>
+<li><code><a title="liquer.cache.NoCache.get_metadata" href="#liquer.cache.NoCache.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.NoCache.keys" href="#liquer.cache.NoCache.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.NoCache.remove" href="#liquer.cache.NoCache.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.NoCache.store" href="#liquer.cache.NoCache.store">store</a></code></li>
+<li><code><a title="liquer.cache.NoCache.store_metadata" href="#liquer.cache.NoCache.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.SQLCache" href="#liquer.cache.SQLCache">SQLCache</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.SQLCache.available_keys" href="#liquer.cache.SQLCache.available_keys">available_keys</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.clean" href="#liquer.cache.SQLCache.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.contains" href="#liquer.cache.SQLCache.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.decode" href="#liquer.cache.SQLCache.decode">decode</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.encode" href="#liquer.cache.SQLCache.encode">encode</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.from_sqlite" href="#liquer.cache.SQLCache.from_sqlite">from_sqlite</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.get" href="#liquer.cache.SQLCache.get">get</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.get_metadata" href="#liquer.cache.SQLCache.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.init" href="#liquer.cache.SQLCache.init">init</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.keys" href="#liquer.cache.SQLCache.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.remove" href="#liquer.cache.SQLCache.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.store" href="#liquer.cache.SQLCache.store">store</a></code></li>
+<li><code><a title="liquer.cache.SQLCache.store_metadata" href="#liquer.cache.SQLCache.store_metadata">store_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.SQLStringCache" href="#liquer.cache.SQLStringCache">SQLStringCache</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.cache.SQLStringCache.decode" href="#liquer.cache.SQLStringCache.decode">decode</a></code></li>
+<li><code><a title="liquer.cache.SQLStringCache.encode" href="#liquer.cache.SQLStringCache.encode">encode</a></code></li>
+<li><code><a title="liquer.cache.SQLStringCache.from_sqlite" href="#liquer.cache.SQLStringCache.from_sqlite">from_sqlite</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.StoreCache" href="#liquer.cache.StoreCache">StoreCache</a></code></h4>
+<ul class="two-column">
+<li><code><a title="liquer.cache.StoreCache.clean" href="#liquer.cache.StoreCache.clean">clean</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.contains" href="#liquer.cache.StoreCache.contains">contains</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.decode" href="#liquer.cache.StoreCache.decode">decode</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.decode_metadata" href="#liquer.cache.StoreCache.decode_metadata">decode_metadata</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.encode" href="#liquer.cache.StoreCache.encode">encode</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.encode_metadata" href="#liquer.cache.StoreCache.encode_metadata">encode_metadata</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.from_config" href="#liquer.cache.StoreCache.from_config">from_config</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.get" href="#liquer.cache.StoreCache.get">get</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.get_metadata" href="#liquer.cache.StoreCache.get_metadata">get_metadata</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.keys" href="#liquer.cache.StoreCache.keys">keys</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.remove" href="#liquer.cache.StoreCache.remove">remove</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.store" href="#liquer.cache.StoreCache.store">store</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.store_metadata" href="#liquer.cache.StoreCache.store_metadata">store_metadata</a></code></li>
+<li><code><a title="liquer.cache.StoreCache.to_path" href="#liquer.cache.StoreCache.to_path">to_path</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="liquer.cache.XORFileCache" href="#liquer.cache.XORFileCache">XORFileCache</a></code></h4>
+<ul class="">
+<li><code><a title="liquer.cache.XORFileCache.code_of_length" href="#liquer.cache.XORFileCache.code_of_length">code_of_length</a></code></li>
+<li><code><a title="liquer.cache.XORFileCache.decode" href="#liquer.cache.XORFileCache.decode">decode</a></code></li>
+<li><code><a title="liquer.cache.XORFileCache.encode" href="#liquer.cache.XORFileCache.encode">encode</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

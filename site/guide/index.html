@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Introduction - LiQuer Docs</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Introduction";
+        var mkdocs_page_input_path = "guide.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/html.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> LiQuer Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Introduction</a>
+    <ul class="current">
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../query/">Query syntax</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../store/">Store and Cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../recipes/">Recipes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../metadata/">Metadata and state</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../commands/">Commands</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../web_service/">Web service</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../security/">Security</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../apidocs/liquer/index.html">API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">LiQuer Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+          <li>User Guide &raquo;</li>
+      <li>Introduction</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/orest-d/liquer/edit/master/docs/guide.md">Edit on LiQuer</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="instalation">Instalation</h1>
+<p>LiQuer requires at least python 3.6 with flask. It can be installed by</p>
+<div class="codehilite"><pre><span></span><code>python3 -m pip install liquer-framework
+</code></pre></div>
+
+<p>Alternatively you can get LiQuer from <a href="https://github.com/orest-d/liquer">repository</a>:</p>
+<div class="codehilite"><pre><span></span><code>git clone https://github.com/orest-d/liquer.git
+
+python3 -m venv venv
+source venv/bin/activate
+cd liquer
+python3 setup.py install
+</code></pre></div>
+
+<h1 id="getting-started">Getting started</h1>
+<p>The good tradition is to start with a <em>Hello, world!</em> example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">liquer</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="nd">@first_command</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello&quot;</span>
+
+<span class="nd">@command</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">greeting</span><span class="p">,</span> <span class="n">who</span><span class="o">=</span><span class="s2">&quot;world&quot;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">who</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;hello/greet&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;hello/greet-everybody&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</code></pre></div>
+
+<p>In this example we first create to <em>commands</em> - <em>hello</em> and <em>greet</em>.
+Commands are ordinary python functions decorated with
+either <code>@first_command</code> or <code>@command</code>.</p>
+<p>A sequence of commands can be written as a <em>link query</em>
+(the main concept of LiQuer).
+Simple query is a sequence of actions (commands with parameters) separated by <em>slash</em> ("/").
+A query is evaluated from left to right,
+always passing the output as a first argument to the next action.
+For example the query <code>hello/greet</code>
+is roughly equivalent to evaluating</p>
+<div class="codehilite"><pre><span></span><code><span class="n">greet</span><span class="p">(</span><span class="n">hello</span><span class="p">())</span>
+</code></pre></div>
+
+<p>Query <code>hello/greet-everybody</code> (in the end of the example) is equivalent
+to</p>
+<div class="codehilite"><pre><span></span><code><span class="n">greet</span><span class="p">(</span><span class="n">hello</span><span class="p">(),</span> <span class="s2">&quot;everybody&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Here we specify the second argument to the function greet
+in the query. the arguments are separated by dash ("-").
+(This choice might look unusual, but it allows using such a <em>query</em>
+as a part of <a href="https://en.wikipedia.org/wiki/URL">URL</a>.</p>
+<p>(Link query syntax requires treating "/" and "-" as special characters
+and escape them when needed - as we will explain in the <a href="../query/">query</a> chapter.</p>
+<p><em>If the actions are always passing the result into the next action,
+what is passed into the very first action?</em></p>
+<p>The very first action in the pipeline will not receive anything as a first
+argument (more precisely, it will receive <code>None</code>).
+To avoid having such a useless
+argument in commands that are used at the beginning of the query,
+(in our example the <code>hello</code> function), we can use the
+decorator <code>@first_command</code> instead of <code>@command</code>.
+This is more a convenience than necessity though.
+Commands and actions are explained in <a href="../commands/">this chapter</a></p>
+<p>Queries can be executed in multiple ways in LiQuer
+(programatically from scripts or commands,
+from recipes/batch jobs or interactively from a web API).
+In this example we just evaluate them in the script by the <code>evaluate</code>
+function. </p>
+<h1 id="what-did-we-actually-gain">What did we actually gain?</h1>
+<p><em>Link query</em> syntax allows to represent pipelines are relatively short strings.
+More importantly, <em>link query</em> can be used as
+a path part of the <a href="https://en.wikipedia.org/wiki/URL">URL</a>.
+Unlike the more conventional web services typically a separate request
+for each action, <em>link query</em> can specify
+sequences of actions (pipelines) in the URL.
+This gives LiQuer an incredible amount of  flexibility and expressiveness.</p>
+<p>LiQuer has a well-defined <a href="../web_service/">web service API</a></p>
+<p>A server version of the same example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">liquer</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">### Create Flask app and register LiQuer blueprint</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">import</span> <span class="nn">liquer.blueprint</span> <span class="k">as</span> <span class="nn">bp</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/liquer&#39;</span><span class="p">)</span>
+
+<span class="nd">@first_command</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello&quot;</span>
+
+<span class="nd">@command</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">greeting</span><span class="p">,</span> <span class="n">who</span><span class="o">=</span><span class="s2">&quot;world&quot;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">who</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This is a normal <a href="http://flask.pocoo.org/">flask</a> server, registering LiQuer
+<a href="http://flask.pocoo.org/docs/1.0/blueprints/">blueprint</a> which makes all the LiQuer functionality available
+in the web service.</p>
+<h1 id="working-with-pandas">Working with pandas</h1>
+<p>Pandas example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">liquer</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">liquer.ext.lq_pandas</span>
+
+<span class="nd">@first_command</span>
+<span class="k">def</span> <span class="nf">data</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">b</span><span class="o">=</span><span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">]))</span>
+
+<span class="nd">@command</span>
+<span class="k">def</span> <span class="nf">sum_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column1</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">column2</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">):</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column1</span><span class="p">]</span><span class="o">+</span><span class="n">df</span><span class="p">[</span><span class="n">column2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df</span>
+</code></pre></div>
+
+<p>When queried via a web interface, the data is automatically converted
+to a most suitable format. If the last element of a query is a command
+without arguments containing a dot in the name, it is interpreted as a file name and the extension is used to determine the format.
+The format conversion only happens when query is run over the service,
+not when using the <code>evaluate</code> function. </p>
+<ul>
+<li><strong>data</strong> - default format is used (which is csv)</li>
+<li><strong>data/data.html</strong> - data is converted to html and displayed in the browser</li>
+<li><strong>data/data.csv</strong> - data is converted to csv</li>
+<li><strong>data/data.xlsx</strong> - dataframe is converted to xlsx</li>
+<li><strong>data/eq-b-50</strong> - built in equality filter selects rows with b==50</li>
+<li><strong>data/sum_columns</strong> - sum_columns is applied to a dataframe; this is equivalent to <code>sum_columns(data())</code></li>
+<li><strong>data/sum_columns/sum_columns-a-c-d/sum2.html</strong> - multiple actions are chained: sum_columns(sum_columns(data()),"a","c","d") and result is served as html.</li>
+<li><strong>df_from-URL</strong> - built in command loads a dataframe from URL</li>
+</ul>
+<h1 id="charts">Charts</h1>
+<p>LiQuer has a rudimentary support for <a href="https://matplotlib.org/">matplotlib</a> and <a href="https://plot.ly/python/">plotly</a>
+residing in packages <code>liquer.ext.lq_matplotlib</code> and <code>liquer.ext.lq_plotly</code>
+Examples are in <a href="https://github.com/orest-d/liquer/blob/master/examples/matplotlib_chart.py">matplotlib_chart.py</a>
+and <a href="https://github.com/orest-d/liquer/blob/master/examples/plotly_chart.py">plotly_chart.py</a>
+show how to make simple plots with the commands already built in. This functionality is very basic at the moment and is likely to change.</p>
+<h1 id="cache">Cache</h1>
+<p>By default there is no cache - i.e. the queries are always re-evaluated.
+There are several cache implementations available in <code>liquer.cache</code>.
+They are configured by <code>set_cache</code> function, for example</p>
+<div class="codehilite"><pre><span></span><code><span class="n">set_cache</span><span class="p">(</span><span class="n">FileCache</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">))</span>
+</code></pre></div>
+
+<p>configures a cache that will store all the (chache-able) results of queries
+in a dictionary <em>cache</em>.
+Cache should be configured before the queries are evaluated - and before state variables are set.</p>
+<p>Currently there are three cache implementations: <code>NoCache</code> is a trivial do-nothing cache, <code>FileCache</code> stores data in files, <code>MemoryCache</code> caches
+the object in the memory.</p>
+<p>Custom cache can be created by defining a cache interface, see above mentioned classes. Cache will typically use query as a key and utilize the mechanism of serializing data into a bytes sequence (defined in <code>liquer.state_types</code>), thus implementing a cache based either on a key-value store or blob-storage in SQL databases should be fairly straightforward (and probably quite similar to <code>FileCache</code>).</p>
+<p>Command may optionally decide not to cache its output. This may be useful when command produces volatile data, e.g. time.
+In such a case command (operating on a state) can disable cache by <code>state.with_caching(False)</code>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../query/" class="btn btn-neutral float-right" title="Query syntax">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../query/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

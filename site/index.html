@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>LiQuer Docs</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/html.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> LiQuer Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#hello-world">Hello, world!</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="guide/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="query/">Query syntax</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="store/">Store and Cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="recipes/">Recipes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="metadata/">Metadata and state</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="commands/">Commands</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="web_service/">Web service</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="security/">Security</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/">Examples</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="apidocs/liquer/index.html">API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">LiQuer Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/orest-d/liquer/edit/master/docs/index.md">Edit on LiQuer</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="welcome-to-liquer">Welcome to LiQuer</h1>
+<p>LiQuer is a leightweighted open-source framework (see <a href="https://github.com/orest-d/liquer">repo</a> )
+covering a large number of usecases
+associated with machine learning, data science and other computational experimentation tasks
+requiring flexible analysis.</p>
+<p>LiQuer is a versatile tool - it helps to create interactive dashboards and web applications,
+working with tables, creating charts, images, reports - but as well non-interactive batch processes.
+The core of Liquer is a minimalistic query language, that represents 
+a sequence of actions as a compact (but still human readable) string, or as URL "link".
+(Hence the name Link Query.) The second pillar of LiQuer is metadata: LiQuer always keeps track of metadata associated with the data.
+LiQuer queries can
+* execute interactively in a browser,
+* execute non-interactively in a batch,
+* referenced in reports,
+* efficiently cache the final and intermediate results,
+* improve the transparency, traceability and discoverability by the use of metadata - and more.</p>
+<p>Design of LiQuer is guided by the following principles:</p>
+<ul>
+<li><strong>Simplicity and flexibility</strong> - Make simple things simple, complex things possible.</li>
+<li><strong>Batteries included</strong> - Provide useful features and integration of 3rd party libraries out of the box in a modular way.</li>
+<li><strong>Don't stand in the way - collaborate!</strong> - Do not force one way of doing things. Be technology neutral and integrate well 
+with other libraries and frameworks. LiQuer-enabled code should run as well without the framework and thus using LiQuer should be low risk in terms of dependencies. Make all parts modular, replaceable and customizable.</li>
+</ul>
+<p><strong>LiQuer is extremely easy to use</strong> - just decorate ordinary python functions with a simple decorator.
+LiQuer provides integration of essential data-science tools like Pandas, Scikit-Learn and Keras without having a hard dependency on these frameworks - you need them only when you are going to use them.
+LiQuer's main web-framework is Flask (because of its simplicity), but other frameworks can easily be supported (there is a basic Tornado support available, others will follow as needed).</p>
+<p>LiQuer enabled code can be used (in most cases) exactly the same way as if LiQuer would not be there - so no LiQuer knowledge is needed to use your code.
+That makes it easy for newcommers to use the existing code, but as well start quickly contributing to a LiQuer-enabled code base.</p>
+<h2 id="hello-world">Hello, world!</h2>
+<p>Let's start with a Hello, world! example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">liquer</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="nd">@first_command</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello&quot;</span>
+
+<span class="nd">@command</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">greeting</span><span class="p">,</span> <span class="n">who</span><span class="o">=</span><span class="s2">&quot;world&quot;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">who</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;hello/greet&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;hello/greet-everybody&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</code></pre></div>
+
+<p>To learn more, please continue to the <a href="guide/">user guide</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="guide/" class="btn btn-neutral float-right" title="Introduction">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="guide/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.4.3
+Build Date UTC : 2023-08-26 14:58:23.185263+00:00
+-->
