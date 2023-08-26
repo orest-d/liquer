@@ -143,7 +143,7 @@ class State(object):
     def get(self):
         """Get data from the state"""
         if self.is_error:
-            tb = "\n".join(m.get("traceback", "") for m in self.metadata["log"])
+            tb = "\n".join((m.get("traceback", "") or "-") for m in self.metadata["log"])
             print(tb)
             position = None
             query = None

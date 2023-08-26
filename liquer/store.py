@@ -283,10 +283,11 @@ class Store(StoreMixin):
         return Metadata(metadata).as_dict()
 
     def get_bytes(self, key):
+        """Get data as bytes"""
         raise KeyNotFoundStoreException(key=key, store=self)
 
     def get_metadata(self, key):
-        """Store data and metadata."""
+        """Get metadata"""
         raise KeyNotFoundStoreException(key=key, store=self)
 
     def store(self, key, data, metadata):
@@ -303,7 +304,7 @@ class Store(StoreMixin):
 
     def removedir(self, key):
         """Remove directory.
-        The ky must be a directory.
+        The key must be a directory.
         It depends on the underlying store whether the directory must be empty.
         """
         raise KeyNotFoundStoreException(key=key, store=self)
@@ -323,7 +324,7 @@ class Store(StoreMixin):
     def listdir(self, key):
         """Return names inside a directory specified by key.
         To get a key, names need to be joined with the key (key/name).
-        If you need keys, use the listdir_keys method.
+        Complete keys can be obtained with the listdir_keys method.
         """
         return []
 
@@ -344,7 +345,7 @@ class Store(StoreMixin):
         raise KeyNotSupportedStoreException(key=key, store=self)
 
     def is_supported(self, key):
-        """Returns true is this store supports the supplied key.
+        """Returns true when this store supports the supplied key.
         This allows layering Stores, e.g. by with_overlay, with_fallback
         and store selectively certain data (keys) in certain stores.
         """
