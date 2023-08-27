@@ -1,3 +1,21 @@
+"""This module is responsible for registering commands.
+
+Commands are composed of a command executable and command metadata, which are collected in a command registry.
+CommandRegistry is a singleton that can be obtained by get_command_registry().
+
+Command metadata (CommandMetadata tuple) contain informations about the command and its arguments
+(type, parsing and editing of each argument). These metadata are a basis for parsing of arguments as well as command editor creation.
+
+Argument parsers are responsible for parsing command arguments into desired types.
+ArgumentParser has a parse method, which takes argument metadata and list of arguments (typically supplied as list of strings
+resulting from liquer.parser.decode). Parsing may extract arbitrary amount of arguments and thus support more complex data structures.
+Parse method returns a tuple with the parsed argument and remaining unparsed arguments.
+Argument parsers which do not need multiple instances (typical case) have predefined constants.
+Multiple argument parsers may be collected in a SequenceArgumentParser by use of + operator (e.g. INT_AP + FLOAT_AP).
+
+Though commands can be registered with a low level method 'register' of CommandRegistry (which allows the greatest flexibility),
+the "mainstream" way of command registration is by simply decorating a function with @command or @first_command.
+"""
 import traceback
 from collections import namedtuple
 import inspect
@@ -14,26 +32,6 @@ from liquer.parser import (
     QueryException,
     ExpandedActionParameter,
 )
-
-
-"""This module is responsible for registering commands
-Commands are composed of a command executable and command metadata, which are collected in a command registry.
-CommandRegistry is a singleton that can be obtained by get_command_registry().
-
-Command metadata (CommandMetadata tuple) contain informations about the command and its arguments
-(type, parsing and editing of each argument). These metadata are a basis for parsing of arguments as well as command editor creation.
-
-Argument parsers are responsible for parsing command arguments into desired types.
-ArgumentParser has a parse method, which takes argument metadata and list of arguments (typically supplied as list of strings
-resulting from liquer.parser.decode). Parsing may extract arbitrary amount of arguments and thus support more complex data structures.
-Parse method returns a tuple with the parsed argument and remaining unparsed arguments.
-Argument parsers which do not need multiple instances (typical case) have predefined constants.
-Multiple argument parsers may be collected in a SequenceArgumentParser by use of + operator (e.g. INT_AP + FLOAT_AP).
-
-Though commands can be registered with a low level method 'register' of CommandRegistry (which allows the greatest flexibility),
-the "mainstream" way of command registration is by simply decorating a function with @command or @first_command.
-
-"""
 
 CommandMetadata = namedtuple(
     "CommandMetadata",

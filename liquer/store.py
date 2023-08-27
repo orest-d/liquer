@@ -1,13 +1,3 @@
-from os import makedirs, name, remove
-from pathlib import Path
-import json
-from io import BytesIO
-from liquer.constants import *
-import liquer.util as util
-import hashlib
-from liquer.metadata import Metadata
-import traceback
-
 """Store is a flexible filesystem-like key-value store.
 Stores support reading and writing of binary data and the associated metadata.
 Data from the store can typically be accessed through the resource part of the query:
@@ -34,6 +24,16 @@ By convention, the folder "web" in the get_store() holds web interface and can b
 /liquer/web url. 
 
 """
+from os import makedirs, name, remove
+from pathlib import Path
+import json
+from io import BytesIO
+from liquer.constants import *
+import liquer.util as util
+import hashlib
+from liquer.metadata import Metadata
+import traceback
+
 
 STORE = None
 WEB_STORE = None

@@ -1,3 +1,4 @@
+"""Query module - functions for query evaluation"""
 import traceback
 import os.path
 from liquer.context import get_context, find_queries_in_template

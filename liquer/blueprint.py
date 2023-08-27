@@ -1,3 +1,4 @@
+"""Deprecated blueprint module. Use *liquer.server.blueprint* instead"""
 import warnings
 
 print("WARNING: liquer.blueprint is deprecated, use liquer.server.blueprint")

@@ -1,3 +1,4 @@
+"""[Flask](https://flask.palletsprojects.com) blueprint for LiQuer server"""
 import logging
 from flask import Blueprint, jsonify, redirect, send_file, request, make_response, abort
 from liquer.query import evaluate

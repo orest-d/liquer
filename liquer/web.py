@@ -1,3 +1,7 @@
+"""Web related functions for LiQuer
+
+This module provides functions for generating links to queries and keys.
+"""
 from liquer.template import expand_simple
 
 

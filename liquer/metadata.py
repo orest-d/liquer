@@ -1,3 +1,15 @@
+"""Metadata class and related functionality
+
+Metadata accompanies every result of a query evaluation.
+It is used
+
+* it is typically created during a query evaluation in the *context* (*liquer.context.Context*)
+* Metadata becomes part of the *State* (*liquer.state.State*), which is ultimately an object combining the resulting data and metadata.
+* Metadata is stored in the *Store* (*liquer.store.Store*) together with the binary data.
+
+Metadata in the current implementation is a simple JSON-able python dictionary.
+This should slowly be replaced by the Metadata class, which provides high-level getters/setters and validation on top of the metadata dictionary object.
+"""
 from liquer.constants import Status
 from liquer.util import timestamp
 from liquer.dependencies import Dependencies

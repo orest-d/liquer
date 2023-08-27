@@ -1,3 +1,4 @@
+"""Convenience functions for Liquer"""
 from liquer.parser import *
 from liquer.store import get_store, KeyNotFoundStoreException, set_store
 from liquer.cache import get_cache

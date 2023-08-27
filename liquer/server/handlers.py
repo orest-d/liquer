@@ -1,3 +1,6 @@
+"""Handlers for LiQuer server
+These can be used as Tornado or Jupyter handlers.
+"""
 from liquer import *
 import json
 from liquer.commands import command_registry

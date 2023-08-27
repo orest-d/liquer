@@ -1,3 +1,19 @@
+"""
+This module provides functions to decode and encode query.
+
+This module provides a single public function: *parse*, that can parse a string representation of a query.
+This is turned into a *Query* object that can be used to introspect and manipulate the query.
+
+A query is a sequence of commands, each command being a list of strings starting with the command name as a first element.
+Commands are separated by a COMMAND_SEPARATOR, parts of the command (tokens) by PARAMETER_SEPARATOR.
+Having special charachers (like COMMAND_SEPARATOR or PARAMETER_SEPARATOR) inside the commands is possible
+by escaping with ESCAPE character and using escape sequences.
+Query is URL-safe and URL escaping is applied to other special characters.
+Empty commands are ignored (e.g. two consecutive COMMAND_SEPARATORs are equivalent to a single COMMAND_SEPARATOR).
+
+Query can be decoded from string to a list of lists of strings by decode (or encoded by encode).
+Encode and decode use encode_token and decode_token that are acting on a token level.
+"""
 from urllib.parse import quote, unquote
 import re
 from pyparsing import (
@@ -18,19 +34,6 @@ from pyparsing import (
     col,
     FollowedBy,
 )
-
-"""
-This module provides functions to decode and encode query.
-A query is a sequence of commands, each command being a list of strings starting with the command name as a first element.
-Commands are separated by a COMMAND_SEPARATOR, parts of the command (tokens) by PARAMETER_SEPARATOR.
-Having special charachers (like COMMAND_SEPARATOR or PARAMETER_SEPARATOR) inside the commands is possible
-by escaping with ESCAPE character and using escape sequences.
-Query is URL-safe and URL escaping is applied to other special characters.
-Empty commands are ignored (e.g. two consecutive COMMAND_SEPARATORs are equivalent to a single COMMAND_SEPARATOR).
-
-Query can be decoded from string to a list of lists of strings by decode (or encoded by encode).
-Encode and decode use encode_token and decode_token that are acting on a token level.
-"""
 
 COMMAND_SEPARATOR = "/"
 PARAMETER_SEPARATOR = "-"
@@ -107,6 +110,7 @@ def list_indent(lst, prefix="  "):
 
 
 class Position:
+    """Position in a query string or a longer text."""
     def __init__(self, offset=0, line=0, column=0):
         self.offset = offset
         self.line = line
@@ -141,6 +145,7 @@ class Position:
 
 
 class QueryException(Exception):
+    """Base class for all exceptions in liquer parser."""
     def __init__(self, message, position=None, query=None):
         self.original_message = message
         if position is not None:
@@ -157,6 +162,10 @@ class QueryException(Exception):
 
 
 class ActionParameter(object):
+    """Action parameter is an object representing a parameter of an action.
+    Action is a command with parameter specified.
+    In simple terms, action parameter is a parsed parameter that will be passed to a command.
+    """
     def __init__(self, position=None):
         self.position = position or Position()
 
@@ -172,6 +181,7 @@ class ActionParameter(object):
 
 
 class LinkActionParameter(ActionParameter):
+    """Link action parameter is a parameter of an action that is a link to another query."""
     def __init__(self, link, position=None):
         super().__init__(position)
         self.link = link
@@ -189,6 +199,7 @@ class LinkActionParameter(ActionParameter):
 
 
 class ExpandedActionParameter(ActionParameter):
+    """Expanded action parameter is a parameter of an action that is expanded (typically a link to another query, which has been evaluated)."""
     def __init__(self, value, link, position=None):
         super().__init__(position)
         self.value = value
@@ -208,6 +219,9 @@ class ExpandedActionParameter(ActionParameter):
 
 
 class StringActionParameter(ActionParameter):
+    """String action parameter is a parameter of an action that is a plain string.
+    This may be converted to other types during the command execution process.
+    """
     def __init__(self, string: str, position=None):
         super().__init__(position)
         self.string = string
@@ -225,6 +239,7 @@ class StringActionParameter(ActionParameter):
 
 
 class ResourceName(ActionParameter):
+    """Resource name is a name of a resource (typically a file or folder) in a store."""
     def __init__(self, name: str, position=None):
         self.position = position or Position()
         self.name = name
@@ -240,6 +255,7 @@ class ResourceName(ActionParameter):
 
 
 class ActionRequest(object):
+    """Action request is a command name with parameters."""
     def __init__(self, name: str, parameters=None, position=None):
         self.name = name
         self.parameters = [] if parameters is None else parameters
@@ -1076,6 +1092,7 @@ resource_transform_query = (
 
 
 def parse(query):
+    """Main function to parse a query."""
     try:
         return resource_transform_query.parseString(query, True)[0]
     except:

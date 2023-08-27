@@ -1,3 +1,17 @@
+"""
+Cache defines a mechanism for caching state for a query (or a subquery).
+
+Since there is a one-to-one correspondence between a query and a state (more precisely state data),
+cache can work as a simple key-value store, using state.query as a key.
+Cache object must define three methods:
+- get - for retrieving state from a key (query); get returns None if the state cannot be recovered
+- store - for storing the state; should return True if the cache handled the storing 
+- contains - for checking the availability of a state associated with a key (query)
+
+A global cache is configured by set_cache and available via get_cache.
+From a given query, cached_part function tries to recover as much as possible from cache,
+while returning (besides the recovered state) the query remainder that needs to be evaluated. 
+"""
 from os import makedirs
 import os.path
 import hashlib
@@ -10,19 +24,6 @@ import traceback
 import base64
 import numpy as np
 
-"""
-Cache defines a mechanism for caching state for a query (or a subquery).
-Since there is a one-to-one correspondence between a query and a state (more precisely state data),
-cache can work as a simple key-value store, using state.query as a key.
-Cache object must define three methods:
-- get - for retrieving state from a key (query); get returns None if the state cannot be recovered
-- store - for storing the state; should return True if the cache handled the storing 
-- contains - for checking the availability of a state associated with a key (query)
-
-A global cache is configured by set_cache and available via get_cache.
-From a given query, cached_part function tries to recover as much as possible from cache,
-while returning (besides the recovered state) the query remainder that needs to be evaluated. 
-"""
 _cache = None
 
 

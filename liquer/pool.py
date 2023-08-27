@@ -1,3 +1,4 @@
+"""Module liquer.pool provides functions for running Liquer in a multiprocessing pool."""
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 from os import getpid

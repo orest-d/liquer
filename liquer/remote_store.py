@@ -1,3 +1,6 @@
+"""Defines a RemoteStore, a store implementation that can connect to a remote liquer server
+via liquer server store API.
+"""
 from liquer.store import Store, StoreException
 import requests
 

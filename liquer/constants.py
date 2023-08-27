@@ -1,19 +1,21 @@
-from enum import Enum
+"""Definition of useful constants and enums"""
 
+from enum import Enum
 
 class Status(Enum):
     """Status of evaluated data.
-    NONE         - status not available (default value)
-    SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
-    EVALUATING_PARENT - parent is being evaluated
-    EVALUATION   - last action of the query is being evaluated
-    EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
-    READY        - data is ready (after successful evaluation)
-    ERROR        - evaluation terminated with an error
-    EXPIRED      - data exists, but it is obsolete or expired
-    RECIPE       - data are not in store, but a recipe is available
-    EXTERNAL     - data is from external source or modified by a user
-    SIDE_EFFECT  - data has been created as a side-effect of a query
+
+    * NONE         - status not available (default value)
+    * SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
+    * EVALUATING_PARENT - parent is being evaluated
+    * EVALUATION   - last action of the query is being evaluated
+    * EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
+    * READY        - data is ready (after successful evaluation)
+    * ERROR        - evaluation terminated with an error
+    * EXPIRED      - data exists, but it is obsolete or expired
+    * RECIPE       - data are not in store, but a recipe is available
+    * EXTERNAL     - data is from external source or modified by a user
+    * SIDE_EFFECT  - data has been created as a side-effect of a query
 
     """
 
@@ -125,8 +127,14 @@ TYPE_IDENTIFIER_BY_EXTENSION = dict(
 
 
 def mimetype_from_extension(extension, default="application/octet-stream"):
+    """Get the media type (MIME type) from a file extension
+    See https://en.wikipedia.org/wiki/Media_type
+    """
     return MIMETYPES.get(extension, default)
 
 
 def type_identifier_from_extension(extension):
+    """Get type identifier from a file extension.
+    Type identifier is used to identify the type of data; see *liquer.state_types* for details.
+    """
     return TYPE_IDENTIFIER_BY_EXTENSION.get(extension)

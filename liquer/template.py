@@ -1,3 +1,4 @@
+"""Rich template engine for Liquer queries - in progress."""
 from pyparsing import (
     Literal,
     Word,

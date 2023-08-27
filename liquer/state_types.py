@@ -1,10 +1,3 @@
-from io import BytesIO, StringIO
-import json
-from copy import deepcopy
-import base64
-import pickle
-from liquer.constants import mimetype_from_extension, MIMETYPES
-
 """State types represent the additional properties of data types that can be used as a state:
 - state type must be representable as a (short) string identifier
 - state must be serializable (and deserializable) as bytes
@@ -32,6 +25,13 @@ can be used:
 Serialization/deserialization may as well keep being unspecified. In that case, the state the capability
 of a state being cached or served is limited.
 """
+
+from io import BytesIO, StringIO
+import json
+from copy import deepcopy
+import base64
+import pickle
+from liquer.constants import mimetype_from_extension, MIMETYPES
 
 
 def get_type_qualname(cls):

@@ -1,3 +1,5 @@
+"""Defines S3Store class with the Liquer store interface.
+S3Store is a store using Amazon S3 buckets."""
 from liquer.store import Store, parent_key
 from liquer.metadata import Metadata
 import json
@@ -5,6 +7,8 @@ import boto3
 
 
 class S3Store(Store):
+    """S3Store class with the Liquer store interface.
+    S3Store is a store using Amazon S3 buckets."""
     DELIMITER = "/"
 
     def __init__(self, bucket_name, prefix="", s3_resource=None):

@@ -1,3 +1,4 @@
+"""Dependency management for Liquer - currently in progress"""
 from copy import deepcopy
 
 

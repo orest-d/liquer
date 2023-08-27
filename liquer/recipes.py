@@ -1,3 +1,21 @@
+"""Recipes are a way to define how a resource is created from other resources.
+
+Recipes are stored in a special type of store, that supports recipes interpretation.
+Such a store can transparently handle resource creation on demand by evaluating the recipes.
+A store user only needs to request the resource and the store will take care of its creation if needed.
+
+Recipes are defined in a recipes.yaml files that can define resources inside the folder and as well in the immediate sub-folders.
+Each recipe is a dictionary. This dictionaries are interpreted by *Recipe* objects registered in the *RecipeRegistry*.
+The *RecipeRegistry* is a singleton object that can be accessed via *recipe_registry()* function.
+
+There is a standard recipe type which simply executes a query and stores the result in a file.
+The filename in the end of the query is used as the filename of the resource.
+This standard recipe has two forms:
+
+* query as a string
+* dictionary with a *query* and optional *title* and *description*.
+
+"""
 from liquer.store import (
     get_store,
     Store,
@@ -79,6 +97,7 @@ def register_recipe(recipe):
 
 
 class Recipe:
+    """Base class for recipes"""
     def __init__(self, d):
         if type(d) != dict:
             raise Exception("Dictionary expected as recipe definition")
@@ -186,6 +205,7 @@ def resolve_recipe_definition(r, directory, metadata):
 
 
 class QueryRecipe(Recipe):
+    """Standard recipe that executes a query"""
     @classmethod
     def recipe_type(self):
         return "query"
@@ -214,6 +234,7 @@ register_recipe(QueryRecipe)
 
 
 class RecipeStore(Store):
+    """Base class for recipe stores"""
     def __init__(self, store, recipes=None, context=None):
         self.substore = store
         self.substore.parent_store = self
@@ -387,6 +408,7 @@ class RecipeStore(Store):
 
 
 class OldRecipeSpecStore(RecipeStore):
+    """Deprecated recipe store. Use RecipeSpecStore instead."""
     RECIPES_FILE = "recipes.yaml"
     LOCAL_RECIPES = "RECIPES"
     STATUS_FILE = "recipes_status.txt"
@@ -607,6 +629,7 @@ class OldRecipeSpecStore(RecipeStore):
 
 
 class NewRecipeSpecStore(Store):
+    """Current recipe store. Use RecipeSpecStore instead, which is an alias to NewRecipeSpecStore."""
     RECIPES_FILE = "recipes.yaml"
     LOCAL_RECIPES = "RECIPES"
     STATUS_FILE = "recipes_status.txt"
@@ -982,4 +1005,5 @@ class NewRecipeSpecStore(Store):
 
 
 class RecipeSpecStore(NewRecipeSpecStore):
+    """Recipe store that supports recipes"""
     pass

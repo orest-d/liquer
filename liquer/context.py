@@ -1,3 +1,22 @@
+"""Context is a class that holds the data and services associated with the query evaluation.
+
+Context contains the following:
+
+* query - the query to be evaluated
+* metadata - metadata of the executed query including the log of messages
+* methods for logging messages and progress indicators
+* state variables - variables that are passed along the pipeline during the query evaluation
+* store - reference to a global store object
+* cache - reference to a global cache object
+* methods for evaluating subqueries; these methods controll the interpretation and evaluation of the query
+
+Context is (optionally) injected into the evaluation of commands when the command function is called from the liquer framework.
+By convention, the context is an argument named `context` in the command function, which has the default value `None`.
+If the context is `None` (e.g. when the command function is called directly), the context needs to be created by calling `get_context()`.
+That's why the command function should always have the `context` argument with the default value `None`, followed by the
+```context = get_context(context)``` line at the beginning of the function.
+
+"""
 import traceback
 from liquer.state import State, EvaluationException, vars_clone
 from liquer.parser import (
@@ -41,6 +60,7 @@ from liquer.store import (
 
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
+    """Internal helper function to find queries in a template."""
     try:
         start = template.index(prefix)
         end = template.index(sufix, start + len(prefix))
@@ -82,6 +102,7 @@ class Vars(dict):
 
 
 def log_time():
+    """Return time in the log format"""
     date = datetime.now()
     return date.strftime("%H:%M:%S")
 
@@ -90,11 +111,18 @@ CONTEXT_CREATOR = None
 
 
 def set_context_creator(context_creator):
+    """Override the context creator function.
+    This function is called by the framework to create a new context as well as by the *get_context* function.
+    """
     global CONTEXT_CREATOR
     CONTEXT_CREATOR = context_creator
 
 
 def get_context(context=None):
+    """Get the current context.
+    If the *context* is None, the context is created by calling the context creator function (Context() by default).
+    Otherwise the *context* argument is returned as is.
+    """
     global CONTEXT_CREATOR
     if context is None:
         if CONTEXT_CREATOR is None:
@@ -106,6 +134,7 @@ def get_context(context=None):
 
 
 class MetadataContextMixin:
+    """Mixin containing functionality associated with metadata processig - e.g. log messages and progress indicators."""
     def metadata(self):
         metadata = self._metadata.as_dict()
         title = self.title
@@ -243,7 +272,18 @@ class MetadataContextMixin:
 
 
 class Context(MetadataContextMixin, object):
+    """Main Context class.
+
+    Context is normally created by the framework or the *get_context* function.
+    Context should not be created directly (unless you know what you are doing).
+    Use get_context() instead.
+
+    Note, that context can be configured with a debug option, which turns on/off debug messages.
+    """
     def __init__(self, parent_context=None, debug=False):
+        """Create a new context.
+        With *debug* option, debug messages are turned on/off (default is off).
+        """
         self.parent_context = parent_context  # parent context - when in child context
 
         #        self.raw_query = None  # String with the evaluated query
@@ -341,16 +381,29 @@ class Context(MetadataContextMixin, object):
         return (datetime.now() - self.last_report_time).total_seconds() > 0.1
 
     def set_html_preview(self, html):
+        """Set the HTML preview in the metadata.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        """
         self.html_preview = html
         self.store_metadata()
         return self
 
     def set_description(self, description):
+        """Set the description in the metadata.
+        Description is a short (potentially multiline) text describing the purpose of the command.
+        Description and title can be set by the recipy.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        """
         self.description = description
         self.store_metadata()
         return self
 
     def set_title(self, title):
+        """Set the title in the metadata.
+        Title is a short single line text used as a title for the result.
+        Description and title can be set by the recipy.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        """
         self.title = title
         self.store_metadata()
         return self

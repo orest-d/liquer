@@ -1,3 +1,12 @@
+"""State object - encapsulates the combination of data and metadata.
+
+State instance is a typical output of a query evaluation, e.g. by calling evaluate function.
+If the evaluation was successful, the state contains the data, that can be obtained by calling get() method.
+If the evaluation was not successful, the state contains the error message, which is raised as an exception when calling get() method.
+The error status as well as other metadata can be inspected by accessing the State properties, methods and/or metadata directly.
+
+Metadata is stored in the *State* *metadata* property as a dictionary.
+"""
 import json
 from liquer.state_types import type_identifier_of, copy_state_data, data_characteristics
 from liquer.constants import mimetype_from_extension
@@ -40,6 +49,7 @@ def set_var(name, value):
 
 
 class State(object):
+    """State object - combination of data and metadata"""
     def __init__(self, data=None, metadata=None, context=None):
         self.data = data
         self.exception = None

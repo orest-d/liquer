@@ -1,3 +1,4 @@
+"""[Tornado](https://www.tornadoweb.org/en/stable/) handlers and Tornado backend for Liquer server"""
 import tornado.ioloop
 import tornado.web
 import liquer.server.handlers as h

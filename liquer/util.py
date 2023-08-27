@@ -1,3 +1,4 @@
+"""General utilities for Liquer, e.g. datetime formatting"""
 from datetime import datetime
 
 
