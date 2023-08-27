@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.state API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="State object - encapsulates the combination of data and metadata …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,26 @@
 <h1 class="title">Module <code>liquer.state</code></h1>
 </header>
 <section id="section-intro">
+<p>State object - encapsulates the combination of data and metadata.</p>
+<p>State instance is a typical output of a query evaluation, e.g. by calling evaluate function.
+If the evaluation was successful, the state contains the data, that can be obtained by calling get() method.
+If the evaluation was not successful, the state contains the error message, which is raised as an exception when calling get() method.
+The error status as well as other metadata can be inspected by accessing the State properties, methods and/or metadata directly.</p>
+<p>Metadata is stored in the <em>State</em> <em>metadata</em> property as a dictionary.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import json
+<pre><code class="python">&#34;&#34;&#34;State object - encapsulates the combination of data and metadata.
+
+State instance is a typical output of a query evaluation, e.g. by calling evaluate function.
+If the evaluation was successful, the state contains the data, that can be obtained by calling get() method.
+If the evaluation was not successful, the state contains the error message, which is raised as an exception when calling get() method.
+The error status as well as other metadata can be inspected by accessing the State properties, methods and/or metadata directly.
+
+Metadata is stored in the *State* *metadata* property as a dictionary.
+&#34;&#34;&#34;
+import json
 from liquer.state_types import type_identifier_of, copy_state_data, data_characteristics
 from liquer.constants import mimetype_from_extension
 
@@ -68,6 +83,7 @@ def set_var(name, value):
 
 
 class State(object):
+    &#34;&#34;&#34;State object - combination of data and metadata&#34;&#34;&#34;
     def __init__(self, data=None, metadata=None, context=None):
         self.data = data
         self.exception = None
@@ -353,7 +369,7 @@ This is used to set the initial content of State.vars for a newly created state.
 <span>(</span><span>message, position=None, query=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Base class for all exceptions in liquer parser.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -373,12 +389,13 @@ This is used to set the initial content of State.vars for a newly created state.
 <span>(</span><span>data=None, metadata=None, context=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>State object - combination of data and metadata</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class State(object):
+    &#34;&#34;&#34;State object - combination of data and metadata&#34;&#34;&#34;
     def __init__(self, data=None, metadata=None, context=None):
         self.data = data
         self.exception = None

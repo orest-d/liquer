@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.store API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Store is a flexible filesystem-like key-value store.
+Stores support reading and writing of binary data and the associated metadata.
+Data from the …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,21 +24,29 @@
 <h1 class="title">Module <code>liquer.store</code></h1>
 </header>
 <section id="section-intro">
+<p>Store is a flexible filesystem-like key-value store.
+Stores support reading and writing of binary data and the associated metadata.
+Data from the store can typically be accessed through the resource part of the query:</p>
+<p>file/in/store.txt/-/some_command/another_command</p>
+<p>This query is split to two parts by /-/, the first part is the resource query (file/in/store.txt),
+and the second part is the standard query (some_command/another_command).
+Query is interpreted as
+- first read file/in/store.txt from store
+- pass it as bytes to the query,
+so it is equivalent to</p>
+<p>another_command(some_command(store.get_bytes('file/in/store.txt')))</p>
+<p>Stores can be combined and composed in various way (see e.g. mount function and method).
+Various store types are supported: memory store (MemoryStore), local filesystem store (FileStore),
+overlays and other. The FileSystemStore allows to mount ftp servers, zip and files via PyFilesystem2.</p>
+<p>There is always a default main store, which can be obtained by get_store().
+This is typically passed ty commands via context.store().</p>
+<p>By convention, the folder "web" in the get_store() holds web interface and can be accessed via
+/liquer/web url.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from os import makedirs, name, remove
-from pathlib import Path
-import json
-from io import BytesIO
-from liquer.constants import *
-import liquer.util as util
-import hashlib
-from liquer.metadata import Metadata
-import traceback
-
-&#34;&#34;&#34;Store is a flexible filesystem-like key-value store.
+<pre><code class="python">&#34;&#34;&#34;Store is a flexible filesystem-like key-value store.
 Stores support reading and writing of binary data and the associated metadata.
 Data from the store can typically be accessed through the resource part of the query:
 
@@ -62,6 +72,16 @@ By convention, the folder &#34;web&#34; in the get_store() holds web interface a
 /liquer/web url. 
 
 &#34;&#34;&#34;
+from os import makedirs, name, remove
+from pathlib import Path
+import json
+from io import BytesIO
+from liquer.constants import *
+import liquer.util as util
+import hashlib
+from liquer.metadata import Metadata
+import traceback
+
 
 STORE = None
 WEB_STORE = None

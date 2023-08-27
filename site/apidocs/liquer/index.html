@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Main liquer module. Importing this module is sufficient to use liquer.
+It exposes command registration decorators (*command* and *first_command*),
+…" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +24,18 @@
 <h1 class="title">Package <code>liquer</code></h1>
 </header>
 <section id="section-intro">
+<p>Main liquer module. Importing this module is sufficient to use liquer.
+It exposes command registration decorators (<em>command</em> and <em>first_command</em>),
+query evaluation functions (<em>evaluate</em>, <em>evaluate_and_save</em>) and context access (<em>get_context</em>).</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from liquer.commands import command, first_command
+<pre><code class="python">&#34;&#34;&#34;Main liquer module. Importing this module is sufficient to use liquer.
+It exposes command registration decorators (*command* and *first_command*),
+query evaluation functions (*evaluate*, *evaluate_and_save*) and context access (*get_context*).
+&#34;&#34;&#34;
+from liquer.commands import command, first_command
 from liquer.query import evaluate, evaluate_and_save, evaluate_template
 from liquer.context import get_context
 
@@ -42,15 +51,15 @@ __version__ = &#34;0.8.0&#34;</code></pre>
 </dd>
 <dt><code class="name"><a title="liquer.blueprint" href="blueprint.html">liquer.blueprint</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Deprecated blueprint module. Use <em>liquer.server.blueprint</em> instead</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.cache" href="cache.html">liquer.cache</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Cache defines a mechanism for caching state for a query (or a subquery) …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.commands" href="commands.html">liquer.commands</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>This module is responsible for registering commands …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.config" href="config.html">liquer.config</a></code></dt>
 <dd>
@@ -60,15 +69,15 @@ The dictionary is initialized …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.constants" href="constants.html">liquer.constants</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Definition of useful constants and enums</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.context" href="context.html">liquer.context</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Context is a class that holds the data and services associated with the query evaluation …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.dependencies" href="dependencies.html">liquer.dependencies</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Dependency management for Liquer - currently in progress</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.ext" href="ext/index.html">liquer.ext</a></code></dt>
 <dd>
@@ -81,63 +90,68 @@ Indexers can be used for multiple …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.metadata" href="metadata.html">liquer.metadata</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Metadata class and related functionality …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.parser" href="parser.html">liquer.parser</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>This module provides functions to decode and encode query …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.pool" href="pool.html">liquer.pool</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Module liquer.pool provides functions for running Liquer in a multiprocessing pool.</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.query" href="query.html">liquer.query</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Query module - functions for query evaluation</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.recipes" href="recipes.html">liquer.recipes</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Recipes are a way to define how a resource is created from other resources …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.remote_store" href="remote_store.html">liquer.remote_store</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Defines a RemoteStore, a store implementation that can connect to a remote liquer server
+via liquer server store API.</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.s3_store" href="s3_store.html">liquer.s3_store</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Defines S3Store class with the Liquer store interface.
+S3Store is a store using Amazon S3 buckets.</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.server" href="server/index.html">liquer.server</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Server implementations and utilities for various backends</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.state" href="state.html">liquer.state</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>State object - encapsulates the combination of data and metadata …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.state_types" href="state_types.html">liquer.state_types</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>State types represent the additional properties of data types that can be used as a state:
+- state type must be representable as a (short) string …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.store" href="store.html">liquer.store</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Store is a flexible filesystem-like key-value store.
+Stores support reading and writing of binary data and the associated metadata.
+Data from the …</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.template" href="template.html">liquer.template</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Rich template engine for Liquer queries - in progress.</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.tools" href="tools.html">liquer.tools</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Convenience functions for Liquer</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.util" href="util.html">liquer.util</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>General utilities for Liquer, e.g. datetime formatting</p></div>
 </dd>
 <dt><code class="name"><a title="liquer.web" href="web.html">liquer.web</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Web related functions for LiQuer …</p></div>
 </dd>
 </dl>
 </section>

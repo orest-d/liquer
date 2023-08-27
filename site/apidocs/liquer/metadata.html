@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.metadata API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Metadata class and related functionality …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,33 @@
 <h1 class="title">Module <code>liquer.metadata</code></h1>
 </header>
 <section id="section-intro">
+<p>Metadata class and related functionality</p>
+<p>Metadata accompanies every result of a query evaluation.
+It is used</p>
+<ul>
+<li>it is typically created during a query evaluation in the <em>context</em> (<em>liquer.context.Context</em>)</li>
+<li>Metadata becomes part of the <em>State</em> (<em>liquer.state.State</em>), which is ultimately an object combining the resulting data and metadata.</li>
+<li>Metadata is stored in the <em>Store</em> (<em>liquer.store.Store</em>) together with the binary data.</li>
+</ul>
+<p>Metadata in the current implementation is a simple JSON-able python dictionary.
+This should slowly be replaced by the Metadata class, which provides high-level getters/setters and validation on top of the metadata dictionary object.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from liquer.constants import Status
+<pre><code class="python">&#34;&#34;&#34;Metadata class and related functionality
+
+Metadata accompanies every result of a query evaluation.
+It is used
+
+* it is typically created during a query evaluation in the *context* (*liquer.context.Context*)
+* Metadata becomes part of the *State* (*liquer.state.State*), which is ultimately an object combining the resulting data and metadata.
+* Metadata is stored in the *Store* (*liquer.store.Store*) together with the binary data.
+
+Metadata in the current implementation is a simple JSON-able python dictionary.
+This should slowly be replaced by the Metadata class, which provides high-level getters/setters and validation on top of the metadata dictionary object.
+&#34;&#34;&#34;
+from liquer.constants import Status
 from liquer.util import timestamp
 from liquer.dependencies import Dependencies
 from copy import deepcopy

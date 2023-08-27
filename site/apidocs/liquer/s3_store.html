@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.s3_store API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Defines S3Store class with the Liquer store interface.
+S3Store is a store using Amazon S3 buckets." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,17 +23,23 @@
 <h1 class="title">Module <code>liquer.s3_store</code></h1>
 </header>
 <section id="section-intro">
+<p>Defines S3Store class with the Liquer store interface.
+S3Store is a store using Amazon S3 buckets.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from liquer.store import Store, parent_key
+<pre><code class="python">&#34;&#34;&#34;Defines S3Store class with the Liquer store interface.
+S3Store is a store using Amazon S3 buckets.&#34;&#34;&#34;
+from liquer.store import Store, parent_key
 from liquer.metadata import Metadata
 import json
 import boto3
 
 
 class S3Store(Store):
+    &#34;&#34;&#34;S3Store class with the Liquer store interface.
+    S3Store is a store using Amazon S3 buckets.&#34;&#34;&#34;
     DELIMITER = &#34;/&#34;
 
     def __init__(self, bucket_name, prefix=&#34;&#34;, s3_resource=None):
@@ -214,12 +221,15 @@ class S3Store(Store):
 <span>(</span><span>bucket_name, prefix='', s3_resource=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixing adding extra functionality to stores.</p></div>
+<div class="desc"><p>S3Store class with the Liquer store interface.
+S3Store is a store using Amazon S3 buckets.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class S3Store(Store):
+    &#34;&#34;&#34;S3Store class with the Liquer store interface.
+    S3Store is a store using Amazon S3 buckets.&#34;&#34;&#34;
     DELIMITER = &#34;/&#34;
 
     def __init__(self, bucket_name, prefix=&#34;&#34;, s3_resource=None):

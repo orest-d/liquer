@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.state_types API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="State types represent the additional properties of data types that can be used as a state:
+- state type must be representable as a (short) string …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,18 +23,33 @@
 <h1 class="title">Module <code>liquer.state_types</code></h1>
 </header>
 <section id="section-intro">
+<p>State types represent the additional properties of data types that can be used as a state:
+- state type must be representable as a (short) string identifier
+- state must be serializable (and deserializable) as bytes
+- mime type must be known for a serialized form
+State types are registered in a state type registry, where they can be looked up either by
+a qualified type name or a state type identifier. (Therefore state type identifiers should be carefully chosen
+to not to clash with qualified names. It is encouraged to only use lower case characters as state type identifiers.)</p>
+<p>Intended use:
+- state can be served via a web service,
+- state can be serialized into a file, database or key/value store.</p>
+<p>Deserialization requires (besides the byte representation of the data) as well identifier of the state type,
+which identifies a registered state type and thus the deserialization method.
+Though state type provides a prefered (default) format,
+multiple formats may be used for serialization (and deserialization) if needed.
+The serialization format is selected by file extension passed to serialization (as_bytes) or deserialization (from_bytes) method.
+Since the format determines the mime type, as bytes return besides serialized data as well the actual mime type relevant for the serialization.</p>
+<p>Note that for the successful serialization/deserialization strategy (e.g. for caching), the following approaches
+can be used:
+- use the default extension/format/mimetype - i.e. do not specify the extension or set extension=None in as_bytes/from_bytes
+- specify fixed extension</p>
+<p>Serialization/deserialization may as well keep being unspecified. In that case, the state the capability
+of a state being cached or served is limited.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from io import BytesIO, StringIO
-import json
-from copy import deepcopy
-import base64
-import pickle
-from liquer.constants import mimetype_from_extension, MIMETYPES
-
-&#34;&#34;&#34;State types represent the additional properties of data types that can be used as a state:
+<pre><code class="python">&#34;&#34;&#34;State types represent the additional properties of data types that can be used as a state:
 - state type must be representable as a (short) string identifier
 - state must be serializable (and deserializable) as bytes
 - mime type must be known for a serialized form
@@ -60,6 +76,13 @@ can be used:
 Serialization/deserialization may as well keep being unspecified. In that case, the state the capability
 of a state being cached or served is limited.
 &#34;&#34;&#34;
+
+from io import BytesIO, StringIO
+import json
+from copy import deepcopy
+import base64
+import pickle
+from liquer.constants import mimetype_from_extension, MIMETYPES
 
 
 def get_type_qualname(cls):

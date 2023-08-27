@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.recipes API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Recipes are a way to define how a resource is created from other resources …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,43 @@
 <h1 class="title">Module <code>liquer.recipes</code></h1>
 </header>
 <section id="section-intro">
+<p>Recipes are a way to define how a resource is created from other resources.</p>
+<p>Recipes are stored in a special type of store, that supports recipes interpretation.
+Such a store can transparently handle resource creation on demand by evaluating the recipes.
+A store user only needs to request the resource and the store will take care of its creation if needed.</p>
+<p>Recipes are defined in a recipes.yaml files that can define resources inside the folder and as well in the immediate sub-folders.
+Each recipe is a dictionary. This dictionaries are interpreted by <em>Recipe</em> objects registered in the <em>RecipeRegistry</em>.
+The <em>RecipeRegistry</em> is a singleton object that can be accessed via <em>recipe_registry()</em> function.</p>
+<p>There is a standard recipe type which simply executes a query and stores the result in a file.
+The filename in the end of the query is used as the filename of the resource.
+This standard recipe has two forms:</p>
+<ul>
+<li>query as a string</li>
+<li>dictionary with a <em>query</em> and optional <em>title</em> and <em>description</em>.</li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from liquer.store import (
+<pre><code class="python">&#34;&#34;&#34;Recipes are a way to define how a resource is created from other resources.
+
+Recipes are stored in a special type of store, that supports recipes interpretation.
+Such a store can transparently handle resource creation on demand by evaluating the recipes.
+A store user only needs to request the resource and the store will take care of its creation if needed.
+
+Recipes are defined in a recipes.yaml files that can define resources inside the folder and as well in the immediate sub-folders.
+Each recipe is a dictionary. This dictionaries are interpreted by *Recipe* objects registered in the *RecipeRegistry*.
+The *RecipeRegistry* is a singleton object that can be accessed via *recipe_registry()* function.
+
+There is a standard recipe type which simply executes a query and stores the result in a file.
+The filename in the end of the query is used as the filename of the resource.
+This standard recipe has two forms:
+
+* query as a string
+* dictionary with a *query* and optional *title* and *description*.
+
+&#34;&#34;&#34;
+from liquer.store import (
     get_store,
     Store,
     KeyNotFoundStoreException,
@@ -107,6 +139,7 @@ def register_recipe(recipe):
 
 
 class Recipe:
+    &#34;&#34;&#34;Base class for recipes&#34;&#34;&#34;
     def __init__(self, d):
         if type(d) != dict:
             raise Exception(&#34;Dictionary expected as recipe definition&#34;)
@@ -214,6 +247,7 @@ def resolve_recipe_definition(r, directory, metadata):
 
 
 class QueryRecipe(Recipe):
+    &#34;&#34;&#34;Standard recipe that executes a query&#34;&#34;&#34;
     @classmethod
     def recipe_type(self):
         return &#34;query&#34;
@@ -242,6 +276,7 @@ register_recipe(QueryRecipe)
 
 
 class RecipeStore(Store):
+    &#34;&#34;&#34;Base class for recipe stores&#34;&#34;&#34;
     def __init__(self, store, recipes=None, context=None):
         self.substore = store
         self.substore.parent_store = self
@@ -415,6 +450,7 @@ class RecipeStore(Store):
 
 
 class OldRecipeSpecStore(RecipeStore):
+    &#34;&#34;&#34;Deprecated recipe store. Use RecipeSpecStore instead.&#34;&#34;&#34;
     RECIPES_FILE = &#34;recipes.yaml&#34;
     LOCAL_RECIPES = &#34;RECIPES&#34;
     STATUS_FILE = &#34;recipes_status.txt&#34;
@@ -635,6 +671,7 @@ class OldRecipeSpecStore(RecipeStore):
 
 
 class NewRecipeSpecStore(Store):
+    &#34;&#34;&#34;Current recipe store. Use RecipeSpecStore instead, which is an alias to NewRecipeSpecStore.&#34;&#34;&#34;
     RECIPES_FILE = &#34;recipes.yaml&#34;
     LOCAL_RECIPES = &#34;RECIPES&#34;
     STATUS_FILE = &#34;recipes_status.txt&#34;
@@ -1010,6 +1047,7 @@ class NewRecipeSpecStore(Store):
 
 
 class RecipeSpecStore(NewRecipeSpecStore):
+    &#34;&#34;&#34;Recipe store that supports recipes&#34;&#34;&#34;
     pass</code></pre>
 </details>
 </section>
@@ -1123,12 +1161,13 @@ class RecipeSpecStore(NewRecipeSpecStore):
 <span>(</span><span>store)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixing adding extra functionality to stores.</p></div>
+<div class="desc"><p>Current recipe store. Use RecipeSpecStore instead, which is an alias to NewRecipeSpecStore.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class NewRecipeSpecStore(Store):
+    &#34;&#34;&#34;Current recipe store. Use RecipeSpecStore instead, which is an alias to NewRecipeSpecStore.&#34;&#34;&#34;
     RECIPES_FILE = &#34;recipes.yaml&#34;
     LOCAL_RECIPES = &#34;RECIPES&#34;
     STATUS_FILE = &#34;recipes_status.txt&#34;
@@ -1871,12 +1910,13 @@ class RecipeSpecStore(NewRecipeSpecStore):
 <span>(</span><span>store, context=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixing adding extra functionality to stores.</p></div>
+<div class="desc"><p>Deprecated recipe store. Use RecipeSpecStore instead.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class OldRecipeSpecStore(RecipeStore):
+    &#34;&#34;&#34;Deprecated recipe store. Use RecipeSpecStore instead.&#34;&#34;&#34;
     RECIPES_FILE = &#34;recipes.yaml&#34;
     LOCAL_RECIPES = &#34;RECIPES&#34;
     STATUS_FILE = &#34;recipes_status.txt&#34;
@@ -2423,12 +2463,13 @@ class RecipeSpecStore(NewRecipeSpecStore):
 <span>(</span><span>d)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Standard recipe that executes a query</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class QueryRecipe(Recipe):
+    &#34;&#34;&#34;Standard recipe that executes a query&#34;&#34;&#34;
     @classmethod
     def recipe_type(self):
         return &#34;query&#34;
@@ -2531,12 +2572,13 @@ def recipe_type(self):
 <span>(</span><span>d)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Base class for recipes</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Recipe:
+    &#34;&#34;&#34;Base class for recipes&#34;&#34;&#34;
     def __init__(self, d):
         if type(d) != dict:
             raise Exception(&#34;Dictionary expected as recipe definition&#34;)
@@ -2848,12 +2890,13 @@ class-method result for known recipes to find a suitable recipe constructor.</p>
 <span>(</span><span>store)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixing adding extra functionality to stores.</p></div>
+<div class="desc"><p>Recipe store that supports recipes</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class RecipeSpecStore(NewRecipeSpecStore):
+    &#34;&#34;&#34;Recipe store that supports recipes&#34;&#34;&#34;
     pass</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -2902,12 +2945,13 @@ class-method result for known recipes to find a suitable recipe constructor.</p>
 <span>(</span><span>store, recipes=None, context=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixing adding extra functionality to stores.</p></div>
+<div class="desc"><p>Base class for recipe stores</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class RecipeStore(Store):
+    &#34;&#34;&#34;Base class for recipe stores&#34;&#34;&#34;
     def __init__(self, store, recipes=None, context=None):
         self.substore = store
         self.substore.parent_store = self

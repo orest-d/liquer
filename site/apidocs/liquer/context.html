@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.context API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Context is a class that holds the data and services associated with the query evaluation …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,46 @@
 <h1 class="title">Module <code>liquer.context</code></h1>
 </header>
 <section id="section-intro">
+<p>Context is a class that holds the data and services associated with the query evaluation.</p>
+<p>Context contains the following:</p>
+<ul>
+<li>query - the query to be evaluated</li>
+<li>metadata - metadata of the executed query including the log of messages</li>
+<li>methods for logging messages and progress indicators</li>
+<li>state variables - variables that are passed along the pipeline during the query evaluation</li>
+<li>store - reference to a global store object</li>
+<li>cache - reference to a global cache object</li>
+<li>methods for evaluating subqueries; these methods controll the interpretation and evaluation of the query</li>
+</ul>
+<p>Context is (optionally) injected into the evaluation of commands when the command function is called from the liquer framework.
+By convention, the context is an argument named <code>context</code> in the command function, which has the default value <code>None</code>.
+If the context is <code>None</code> (e.g. when the command function is called directly), the context needs to be created by calling <code><a title="liquer.context.get_context" href="#liquer.context.get_context">get_context()</a></code>.
+That's why the command function should always have the <code>context</code> argument with the default value <code>None</code>, followed by the
+<code>context = get_context(context)</code> line at the beginning of the function.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import traceback
+<pre><code class="python">&#34;&#34;&#34;Context is a class that holds the data and services associated with the query evaluation.
+
+Context contains the following:
+
+* query - the query to be evaluated
+* metadata - metadata of the executed query including the log of messages
+* methods for logging messages and progress indicators
+* state variables - variables that are passed along the pipeline during the query evaluation
+* store - reference to a global store object
+* cache - reference to a global cache object
+* methods for evaluating subqueries; these methods controll the interpretation and evaluation of the query
+
+Context is (optionally) injected into the evaluation of commands when the command function is called from the liquer framework.
+By convention, the context is an argument named `context` in the command function, which has the default value `None`.
+If the context is `None` (e.g. when the command function is called directly), the context needs to be created by calling `get_context()`.
+That&#39;s why the command function should always have the `context` argument with the default value `None`, followed by the
+```context = get_context(context)``` line at the beginning of the function.
+
+&#34;&#34;&#34;
+import traceback
 from liquer.state import State, EvaluationException, vars_clone
 from liquer.parser import (
     encode,
@@ -69,6 +104,7 @@ from liquer.store import (
 
 
 def find_queries_in_template(template: str, prefix: str, sufix: str):
+    &#34;&#34;&#34;Internal helper function to find queries in a template.&#34;&#34;&#34;
     try:
         start = template.index(prefix)
         end = template.index(sufix, start + len(prefix))
@@ -110,6 +146,7 @@ class Vars(dict):
 
 
 def log_time():
+    &#34;&#34;&#34;Return time in the log format&#34;&#34;&#34;
     date = datetime.now()
     return date.strftime(&#34;%H:%M:%S&#34;)
 
@@ -118,11 +155,18 @@ CONTEXT_CREATOR = None
 
 
 def set_context_creator(context_creator):
+    &#34;&#34;&#34;Override the context creator function.
+    This function is called by the framework to create a new context as well as by the *get_context* function.
+    &#34;&#34;&#34;
     global CONTEXT_CREATOR
     CONTEXT_CREATOR = context_creator
 
 
 def get_context(context=None):
+    &#34;&#34;&#34;Get the current context.
+    If the *context* is None, the context is created by calling the context creator function (Context() by default).
+    Otherwise the *context* argument is returned as is.
+    &#34;&#34;&#34;
     global CONTEXT_CREATOR
     if context is None:
         if CONTEXT_CREATOR is None:
@@ -134,6 +178,7 @@ def get_context(context=None):
 
 
 class MetadataContextMixin:
+    &#34;&#34;&#34;Mixin containing functionality associated with metadata processig - e.g. log messages and progress indicators.&#34;&#34;&#34;
     def metadata(self):
         metadata = self._metadata.as_dict()
         title = self.title
@@ -271,7 +316,18 @@ class MetadataContextMixin:
 
 
 class Context(MetadataContextMixin, object):
+    &#34;&#34;&#34;Main Context class.
+
+    Context is normally created by the framework or the *get_context* function.
+    Context should not be created directly (unless you know what you are doing).
+    Use get_context() instead.
+
+    Note, that context can be configured with a debug option, which turns on/off debug messages.
+    &#34;&#34;&#34;
     def __init__(self, parent_context=None, debug=False):
+        &#34;&#34;&#34;Create a new context.
+        With *debug* option, debug messages are turned on/off (default is off).
+        &#34;&#34;&#34;
         self.parent_context = parent_context  # parent context - when in child context
 
         #        self.raw_query = None  # String with the evaluated query
@@ -369,16 +425,29 @@ class Context(MetadataContextMixin, object):
         return (datetime.now() - self.last_report_time).total_seconds() &gt; 0.1
 
     def set_html_preview(self, html):
+        &#34;&#34;&#34;Set the HTML preview in the metadata.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        &#34;&#34;&#34;
         self.html_preview = html
         self.store_metadata()
         return self
 
     def set_description(self, description):
+        &#34;&#34;&#34;Set the description in the metadata.
+        Description is a short (potentially multiline) text describing the purpose of the command.
+        Description and title can be set by the recipy.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        &#34;&#34;&#34;
         self.description = description
         self.store_metadata()
         return self
 
     def set_title(self, title):
+        &#34;&#34;&#34;Set the title in the metadata.
+        Title is a short single line text used as a title for the result.
+        Description and title can be set by the recipy.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        &#34;&#34;&#34;
         self.title = title
         self.store_metadata()
         return self
@@ -1198,12 +1267,13 @@ class Context(MetadataContextMixin, object):
 <span>def <span class="ident">find_queries_in_template</span></span>(<span>template: str, prefix: str, sufix: str)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Internal helper function to find queries in a template.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def find_queries_in_template(template: str, prefix: str, sufix: str):
+    &#34;&#34;&#34;Internal helper function to find queries in a template.&#34;&#34;&#34;
     try:
         start = template.index(prefix)
         end = template.index(sufix, start + len(prefix))
@@ -1220,12 +1290,18 @@ class Context(MetadataContextMixin, object):
 <span>def <span class="ident">get_context</span></span>(<span>context=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get the current context.
+If the <em>context</em> is None, the context is created by calling the context creator function (Context() by default).
+Otherwise the <em>context</em> argument is returned as is.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_context(context=None):
+    &#34;&#34;&#34;Get the current context.
+    If the *context* is None, the context is created by calling the context creator function (Context() by default).
+    Otherwise the *context* argument is returned as is.
+    &#34;&#34;&#34;
     global CONTEXT_CREATOR
     if context is None:
         if CONTEXT_CREATOR is None:
@@ -1240,12 +1316,13 @@ class Context(MetadataContextMixin, object):
 <span>def <span class="ident">log_time</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Return time in the log format</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def log_time():
+    &#34;&#34;&#34;Return time in the log format&#34;&#34;&#34;
     date = datetime.now()
     return date.strftime(&#34;%H:%M:%S&#34;)</code></pre>
 </details>
@@ -1254,12 +1331,16 @@ class Context(MetadataContextMixin, object):
 <span>def <span class="ident">set_context_creator</span></span>(<span>context_creator)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Override the context creator function.
+This function is called by the framework to create a new context as well as by the <em>get_context</em> function.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set_context_creator(context_creator):
+    &#34;&#34;&#34;Override the context creator function.
+    This function is called by the framework to create a new context as well as by the *get_context* function.
+    &#34;&#34;&#34;
     global CONTEXT_CREATOR
     CONTEXT_CREATOR = context_creator</code></pre>
 </details>
@@ -1274,13 +1355,30 @@ class Context(MetadataContextMixin, object):
 <span>(</span><span>parent_context=None, debug=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Main Context class.</p>
+<p>Context is normally created by the framework or the <em>get_context</em> function.
+Context should not be created directly (unless you know what you are doing).
+Use get_context() instead.</p>
+<p>Note, that context can be configured with a debug option, which turns on/off debug messages.</p>
+<p>Create a new context.
+With <em>debug</em> option, debug messages are turned on/off (default is off).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Context(MetadataContextMixin, object):
+    &#34;&#34;&#34;Main Context class.
+
+    Context is normally created by the framework or the *get_context* function.
+    Context should not be created directly (unless you know what you are doing).
+    Use get_context() instead.
+
+    Note, that context can be configured with a debug option, which turns on/off debug messages.
+    &#34;&#34;&#34;
     def __init__(self, parent_context=None, debug=False):
+        &#34;&#34;&#34;Create a new context.
+        With *debug* option, debug messages are turned on/off (default is off).
+        &#34;&#34;&#34;
         self.parent_context = parent_context  # parent context - when in child context
 
         #        self.raw_query = None  # String with the evaluated query
@@ -1378,16 +1476,29 @@ class Context(MetadataContextMixin, object):
         return (datetime.now() - self.last_report_time).total_seconds() &gt; 0.1
 
     def set_html_preview(self, html):
+        &#34;&#34;&#34;Set the HTML preview in the metadata.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        &#34;&#34;&#34;
         self.html_preview = html
         self.store_metadata()
         return self
 
     def set_description(self, description):
+        &#34;&#34;&#34;Set the description in the metadata.
+        Description is a short (potentially multiline) text describing the purpose of the command.
+        Description and title can be set by the recipy.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        &#34;&#34;&#34;
         self.description = description
         self.store_metadata()
         return self
 
     def set_title(self, title):
+        &#34;&#34;&#34;Set the title in the metadata.
+        Title is a short single line text used as a title for the result.
+        Description and title can be set by the recipy.
+        This can be displayed in the Metadata viewer such as liquer_gui.
+        &#34;&#34;&#34;
         self.title = title
         self.store_metadata()
         return self
@@ -3308,12 +3419,20 @@ Queries should evaluate to strings and should not cause errors.</p></div>
 <span>def <span class="ident">set_description</span></span>(<span>self, description)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Set the description in the metadata.
+Description is a short (potentially multiline) text describing the purpose of the command.
+Description and title can be set by the recipy.
+This can be displayed in the Metadata viewer such as liquer_gui.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set_description(self, description):
+    &#34;&#34;&#34;Set the description in the metadata.
+    Description is a short (potentially multiline) text describing the purpose of the command.
+    Description and title can be set by the recipy.
+    This can be displayed in the Metadata viewer such as liquer_gui.
+    &#34;&#34;&#34;
     self.description = description
     self.store_metadata()
     return self</code></pre>
@@ -3323,12 +3442,16 @@ Queries should evaluate to strings and should not cause errors.</p></div>
 <span>def <span class="ident">set_html_preview</span></span>(<span>self, html)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Set the HTML preview in the metadata.
+This can be displayed in the Metadata viewer such as liquer_gui.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set_html_preview(self, html):
+    &#34;&#34;&#34;Set the HTML preview in the metadata.
+    This can be displayed in the Metadata viewer such as liquer_gui.
+    &#34;&#34;&#34;
     self.html_preview = html
     self.store_metadata()
     return self</code></pre>
@@ -3338,12 +3461,20 @@ Queries should evaluate to strings and should not cause errors.</p></div>
 <span>def <span class="ident">set_title</span></span>(<span>self, title)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Set the title in the metadata.
+Title is a short single line text used as a title for the result.
+Description and title can be set by the recipy.
+This can be displayed in the Metadata viewer such as liquer_gui.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set_title(self, title):
+    &#34;&#34;&#34;Set the title in the metadata.
+    Title is a short single line text used as a title for the result.
+    Description and title can be set by the recipy.
+    This can be displayed in the Metadata viewer such as liquer_gui.
+    &#34;&#34;&#34;
     self.title = title
     self.store_metadata()
     return self</code></pre>
@@ -3457,12 +3588,13 @@ This is indicated by the side_effect flag in the metadata and status Status.SIDE
 <span>class <span class="ident">MetadataContextMixin</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Mixin containing functionality associated with metadata processig - e.g. log messages and progress indicators.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class MetadataContextMixin:
+    &#34;&#34;&#34;Mixin containing functionality associated with metadata processig - e.g. log messages and progress indicators.&#34;&#34;&#34;
     def metadata(self):
         metadata = self._metadata.as_dict()
         title = self.title

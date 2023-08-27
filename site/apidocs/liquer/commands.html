@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.commands API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="This module is responsible for registering commands …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,29 +22,25 @@
 <h1 class="title">Module <code>liquer.commands</code></h1>
 </header>
 <section id="section-intro">
+<p>This module is responsible for registering commands.</p>
+<p>Commands are composed of a command executable and command metadata, which are collected in a command registry.
+CommandRegistry is a singleton that can be obtained by get_command_registry().</p>
+<p>Command metadata (CommandMetadata tuple) contain informations about the command and its arguments
+(type, parsing and editing of each argument). These metadata are a basis for parsing of arguments as well as command editor creation.</p>
+<p>Argument parsers are responsible for parsing command arguments into desired types.
+ArgumentParser has a parse method, which takes argument metadata and list of arguments (typically supplied as list of strings
+resulting from liquer.parser.decode). Parsing may extract arbitrary amount of arguments and thus support more complex data structures.
+Parse method returns a tuple with the parsed argument and remaining unparsed arguments.
+Argument parsers which do not need multiple instances (typical case) have predefined constants.
+Multiple argument parsers may be collected in a SequenceArgumentParser by use of + operator (e.g. INT_AP + FLOAT_AP).</p>
+<p>Though commands can be registered with a low level method 'register' of CommandRegistry (which allows the greatest flexibility),
+the "mainstream" way of command registration is by simply decorating a function with @command or @first_command.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import traceback
-from collections import namedtuple
-import inspect
-from liquer.state import State
-from liquer.parser import encode
-import marshal
-import pickle
-import types
-import traceback
-import base64
-from liquer.parser import (
-    StringActionParameter,
-    ActionParameter,
-    QueryException,
-    ExpandedActionParameter,
-)
+<pre><code class="python">&#34;&#34;&#34;This module is responsible for registering commands.
 
-
-&#34;&#34;&#34;This module is responsible for registering commands
 Commands are composed of a command executable and command metadata, which are collected in a command registry.
 CommandRegistry is a singleton that can be obtained by get_command_registry().
 
@@ -60,8 +56,23 @@ Multiple argument parsers may be collected in a SequenceArgumentParser by use of
 
 Though commands can be registered with a low level method &#39;register&#39; of CommandRegistry (which allows the greatest flexibility),
 the &#34;mainstream&#34; way of command registration is by simply decorating a function with @command or @first_command.
-
 &#34;&#34;&#34;
+import traceback
+from collections import namedtuple
+import inspect
+from liquer.state import State
+from liquer.parser import encode
+import marshal
+import pickle
+import types
+import traceback
+import base64
+from liquer.parser import (
+    StringActionParameter,
+    ActionParameter,
+    QueryException,
+    ExpandedActionParameter,
+)
 
 CommandMetadata = namedtuple(
     &#34;CommandMetadata&#34;,
@@ -1405,7 +1416,7 @@ Provide url to the registration service</p></div>
 <span>(</span><span>message, position=None, query=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Base class for all exceptions in liquer parser.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>

@@ -238,21 +238,6 @@ residing in packages <code>liquer.ext.lq_matplotlib</code> and <code>liquer.ext.
 Examples are in <a href="https://github.com/orest-d/liquer/blob/master/examples/matplotlib_chart.py">matplotlib_chart.py</a>
 and <a href="https://github.com/orest-d/liquer/blob/master/examples/plotly_chart.py">plotly_chart.py</a>
 show how to make simple plots with the commands already built in. This functionality is very basic at the moment and is likely to change.</p>
-<h1 id="cache">Cache</h1>
-<p>By default there is no cache - i.e. the queries are always re-evaluated.
-There are several cache implementations available in <code>liquer.cache</code>.
-They are configured by <code>set_cache</code> function, for example</p>
-<div class="codehilite"><pre><span></span><code><span class="n">set_cache</span><span class="p">(</span><span class="n">FileCache</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">))</span>
-</code></pre></div>
-
-<p>configures a cache that will store all the (chache-able) results of queries
-in a dictionary <em>cache</em>.
-Cache should be configured before the queries are evaluated - and before state variables are set.</p>
-<p>Currently there are three cache implementations: <code>NoCache</code> is a trivial do-nothing cache, <code>FileCache</code> stores data in files, <code>MemoryCache</code> caches
-the object in the memory.</p>
-<p>Custom cache can be created by defining a cache interface, see above mentioned classes. Cache will typically use query as a key and utilize the mechanism of serializing data into a bytes sequence (defined in <code>liquer.state_types</code>), thus implementing a cache based either on a key-value store or blob-storage in SQL databases should be fairly straightforward (and probably quite similar to <code>FileCache</code>).</p>
-<p>Command may optionally decide not to cache its output. This may be useful when command produces volatile data, e.g. time.
-In such a case command (operating on a state) can disable cache by <code>state.with_caching(False)</code>.</p>
               
             </div>
           </div><footer>

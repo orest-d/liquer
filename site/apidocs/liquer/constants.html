@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.constants API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Definition of useful constants and enums" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,26 +22,29 @@
 <h1 class="title">Module <code>liquer.constants</code></h1>
 </header>
 <section id="section-intro">
+<p>Definition of useful constants and enums</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from enum import Enum
+<pre><code class="python">&#34;&#34;&#34;Definition of useful constants and enums&#34;&#34;&#34;
 
+from enum import Enum
 
 class Status(Enum):
     &#34;&#34;&#34;Status of evaluated data.
-    NONE         - status not available (default value)
-    SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
-    EVALUATING_PARENT - parent is being evaluated
-    EVALUATION   - last action of the query is being evaluated
-    EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
-    READY        - data is ready (after successful evaluation)
-    ERROR        - evaluation terminated with an error
-    EXPIRED      - data exists, but it is obsolete or expired
-    RECIPE       - data are not in store, but a recipe is available
-    EXTERNAL     - data is from external source or modified by a user
-    SIDE_EFFECT  - data has been created as a side-effect of a query
+
+    * NONE         - status not available (default value)
+    * SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
+    * EVALUATING_PARENT - parent is being evaluated
+    * EVALUATION   - last action of the query is being evaluated
+    * EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
+    * READY        - data is ready (after successful evaluation)
+    * ERROR        - evaluation terminated with an error
+    * EXPIRED      - data exists, but it is obsolete or expired
+    * RECIPE       - data are not in store, but a recipe is available
+    * EXTERNAL     - data is from external source or modified by a user
+    * SIDE_EFFECT  - data has been created as a side-effect of a query
 
     &#34;&#34;&#34;
 
@@ -153,10 +156,16 @@ TYPE_IDENTIFIER_BY_EXTENSION = dict(
 
 
 def mimetype_from_extension(extension, default=&#34;application/octet-stream&#34;):
+    &#34;&#34;&#34;Get the media type (MIME type) from a file extension
+    See https://en.wikipedia.org/wiki/Media_type
+    &#34;&#34;&#34;
     return MIMETYPES.get(extension, default)
 
 
 def type_identifier_from_extension(extension):
+    &#34;&#34;&#34;Get type identifier from a file extension.
+    Type identifier is used to identify the type of data; see *liquer.state_types* for details.
+    &#34;&#34;&#34;
     return TYPE_IDENTIFIER_BY_EXTENSION.get(extension)</code></pre>
 </details>
 </section>
@@ -171,12 +180,16 @@ def type_identifier_from_extension(extension):
 <span>def <span class="ident">mimetype_from_extension</span></span>(<span>extension, default='application/octet-stream')</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get the media type (MIME type) from a file extension
+See <a href="https://en.wikipedia.org/wiki/Media_type">https://en.wikipedia.org/wiki/Media_type</a></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mimetype_from_extension(extension, default=&#34;application/octet-stream&#34;):
+    &#34;&#34;&#34;Get the media type (MIME type) from a file extension
+    See https://en.wikipedia.org/wiki/Media_type
+    &#34;&#34;&#34;
     return MIMETYPES.get(extension, default)</code></pre>
 </details>
 </dd>
@@ -184,12 +197,16 @@ def type_identifier_from_extension(extension):
 <span>def <span class="ident">type_identifier_from_extension</span></span>(<span>extension)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get type identifier from a file extension.
+Type identifier is used to identify the type of data; see <em>liquer.state_types</em> for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def type_identifier_from_extension(extension):
+    &#34;&#34;&#34;Get type identifier from a file extension.
+    Type identifier is used to identify the type of data; see *liquer.state_types* for details.
+    &#34;&#34;&#34;
     return TYPE_IDENTIFIER_BY_EXTENSION.get(extension)</code></pre>
 </details>
 </dd>
@@ -203,44 +220,47 @@ def type_identifier_from_extension(extension):
 <span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Status of evaluated data.
-NONE
-- status not available (default value)
-SUBMITTED
-- immediately after submission (e.g. with pool.evaluate_in_background)
-EVALUATING_PARENT - parent is being evaluated
-EVALUATION
-- last action of the query is being evaluated
-EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
-READY
-- data is ready (after successful evaluation)
-ERROR
-- evaluation terminated with an error
-EXPIRED
-- data exists, but it is obsolete or expired
-RECIPE
-- data are not in store, but a recipe is available
-EXTERNAL
-- data is from external source or modified by a user
-SIDE_EFFECT
-- data has been created as a side-effect of a query</p></div>
+<div class="desc"><p>Status of evaluated data.</p>
+<ul>
+<li>NONE
+- status not available (default value)</li>
+<li>SUBMITTED
+- immediately after submission (e.g. with pool.evaluate_in_background)</li>
+<li>EVALUATING_PARENT - parent is being evaluated</li>
+<li>EVALUATION
+- last action of the query is being evaluated</li>
+<li>EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters</li>
+<li>READY
+- data is ready (after successful evaluation)</li>
+<li>ERROR
+- evaluation terminated with an error</li>
+<li>EXPIRED
+- data exists, but it is obsolete or expired</li>
+<li>RECIPE
+- data are not in store, but a recipe is available</li>
+<li>EXTERNAL
+- data is from external source or modified by a user</li>
+<li>SIDE_EFFECT
+- data has been created as a side-effect of a query</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Status(Enum):
     &#34;&#34;&#34;Status of evaluated data.
-    NONE         - status not available (default value)
-    SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
-    EVALUATING_PARENT - parent is being evaluated
-    EVALUATION   - last action of the query is being evaluated
-    EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
-    READY        - data is ready (after successful evaluation)
-    ERROR        - evaluation terminated with an error
-    EXPIRED      - data exists, but it is obsolete or expired
-    RECIPE       - data are not in store, but a recipe is available
-    EXTERNAL     - data is from external source or modified by a user
-    SIDE_EFFECT  - data has been created as a side-effect of a query
+
+    * NONE         - status not available (default value)
+    * SUBMITTED    - immediately after submission (e.g. with pool.evaluate_in_background)
+    * EVALUATING_PARENT - parent is being evaluated
+    * EVALUATION   - last action of the query is being evaluated
+    * EVALUATING_DEPENDENCIES - evaluating dependencies, e.g. parameters
+    * READY        - data is ready (after successful evaluation)
+    * ERROR        - evaluation terminated with an error
+    * EXPIRED      - data exists, but it is obsolete or expired
+    * RECIPE       - data are not in store, but a recipe is available
+    * EXTERNAL     - data is from external source or modified by a user
+    * SIDE_EFFECT  - data has been created as a side-effect of a query
 
     &#34;&#34;&#34;
 

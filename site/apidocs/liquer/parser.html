@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>liquer.parser API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="This module provides functions to decode and encode query …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,38 @@
 <h1 class="title">Module <code>liquer.parser</code></h1>
 </header>
 <section id="section-intro">
+<p>This module provides functions to decode and encode query.</p>
+<p>This module provides a single public function: <em>parse</em>, that can parse a string representation of a query.
+This is turned into a <em>Query</em> object that can be used to introspect and manipulate the query.</p>
+<p>A query is a sequence of commands, each command being a list of strings starting with the command name as a first element.
+Commands are separated by a COMMAND_SEPARATOR, parts of the command (tokens) by PARAMETER_SEPARATOR.
+Having special charachers (like COMMAND_SEPARATOR or PARAMETER_SEPARATOR) inside the commands is possible
+by escaping with ESCAPE character and using escape sequences.
+Query is URL-safe and URL escaping is applied to other special characters.
+Empty commands are ignored (e.g. two consecutive COMMAND_SEPARATORs are equivalent to a single COMMAND_SEPARATOR).</p>
+<p>Query can be decoded from string to a list of lists of strings by decode (or encoded by encode).
+Encode and decode use encode_token and decode_token that are acting on a token level.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from urllib.parse import quote, unquote
+<pre><code class="python">&#34;&#34;&#34;
+This module provides functions to decode and encode query.
+
+This module provides a single public function: *parse*, that can parse a string representation of a query.
+This is turned into a *Query* object that can be used to introspect and manipulate the query.
+
+A query is a sequence of commands, each command being a list of strings starting with the command name as a first element.
+Commands are separated by a COMMAND_SEPARATOR, parts of the command (tokens) by PARAMETER_SEPARATOR.
+Having special charachers (like COMMAND_SEPARATOR or PARAMETER_SEPARATOR) inside the commands is possible
+by escaping with ESCAPE character and using escape sequences.
+Query is URL-safe and URL escaping is applied to other special characters.
+Empty commands are ignored (e.g. two consecutive COMMAND_SEPARATORs are equivalent to a single COMMAND_SEPARATOR).
+
+Query can be decoded from string to a list of lists of strings by decode (or encoded by encode).
+Encode and decode use encode_token and decode_token that are acting on a token level.
+&#34;&#34;&#34;
+from urllib.parse import quote, unquote
 import re
 from pyparsing import (
     Literal,
@@ -46,19 +73,6 @@ from pyparsing import (
     col,
     FollowedBy,
 )
-
-&#34;&#34;&#34;
-This module provides functions to decode and encode query.
-A query is a sequence of commands, each command being a list of strings starting with the command name as a first element.
-Commands are separated by a COMMAND_SEPARATOR, parts of the command (tokens) by PARAMETER_SEPARATOR.
-Having special charachers (like COMMAND_SEPARATOR or PARAMETER_SEPARATOR) inside the commands is possible
-by escaping with ESCAPE character and using escape sequences.
-Query is URL-safe and URL escaping is applied to other special characters.
-Empty commands are ignored (e.g. two consecutive COMMAND_SEPARATORs are equivalent to a single COMMAND_SEPARATOR).
-
-Query can be decoded from string to a list of lists of strings by decode (or encoded by encode).
-Encode and decode use encode_token and decode_token that are acting on a token level.
-&#34;&#34;&#34;
 
 COMMAND_SEPARATOR = &#34;/&#34;
 PARAMETER_SEPARATOR = &#34;-&#34;
@@ -135,6 +149,7 @@ def list_indent(lst, prefix=&#34;  &#34;):
 
 
 class Position:
+    &#34;&#34;&#34;Position in a query string or a longer text.&#34;&#34;&#34;
     def __init__(self, offset=0, line=0, column=0):
         self.offset = offset
         self.line = line
@@ -169,6 +184,7 @@ class Position:
 
 
 class QueryException(Exception):
+    &#34;&#34;&#34;Base class for all exceptions in liquer parser.&#34;&#34;&#34;
     def __init__(self, message, position=None, query=None):
         self.original_message = message
         if position is not None:
@@ -185,6 +201,10 @@ class QueryException(Exception):
 
 
 class ActionParameter(object):
+    &#34;&#34;&#34;Action parameter is an object representing a parameter of an action.
+    Action is a command with parameter specified.
+    In simple terms, action parameter is a parsed parameter that will be passed to a command.
+    &#34;&#34;&#34;
     def __init__(self, position=None):
         self.position = position or Position()
 
@@ -200,6 +220,7 @@ class ActionParameter(object):
 
 
 class LinkActionParameter(ActionParameter):
+    &#34;&#34;&#34;Link action parameter is a parameter of an action that is a link to another query.&#34;&#34;&#34;
     def __init__(self, link, position=None):
         super().__init__(position)
         self.link = link
@@ -217,6 +238,7 @@ class LinkActionParameter(ActionParameter):
 
 
 class ExpandedActionParameter(ActionParameter):
+    &#34;&#34;&#34;Expanded action parameter is a parameter of an action that is expanded (typically a link to another query, which has been evaluated).&#34;&#34;&#34;
     def __init__(self, value, link, position=None):
         super().__init__(position)
         self.value = value
@@ -236,6 +258,9 @@ class ExpandedActionParameter(ActionParameter):
 
 
 class StringActionParameter(ActionParameter):
+    &#34;&#34;&#34;String action parameter is a parameter of an action that is a plain string.
+    This may be converted to other types during the command execution process.
+    &#34;&#34;&#34;
     def __init__(self, string: str, position=None):
         super().__init__(position)
         self.string = string
@@ -253,6 +278,7 @@ class StringActionParameter(ActionParameter):
 
 
 class ResourceName(ActionParameter):
+    &#34;&#34;&#34;Resource name is a name of a resource (typically a file or folder) in a store.&#34;&#34;&#34;
     def __init__(self, name: str, position=None):
         self.position = position or Position()
         self.name = name
@@ -268,6 +294,7 @@ class ResourceName(ActionParameter):
 
 
 class ActionRequest(object):
+    &#34;&#34;&#34;Action request is a command name with parameters.&#34;&#34;&#34;
     def __init__(self, name: str, parameters=None, position=None):
         self.name = name
         self.parameters = [] if parameters is None else parameters
@@ -1104,6 +1131,7 @@ resource_transform_query = (
 
 
 def parse(query):
+    &#34;&#34;&#34;Main function to parse a query.&#34;&#34;&#34;
     try:
         return resource_transform_query.parseString(query, True)[0]
     except:
@@ -1281,12 +1309,13 @@ query == beginning + COMMAND_SEPARATOR + remainder</p></div>
 <span>def <span class="ident">parse</span></span>(<span>query)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Main function to parse a query.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def parse(query):
+    &#34;&#34;&#34;Main function to parse a query.&#34;&#34;&#34;
     try:
         return resource_transform_query.parseString(query, True)[0]
     except:
@@ -1303,12 +1332,18 @@ query == beginning + COMMAND_SEPARATOR + remainder</p></div>
 <span>(</span><span>position=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Action parameter is an object representing a parameter of an action.
+Action is a command with parameter specified.
+In simple terms, action parameter is a parsed parameter that will be passed to a command.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ActionParameter(object):
+    &#34;&#34;&#34;Action parameter is an object representing a parameter of an action.
+    Action is a command with parameter specified.
+    In simple terms, action parameter is a parsed parameter that will be passed to a command.
+    &#34;&#34;&#34;
     def __init__(self, position=None):
         self.position = position or Position()
 
@@ -1352,12 +1387,13 @@ query == beginning + COMMAND_SEPARATOR + remainder</p></div>
 <span>(</span><span>name: str, parameters=None, position=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Action request is a command name with parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ActionRequest(object):
+    &#34;&#34;&#34;Action request is a command name with parameters.&#34;&#34;&#34;
     def __init__(self, name: str, parameters=None, position=None):
         self.name = name
         self.parameters = [] if parameters is None else parameters
@@ -1521,12 +1557,13 @@ def from_list(cls, lst):
 <span>(</span><span>value, link, position=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Expanded action parameter is a parameter of an action that is expanded (typically a link to another query, which has been evaluated).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ExpandedActionParameter(ActionParameter):
+    &#34;&#34;&#34;Expanded action parameter is a parameter of an action that is expanded (typically a link to another query, which has been evaluated).&#34;&#34;&#34;
     def __init__(self, value, link, position=None):
         super().__init__(position)
         self.value = value
@@ -1570,12 +1607,13 @@ def from_list(cls, lst):
 <span>(</span><span>link, position=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Link action parameter is a parameter of an action that is a link to another query.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class LinkActionParameter(ActionParameter):
+    &#34;&#34;&#34;Link action parameter is a parameter of an action that is a link to another query.&#34;&#34;&#34;
     def __init__(self, link, position=None):
         super().__init__(position)
         self.link = link
@@ -1617,12 +1655,13 @@ def from_list(cls, lst):
 <span>(</span><span>offset=0, line=0, column=0)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Position in a query string or a longer text.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Position:
+    &#34;&#34;&#34;Position in a query string or a longer text.&#34;&#34;&#34;
     def __init__(self, offset=0, line=0, column=0):
         self.offset = offset
         self.line = line
@@ -2295,12 +2334,13 @@ Path may be a string or a ResourceQuerySegment.</p></div>
 <span>(</span><span>message, position=None, query=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Base class for all exceptions in liquer parser.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class QueryException(Exception):
+    &#34;&#34;&#34;Base class for all exceptions in liquer parser.&#34;&#34;&#34;
     def __init__(self, message, position=None, query=None):
         self.original_message = message
         if position is not None:
@@ -2331,12 +2371,13 @@ Path may be a string or a ResourceQuerySegment.</p></div>
 <span>(</span><span>name: str, position=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Resource name is a name of a resource (typically a file or folder) in a store.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ResourceName(ActionParameter):
+    &#34;&#34;&#34;Resource name is a name of a resource (typically a file or folder) in a store.&#34;&#34;&#34;
     def __init__(self, name: str, position=None):
         self.position = position or Position()
         self.name = name
@@ -2748,12 +2789,16 @@ Trivial header can be both for resource and query, it does not depend on the res
 <span>(</span><span>string: str, position=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>String action parameter is a parameter of an action that is a plain string.
+This may be converted to other types during the command execution process.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class StringActionParameter(ActionParameter):
+    &#34;&#34;&#34;String action parameter is a parameter of an action that is a plain string.
+    This may be converted to other types during the command execution process.
+    &#34;&#34;&#34;
     def __init__(self, string: str, position=None):
         super().__init__(position)
         self.string = string
