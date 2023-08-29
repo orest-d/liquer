@@ -37,7 +37,7 @@ if __name__=="__main__":
         with open(args.create_config,"w") as f:
             f.write(preset().default_config())
             print(f"Configuration file {args.create_config} created.")
-            sys.exit(0)
+        sys.exit(0)
 
     if args.query:
         query = args.query

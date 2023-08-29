@@ -1,6 +1,6 @@
 # Instalation
 
-LiQuer requires at least python 3.6 with flask. It can be installed by
+LiQuer requires (at minimum) python 3.6 with flask. It can be installed by
 ```
 python3 -m pip install liquer-framework
 ```
@@ -18,7 +18,7 @@ python3 setup.py install
 
 # Getting started
 
-The good tradition is to start with a *Hello, world!* example:
+The good tradition is starting with a *Hello, world!* example:
 
 ```python
 from liquer import *
@@ -85,7 +85,7 @@ In this example we just evaluate them in the script by the ```evaluate```
 function. 
 
 # What did we actually gain?
-*Link query* syntax allows to represent pipelines are relatively short strings.
+*Link query* syntax allows to represent pipelines as short strings.
 More importantly, *link query* can be used as
 a path part of the [URL](https://en.wikipedia.org/wiki/URL).
 Unlike the more conventional web services typically a separate request

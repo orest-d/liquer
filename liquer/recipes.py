@@ -529,7 +529,7 @@ class OldRecipeSpecStore(RecipeStore):
         if self.substore.is_dir(dir_key):
             for d in self.listdir(dir_key):
                 key = f"{dir_key}/{d}" if len(dir_key) else d
-                if d == self.STATUS_FILE:
+                if d == self.STATUS_FILE and self.STATUS_FILE is not None:
                     continue
                 if not self.is_dir(key):
                     metadata = self.get_metadata(key)
@@ -587,6 +587,8 @@ class OldRecipeSpecStore(RecipeStore):
         return txt
 
     def create_status(self, key):
+        if self.STATUS_FILE is None:
+            return
         if self.key_name(key) != self.STATUS_FILE:
             if not self.is_dir(key):
                 key = self.parent_key(key)
