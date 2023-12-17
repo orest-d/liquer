@@ -24,6 +24,7 @@
 - [x] root "-R/-/"
 
 ## Unsorted
+- [ ] OpenDAL store support
 - [ ] Separate recipes identification into metadata from recipe execution (store)
 - [ ] has_warnings in metadata and gui
 - [ ] identify better command runtime errors from framework errors - color output? 
@@ -205,11 +206,12 @@
 - [ ] clarify state/context metadata flow
 
 ### Other
-- [ ] template engine with query expansion
-- [ ] Anchor support in query parser
+- [ ] dependency injection input type
+- [ ] default parameter value from query (combined with dependency injection)
+- [ ] default state parameter value ? from query ? (combined with dependency injection)
+- [x] template engine with query expansion
 - [ ] references in metadata
 - [ ] query origin (file, line number if possible)
-- [ ] dependency injection input type
 - [ ] attribute to prevent cloning
 - [ ] git support
 - [x] search engine(s) integration
@@ -218,6 +220,7 @@
 - [ ] automatic argument type conversion
 - [x] refactor metadata handling to a separate class from context and state
 - [x] split context to mixins
+- [ ] Anchor support in query parser
 
 ## Highlevel features, useful commands, Examples and Documentation
 

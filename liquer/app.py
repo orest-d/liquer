@@ -8,6 +8,16 @@ import argparse
 import webbrowser
 from liquer.config import load_config, initialize, preset, config
 
+def quickstart(config_file="config.yaml", index_link=None):
+    """Quickstart function for liquer. It loads configuration, initializes liquer and starts the server."""
+    load_config(config_file)
+    initialize()
+    if index_link:
+        webbrowser.open("http://localhost:5000/"+index_link)
+    else:
+        webbrowser.open("http://localhost:5000")
+    preset().start_server(config())
+
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Liquer command line interface')
     parser.add_argument('--config', '-c', type=str, action="store", help='Configuration file')

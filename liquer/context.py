@@ -1234,14 +1234,20 @@ class Context(MetadataContextMixin, object):
                 if path is not None:
                     q = parse(q).to_absolute(path, resource_segment_name=resource_segment_name).encode()
                 if q in local_cache:
+                    self.info(f"Using cached {q}")
                     result += local_cache[q]
                 else:
-                    state = self.evaluate(q, description=f"template expansion of {q}")
-                    if state.is_error:
-                        self.error(f"Template failed to expand {q}")
+                    self.info(f"Evaluating {q}")
+                    try:
+                        state = self.evaluate(q, description=f"template expansion of {q}")
+                        if state.is_error:
+                            self.error(f"Template failed to expand {q}")
+                            qr = f"ERROR({q})"
+                        else:
+                            qr = str(state.get())
+                    except:
+                        self.error(f"Template crashed on expanding {q}", traceback=traceback.format_exc())
                         qr = f"ERROR({q})"
-                    else:
-                        qr = str(state.get())
                     local_cache[q] = qr
                     result += qr
         return result
