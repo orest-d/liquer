@@ -876,10 +876,19 @@ class Context(MetadataContextMixin, object):
             traceback.print_exc()
         return state
 
-    def create_initial_state(self):
-        state = State()
-        state.query = ""
-        return state
+    def create_initial_state(self, input_value=None):
+        """Create an initial state.
+        This is used to create the input state for a resource query.
+        The initial value can be specified as an argument.
+        """
+        if input_value is None:
+            state = State()
+            state.query = ""
+            return state
+        else:
+            state = State().with_data(input_value)
+            state.query = ""
+            return state
 
     @classmethod
     def to_query(cls, query):
@@ -947,6 +956,7 @@ class Context(MetadataContextMixin, object):
         store_key=None,
         store_to=None,
         extra_parameters=None,
+        input_value=None,
     ):
         """Evaluate query, returns a State.
         This method can be used in a command to evaluate a subquery,
@@ -962,6 +972,8 @@ class Context(MetadataContextMixin, object):
 
         If extra_parameters are specified, these parameters are appended to the parameters of the last action.
         This effectively renders the evaluation volatile. Note that the action needs correct amount of parameters.
+
+        The input_value parameter can be used to specify the input value for the first action.
         """
         self.enable_store_metadata = False  # Prevents overwriting cache with metadata
         self.status = Status.EVALUATION
@@ -1005,7 +1017,7 @@ class Context(MetadataContextMixin, object):
 
         self.debug(f"Using cache {repr(cache)}")
         self.debug(f"Try cache {query}")
-        if extra_parameters is None or len(extra_parameters)==0:
+        if (extra_parameters is None or len(extra_parameters)==0) and input_value is None:
             state = cache.get(query.encode())
             if state is not None:
                 self.debug(f"Cache hit {query}")
@@ -1014,8 +1026,12 @@ class Context(MetadataContextMixin, object):
                 return state
         else:
             state=None
-            print("Extra parameters specified, cache disabled", extra_parameters)
-            self.debug("Extra parameters specified, cache disabled")
+            if input_value is not None:
+                print("Input value specified, cache disabled")
+                self.debug("Input value specified, cache disabled")
+            else:
+                print("Extra parameters specified, cache disabled", extra_parameters)
+                self.debug("Extra parameters specified, cache disabled")
         self.enable_store_metadata = (
             True  # Metadata can be only written after trying to read from cache,
         )
@@ -1034,7 +1050,7 @@ class Context(MetadataContextMixin, object):
             self.debug(f"PROCESS Predecessor:{p} Action: {r}")
             if p is None or p.is_empty():
                 self.parent_query = ""
-                state = self.create_initial_state()
+                state = self.create_initial_state(input_value=input_value)
                 state.metadata["created"] = self.now()
                 self.debug(f"INITIAL STATE")
             else:
@@ -1044,7 +1060,7 @@ class Context(MetadataContextMixin, object):
                 c=self.child_context()
                 c.evaluated_key = self.evaluated_key
                 c.cwd_key = self.cwd_key
-                state = c.evaluate(p, cache=cache)
+                state = c.evaluate(p, cache=cache, input_value=input_value)
             if state.is_error:
                 self.status = Status.ERROR
                 self.store_metadata()
@@ -1100,6 +1116,25 @@ class Context(MetadataContextMixin, object):
             traceback.print_exc()
             self.warning("Indexer failed", traceback=traceback.format_exc())
         return state
+
+    def evaluate_on(self, value, query):
+        """Evaluate query on a given value.
+        This is a convenience method, which creates a context, evaluates the query and returns the result.
+        """
+        print(f"*** Evaluate on {value} query {query} started")
+        return self.child_context().evaluate(query, input_value=value)
+    
+    def create_evaluate_on_state_function(self, query):
+        """Create a function, which evaluates query on a given value.
+        This is a convenience method, which creates a context, evaluates the query and returns the result.
+        """
+        return lambda value=None, q=query, c=self: c.evaluate_on(value, query)
+
+    def create_evaluate_on_function(self, query):
+        """Create a function, which evaluates query on a given value.
+        This is a convenience method, which creates a context, evaluates the query and returns the result.
+        """
+        return lambda value=None, q=query, c=self: c.evaluate_on(value, query).get()
 
     def evaluate_and_save(
         self,

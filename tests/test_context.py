@@ -4,6 +4,7 @@
 Unit tests for LiQuer execution context.
 """
 import pytest
+from liquer.cache import MemoryCache, NoCache, set_cache
 from liquer.context import *
 from liquer.recipes import *
 from liquer.parser import ActionRequest
@@ -186,6 +187,36 @@ class TestContext:
         assert get_context().evaluate("varcommand/check2").get() == True
         assert get_context().evaluate("varcommand_state/check1").get() == True
         assert get_context().evaluate("varcommand_state/check2").get() == True
+
+    def test_initial_value(self):
+        reset_command_registry()
+        set_var("test_var", "INITIAL")
+
+        @command
+        def add(x,y=1,context=None):
+            print("x=",x,"y=",y)
+            if x is None:
+                print("x is None")
+                x=0
+            print("returning",x+y)
+            return x+y
+
+        set_cache(MemoryCache())
+        assert get_context().evaluate("add").get() == 1
+        assert get_context().evaluate("add-2").get() == 2
+        assert get_context().evaluate("add",input_value=1).get() == 2
+        assert get_context().evaluate_on(2,"add-3").get() == 5
+        assert get_context().evaluate_on(2,"add-3/add-4").get() == 9
+        f=get_context().create_evaluate_on_state_function("add-1/add-2")
+        assert f(0).get() == 3
+        assert f().get() == 3
+        assert f(4).get() == 7
+        f=get_context().create_evaluate_on_function("add-1/add-2")
+        assert f(0) == 3
+        assert f() == 3
+        assert f(4) == 7
+        set_cache(NoCache())
+
 
     def test_vars(self):
         v = Vars()

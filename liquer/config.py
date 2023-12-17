@@ -72,7 +72,8 @@ def preset():
     return _preset
 
 async def run_tornado(port=5000, index_query="index"):
-    from liquer.server.tornado_handlers import url_mapping, response
+    from liquer.server.tornado_handlers import url_mapping
+    from liquer.server.handlers import response
     import tornado.web
     import asyncio
     import traceback
@@ -174,6 +175,7 @@ setup:
     server_type:       {"flask":<35} # Server type (flask, tornado, ...)
     url_prefix:        {'"/liquer"':<35} # URL prefix for the server
     port:              {5000:<35} # Server port
+    index_query:       {"index":<35} # Index query
 """
     
     def initialize(self, config, worker_environment=False):        

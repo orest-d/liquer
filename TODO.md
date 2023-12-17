@@ -24,6 +24,9 @@
 - [x] root "-R/-/"
 
 ## Unsorted
+- [ ] Separate recipes identification into metadata from recipe execution (store)
+- [ ] has_warnings in metadata and gui
+- [ ] identify better command runtime errors from framework errors - color output? 
 - [ ] Avoid multiple sync in store initialization - require sync or init after setup
 - [ ] Lazy generation of recipes_status.txt
 - [ ] Lazy initialization of recipes description?

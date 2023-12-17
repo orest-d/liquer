@@ -218,7 +218,11 @@ def dir_status(metadata, context=None):
     data = []
     if store.is_dir(key):
         for name in store.listdir(key):
-            metadata = store.get_metadata(store.join_key(key, name))
+            try:
+                metadata = store.get_metadata(store.join_key(key, name))
+            except:
+                context.warning(f"Can't read metadata for {store.join_key(key, name)}", traceback=traceback.format_exc())
+                continue
             fileinfo = metadata.get("fileinfo", {})
             data.append(
                 dict(
