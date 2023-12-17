@@ -101,12 +101,7 @@ A server version of the same example:
 
 ```python
 from liquer import *
-
-### Create Flask app and register LiQuer blueprint
-from flask import Flask
-import liquer.blueprint as bp
-app = Flask(__name__)
-app.register_blueprint(bp.app, url_prefix='/liquer')
+from liquer.app import quickstart
 
 @first_command
 def hello():
@@ -117,12 +112,16 @@ def greet(greeting, who="world"):
     return f"{greeting}, {who}!"
 
 if __name__ == '__main__':
-    app.run()
+    quickstart(index_link="/liquer/q/hello/greet/readme.txt")
 ```
 
-This is a normal [flask](http://flask.pocoo.org/) server, registering LiQuer
-[blueprint](http://flask.pocoo.org/docs/1.0/blueprints/) which makes all the LiQuer functionality available
-in the web service.
+This is a quick way how to start a liquer server. It should automatically call the link ```/liquer/q/hello/greet/readme.txt```,
+which executes the query ```hello/greet```. The result is exposed as ```readme.txt```. The name (readme) is arbitrary, but the file extension (txt)
+is significant, since it determines the output format.
+The ```/liquer/q``` is an [endpoint](https://en.wikipedia.org/wiki/Web_API#Endpoints) for executing a query (see [web service API](web_service.md)).
+
+The ```quickstart``` is one of the simplest methods to start the LiQuer in server mode.
+LiQuer framework offers, however, many ways to configure and adapt the solution.
 
 # Working with pandas
 
