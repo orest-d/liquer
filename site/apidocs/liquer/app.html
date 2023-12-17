@@ -37,6 +37,16 @@ import argparse
 import webbrowser
 from liquer.config import load_config, initialize, preset, config
 
+def quickstart(config_file=&#34;config.yaml&#34;, index_link=None):
+    &#34;&#34;&#34;Quickstart function for liquer. It loads configuration, initializes liquer and starts the server.&#34;&#34;&#34;
+    load_config(config_file)
+    initialize()
+    if index_link:
+        webbrowser.open(&#34;http://localhost:5000/&#34;+index_link)
+    else:
+        webbrowser.open(&#34;http://localhost:5000&#34;)
+    preset().start_server(config())
+
 if __name__==&#34;__main__&#34;:
     parser = argparse.ArgumentParser(description=&#39;Liquer command line interface&#39;)
     parser.add_argument(&#39;--config&#39;, &#39;-c&#39;, type=str, action=&#34;store&#34;, help=&#39;Configuration file&#39;)
@@ -66,7 +76,7 @@ if __name__==&#34;__main__&#34;:
         with open(args.create_config,&#34;w&#34;) as f:
             f.write(preset().default_config())
             print(f&#34;Configuration file {args.create_config} created.&#34;)
-            sys.exit(0)
+        sys.exit(0)
 
     if args.query:
         query = args.query
@@ -86,6 +96,29 @@ if __name__==&#34;__main__&#34;:
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="liquer.app.quickstart"><code class="name flex">
+<span>def <span class="ident">quickstart</span></span>(<span>config_file='config.yaml', index_link=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Quickstart function for liquer. It loads configuration, initializes liquer and starts the server.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def quickstart(config_file=&#34;config.yaml&#34;, index_link=None):
+    &#34;&#34;&#34;Quickstart function for liquer. It loads configuration, initializes liquer and starts the server.&#34;&#34;&#34;
+    load_config(config_file)
+    initialize()
+    if index_link:
+        webbrowser.open(&#34;http://localhost:5000/&#34;+index_link)
+    else:
+        webbrowser.open(&#34;http://localhost:5000&#34;)
+    preset().start_server(config())</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -99,6 +132,11 @@ if __name__==&#34;__main__&#34;:
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="liquer" href="index.html">liquer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="liquer.app.quickstart" href="#liquer.app.quickstart">quickstart</a></code></li>
 </ul>
 </li>
 </ul>

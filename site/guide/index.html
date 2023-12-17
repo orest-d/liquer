@@ -101,7 +101,7 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="instalation">Instalation</h1>
-<p>LiQuer requires at least python 3.6 with flask. It can be installed by</p>
+<p>LiQuer requires (at minimum) python 3.6 with flask. It can be installed by</p>
 <div class="codehilite"><pre><span></span><code>python3 -m pip install liquer-framework
 </code></pre></div>
 
@@ -115,7 +115,7 @@ python3 setup.py install
 </code></pre></div>
 
 <h1 id="getting-started">Getting started</h1>
-<p>The good tradition is to start with a <em>Hello, world!</em> example:</p>
+<p>The good tradition is starting with a <em>Hello, world!</em> example:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">liquer</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="nd">@first_command</span>
@@ -170,7 +170,7 @@ from recipes/batch jobs or interactively from a web API).
 In this example we just evaluate them in the script by the <code>evaluate</code>
 function. </p>
 <h1 id="what-did-we-actually-gain">What did we actually gain?</h1>
-<p><em>Link query</em> syntax allows to represent pipelines are relatively short strings.
+<p><em>Link query</em> syntax allows to represent pipelines as short strings.
 More importantly, <em>link query</em> can be used as
 a path part of the <a href="https://en.wikipedia.org/wiki/URL">URL</a>.
 Unlike the more conventional web services typically a separate request
@@ -180,12 +180,7 @@ This gives LiQuer an incredible amount of  flexibility and expressiveness.</p>
 <p>LiQuer has a well-defined <a href="../web_service/">web service API</a></p>
 <p>A server version of the same example:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">liquer</span> <span class="kn">import</span> <span class="o">*</span>
-
-<span class="c1">### Create Flask app and register LiQuer blueprint</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
-<span class="kn">import</span> <span class="nn">liquer.blueprint</span> <span class="k">as</span> <span class="nn">bp</span>
-<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-<span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/liquer&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">liquer.app</span> <span class="kn">import</span> <span class="n">quickstart</span>
 
 <span class="nd">@first_command</span>
 <span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
@@ -196,12 +191,15 @@ This gives LiQuer an incredible amount of  flexibility and expressiveness.</p>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">who</span><span class="si">}</span><span class="s2">!&quot;</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">quickstart</span><span class="p">(</span><span class="n">index_link</span><span class="o">=</span><span class="s2">&quot;/liquer/q/hello/greet/readme.txt&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>This is a normal <a href="http://flask.pocoo.org/">flask</a> server, registering LiQuer
-<a href="http://flask.pocoo.org/docs/1.0/blueprints/">blueprint</a> which makes all the LiQuer functionality available
-in the web service.</p>
+<p>This is a quick way how to start a liquer server. It should automatically call the link <code>/liquer/q/hello/greet/readme.txt</code>,
+which executes the query <code>hello/greet</code>. The result is exposed as <code>readme.txt</code>. The name (readme) is arbitrary, but the file extension (txt)
+is significant, since it determines the output format.
+The <code>/liquer/q</code> is an <a href="https://en.wikipedia.org/wiki/Web_API#Endpoints">endpoint</a> for executing a query (see <a href="../web_service/">web service API</a>).</p>
+<p>The <code>quickstart</code> is one of the simplest methods to start the LiQuer in server mode.
+LiQuer framework offers, however, many ways to configure and adapt the solution.</p>
 <h1 id="working-with-pandas">Working with pandas</h1>
 <p>Pandas example:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">liquer</span> <span class="kn">import</span> <span class="o">*</span>
