@@ -1,3 +1,40 @@
+# Overview
+
+LiQuer has multiple concepts which will be explained, following its natural order,
+intervened with practical examples.
+
+This is a list of topics - currently work in progress.
+First part should give a relatively fast introduction to the subject,
+is followed by more in-depth "advanced topics": 
+
+Guide:
+- Installation (PARTLY DONE)
+- Basic introduction into forming queries and how to execute them. (PARTLY DONE)
+- Introduction to the store and metadata - a virtual filesystem in LiQuer. (TBD)
+- Introduction to recipes - organizing pipelines (TBD)
+- CLI, server, web applications and tools (TBD)
+- A littlebit more about commands: context, namespaces, logging (TBD)
+- Caching - what is cache, cleaning cache, no_cache and volatile commands, iterators (TBD) 
+- Working with data-frames: pandas and polars (TBD)
+- Charts with matplotlib and plotly (TBD)
+- Creating reports with templates (TBD)
+- Machine learning (TBD)
+- Dependencies (not implemented yet) (TBD)
+
+Advanced topics:
+- Query in detail (TBD)
+- Indexing - supporting web tools and search engines (TBD)
+- Writing support for existing libraries, defining own state types (TBD)
+- Implementing own store (TBD)
+- Implementing own cache (TBD)
+- Implementing own recipe interpreter (TBD)
+- Server component and integration with an existing web application (TBD)
+- Pool - parallel execution of queries (TBD)
+- Config presets (TBD)
+- Implementing reusable web-based tools (TBD)
+- Web service specification (TBD)
+- Commands in depth, command registry and remote command registration (TBD)
+
 # Instalation
 
 LiQuer requires (at minimum) python 3.6 with flask. It can be installed by
@@ -15,6 +52,8 @@ source venv/bin/activate
 cd liquer
 python3 setup.py install
 ```
+
+TBD: install further dependencies
 
 # Getting started
 
