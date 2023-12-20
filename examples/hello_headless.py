@@ -4,6 +4,11 @@ sys.path.append("..")
 
 from liquer import *
 
+### Optional: setup logging
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+
 @first_command
 def hello():
     return "Hello"

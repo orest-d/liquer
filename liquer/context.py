@@ -48,6 +48,9 @@ from liquer.util import timestamp
 from copy import deepcopy
 from liquer.metadata import Metadata
 from liquer.indexer import index, NullIndexer
+import logging
+
+logger = logging.getLogger('liquer.context')
 
 from liquer.store import (
     get_store,
@@ -214,9 +217,11 @@ class MetadataContextMixin:
         self.is_error = True
         self.status = Status.ERROR
         if position is None:
-            print(f"{log_time()} ERROR:    ", message)
+            #print(f"{log_time()} ERROR:    ", message)
+            logger.error(message)
         else:
-            print(f"{log_time()} ERROR:    ", message, f" at {position}")
+            #print(f"{log_time()} ERROR:    ", message, f" at {position}")
+            logger.error(f"{message} at {position}")
         return self.log_dict(
             dict(
                 kind="error",
@@ -228,7 +233,8 @@ class MetadataContextMixin:
 
     def warning(self, message, traceback=None):
         """Log a warning message"""
-        print(f"{log_time()} WARNING:  ", message)
+        #print(f"{log_time()} WARNING:  ", message)
+        logger.warning(message)
         return self.log_dict(dict(kind="warning", message=message, traceback=traceback))
 
     def exception(self, message, traceback, position=None, query=None):
@@ -236,9 +242,12 @@ class MetadataContextMixin:
         self.is_error = True
         self.status = Status.ERROR
         if position is None:
-            print(f"{log_time()} EXCEPTION:", message)
+            #print(f"{log_time()} EXCEPTION:", message)
+            logger.error(message)
         else:
-            print(f"{log_time()} EXCEPTION:", message, f" at {position}")
+            logger.error(f"{message} at {position}")
+            #print(f"{log_time()} EXCEPTION:", message, f" at {position}")
+        logger.error("TRACEBACK:\n%s"%traceback)
         return self.log_dict(
             dict(
                 kind="error",
@@ -251,14 +260,16 @@ class MetadataContextMixin:
 
     def info(self, message):
         """Log a message (info)"""
-        print(f"{log_time()} INFO:     ", message)
+        #print(f"{log_time()} INFO:     ", message)
+        logger.info(message)
         self.log_dict(dict(kind="info", message=message))
         return self
 
     def debug(self, message):
         """Log a message (info)"""
+        logger.debug(message)
         if self.debug_messages:
-            print(f"{log_time()} DEBUG:    ", message)
+            #print(f"{log_time()} DEBUG:    ", message)
             self.log_dict(dict(kind="debug", message=message))
         return self
 
@@ -1092,7 +1103,7 @@ class Context(MetadataContextMixin, object):
             and not state.is_error
             and not state.is_volatile()
         ):
-            print("CACHE", state.query)
+            #print("CACHE", state.query)
             #            self.status = "cache"
             #            self.store_metadata()
             try:

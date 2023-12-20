@@ -199,7 +199,7 @@
 - [ ] enable websockets
 - [ ] finalize refactoring of Context to Metadata
 - [ ] query meta modifier similar to -R-meta
-- [ ] python logging integration with metadata and context
+- [x] python logging integration with metadata and context
 - [ ] iterative resource evaluation
 - [ ] trampoline to handle subqueries and parent queries
 - [ ] cyclic dependencies detection
