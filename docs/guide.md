@@ -10,10 +10,10 @@ is followed by more in-depth "advanced topics":
 Guide:
 - Installation (PARTLY DONE)
 - Basic introduction into forming queries and how to execute them. (PARTLY DONE)
-- Introduction to the store and metadata - a virtual filesystem in LiQuer. (TBD)
+- Introduction to the store - files in the query. (TBD)
 - Introduction to recipes - organizing pipelines (TBD)
 - CLI, server, web applications and tools (TBD)
-- A littlebit more about commands: context, namespaces, logging (TBD)
+- A littlebit more about commands: context, logging, modules and namespaces (TBD)
 - Caching - what is cache, cleaning cache, no_cache and volatile commands, iterators (TBD) 
 - Working with data-frames: pandas and polars (TBD)
 - Charts with matplotlib and plotly (TBD)
