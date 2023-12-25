@@ -198,7 +198,7 @@ setup:
 
     def initialize(self, config, worker_environment=False):
         """Initialize from configuration.
-        If worker_environment is True, then initialize specificallz the worker environment,
+        If worker_environment is True, then initialize specifically the worker environment,
         i.e. the worker pool should not be initialized.
         """
         self.load_modules(config)
@@ -240,6 +240,14 @@ setup:
         else:
             raise Exception(f"Unknown cache type {cache}")
 
+    def create_store(self, config):
+        "Create store object from configuration"
+        import liquer.store
+
+        self.initialize_store(config)
+        return liquer.store.get_store() # TODO: make a proper store construction
+
+
     def initialize_cache(self, config):
         """Initialize cache from configuration"""
         import liquer.cache
@@ -267,6 +275,7 @@ setup:
         """Initialize pool from configuration"""
         import liquer.pool
         import liquer.cache
+        import liquer.store
 
         cache_concurrency = self.get_setup_parameter(config, "cache_concurrency")
         if cache_concurrency in ["off", "none", "no", None, False]:
@@ -280,6 +289,19 @@ setup:
             liquer.pool.set_local_cache_constructor(self.create_cache, arg=[config])
         else:
             raise Exception(f"Unknown cache concurrency setting: {cache_concurrency}")
+
+        store_concurrency = self.get_setup_parameter(config, "cache_concurrency")
+        if store_concurrency in ["off", "none", "no", None, False]:
+            logger.info(f"Store not configured for concurrency")
+            logger.warning(f"Distributed execution will not work properly")
+        elif store_concurrency == "central":
+            logger.info(f"Enabling central store")
+            liquer.pool.set_central_store(liquer.store.get_store())
+        elif cache_concurrency == "local":
+            logger.info(f"Enabling worker-local store")
+            liquer.pool.set_local_store_constructor(self.create_store, arg=[config])
+        else:
+            raise Exception(f"Unknown store concurrency setting: {store_concurrency}")
 
     def start_server(self, config):
         """Start server from configuration"""
@@ -358,6 +380,7 @@ setup:
     cache:             {"off":<35} # Cache type (off, memory, file, ...)
     cache_path:        {"cache":<35} # Cache path (for file cache)
     cache_concurrency: {"central":<35} # Cache concurrency (off, local, central)
+    store_concurrency: {"central":<35} # Store concurrency (off, local, central)
     recipe_folders:    {"":<35} # Recipe folders
 {recipe_folders}
     server_type:       {"flask":<35} # Server type (flask, tornado, ...)
@@ -374,6 +397,10 @@ setup:
             return config["setup"].get("index_link", "/liquer/web/gui")
         if name == "recipe_folders":
             return config["setup"].get("recipe_folders", ["data", "reports"])
+        if name == "cache_concurrency":
+            return config["setup"].get("cache_concurrency", "central")
+        if name == "store_concurrency":
+            return config["setup"].get("store_concurrency", "central")
         return config["setup"].get(name, default)
 
 def set_preset(preset_def=None):

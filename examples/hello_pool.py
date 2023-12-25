@@ -7,14 +7,22 @@ from liquer.pool import set_central_cache, evaluate_and_save_in_background, get_
 from liquer.cache import MemoryCache
 from time import sleep
 
+### Optional: setup logging
+import logging
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+
 @first_command
 def hello():
+    print("hello 1")
     sleep(0.5)
+    print("hello 2")
     return "Hello"
 
 @command
 def greet(greeting, who="world"):
+    print(f"greet 1 {greeting} {who}")
     sleep(0.5)
+    print(f"greet 2 {greeting} {who}")
     return f"{greeting}, {who}!"
 
 if __name__=="__main__":

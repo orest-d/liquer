@@ -21,6 +21,7 @@ def index():
     <li><a href="/liquer/q/hello/greet">simple greet</a></li>
     <li><a href="/liquer/q/hello/greet-everybody">greet everybody</a></li>
     <li><a href="/liquer/q/hello/greet?who=everybody">greet everybody by URL parameters</a></li>
+    <li><a href="/liquer/web/gui">GUI</a></li>
     </ul>
     """
 
