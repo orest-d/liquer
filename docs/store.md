@@ -1,6 +1,24 @@
-
 # Store
 
+## Why we need a store?
+
+Working with simple queries, several wishes appear:
+
+- It would be useful to make shortcuts for the most frequent queries.
+- It would be nice if these frequent queries would only need to be executed once and the results of these queries would be stored.
+- Results of frequent queries should be stored in a desirable format - e.g. csv or xlsx.
+- We still want to know how the result was created, eventually have a log file associated with it.
+- It would be useful to use files as input to queries.
+- These files might be stored in local filesystem, but possibly in some key-value store (e.g. an S3 bucket), on an FTP server or in a database.
+
+All these wishes are satisfied by a *LiQuer store*:
+- Store works as an abstraction over a file system: it can access a local directory, a key-value store (e.g. S3) or a remote file-system (e.g. FTP) via a unified interface.
+- LiQuer query can reference a file in the store as an input to the pipeline.
+- Queries can be stored in recipes, where they can be evaluated on demand.
+- Store is extensible: New types of store (e.g. support for a key-value store) can be implemented. Different stores can be combined by mounting them into the file tree.
+- Store is accessible via a web server, where basic operations can be done via a web GUI: browsing, inspecting log files, deleting, creating and editing of text files.  
+
+## What is a store?
 *Store* is a configurable virtual file system inside liquer. *Store* is designed to be able to deal with states. One notable extension of the *Store* compared to a regular file system is the ability to store (and work with) the metadata, which is essential for dealing with data in liquer.  
 
 *Store* is basically a key/value store mapping a path to a sequence of bytes. By itself, *Store* does not define (or care) about serialization of the data. This differenciates it from *Cache*.

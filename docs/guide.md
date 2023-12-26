@@ -20,6 +20,8 @@ Guide:
 - Creating reports with templates (TBD)
 - Machine learning (TBD)
 - Dependencies (not implemented yet) (TBD)
+- Overcoming query limitations (TBD)
+- State variables (TBD)
 
 Advanced topics:
 - Query in detail (TBD)
