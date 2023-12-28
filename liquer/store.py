@@ -382,6 +382,10 @@ class Store(StoreMixin):
             return self
         return self.parent_store.root_store()
 
+    def clone(self):
+        """Clone the store."""
+        return self.__class__()
+    
     def sync(self):
         pass
 
@@ -389,7 +393,7 @@ class Store(StoreMixin):
         return f"Empty store"
 
     def __repr__(self):
-        return f"Store()"
+        return f"{self.__class__.__name__}()"
 
 
 class FileStore(Store):
@@ -541,6 +545,11 @@ class FileStore(Store):
     def is_supported(self, key):
         return True
 
+    def clone(self):
+        """Clone the store."""
+        s=self.__class__(self.path)
+        return s
+
     def __str__(self):
         return f"File store at {self.path}"
 
@@ -651,6 +660,11 @@ class MemoryStore(Store):
     def is_supported(self, key):
         return True
 
+    def clone(self):
+        """Clone the store."""
+        s=self.__class__()
+        return s
+
     def __str__(self):
         return f"Memory store"
 
@@ -713,6 +727,11 @@ class ProxyStore(Store):
 
     def is_supported(self, key):
         return self._store.is_supported(key)
+
+    def clone(self):
+        """Clone the store."""
+        s=self.__class__(self._store.clone())
+        return s
 
     def __str__(self):
         return f"proxy of {self._store}"
@@ -885,6 +904,11 @@ class OverlayStore(Store):
 
     def is_supported(self, key):
         return self.overlay.is_supported(key) or self.fallback.is_supported(key())
+
+    def clone(self):
+        """Clone the store."""
+        s=self.__class__(self.overlay.clone(), self.fallback.clone())
+        return s
 
     def __str__(self):
         return f"Overlay of ({self.overlay}) over ({self.fallback})"
@@ -1086,6 +1110,11 @@ class PrefixStore(KeyTranslatingStore):
             return True
         return self.substore.is_dir(self.translate_key(key))
 
+    def clone(self):
+        """Clone the store."""
+        s=self.__class__(self.substore.clone(), self.prefix[:])
+        return s
+
     def __str__(self):
         return f"Prefixed store {self.prefix} on ({self.substore})"
 
@@ -1213,6 +1242,14 @@ class MountPointStore(RoutingStore):
 
         return self.route_to(key).removedir(key)
 
+    def clone(self):
+        """Clone the store."""
+        default_store = None if self.default_store is None else self.default_store.clone()
+        routing_table = [(k, s.clone()) for k, s in self.routing_table]
+        s=self.__class__(default_store, routing_table)
+        return s
+
+
     def __str__(self):
         return f"Mount point store routed by {self.routing_table} with default store {self.default_store}"
 
@@ -1224,11 +1261,11 @@ class FileSystemStore(Store):
     """A store that uses the [PyFilesystem2](https://docs.pyfilesystem.org/en/latest/) as a backend.
 
     Though it seems to be working fine in Linux, some issues were found in Windows.
-    This seems to not work reliable due to different implementations of PyFilesystem2.
-    Notably, listdir() sometimes returns list of recurently items in the subdirectories.
+    This store does not work reliable in WIndows due to different implementations of PyFilesystem2.
+    Notably, listdir() sometimes returns list of items in the subdirectories (recurently).
     
     Consider using FSSpecStore based on [fsspec](https://filesystem-spec.readthedocs.io/en/latest/),
-    which should have a better support.
+    which is more reliable.
     """
     METADATA = "__metadata__"
 
@@ -1401,6 +1438,11 @@ class FileSystemStore(Store):
 
     def is_supported(self, key):
         return True
+    
+    def clone(self):
+        """Clone the store."""
+        s=self.__class__(self.fs, Path(self.path))
+        return s
 
     def __str__(self):
         return f"Filesystem {self.fs} store at {self.path}"
@@ -1593,6 +1635,11 @@ class FSSpecStore(Store):
     def is_supported(self, key):
         return True
 
+    def clone(self):
+        """Clone the store."""
+        s=self.__class__(self.fs, self.prefix)
+        return s
+    
     def __str__(self):
         return f"fsspec {self.fs} store at {self.prefix}"
 

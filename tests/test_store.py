@@ -85,12 +85,20 @@ class TestMemoryStore(TestStore):
     def store(self, tmpdir):
         return MemoryStore()
 
+class TestMemoryStoreClone(TestStore):
+    @pytest.fixture
+    def store(self, tmpdir):
+        return MemoryStore().clone()
 
 class TestOverlayStore(TestStore):
     @pytest.fixture
     def store(self, tmpdir):
         return OverlayStore(MemoryStore(), MemoryStore())
 
+class TestOverlayStoreClone(TestStore):
+    @pytest.fixture
+    def store(self, tmpdir):
+        return OverlayStore(MemoryStore(), MemoryStore()).clone()
 
 class TestFileSystemStore(TestStore):
     @pytest.fixture
@@ -105,6 +113,13 @@ class TestFSSpecStore(TestStore):
         import fsspec
 
         return FSSpecStore(fsspec.filesystem("memory"))
+
+class TestFSSpecStoreClone(TestStore):
+    @pytest.fixture
+    def store(self, tmpdir):
+        import fsspec
+
+        return FSSpecStore(fsspec.filesystem("memory")).clone()
 
 class TestFileStore(TestStore):
     @pytest.fixture

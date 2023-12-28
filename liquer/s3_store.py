@@ -168,6 +168,13 @@ class S3Store(Store):
 
     def is_supported(self, key):
         return True
+    
+    def clone(self):
+        """Clone S3Store"""
+        s = self.__class__(self.bucket_name, self.prefix, self.s3_resource)
+        s.data_prefix = self.data_prefix
+        s.metadata_prefix = self.metadata_prefix
+        return s
 
     def __str__(self):
         return f"S3 bucket {self.bucket_name} with prefix {repr(self.prefix)}"

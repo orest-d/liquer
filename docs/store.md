@@ -1,22 +1,33 @@
 # Store
 
-## Why we need a store?
+## Why do we need a store?
 
-Working with simple queries, several wishes appear:
+When working with simple queries, several needs emerge:
 
-- It would be useful to make shortcuts for the most frequent queries.
-- It would be nice if these frequent queries would only need to be executed once and the results of these queries would be stored.
-- Results of frequent queries should be stored in a desirable format - e.g. csv or xlsx.
+- It would be helpful to create shortcuts for frequently used queries.
+- It would be ideal if the frequently used queries just had to be run once and the results were saved and reused.
+- Results of frequent queries should be stored in a format of choice - e.g. csv or xlsx.
 - We still want to know how the result was created, eventually have a log file associated with it.
 - It would be useful to use files as input to queries.
 - These files might be stored in local filesystem, but possibly in some key-value store (e.g. an S3 bucket), on an FTP server or in a database.
 
-All these wishes are satisfied by a *LiQuer store*:
+All these wishes can be satisfied by a *LiQuer store*:
 - Store works as an abstraction over a file system: it can access a local directory, a key-value store (e.g. S3) or a remote file-system (e.g. FTP) via a unified interface.
-- LiQuer query can reference a file in the store as an input to the pipeline.
+Various stores can be combined together, so e.g. large data can be stored in S3 and
+results and reports can be stored in a local file system.
 - Queries can be stored in recipes, where they can be evaluated on demand.
-- Store is extensible: New types of store (e.g. support for a key-value store) can be implemented. Different stores can be combined by mounting them into the file tree.
-- Store is accessible via a web server, where basic operations can be done via a web GUI: browsing, inspecting log files, deleting, creating and editing of text files.  
+
+LiQuer query can reference a file in the store as an input to the pipeline.
+Most typically, when using the store, the query has two parts:
+- Resource part referencing a file in a store (folder/file.csv) and
+- Transformarion part with a sequence of actions (select_rows/process...).
+The complete query then could look like
+
+```
+folder/file.csv/-/select_rows/process/output.xlsx
+``` 
+
+Store is accessible via a web server, where basic operations can be done via a web GUI: browsing, inspecting log files, deleting, creating and editing of text files.  
 
 ## What is a store?
 *Store* is a configurable virtual file system inside liquer. *Store* is designed to be able to deal with states. One notable extension of the *Store* compared to a regular file system is the ability to store (and work with) the metadata, which is essential for dealing with data in liquer.  
