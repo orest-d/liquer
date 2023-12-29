@@ -190,7 +190,7 @@ setup:
     cache_concurrency: {"central":<35} # Cache concurrency (off, local, central)
     recipe_folders:    {"[]":<35} # Recipe folders
 
-    server_type:       {"flask":<35} # Server type (flask, tornado, ...)
+    server_type:       {"flask":<35} # Server type (flask, tornado, FastAPI ...)
     url_prefix:        {'"/liquer"':<35} # URL prefix for the server
     port:              {5000:<35} # Server port
     index_link:        {"/liquer/q/index/index.html":<35} # Index query
@@ -346,6 +346,28 @@ setup:
             set_var("api_path", url_prefix + "/q/")
             set_var("server", f"http://{host}:{port}")
             asyncio.run(run_tornado(port, index_link=index_link))
+        elif server_type.lower() in ["fastapi"]:
+            import uvicorn
+            import liquer.server.fastapi as fa
+            import fastapi
+            import fastapi.responses
+
+            app = fastapi.FastAPI()
+            logger.info(f"Starting fastapi server")
+            port = self.get_setup_parameter(config, "port", "5000")
+            url_prefix = self.get_setup_parameter(config, "url_prefix", "/liquer")
+            index_link = self.get_setup_parameter(config, "index_link", "/liquer/q/index/index.html")
+            host = self.get_setup_parameter(config, "host", "127.0.0.1")
+
+            @app.get('/')
+            def index():
+                return fastapi.responses.RedirectResponse(url=index_link)
+
+            set_var("api_path", url_prefix + "/q/")
+            set_var("server", f"http://{host}:{port}")
+
+            app.include_router(fa.router, prefix=url_prefix)
+            uvicorn.run(app, host=host, port=int(port))
         else:
             raise Exception(f"Unknown server type: {server_type}")
 
@@ -383,7 +405,7 @@ setup:
     store_concurrency: {"central":<35} # Store concurrency (off, local, central)
     recipe_folders:    {"":<35} # Recipe folders
 {recipe_folders}
-    server_type:       {"flask":<35} # Server type (flask, tornado, ...)
+    server_type:       {"flask":<35} # Server type (flask, tornado, FastAPI ...)
     url_prefix:        {'"/liquer"':<35} # URL prefix for the server
     port:              {5000:<35} # Server port
     index_query:       {"/liquer/web/gui":<35} # Index query

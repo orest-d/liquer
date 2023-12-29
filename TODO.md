@@ -98,7 +98,7 @@
 - [ ] server driver - function to start server from a particular driver
 - [ ] configure the start page, Response support?
 - [ ] update Jupyter plugin
-- [ ] a faster server (FastAPI?, Sanic?)
+- [x] a faster server - FastAPI
 - [ ] websockets status update
 - [x] update tornado backend
 - [x] unified metadata api for cache and store
@@ -183,6 +183,7 @@
 - [ ] epub
 - [ ] 3d formats stl, obj
 - [ ] gcode
+- [x] gradio
 - [x] sweetviz support
 - [x] polars support
 - [x] python-pptx integration
