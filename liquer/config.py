@@ -324,6 +324,16 @@ setup:
             index_link = self.get_setup_parameter(config, "index_link", "/liquer/q/index/index.html")
             print(f"Index link: {index_link}")
 
+            # CORS - used to support e.g. integration of Godot web-applications 
+            @bp.app.after_request
+            def add_cross_origin_header(response):
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+                response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+
+                return response
+
+
             app.register_blueprint(bp.app, url_prefix=url_prefix)
 
             @app.route("/")
@@ -353,8 +363,10 @@ setup:
             import fastapi.responses
 
             app = fastapi.FastAPI()
+
+            # CORS - used to support e.g. integration of Godot web-applications 
             @app.middleware("http")
-            async def add_coi_header(request: fastapi.Request, call_next):
+            async def add_cross_origin_header(request: fastapi.Request, call_next):
                 response = await call_next(request)
                 response.headers['Access-Control-Allow-Origin'] = '*'
                 response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
