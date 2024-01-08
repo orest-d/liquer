@@ -10,147 +10,153 @@ def liquer_static_path():
 
     return os.path.join(os.path.dirname(liquer.server.__file__), "static")
 
+class BaseHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        # CORS headers - e.g. to support Godot apps
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header('Cross-Origin-Embedder-Policy', 'require-corp')
+        self.set_header('Cross-Origin-Opener-Policy', 'same-origin')
 
-class LiquerIndexHandler(h.LiquerIndexHandler, tornado.web.RequestHandler):
+class LiquerIndexHandler(h.LiquerIndexHandler, BaseHandler):
     pass
 
 
-class LiquerJsHandler(h.LiquerJsHandler, tornado.web.RequestHandler):
+class LiquerJsHandler(h.LiquerJsHandler, BaseHandler):
     pass
 
 
 # /api/commands.json
-class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
+class CommandsHandler(h.CommandsHandler, BaseHandler):
     pass
 
 
 #'/submit/<query>
-class SubmitHandler(h.SubmitHandler, tornado.web.RequestHandler):
+class SubmitHandler(h.SubmitHandler, BaseHandler):
     pass
 
 
 # /q/<path:query>
-class QueryHandler(h.QueryHandler, tornado.web.RequestHandler):
+class QueryHandler(h.QueryHandler, BaseHandler):
     pass
 
 
 # /api/cache/get/<path:query>
-class CacheGetDataHandler(h.CacheGetDataHandler, tornado.web.RequestHandler):
+class CacheGetDataHandler(h.CacheGetDataHandler, BaseHandler):
     pass
 
 
 # /api/cache/meta/<path:query>
-class CacheMetadataHandler(h.CacheMetadataHandler, tornado.web.RequestHandler):
+class CacheMetadataHandler(h.CacheMetadataHandler, BaseHandler):
     pass
 
 
 # /api/cache/remove/<path:query>
-class CacheRemoveHandler(h.CacheRemoveHandler, tornado.web.RequestHandler):
+class CacheRemoveHandler(h.CacheRemoveHandler, BaseHandler):
     pass
 
 
 # /api/cache/contains/<path:query>
-class CacheContainsHandler(h.CacheContainsHandler, tornado.web.RequestHandler):
+class CacheContainsHandler(h.CacheContainsHandler, BaseHandler):
     pass
 
 
 # /api/cache/keys.json
-class CacheKeysHandler(h.CacheKeysHandler, tornado.web.RequestHandler):
+class CacheKeysHandler(h.CacheKeysHandler, BaseHandler):
     pass
 
 
 # /api/cache/clean
-class CacheCleanHandler(h.CacheCleanHandler, tornado.web.RequestHandler):
+class CacheCleanHandler(h.CacheCleanHandler, BaseHandler):
     pass
 
 
 # /api/commands.json
-class CommandsHandler(h.CommandsHandler, tornado.web.RequestHandler):
+class CommandsHandler(h.CommandsHandler, BaseHandler):
     pass
 
 
 # /api/debug-json/<path:query>
-class GetMetadataHandler(h.GetMetadataHandler, tornado.web.RequestHandler):
+class GetMetadataHandler(h.GetMetadataHandler, BaseHandler):
     pass
 
 
 # /api/stored_metadata/<path:query>
-class GetStoredMetadataHandler(h.GetStoredMetadataHandler, tornado.web.RequestHandler):
+class GetStoredMetadataHandler(h.GetStoredMetadataHandler, BaseHandler):
     pass
 
 
 # /api/build
-class BuildHandler(h.BuildHandler, tornado.web.RequestHandler):
+class BuildHandler(h.BuildHandler, BaseHandler):
     pass
 
 
 #'/api/register_command/
-class RegisterCommandHandler(h.RegisterCommandHandler, tornado.web.RequestHandler):
+class RegisterCommandHandler(h.RegisterCommandHandler, BaseHandler):
     pass
 
 
 # /api/store/data/<path:query>
-class GetStoreDataHandler(h.GetStoreDataHandler, tornado.web.RequestHandler):
+class GetStoreDataHandler(h.GetStoreDataHandler, BaseHandler):
     pass
 
 # /api/store/data/<path:query>
-class StoreDataHandler(h.StoreDataHandler, tornado.web.RequestHandler):
+class StoreDataHandler(h.StoreDataHandler, BaseHandler):
     pass
 
 # /api/store/upload/<path:query>
-class StoreUploadHandler(h.StoreUploadHandler, tornado.web.RequestHandler):
+class StoreUploadHandler(h.StoreUploadHandler, BaseHandler):
     pass
 
 
 # /api/store/metadata/<path:query>
-class GetStoreMetadataHandler(h.GetStoreMetadataHandler, tornado.web.RequestHandler):
+class GetStoreMetadataHandler(h.GetStoreMetadataHandler, BaseHandler):
     pass
 
 # /api/store/metadata/<path:query>
-class StoreMetadataHandler(h.StoreMetadataHandler, tornado.web.RequestHandler):
+class StoreMetadataHandler(h.StoreMetadataHandler, BaseHandler):
     pass
 
 # /web/<path:query>
-class WebStoreHandler(h.WebStoreHandler, tornado.web.RequestHandler):
+class WebStoreHandler(h.WebStoreHandler, BaseHandler):
     pass
 
 
 # /api/store/remove/<path:query>
-class StoreRemoveHandler(h.StoreRemoveHandler, tornado.web.RequestHandler):
+class StoreRemoveHandler(h.StoreRemoveHandler, BaseHandler):
     pass
 
 
 # /api/store/removedir/<path:query>
-class StoreRemovedirHandler(h.StoreRemovedirHandler, tornado.web.RequestHandler):
+class StoreRemovedirHandler(h.StoreRemovedirHandler, BaseHandler):
     pass
 
 
 # /api/store/contains/<path:query>
-class StoreContainsHandler(h.StoreContainsHandler, tornado.web.RequestHandler):
+class StoreContainsHandler(h.StoreContainsHandler, BaseHandler):
     pass
 
 
 # /api/store/is_dir/<path:query>
-class StoreIsDirHandler(h.StoreIsDirHandler, tornado.web.RequestHandler):
+class StoreIsDirHandler(h.StoreIsDirHandler, BaseHandler):
     pass
 
 
 # /api/store/keys")
-class StoreKeysHandler(h.StoreKeysHandler, tornado.web.RequestHandler):
+class StoreKeysHandler(h.StoreKeysHandler, BaseHandler):
     pass
 
 
 # /api/store/listdir/<path:query>
-class StoreListdirHandler(h.StoreListdirHandler, tornado.web.RequestHandler):
+class StoreListdirHandler(h.StoreListdirHandler, BaseHandler):
     pass
 
 
 # /api/store/makedir/<path:query>
-class StoreMakedirHandler(h.StoreMakedirHandler, tornado.web.RequestHandler):
+class StoreMakedirHandler(h.StoreMakedirHandler, BaseHandler):
     pass
 
 
-# class DebugQueryHandler(h.DebugQueryHandler, tornado.web.RequestHandler):
+# class DebugQueryHandler(h.DebugQueryHandler, BaseHandler):
 #    pass
 
 
