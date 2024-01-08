@@ -1132,20 +1132,20 @@ class Context(MetadataContextMixin, object):
         """Evaluate query on a given value.
         This is a convenience method, which creates a context, evaluates the query and returns the result.
         """
-        print(f"*** Evaluate on {value} query {query} started")
-        return self.child_context().evaluate(query, input_value=value)
+        logger.debug(f"*** Evaluate on {value} query {query} started")
+        return self.evaluate(query, input_value=value)
     
     def create_evaluate_on_state_function(self, query):
         """Create a function, which evaluates query on a given value.
         This is a convenience method, which creates a context, evaluates the query and returns the result.
         """
-        return lambda value=None, q=query, c=self: c.evaluate_on(value, query)
+        return lambda value=None, q=query, context=self: context.evaluate_on(value, query)
 
     def create_evaluate_on_function(self, query):
         """Create a function, which evaluates query on a given value.
         This is a convenience method, which creates a context, evaluates the query and returns the result.
         """
-        return lambda value=None, q=query, c=self: c.evaluate_on(value, query).get()
+        return lambda value=None, q=query, context=self: context.evaluate_on(value, query).get()
 
     def evaluate_and_save(
         self,
@@ -1170,10 +1170,10 @@ class Context(MetadataContextMixin, object):
         ):
             target_directory = "."
 
-        print(f"*** Evaluate and save {query} started")
+        logger.debug(f"*** Evaluate and save {query} started")
         state = self.evaluate(query)
         if state.is_error:
-            print(f"*** Evaluate and save {query} failed")
+            logger.debug(f"*** Evaluate and save {query} failed")
             if target_resource_directory is not None and target_file is not None:
                 filename = target_file
                 key = (
@@ -1213,7 +1213,7 @@ class Context(MetadataContextMixin, object):
             path = os.path.join(target_directory, filename)
 
         if target_directory is not None:
-            print(f"*** Evaluate and save {query} to {path}")
+            logger.debug(f"*** Evaluate and save {query} to {path}")
             with open(path, "wb") as f:
                 f.write(b)
 
@@ -1224,7 +1224,7 @@ class Context(MetadataContextMixin, object):
                 if target_resource_directory == ""
                 else target_resource_directory + "/" + filename
             )
-            print(f"*** Store evaluated {query} to {key}")
+            logger.debug(f"*** Store evaluated {query} to {key}")
             if store is None:
                 store = self.store()
 
