@@ -3,6 +3,7 @@
 ## Bugs
 - [ ] handle undefined and null in COntent.vue 207 (just_load)s
 - [ ] metadata viewer lacks length
+- [x] specify escape character in lq_pandas to_csv
 - [x] import Metadata in lq_pandas
 - [x] recipes.py line 128 - improve error reporting 
 - [?] context.py line 754 metadata referenced before assignment
@@ -24,6 +25,7 @@
 - [x] root "-R/-/"
 
 ## Unsorted
+- [ ] make separators, quotes and escape characters configurable in config
 - [ ] OpenDAL store support
 - [ ] Separate recipes identification into metadata from recipe execution (store)
 - [ ] has_warnings in metadata and gui

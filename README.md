@@ -100,4 +100,5 @@ pip install liquer-framework
 - 2023-06-15 - v0.9.3  - fixing bug impacting evaluate_template with relative paths
 - 2023-12-17 - v0.9.4  - simplified quickstart, evaluate_on query
 - 2023-12-20 - v0.9.5  - python logging in context
+- 2024-01-15 - v0.9.6  - FastAPI, Godot webapps enabled, fixing bugs in evaluate_on
 

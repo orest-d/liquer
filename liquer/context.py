@@ -31,7 +31,7 @@ from liquer.parser import (
     ExpandedActionParameter,
     LinkActionParameter,
 )
-from liquer.cache import cached_part, get_cache
+from liquer.cache import NoCache, cached_part, get_cache
 from liquer.commands import command_registry
 from liquer.state_types import (
     encode_state_data,
@@ -51,6 +51,7 @@ from liquer.indexer import index, NullIndexer
 import logging
 
 logger = logging.getLogger('liquer.context')
+#logger.setLevel("DEBUG")
 
 from liquer.store import (
     get_store,
@@ -968,6 +969,7 @@ class Context(MetadataContextMixin, object):
         store_to=None,
         extra_parameters=None,
         input_value=None,
+        input_value_specified=False,
     ):
         """Evaluate query, returns a State.
         This method can be used in a command to evaluate a subquery,
@@ -997,15 +999,15 @@ class Context(MetadataContextMixin, object):
 
         if self.query is not None:
             self.enable_store_metadata = True
-            print(f"Subquery {query} called from {self.query.encode()}")
+            self.debug(f"Subquery {query} called from {self.query.encode()}")
             state = self.child_context().evaluate(
-                query, store_key=store_key, store_to=store_to
+                query, store_key=store_key, store_to=store_to, input_value=input_value, input_value_specified=input_value_specified
             )
             if not isinstance(query, str):
                 query = query.encode()
             self.log_subquery(query=query, description=description)
             if state.is_error:
-                print("Subquery failed")
+                #print("Subquery failed")
                 for d in state.metadata.get("log", []):
                     self.log_dict(d)
             #            self.enable_store_metadata = True
@@ -1024,11 +1026,16 @@ class Context(MetadataContextMixin, object):
             self.set_description(description)
 
         if cache is None:
-            cache = self.cache()
+            if input_value_specified:
+                cache=NoCache()
+                self.debug(f"Input value specified, cache {repr(cache)}")
+            else:
+                cache = self.cache()
+                self.debug(f"Default cache {repr(cache)}")
 
         self.debug(f"Using cache {repr(cache)}")
         self.debug(f"Try cache {query}")
-        if (extra_parameters is None or len(extra_parameters)==0) and input_value is None:
+        if (extra_parameters is None or len(extra_parameters)==0) and input_value is None and not input_value_specified:
             state = cache.get(query.encode())
             if state is not None:
                 self.debug(f"Cache hit {query}")
@@ -1037,7 +1044,7 @@ class Context(MetadataContextMixin, object):
                 return state
         else:
             state=None
-            if input_value is not None:
+            if input_value is not None or input_value_specified:
                 print("Input value specified, cache disabled")
                 self.debug("Input value specified, cache disabled")
             else:
@@ -1071,7 +1078,7 @@ class Context(MetadataContextMixin, object):
                 c=self.child_context()
                 c.evaluated_key = self.evaluated_key
                 c.cwd_key = self.cwd_key
-                state = c.evaluate(p, cache=cache, input_value=input_value)
+                state = c.evaluate(p, cache=cache, input_value=input_value, input_value_specified=input_value_specified)
             if state.is_error:
                 self.status = Status.ERROR
                 self.store_metadata()
@@ -1133,7 +1140,8 @@ class Context(MetadataContextMixin, object):
         This is a convenience method, which creates a context, evaluates the query and returns the result.
         """
         logger.debug(f"*** Evaluate on {value} query {query} started")
-        return self.evaluate(query, input_value=value)
+        print(f"*** Evaluate on {value} query {query} started")
+        return self.evaluate(query, input_value=value, cache=NoCache(), input_value_specified=True)
     
     def create_evaluate_on_state_function(self, query):
         """Create a function, which evaluates query on a given value.

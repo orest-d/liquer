@@ -43,11 +43,11 @@ class DataframeStateType(StateType):
         mimetype = mimetype_from_extension(extension)
         if extension == "csv":
             output = StringIO()
-            data.to_csv(output, index=False)
+            data.to_csv(output, index=False, escapechar="\\")
             return output.getvalue().encode("utf-8"), mimetype
         elif extension == "tsv":
             output = StringIO()
-            data.to_csv(output, index=False, sep="\t")
+            data.to_csv(output, index=False, sep="\t", escapechar="\\")
             return output.getvalue().encode("utf-8"), mimetype
         elif extension == "json":
             output = StringIO()
