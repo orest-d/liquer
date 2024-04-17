@@ -1,5 +1,9 @@
 # TODO
 
+## Critical Bugs
+- [x] make sure file store removedir removes metadata when empty
+- [x] recurent store.removedir
+
 ## Bugs
 - [ ] handle undefined and null in COntent.vue 207 (just_load)s
 - [ ] metadata viewer lacks length

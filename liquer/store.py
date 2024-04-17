@@ -302,10 +302,11 @@ class Store(StoreMixin):
         """Remove data and metadata associated with the key."""
         raise KeyNotFoundStoreException(key=key, store=self)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
         """Remove directory.
         The key must be a directory.
         It depends on the underlying store whether the directory must be empty.
+        If recursive is True, the directory is removed recursively.
         """
         raise KeyNotFoundStoreException(key=key, store=self)
 
@@ -498,8 +499,18 @@ class FileStore(Store):
 
         self.on_removed(key)
 
-    def removedir(self, key):
-        (self.path_for_key(key) / self.METADATA).rmdir()
+    def removedir(self, key, recursive=False):
+        if key in ("", None):
+            return
+        if recursive:
+            for k in self.listdir_keys(key):
+                if self.is_dir(k):
+                    self.removedir(k, recursive=True)
+                else:
+                    self.remove(k)
+        self.metadata_path_for_key(key).unlink(missing_ok=True)
+        if (self.path_for_key(key) / self.METADATA).exists():
+            (self.path_for_key(key) / self.METADATA).rmdir()
         self.path_for_key(key).rmdir()
         self.on_removed(key)
 
@@ -610,7 +621,15 @@ class MemoryStore(Store):
             pass
         self.on_removed(key)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
+        if key in ("", None):
+            return
+        if recursive:
+            for k in self.listdir_keys(key):
+                if self.is_dir(k):
+                    self.removedir(k, recursive=True)
+                else:
+                    self.remove(k)
         if len(self.listdir(key)) == 0:
             try:
                 self.directories.remove(key)
@@ -701,8 +720,8 @@ class ProxyStore(Store):
         self._store.remove(key)
         self.on_removed(key)
 
-    def removedir(self, key):
-        self._store.remove(key)
+    def removedir(self, key, recursive=False):
+        self._store.removedir(key, recursive=recursive)
         self.on_removed(key)
 
     def contains(self, key):
@@ -776,7 +795,7 @@ class ReadOnlyStore(ProxyStore):
     def remove(self, key):
         raise ReadOnlyStoreException(key=key, store=self)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
         raise ReadOnlyStoreException(key=key, store=self)
 
     def makedir(self, key):
@@ -845,7 +864,13 @@ class OverlayStore(Store):
                 self.removed.add(key)
         self.on_removed(key)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
+        if recursive:
+            for k in self.listdir_keys(key):
+                if self.is_dir(k):
+                    self.removedir(k, recursive=True)
+                else:
+                    self.remove(k)
         if self.contains(key):
             if len(self.listdir(key)) == 0:
                 if self.overlay.contains(key):
@@ -957,8 +982,8 @@ class RoutingStore(Store):
         self.route_to(key).remove(key)
         self.on_removed(key)
 
-    def removedir(self, key):
-        self.route_to(key).removedir(key)
+    def removedir(self, key, recursive=False):
+        self.route_to(key).removedir(key, recursive=recursive)
         self.on_removed(key)
 
     def contains(self, key):
@@ -1044,8 +1069,8 @@ class KeyTranslatingStore(Store):
         self.substore.remove(self.translate_key(key))
         self.on_removed(key)
 
-    def removedir(self, key):
-        self.substore.removedir(self.translate_key(key))
+    def removedir(self, key, recursive=False):
+        self.substore.removedir(self.translate_key(key), recursive=recursive)
         self.on_removed(key)
 
     def contains(self, key):
@@ -1231,7 +1256,15 @@ class MountPointStore(RoutingStore):
 
         return sorted(d)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
+        if key in ("", None):
+            return
+        if recursive:
+            for k in self.listdir_keys(key):
+                if self.is_dir(k):
+                    self.removedir(k, recursive=True)
+                else:
+                    self.remove(k)
         for k, store in self.routing_table:
             if k == key:
                 raise StoreException(
@@ -1379,7 +1412,16 @@ class FileSystemStore(Store):
             pass
         self.on_removed(key)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
+        if key in ("", None):
+            return
+        if recursive:
+            for k in self.listdir_keys(key):
+                if self.is_dir(k):
+                    self.removedir(k, recursive=True)
+                else:
+                    self.remove(k)
+        self.fs.remove(self.metadata_dir_path_for_key(key))
         metadir = self.path_for_key(key) + "/" + self.METADATA
         try:
             self.fs.removedir(metadir)
@@ -1571,7 +1613,21 @@ class FSSpecStore(Store):
             pass
         self.on_removed(key)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
+        if key in ("", None):
+            return
+        if recursive:
+            for k in self.listdir_keys(key):
+                if self.is_dir(k):
+                    self.removedir(k, recursive=True)
+                else:
+                    self.remove(k)
+
+        try:
+            self.fs.rm(self.metadata_path_for_key(key))
+        except:
+            pass
+
         metadir = self.path_for_key(key) + "/" + self.METADATA
         try:
             self.fs.rmdir(metadir)
