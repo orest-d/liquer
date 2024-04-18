@@ -341,8 +341,8 @@ class RecipeStore(Store):
         self.substore.remove(key)
         self.on_removed(key)
 
-    def removedir(self, key):
-        self.substore.removedir(key)
+    def removedir(self, key, recursive=False):
+        self.substore.removedir(key, recursive=recursive)
         self.on_removed(key)
 
     def contains(self, key):
@@ -773,8 +773,8 @@ class NewRecipeSpecStore(Store):
         self.substore.remove(key)
         self.on_removed(key)
 
-    def removedir(self, key):
-        self.substore.removedir(key)
+    def removedir(self, key, recursive=False):
+        self.substore.removedir(key, recursive=recursive)
         self.on_removed(key)
 
     def contains(self, key):

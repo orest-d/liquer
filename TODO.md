@@ -1,6 +1,9 @@
 # TODO
 
 ## Critical Bugs
+- [ ] fix removedir (plus recursive) in S3 store
+- [ ] removedir in remote store
+- [ ] removedir recursive in recipes 
 - [x] make sure file store removedir removes metadata when empty
 - [x] recurent store.removedir
 

@@ -91,7 +91,15 @@ class S3Store(Store):
 
         self.on_removed(key)
 
-    def removedir(self, key):
+    def removedir(self, key, recursive=False):
+        if key in ("", None):
+            return
+        if recursive:
+            for k in self.listdir_keys(key):
+                if self.is_dir(k):
+                    self.removedir(k, recursive=True)
+                else:
+                    self.remove(k)
         self.on_removed(key)
 
     def object_keys(self, keyprefix=""):
