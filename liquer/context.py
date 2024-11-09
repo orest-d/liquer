@@ -213,7 +213,7 @@ class MetadataContextMixin:
             qv = qv.to_list()
         return self.log_dict(dict(kind="command", qv=qv, command_number=number))
 
-    def error(self, message, position=None, query=None):
+    def error(self, message, position=None, query=None, traceback=None):
         """Log an error message"""
         self.is_error = True
         self.status = Status.ERROR
@@ -229,6 +229,7 @@ class MetadataContextMixin:
                 message=message,
                 position=None if position is None else position.to_dict(),
                 query=query,
+                traceback=traceback,
             )
         )
 
@@ -1135,13 +1136,13 @@ class Context(MetadataContextMixin, object):
             self.warning("Indexer failed", traceback=traceback.format_exc())
         return state
 
-    def evaluate_on(self, value, query):
+    def evaluate_on(self, value, query, description=None, extra_parameters=None):
         """Evaluate query on a given value.
         This is a convenience method, which creates a context, evaluates the query and returns the result.
         """
         logger.debug(f"*** Evaluate on {value} query {query} started")
         print(f"*** Evaluate on {value} query {query} started")
-        return self.evaluate(query, input_value=value, cache=NoCache(), input_value_specified=True)
+        return self.evaluate(query, input_value=value, cache=NoCache(), input_value_specified=True, description=description, extra_parameters=extra_parameters)
     
     def create_evaluate_on_state_function(self, query):
         """Create a function, which evaluates query on a given value.

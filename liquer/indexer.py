@@ -22,11 +22,11 @@ class Indexer(object):
         """This should return an identifier uniquely identifying the indexer among all the indexers"""
         return self.__class__.__name__
 
-    def metadata_item_equalts(self, key, value):
+    def metadata_item_equals(self, key, value):
         return MetadataItemEquals(self, key, value)
 
     def type_identifier_equals(self, value):
-        return self.metadata_item_equalts("type_identifier", value)
+        return self.metadata_item_equals("type_identifier", value)
 
 
 class IndexerProxy(Indexer):

@@ -858,7 +858,11 @@ class NewRecipeSpecStore(Store):
             if self.key_name(key) == self.RECIPES_FILE and not self.substore.is_dir(
                 key
             ):
-                spec = yaml.load(self.substore.get_bytes(key), Loader=Loader)
+                try:
+                    spec = yaml.load(self.substore.get_bytes(key), Loader=Loader)
+                except:
+                    print(f"ERROR: Failed loading recipes from {key}")
+                    raise
                 recipes_key = key
                 metadata = StoreSyncMetadata(self.substore, key)
                 metadata.clear_log()
@@ -877,10 +881,15 @@ class NewRecipeSpecStore(Store):
                                 metadata.warning(
                                     f"Failed parsing the definition of recipe {i+1} in {directory}"
                                 )
+                            elif d.get("filename") is None:
+                                metadata.warning(
+                                    f"Filename missing in the definition of recipe {i+1} in {directory}"
+                                )
+
                             d["recipe_name"] = (
                                 self.to_root_key(recipes_key)
                                 + f"/-Ryaml/{directory}/{i}#"
-                                + d.get("filename", "")
+                                + (d.get("filename") or "")
                             )
                             d["recipes_key"] = self.to_root_key(recipes_key)
 

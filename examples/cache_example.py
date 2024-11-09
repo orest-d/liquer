@@ -11,17 +11,21 @@ from liquer.cache import MemoryCache, FileCache, SQLCache, set_cache  # Setting 
 @first_command(my_cache="a")
 def square(count=10):
     df = pd.DataFrame()
+    data=[]
     for i in range(count):
         print("square", i)
-        df = df.append(dict(x=i,y=i*i), ignore_index=True)
+        data.append(dict(x=i,y=i*i))
+    df = pd.concat([df, pd.DataFrame(data)], ignore_index=True)
     return df
 
 @first_command(my_cache="b")
 def cube(count=10):
     df = pd.DataFrame()
+    data=[]
     for i in range(count):
         print("cube", i)
-        df = df.append(dict(x=i,y=i*i*i), ignore_index=True)
+        data.append(dict(x=i,y=i*i*i))
+    df = pd.concat([df,pd.DataFrame(data)], ignore_index=True)
     return df
 
 if __name__ == "__main__":

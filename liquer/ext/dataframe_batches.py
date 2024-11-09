@@ -44,7 +44,7 @@ def concat_batches(idf, max_batches=None, context=None):
             context.info(f"Concatenate batch {batch_number}/{max_batches}")
         else:
             context.info(f"Concatenate batch {batch_number}")
-        buffer = buffer.append(df, ignore_index=True)
+        buffer = pd.concat([buffer, df], ignore_index=True)
         if max_batches and batch_number >= max_batches:
             context.info(f"Maximum number of batches reached")
             break
@@ -82,7 +82,7 @@ def repackage_batches(idf, batch_size=1024, max_batches=0, context=None):
                 context.warning(
                     f"Number of columns in the batches differs - before:{len(buffer.columns)}, now:{len(df.columns)}"
                 )
-        buffer = buffer.append(df, ignore_index=True)
+        buffer = pd.concat([buffer,df], ignore_index=True)
         while len(buffer) >= batch_size:
             batch_number += 1
             if max_batches:
@@ -321,7 +321,7 @@ def _store_batches(idf, key, max_batches=None, context=None):
             context.info(f"Storing batch {batch_number}/{max_batches}")
         else:
             context.info(f"Storing batch {batch_number}")
-        sdfi.append(df)
+        sdfi=pd.concat([sdfi,df])
         context.store_data(sdfi_key, sdfi)
         yield sdfi, df
         #        sdfi_bytes, mimetype = STORED_DATAFRAME_ITERATOR_STATE_TYPE.as_bytes(sdfi)

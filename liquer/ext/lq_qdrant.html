@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+    <div id="app">
+    <v-app>
+      <v-main>
+          <v-container>
+              <v-row>
+                  <v-col cols="10">
+                    <v-text-field
+                    label="Search"
+                    single-line
+                    hide-details
+                    v-model="search"
+                    @change="search_when_free()"
+                    append-icon="mdi-magnify"></v-text-field>
+                </v-col>
+                <v-col cols="2">
+                    <v-btn @click="do_search()">Search</v-btn>
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col cols="12">
+                    <v-card>
+                        <v-data-table
+                        :headers="headers"
+                        :items="data"
+                        :items-per-page="5"
+                        :single-expand="singleExpand"
+                        single-expand="true"
+                        show-expand
+                        item-key="key"
+                        :expanded.sync="expanded"
+                        class="elevation-1"
+                      >
+                      <template v-slot:expanded-item="{ headers, item }">
+                        <td :colspan="headers.length">
+                          {{ item.description }}
+                          <b>
+                              {{ item.characteristics }}
+                          </b>
+                        </td>
+                      </template>
+                      <template v-slot:item.key="{ item }">
+                        <a :href="item.link">
+                            {{ item.key }}
+                        </a>
+                      </template>
+                    </v-data-table>          
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+
+new Vue({
+    el: '#app',
+    vuetify: new Vuetify(
+        {
+            theme: {
+                dark: true,
+            }
+        }
+    ),
+    data: () => ({
+        url: '/liquer/q/ns-qdrant/search_json',
+        fetching:false,
+        singleExpand: true,
+        data: [
+        ],
+        expanded: [],
+        headers: [
+            {text: 'Type', value: 'type_identifier'},
+            {text: 'Title', value: 'title'},
+            {text: 'Key', value: 'key'},
+        ]
+    }),
+    methods: {
+        do_search: function() {
+            console.log("Search",this.search);
+            this.fetch_data(this.search);
+        },
+        search_when_free: function() {
+            if (this.fetching) {
+                return;
+            }
+            this.do_search();
+        },
+        fetch_data: function(query) {
+            this.fetching = true;
+            this.expanded = [];
+            const params = new URLSearchParams();
+            params.append('query', query);
+            var query_url = this.url + '?' + params.toString();
+
+            console.log("Fetch data", query_url);
+            // fetch data from server using axios
+            fetch(query_url).then(
+                function (response) {
+                 // handle success
+                 console.log(response);
+                 response.json().then(function(data) {
+                    this.data = data;
+                 }.bind(this));
+                 this.fetching = false;
+             }.bind(this))
+            .catch(function (error) {
+                 // handle error
+                 console.log(error);
+                 this.fetching = false;
+             }.bind(this));
+        }
+    }
+});
+
+  </script>
+</body>
+</html>
