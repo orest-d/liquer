@@ -1,9 +1,12 @@
 # TODO
 
 ## Critical Bugs
+- [x] pandas append in dataframe_batches - e.g. line 46 - removed in pandas 2
 - [ ] fix removedir (plus recursive) in S3 store
 - [ ] removedir in remote store
 - [ ] removedir recursive in recipes 
+- [ ] store crashing on corrupted metadata; investigate cache too
+- [ ] sql should be displayed in UI !
 - [x] make sure file store removedir removes metadata when empty
 - [x] recurent store.removedir
 
@@ -30,6 +33,11 @@
 - [x] screen should be empty in GUI when unsupported type is shown
 - [x] parser failure when capital case in resource path (?) - probably faulty logic in context.py:896, resource query should be handled separately - seems to be working
 - [x] root "-R/-/"
+
+## High priority features
+- context evaluate_template should support input_value
+- support openbin in recipes
+- support path to stored objects (copy to tmp) to support Polars LazyDataframe
 
 ## Unsorted
 - [ ] make separators, quotes and escape characters configurable in config

@@ -7,6 +7,7 @@ import traceback
 import argparse
 import webbrowser
 from liquer.config import load_config, initialize, preset, config
+import liquer.tui
 
 def quickstart(config_file="config.yaml", index_link=None):
     """Quickstart function for liquer. It loads configuration, initializes liquer and starts the server."""
@@ -27,6 +28,7 @@ if __name__=="__main__":
     parser.add_argument('--query', '-q', type=str, action="store", help='Query to execute')
     parser.add_argument('--output', '-o', type=str, action="store", help='Output directory') 
     parser.add_argument('--serve', '-s', action="store_true", help='Start server')
+    parser.add_argument('--tui', '-t', action="store_true", help='Start TUI app')
 
     args = parser.parse_args()
 
@@ -59,4 +61,6 @@ if __name__=="__main__":
 
     if args.serve:
         preset().start_server(config())
-        
+    
+    if args.tui:
+        liquer.tui.TUIApp().run()

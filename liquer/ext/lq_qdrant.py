@@ -1,3 +1,15 @@
+"""
+A minimalistic support for use of the qdrant vector database
+as a liquer indexer.
+
+By default, the embeddings are done inside the qdrant database via the fastembed library.
+The model is using the defaults of the qdrant/fastembed library.
+
+To use this extension, you need the following dependencies:
+- fastembed
+- qdrant-client - install with pip install qdrant-client[fastembed]
+
+"""
 import json
 from pathlib import Path
 
@@ -18,17 +30,33 @@ QDRANT_PATH="qdrand"
 
 QDRANT_CLIENT=None
 
-def get_client():
+def get_client(path=None) -> QdrantClient:
     import qdrant_client.local.qdrant_local as ql
     global QDRANT_CLIENT
+    if path is None:
+        path = QDRANT_PATH
     if QDRANT_CLIENT is None:
-        #QDRANT_CLIENT = ql.QdrantLocal(QDRANT_PATH)
-        QDRANT_CLIENT = QdrantClient(path=QDRANT_PATH)
+        QDRANT_CLIENT = QdrantClient(path=path)
     return QDRANT_CLIENT
 
-def init(dir="whoosh_index"):
+@first_command(ns="qdrant")
+def embedding_model_name():
+    """Get the name of the embedding model used by the qdrant database."""
+    return get_client().embedding_model_name
+
+@first_command(ns="qdrant")
+def get_fastembed_vector_size():
+    """Get the fastembed vector parameters used by the qdrant database."""
+    p=get_client().get_fastembed_vector_params().values().next()
+    return dict(
+        size=p.size,
+        distance=p.distance
+    )
+
+def init(path=None):
     """Initialize the Qdrant database."""
-    client = get_client()
+    client = get_client(path)
+    client.get_fastembed_vector_params
     register_indexer(AddToQdrantIndex())
 
 #    client.create_collection(
