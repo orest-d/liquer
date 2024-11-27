@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.widgets import DataTable, Footer, Header
+from textual.widgets import DataTable, Footer, Header, Label, Static, TextArea
 from textual import events
 from textual.widget import Widget
 from textual.reactive import reactive
@@ -8,10 +8,10 @@ from rich.text import Text
 
 from liquer.parser import parse
 from liquer.store import get_store, join_key, key_extension, key_name, parent_key
-
+from textual.screen import Screen
 
 class TUIApp(App):
-
+    BINDINGS = [("Q", "exit", "Exit")]
     def compose(self):
         yield Header()
         yield KeyDisplay()
@@ -27,9 +27,11 @@ class TUIApp(App):
 #        data_table.add_row("Row 1, Column 1", "Row 1, Column 2")
 #        data_table.add_row("Row 2, Column 1", "Row 2, Column 2")
 
-    def on_key(self, event: events.Key):
-        if event.key == "q":
-            self.exit()
+#    def on_key(self, event: events.Key):
+#        if event.key == "q":
+#            self.exit()
+    def action_exit(self):
+        self.exit()
 
 def get_unicode_icon(metadata):
     try:
@@ -85,8 +87,20 @@ def get_status(metadata):
         "side-effect":"[green]side-effect[/]"}.get(status,status)
     return status or "[red]???[/]"
 
+class TextView(Screen):
+    BINDINGS = [("escape", "app.pop_screen", "Return")]
+    text=reactive("")
+    head=reactive("")
 
-
+    def __init__(self, text):
+        super().__init__()
+        self.text=text
+    def compose(self):
+        yield Label(self.text)
+        yield Footer()
+    def render(self):
+        return Text(self.text)
+    
 class StoreView(VerticalGroup):
     key=reactive("")
     DEFAULT_CSS = """
@@ -113,7 +127,19 @@ class StoreView(VerticalGroup):
     def on_data_table_row_selected(self, event: DataTable.RowSelected):
         row=int(event.cursor_row)
         if row:
-            self.key=join_key(self.key, self.rows[row][2])
+            key=join_key(self.key, self.rows[row][2])
+            metadata=get_store().get_metadata(key)
+            try:
+                if metadata["fileinfo"]["is_dir"]:
+                    self.key=key
+                    return
+            except:
+                pass
+            try:
+                text=get_store().get_bytes(key).decode("utf-8")
+                self.app.push_screen(TextView(text))
+            except:
+                pass
         else:
             self.action_up()
     def on_mount(self):
