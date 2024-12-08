@@ -9,6 +9,9 @@ from rich.text import Text
 from liquer.parser import parse
 from liquer.store import get_store, join_key, key_extension, key_name, parent_key
 from textual.screen import Screen
+from textual.scroll_view import ScrollView
+import liquer.ext.meta
+from liquer.ext.meta import make_recipes
 
 class TUIApp(App):
     BINDINGS = [("Q", "exit", "Exit")]
@@ -96,17 +99,18 @@ class TextView(Screen):
         super().__init__()
         self.text=text
     def compose(self):
-        yield Label(self.text)
+        t = TextArea(self.text)
+        t.read_only=True
+        yield t
         yield Footer()
-    def render(self):
-        return Text(self.text)
     
 class StoreView(VerticalGroup):
+    BINDINGS = [("r", "run", "Run")]
     key=reactive("")
     DEFAULT_CSS = """
     StoreView {
       layout: vertical;
-      height: auto;
+      height: 100%;
     }
     #table {
       height: 1fr;
@@ -152,6 +156,26 @@ class StoreView(VerticalGroup):
     def action_up(self):
         key=parent_key(self.key)
         self.key= "" if key is None else key
+
+    def selected_key(self):
+        table:DataTable=self.query_one("#table")
+        row=table.cursor_row
+        if row:
+            if self.rows[row][2] not in ("", ".", "..", None):
+                return join_key(self.key, self.rows[row][2])
+        return self.key
+    def action_run(self):        
+        key=self.selected_key()
+        open("msg.txt","w").write(f"Running {repr(key)}")
+        if key in ("", ".", "..", None):
+            return
+        store = get_store()
+
+        if store.contains(key):
+            if store.is_dir(key):
+                #with self.supposed():
+                make_recipes(dict(key=key))
+                pass
 
     def watch_key(self, old, new_key):
         self.query_one("#key").key=new_key
