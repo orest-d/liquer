@@ -5,13 +5,16 @@ from textual.widget import Widget
 from textual.reactive import reactive
 from textual.containers import VerticalGroup
 from rich.text import Text
+from textual.widgets import MarkdownViewer
 
+
+from liquer.cache import get_cache
 from liquer.parser import parse
 from liquer.store import get_store, join_key, key_extension, key_name, parent_key
 from textual.screen import Screen
 from textual.scroll_view import ScrollView
 import liquer.ext.meta
-from liquer.ext.meta import make_recipes
+from liquer.ext.meta import clean_recipes, make_recipes, status_md
 
 class TUIApp(App):
     BINDINGS = [("Q", "exit", "Exit")]
@@ -73,6 +76,7 @@ def get_unicode_icon(metadata):
         return "📄"
     return "📦"   
 
+
 def get_status(metadata):
     status=metadata.get("status")
 
@@ -103,9 +107,23 @@ class TextView(Screen):
         t.read_only=True
         yield t
         yield Footer()
-    
+
+class MarkdownView(Screen):
+    BINDINGS = [("escape", "app.pop_screen", "Return")]
+    text=reactive("")
+    head=reactive("")
+
+    def __init__(self, text):
+        super().__init__()
+        self.text=text
+    def compose(self):
+        t = MarkdownViewer(self.text, show_table_of_contents=True)
+        t.read_only=True
+        yield t
+        yield Footer()
+
 class StoreView(VerticalGroup):
-    BINDINGS = [("r", "run", "Run")]
+    BINDINGS = [("r", "run", "Run"),('m', 'metadata', 'Show Metadata'), ('C', 'clean', 'Clean')]
     key=reactive("")
     DEFAULT_CSS = """
     StoreView {
@@ -157,6 +175,17 @@ class StoreView(VerticalGroup):
         key=parent_key(self.key)
         self.key= "" if key is None else key
 
+    def action_metadata(self):
+
+        key=self.selected_key()
+        open("msg.txt","w").write(f"Metadata {repr(key)}")
+        if key in ("", ".", "..", None):
+            return
+        open("msg.txt","w").write(f"Metadata {repr(key)} valid")
+        metadata=get_store().get_metadata(key)
+        open("msg.txt","w").write(f"Metadata {repr(key)} valid\n{metadata}")
+        self.app.push_screen(MarkdownView(status_md(metadata)))
+
     def selected_key(self):
         table:DataTable=self.query_one("#table")
         row=table.cursor_row
@@ -164,6 +193,7 @@ class StoreView(VerticalGroup):
             if self.rows[row][2] not in ("", ".", "..", None):
                 return join_key(self.key, self.rows[row][2])
         return self.key
+    
     def action_run(self):        
         key=self.selected_key()
         open("msg.txt","w").write(f"Running {repr(key)}")
@@ -173,9 +203,35 @@ class StoreView(VerticalGroup):
 
         if store.contains(key):
             if store.is_dir(key):
-                #with self.supposed():
-                make_recipes(dict(key=key))
-                pass
+                with self.app.suspend():
+                    make_recipes(dict(key=key))
+            else:
+                with self.app.suspend():
+                    get_store().get_bytes(key)
+            self.app.refresh()
+
+        key=self.query_one("#key").key    
+        self.watch_key(key, key)
+
+    def action_clean(self):        
+        key=self.selected_key()
+        open("msg.txt","w").write(f"Running {repr(key)}")
+        if key in ("", ".", "..", None):
+            return
+        store = get_store()
+        get_cache().clean()
+        if store.contains(key):
+            if store.is_dir(key):
+                with self.app.suspend():
+                    clean_recipes(dict(key=key))
+            else:
+                with self.app.suspend():
+                    if get_store().get_metadata(key).get("status")=="ready":
+                        get_store().remove(key)
+            self.app.refresh()
+
+        key=self.query_one("#key").key    
+        self.watch_key(key, key)
 
     def watch_key(self, old, new_key):
         self.query_one("#key").key=new_key
