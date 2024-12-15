@@ -103,3 +103,4 @@ pip install liquer-framework
 - 2024-01-15 - v0.9.6  - FastAPI, Godot webapps enabled, fixing bugs in evaluate_on
 - 2024-04-17 - v0.9.7  - fixing issue with rmdir
 - 2024-04-18 - v0.9.8  - removedir bugfix
+- 2024-04-18 - v0.9.9  - Simple TUI module
