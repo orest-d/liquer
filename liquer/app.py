@@ -28,7 +28,7 @@ if __name__=="__main__":
     parser.add_argument('--query', '-q', type=str, action="store", help='Query to execute')
     parser.add_argument('--output', '-o', type=str, action="store", help='Output directory') 
     parser.add_argument('--serve', '-s', action="store_true", help='Start server')
-    parser.add_argument('--tui', '-t', action="store_true", help='Start TUI app')
+    parser.add_argument('--tui', '-t', nargs="?", const="", default=None, help='Start TUI app')
 
     args = parser.parse_args()
 
@@ -62,5 +62,5 @@ if __name__=="__main__":
     if args.serve:
         preset().start_server(config())
     
-    if args.tui:
-        liquer.tui.TUIApp().run()
+    if type(args.tui)==str:
+        liquer.tui.TUIApp(args.tui).run()

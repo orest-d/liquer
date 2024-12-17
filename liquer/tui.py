@@ -18,6 +18,9 @@ from liquer.ext.meta import clean_recipes, make_recipes, status_md
 
 class TUIApp(App):
     BINDINGS = [("Q", "exit", "Exit")]
+    def __init__(self, key=""):
+        super().__init__()
+        self.key=key
     def compose(self):
         yield Header()
         yield KeyDisplay()
@@ -26,7 +29,7 @@ class TUIApp(App):
         yield Footer()
 
     def on_mount(self):
-        self.query_one(StoreView).key=""
+        self.query_one(StoreView).key=self.key
 #        data_table = self.query_one(DataTable)
 #        data_table.add_column("Column 1")
 #        data_table.add_column("Column 2")
@@ -166,10 +169,10 @@ class StoreView(VerticalGroup):
             self.action_up()
     def on_mount(self):
         data_table = self.query_one(DataTable)
-        data_table.add_column("Column 1")
-        data_table.add_column("Column 2")
-        data_table.add_row("Row 1, Column 1", "Row 1, Column 2")
-        data_table.add_row("Row 2, Column 1", "Row 2, Column 2")
+#        data_table.add_column("Column 1")
+#        data_table.add_column("Column 2")
+#        data_table.add_row("Row 1, Column 1", "Row 1, Column 2")
+#        data_table.add_row("Row 2, Column 1", "Row 2, Column 2")
     
     def action_up(self):
         key=parent_key(self.key)
@@ -178,12 +181,9 @@ class StoreView(VerticalGroup):
     def action_metadata(self):
 
         key=self.selected_key()
-        open("msg.txt","w").write(f"Metadata {repr(key)}")
         if key in ("", ".", "..", None):
             return
-        open("msg.txt","w").write(f"Metadata {repr(key)} valid")
         metadata=get_store().get_metadata(key)
-        open("msg.txt","w").write(f"Metadata {repr(key)} valid\n{metadata}")
         self.app.push_screen(MarkdownView(status_md(metadata)))
 
     def selected_key(self):
@@ -196,7 +196,6 @@ class StoreView(VerticalGroup):
     
     def action_run(self):        
         key=self.selected_key()
-        open("msg.txt","w").write(f"Running {repr(key)}")
         if key in ("", ".", "..", None):
             return
         store = get_store()
@@ -208,14 +207,19 @@ class StoreView(VerticalGroup):
             else:
                 with self.app.suspend():
                     get_store().get_bytes(key)
-            self.app.refresh()
+            self.action_refresh()
 
-        key=self.query_one("#key").key    
+    def action_refresh(self):
+        table:DataTable=self.query_one("#table")
+        selected=table.cursor_row
+        key=self.query_one("#key").key
         self.watch_key(key, key)
+        self.app.refresh()
+        table.move_cursor(row=min(selected, table.row_count-1))
+
 
     def action_clean(self):        
         key=self.selected_key()
-        open("msg.txt","w").write(f"Running {repr(key)}")
         if key in ("", ".", "..", None):
             return
         store = get_store()
@@ -228,10 +232,7 @@ class StoreView(VerticalGroup):
                 with self.app.suspend():
                     if get_store().get_metadata(key).get("status")=="ready":
                         get_store().remove(key)
-            self.app.refresh()
-
-        key=self.query_one("#key").key    
-        self.watch_key(key, key)
+        self.action_refresh()
 
     def watch_key(self, old, new_key):
         self.query_one("#key").key=new_key
@@ -239,7 +240,7 @@ class StoreView(VerticalGroup):
         table:DataTable=self.query_one("#table")
         table.cursor_type="row"
         table.clear(True)
-        table.add_columns("I   ","state       ", "name                  ","title                                                  ")
+        table.add_columns("I   ","state        ", "name                    ","title                                                  ")
         store=get_store()
         rows=[("📁", "", ".." if new_key else "", "")]
         for filename in store.listdir(new_key):
